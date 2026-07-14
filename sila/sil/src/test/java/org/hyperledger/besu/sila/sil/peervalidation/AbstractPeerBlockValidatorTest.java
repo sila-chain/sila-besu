@@ -1,0 +1,187 @@
+/*
+ * Copyright 2019 ConsenSys AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package org.hyperledger.besu.sila.sil.peervalidation;
+
+import static org.assertj.core.api.Assertions.assertThat;
+
+import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.core.BlockDataGenerator;
+import org.hyperledger.besu.sila.core.BlockDataGenerator.BlockOptions;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
+import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
+import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
+import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
+import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
+import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
+import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
+import org.hyperledger.besu.sila.sil.messages.GetBlockHeadersMessage;
+import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.stream.Stream;
+
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.Mockito;
+
+public abstract class AbstractPeerBlockValidatorTest {
+  protected PeerTaskExecutor peerTaskExecutor;
+
+  @BeforeEach
+  public void beforeTest() {
+    peerTaskExecutor = Mockito.mock(PeerTaskExecutor.class);
+  }
+
+  abstract AbstractPeerBlockValidator createValidator(
+      PeerTaskExecutor peerTaskExecutor, long blockNumber, long buffer);
+
+  @Test
+  public void validatePeer_unresponsivePeer() {
+    final SilProtocolManager silProtocolManager =
+        SilProtocolManagerTestBuilder.builder()
+            .setSilScheduler(
+                new DeterministicSilScheduler(
+                    DeterministicSilScheduler.TimeoutPolicy.ALWAYS_TIMEOUT))
+            .build();
+    final long blockNumber = 500;
+    final PeerValidator validator = createValidator(peerTaskExecutor, blockNumber, 0);
+
+    final SilPeer peer =
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber).getSilPeer();
+
+    Mockito.when(
+            peerTaskExecutor.executeAgainstPeer(
+                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peer)))
+        .thenReturn(
+            new PeerTaskExecutorResult<>(
+                Optional.empty(), PeerTaskExecutorResponseCode.TIMEOUT, List.of(peer)));
+
+    final CompletableFuture<Boolean> result =
+        validator.validatePeer(silProtocolManager.silContext(), peer);
+
+    // Request should timeout immediately
+    assertThat(result).isDone();
+    assertThat(result).isCompletedWithValue(false);
+  }
+
+  @Test
+  public void validatePeer_requestBlockFromPeerBeingTested()
+      throws ExecutionException, InterruptedException {
+    final SilProtocolManager silProtocolManager = SilProtocolManagerTestBuilder.builder().build();
+    final BlockDataGenerator gen = new BlockDataGenerator(1);
+    final long blockNumber = 500;
+    final Block block = gen.block(BlockOptions.create().setBlockNumber(blockNumber));
+
+    final PeerValidator validator = createValidator(peerTaskExecutor, blockNumber, 0);
+
+    final int peerCount = 24;
+    final List<SilPeer> otherPeers =
+        Stream.generate(
+                () ->
+                    SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber)
+                        .getSilPeer())
+            .limit(peerCount)
+            .toList();
+    final SilPeer targetPeer =
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber).getSilPeer();
+
+    Mockito.when(
+            peerTaskExecutor.executeAgainstPeer(
+                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(targetPeer)))
+        .thenReturn(
+            new PeerTaskExecutorResult<>(
+                Optional.of(List.of(block.getHeader())),
+                PeerTaskExecutorResponseCode.SUCCESS,
+                List.of(targetPeer)));
+    otherPeers.forEach(
+        (p) ->
+            Mockito.when(
+                    peerTaskExecutor.executeAgainstPeer(
+                        Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(p)))
+                .thenThrow(new RuntimeException("Test failed: wrong peer validated")));
+    final CompletableFuture<Boolean> result =
+        validator.validatePeer(silProtocolManager.silContext(), targetPeer);
+
+    Mockito.verify(peerTaskExecutor)
+        .executeAgainstPeer(Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(targetPeer));
+    Mockito.verifyNoMoreInteractions(peerTaskExecutor);
+    assertThat(result).isDone();
+  }
+
+  @Test
+  public void canBeValidated() {
+    final BlockDataGenerator gen = new BlockDataGenerator(1);
+    final SilProtocolManager silProtocolManager =
+        SilProtocolManagerTestBuilder.builder()
+            .setSilScheduler(
+                new DeterministicSilScheduler(
+                    DeterministicSilScheduler.TimeoutPolicy.ALWAYS_TIMEOUT))
+            .build();
+    final long blockNumber = 500;
+    final long buffer = 10;
+
+    final PeerValidator validator = createValidator(peerTaskExecutor, blockNumber, buffer);
+    final SilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0).getSilPeer();
+
+    peer.chainState().update(gen.hash(), blockNumber - 10);
+    assertThat(validator.canBeValidated(peer)).isFalse();
+
+    peer.chainState().update(gen.hash(), blockNumber);
+    assertThat(validator.canBeValidated(peer)).isFalse();
+
+    peer.chainState().update(gen.hash(), blockNumber + buffer - 1);
+    assertThat(validator.canBeValidated(peer)).isFalse();
+
+    peer.chainState().update(gen.hash(), blockNumber + buffer);
+    assertThat(validator.canBeValidated(peer)).isTrue();
+
+    peer.chainState().update(gen.hash(), blockNumber + buffer + 10);
+    assertThat(validator.canBeValidated(peer)).isTrue();
+  }
+
+  AtomicBoolean respondToBlockRequest(final RespondingSilPeer peer, final Block block) {
+    final AtomicBoolean blockRequested = new AtomicBoolean(false);
+
+    final RespondingSilPeer.Responder responder =
+        RespondingSilPeer.targetedResponder(
+            (cap, p, msg) -> {
+              if (msg.getCode() != SilProtocolMessages.GET_BLOCK_HEADERS) {
+                return false;
+              }
+              final GetBlockHeadersMessage headersRequest = GetBlockHeadersMessage.readFrom(msg);
+              final boolean isTargetedBlockRequest =
+                  headersRequest.blockNumber().isPresent()
+                      && headersRequest.blockNumber().getAsLong() == block.getHeader().getNumber();
+              if (isTargetedBlockRequest) {
+                blockRequested.set(true);
+              }
+              return isTargetedBlockRequest;
+            },
+            (cap, p, msg) -> BlockHeadersMessage.create(block.getHeader()));
+
+    // Respond
+    peer.respond(responder);
+
+    return blockRequested;
+  }
+}

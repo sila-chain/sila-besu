@@ -1,0 +1,73 @@
+/*
+ * Copyright ConsenSys AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package org.hyperledger.besu.sila.sil.manager;
+
+import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
+
+import java.util.Optional;
+
+public class SilContext {
+
+  private final SilPeers silPeers;
+  private final SilMessages silMessages;
+  private final Optional<SilMessages> snapMessages;
+  private final SilScheduler scheduler;
+  private final PeerTaskExecutor peerTaskExecutor;
+
+  public SilContext(
+      final SilPeers silPeers,
+      final SilMessages silMessages,
+      final SilMessages snapMessages,
+      final SilScheduler scheduler,
+      final PeerTaskExecutor peerTaskExecutor) {
+    this.silPeers = silPeers;
+    this.silMessages = silMessages;
+    this.snapMessages = Optional.of(snapMessages);
+    this.scheduler = scheduler;
+    this.peerTaskExecutor = peerTaskExecutor;
+  }
+
+  public SilContext(
+      final SilPeers silPeers,
+      final SilMessages silMessages,
+      final SilScheduler scheduler,
+      final PeerTaskExecutor peerTaskExecutor) {
+    this.silPeers = silPeers;
+    this.silMessages = silMessages;
+    this.snapMessages = Optional.empty();
+    this.scheduler = scheduler;
+    this.peerTaskExecutor = peerTaskExecutor;
+  }
+
+  public SilPeers getSilPeers() {
+    return silPeers;
+  }
+
+  public SilMessages getSilMessages() {
+    return silMessages;
+  }
+
+  public Optional<SilMessages> getSnapMessages() {
+    return snapMessages;
+  }
+
+  public SilScheduler getScheduler() {
+    return scheduler;
+  }
+
+  public PeerTaskExecutor getPeerTaskExecutor() {
+    return peerTaskExecutor;
+  }
+}

@@ -1,0 +1,51 @@
+/*
+ * Copyright ConsenSys AG.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with
+ * the License. You may obtain a copy of the License at
+ *
+ * http://www.apache.org/licenses/LICENSE-2.0
+ *
+ * Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on
+ * an "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. See the License for the
+ * specific language governing permissions and limitations under the License.
+ *
+ * SPDX-License-Identifier: Apache-2.0
+ */
+package org.hyperledger.besu.sila.sil.sync;
+
+import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.sil.manager.SilContext;
+import org.hyperledger.besu.sila.sil.sync.tasks.CompleteBlocksWithPeerTask;
+import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+
+import java.util.List;
+import java.util.concurrent.CompletableFuture;
+import java.util.function.Function;
+
+public class DownloadBodiesStep
+    implements Function<List<BlockHeader>, CompletableFuture<List<Block>>> {
+
+  private final ProtocolSchedule protocolSchedule;
+  private final SilContext silContext;
+
+  public DownloadBodiesStep(final ProtocolSchedule protocolSchedule, final SilContext silContext) {
+    this.protocolSchedule = protocolSchedule;
+    this.silContext = silContext;
+  }
+
+  @Override
+  public CompletableFuture<List<Block>> apply(final List<BlockHeader> blockHeaders) {
+    return silContext
+        .getScheduler()
+        .scheduleServiceTask(
+            () -> {
+              final CompleteBlocksWithPeerTask completeBlocksWithPeerTask =
+                  new CompleteBlocksWithPeerTask(
+                      protocolSchedule, blockHeaders, silContext.getPeerTaskExecutor());
+              final List<Block> blocks = completeBlocksWithPeerTask.retrieveBlocksFromPeers();
+              return CompletableFuture.completedFuture(blocks);
+            });
+  }
+}
