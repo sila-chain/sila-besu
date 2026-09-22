@@ -125,8 +125,8 @@ public interface HardforkId {
     }
 
     /**
-     * The most recent finalized sila-mainnet hardfork Besu supports. This will change across versions
-     * and will be updated after sila-mainnet activations.
+     * The most recent finalized sila-mainnet hardfork Besu supports. This will change across
+     * versions and will be updated after sila-mainnet activations.
      *
      * @return the most recently activated sila-mainnet spec.
      */

@@ -52,7 +52,7 @@ public class GenesisConfig {
    *
    * @return the genesis config file
    */
-  public static GenesisConfig sila-mainnet() {
+  public static GenesisConfig silaMainnet() {
     return fromSource(GenesisConfig.class.getResource("/sila-mainnet.json"));
   }
 

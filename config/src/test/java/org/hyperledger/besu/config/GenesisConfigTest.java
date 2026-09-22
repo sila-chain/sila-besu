@@ -216,12 +216,12 @@ class GenesisConfigTest {
 
   @Test
   void assertSilaMainnetTerminalTotalDifficulty() {
-    GenesisConfigOptions sila-mainnetOptions =
+    GenesisConfigOptions silaMainnetOptions =
         GenesisConfig.fromResource("/sila-mainnet.json").getConfigOptions();
 
-    assertThat(sila-mainnetOptions.getTerminalTotalDifficulty()).isPresent();
+    assertThat(silaMainnetOptions.getTerminalTotalDifficulty()).isPresent();
     // tentative as of 2022-08-11:
-    assertThat(sila-mainnetOptions.getTerminalTotalDifficulty())
+    assertThat(silaMainnetOptions.getTerminalTotalDifficulty())
         .contains(UInt256.valueOf(new BigInteger("58750000000000000000000")));
   }
 
@@ -256,11 +256,11 @@ class GenesisConfigTest {
 
   @Test
   void assertSilaMainnetDepositContractAddress() {
-    GenesisConfigOptions sila-mainnetOptions =
+    GenesisConfigOptions silaMainnetOptions =
         GenesisConfig.fromResource("/sila-mainnet.json").getConfigOptions();
 
-    assertThat(sila-mainnetOptions.getDepositContractAddress()).isPresent();
-    assertThat(sila-mainnetOptions.getDepositContractAddress().get())
+    assertThat(silaMainnetOptions.getDepositContractAddress()).isPresent();
+    assertThat(silaMainnetOptions.getDepositContractAddress().get())
         .isEqualTo(Address.fromHexString("0x00000000219ab540356cbb839cbe05303d7705fa"));
   }
 

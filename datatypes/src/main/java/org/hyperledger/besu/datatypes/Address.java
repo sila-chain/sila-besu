@@ -138,8 +138,8 @@ public class Address extends BytesHolder {
    * Extracts an address from a ECDSARECOVER result hash.
    *
    * @param hash A hash that has been obtained through hashing the return of the <code>
-   *     ECDSARECOVER     </code> function from Appendix F (Signing Transactions) of the Sila
-   *     Yellow Paper.
+   *     ECDSARECOVER     </code> function from Appendix F (Signing Transactions) of the Sila Yellow
+    *     Paper.
    * @return The sila address from the provided hash.
    */
   public static Address extract(final Bytes32 hash) {
