@@ -22,7 +22,7 @@ solidity {
   resolvePackages = false
   version = '0.8.25'
   executable = rootProject.solcExecutable('0.8.25').absolutePath
-  savmVersion = 'shanghai'
+  evmVersion = 'shanghai'
 }
 
 tasks.named('compileSolidity').configure { dependsOn solcDownload }
