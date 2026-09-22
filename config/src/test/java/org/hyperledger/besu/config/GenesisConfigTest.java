@@ -47,7 +47,7 @@ class GenesisConfigTest {
 
   @Test
   void shouldLoadSilaMainnetConfigFile() {
-    final GenesisConfig config = GenesisConfig.sila-mainnet();
+    final GenesisConfig config = GenesisConfig.silaMainnet();
     // Sanity check some basic properties to confirm this is the sila-mainnet file.
     assertThat(config.getConfigOptions().getChainId()).hasValue(SILA_MAINNET_CHAIN_ID);
     assertThat(
