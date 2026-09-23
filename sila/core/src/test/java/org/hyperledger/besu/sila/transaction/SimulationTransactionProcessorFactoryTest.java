@@ -71,12 +71,12 @@ public class SimulationTransactionProcessorFactoryTest {
     when(protocolSchedule.getByBlockHeader(any())).thenReturn(protocolSpec);
     PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
     precompileContractRegistry.put(originalPrecompileAddress, mock(PrecompiledContract.class));
-    SilaMainnetTransactionProcessor sila-mainnetTransactionProcessor =
+    SilaMainnetTransactionProcessor silaMainnetTransactionProcessor =
         SilaMainnetTransactionProcessor.builder()
             .messageCallProcessor(
                 new MessageCallProcessor(mock(SAVM.class), precompileContractRegistry))
             .build();
-    when(protocolSpec.getTransactionProcessor()).thenReturn(sila-mainnetTransactionProcessor);
+    when(protocolSpec.getTransactionProcessor()).thenReturn(silaMainnetTransactionProcessor);
     factory = new SimulationTransactionProcessorFactory(protocolSchedule);
 
     originalPrecompiledContract = mock(PrecompiledContract.class);

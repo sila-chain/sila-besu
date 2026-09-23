@@ -119,7 +119,7 @@ class BlockImportExceptionHandlingTest {
 
   private final BadBlockManager badBlockManager = new BadBlockManager();
 
-  private BlockValidator sila-mainnetBlockValidator;
+  private BlockValidator silaMainnetBlockValidator;
 
   @BeforeEach
   public void setup() {
@@ -133,7 +133,7 @@ class BlockImportExceptionHandlingTest {
     when(blockAccessListValidator.validate(any(), any(), anyInt())).thenReturn(true);
     when(protocolSpec.getStateRootCommitterFactory())
         .thenReturn(new DefaultStateRootCommitterFactory());
-    sila-mainnetBlockValidator =
+    silaMainnetBlockValidator =
         SilaMainnetBlockValidatorBuilder.frontier(
             blockHeaderValidator, blockBodyValidator, blockProcessor, blockAccessListValidator);
   }
@@ -172,7 +172,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenReturn(true);
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    silaMainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -210,7 +210,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenReturn(true);
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    silaMainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -239,7 +239,7 @@ class BlockImportExceptionHandlingTest {
         .thenThrow(new StorageException("database problem"));
 
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    silaMainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -280,7 +280,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenThrow(new StorageException("database problem"));
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    silaMainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,

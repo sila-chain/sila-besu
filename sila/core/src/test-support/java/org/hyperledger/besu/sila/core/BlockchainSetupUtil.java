@@ -144,8 +144,8 @@ public class BlockchainSetupUtil {
     return create(
         chainResources,
         storageFormat,
-        BlockchainSetupUtil::sila-mainnetProtocolScheduleProvider,
-        BlockchainSetupUtil::sila-mainnetProtocolContextProvider,
+        BlockchainSetupUtil::silaMainnetProtocolScheduleProvider,
+        BlockchainSetupUtil::silaMainnetProtocolContextProvider,
         new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()),
         null);
   }
@@ -157,13 +157,13 @@ public class BlockchainSetupUtil {
     return create(
         chainResources,
         storageFormat,
-        BlockchainSetupUtil::sila-mainnetProtocolScheduleProvider,
-        BlockchainSetupUtil::sila-mainnetProtocolContextProvider,
+        BlockchainSetupUtil::silaMainnetProtocolScheduleProvider,
+        BlockchainSetupUtil::silaMainnetProtocolContextProvider,
         new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()),
         serviceManager);
   }
 
-  private static ProtocolSchedule sila-mainnetProtocolScheduleProvider(
+  private static ProtocolSchedule silaMainnetProtocolScheduleProvider(
       final GenesisConfig genesisConfig) {
     return SilaMainnetProtocolSchedule.fromConfig(
         genesisConfig.getConfigOptions(),
@@ -175,7 +175,7 @@ public class BlockchainSetupUtil {
         new NoOpMetricsSystem());
   }
 
-  private static ProtocolContext sila-mainnetProtocolContextProvider(
+  private static ProtocolContext silaMainnetProtocolContextProvider(
       final MutableBlockchain blockchain, final WorldStateArchive worldStateArchive) {
     return new ProtocolContext.Builder()
         .withBlockchain(blockchain)

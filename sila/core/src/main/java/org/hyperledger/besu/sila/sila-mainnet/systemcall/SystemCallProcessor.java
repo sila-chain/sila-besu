@@ -59,10 +59,10 @@ public class SystemCallProcessor {
   static final Address SYSTEM_ADDRESS =
       Address.fromHexString("0xfffffffffffffffffffffffffffffffffffffffe");
 
-  private final SilaMainnetTransactionProcessor sila-mainnetTransactionProcessor;
+  private final SilaMainnetTransactionProcessor silaMainnetTransactionProcessor;
 
-  public SystemCallProcessor(final SilaMainnetTransactionProcessor sila-mainnetTransactionProcessor) {
-    this.sila-mainnetTransactionProcessor = sila-mainnetTransactionProcessor;
+  public SystemCallProcessor(final SilaMainnetTransactionProcessor silaMainnetTransactionProcessor) {
+    this.silaMainnetTransactionProcessor = silaMainnetTransactionProcessor;
   }
 
   /**
@@ -90,7 +90,7 @@ public class SystemCallProcessor {
     }
 
     final AbstractMessageProcessor processor =
-        sila-mainnetTransactionProcessor.getMessageProcessor(MessageFrame.Type.MESSAGE_CALL);
+        silaMainnetTransactionProcessor.getMessageProcessor(MessageFrame.Type.MESSAGE_CALL);
     final MessageFrame frame =
         createMessageFrame(
             callAddress,
@@ -140,7 +140,7 @@ public class SystemCallProcessor {
       final Optional<AccessLocationTracker> maybeAccessLocationTracker) {
 
     final AbstractMessageProcessor processor =
-        sila-mainnetTransactionProcessor.getMessageProcessor(MessageFrame.Type.MESSAGE_CALL);
+        silaMainnetTransactionProcessor.getMessageProcessor(MessageFrame.Type.MESSAGE_CALL);
 
     MessageFrame.Builder builder =
         MessageFrame.builder()
@@ -180,7 +180,7 @@ public class SystemCallProcessor {
 
   private long systemCallStateGasReservoir() {
     final StateGasCostCalculator stateGasCalc =
-        sila-mainnetTransactionProcessor.getGasCalculator().stateGasCostCalculator();
+        silaMainnetTransactionProcessor.getGasCalculator().stateGasCostCalculator();
     return stateGasCalc.storageSetStateGas() * SYSTEM_MAX_SSTORES_PER_CALL;
   }
 
