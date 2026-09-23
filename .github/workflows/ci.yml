@@ -79,6 +79,34 @@ jobs:
       - name: run spotless
         run: ./gradlew spotlessCheck
 
+  upstreamSyncProbe:
+    name: "Latest Besu authority sync probe"
+    if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Sila closure branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Probe original Sila transform on latest Besu authority
+        run: |
+          git fetch --no-tags https://github.com/besu-eth/besu.git \
+            60184e579398a8cd396a048c251682f026d58bdb:refs/remotes/upstream/sila-base \
+            a7867768741ffe7239bab07c38926d065ab16229:refs/remotes/upstream/latest
+          git diff --binary -M20% refs/remotes/upstream/sila-base 9b7585c99d5c1194738af03109f043ed9f555c33 > /tmp/sila-transform.patch
+          git worktree add --detach /tmp/sila-sync refs/remotes/upstream/latest
+          cd /tmp/sila-sync
+          if git apply --3way --index --whitespace=nowarn /tmp/sila-transform.patch; then
+            echo "SILA_TRANSFORM_APPLY=PASS"
+            git diff --cached --stat
+          else
+            echo "SILA_TRANSFORM_APPLY=CONFLICT"
+            echo "CONFLICT_COUNT=$(git diff --name-only --diff-filter=U | wc -l)"
+            git diff --name-only --diff-filter=U
+            exit 1
+          fi
+
   checkLicense:
     name: "Check License"
     runs-on: ubuntu-latest
