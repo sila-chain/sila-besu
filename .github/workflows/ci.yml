@@ -264,6 +264,7 @@ jobs:
                   "SIP196_": "EIP196_",
                   "sip196_": "eip196_",
                   "sila.ckzg4844": "ethereum.ckzg4844",
+                  "github.com/sila/solidity": "github.com/ethereum/solidity",
               }
               new = text
               for old, good in fixes.items():
