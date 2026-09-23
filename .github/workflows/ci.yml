@@ -285,6 +285,26 @@ jobs:
               new = text
               for old, good in fixes.items():
                   new = new.replace(old, good)
+
+              # Published historical Besu artifacts and execution-spec fixtures are external
+              # compatibility authorities. Preserve their real Maven coordinates only in the
+              # dependency metadata/fixture declarations; Sila local module names stay native.
+              rel = path.as_posix()
+              if rel == "gradle/verification-metadata.xml":
+                  new = new.replace('name="besu-savm"', 'name="besu-evm"')
+                  new = new.replace('besu-savm-', 'besu-evm-')
+                  new = new.replace('name="besu-sila-rlp"', 'name="besu-ethereum-rlp"')
+                  new = new.replace('besu-sila-rlp-', 'besu-ethereum-rlp-')
+                  new = new.replace(
+                      'group="sila" name="execution-specs"',
+                      'group="ethereum" name="execution-specs"',
+                  )
+              elif rel == "sila/referencetests/build.gradle":
+                  new = new.replace(
+                      "group: 'sila', name: 'execution-specs'",
+                      "group: 'ethereum', name: 'execution-specs'",
+                  )
+
               if new != text:
                   path.write_text(new, encoding="utf-8")
 
