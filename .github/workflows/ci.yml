@@ -316,6 +316,7 @@ jobs:
                   # Immutables generates this class from the renamed Sila interface.
                   "ImmutableEthProtocolConfiguration": "ImmutableSilProtocolConfiguration",
                   "ImmutableEthStatsConnectOptions": "ImmutableSilStatsConnectOptions",
+                  "getEthStatsReportInterval": "getSilStatsReportInterval",
               }
               new = text
               for old, good in fixes.items():
