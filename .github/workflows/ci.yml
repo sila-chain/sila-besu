@@ -315,6 +315,7 @@ jobs:
                   "org.sila.beacon.discovery": "org.ethereum.beacon.discovery",
                   # Immutables generates this class from the renamed Sila interface.
                   "ImmutableEthProtocolConfiguration": "ImmutableSilProtocolConfiguration",
+                  "ImmutableEthStatsConnectOptions": "ImmutableSilStatsConnectOptions",
               }
               new = text
               for old, good in fixes.items():
