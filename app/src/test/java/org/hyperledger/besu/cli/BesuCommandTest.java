@@ -2433,14 +2433,14 @@ public class BesuCommandTest extends CommandTestAbstract {
   @Test
   public void assertNativeRequirements_UnMet() throws IOException {
     BesuCommand mockCmd = parseCommand("--network=sila-mainnet");
-    NetworkDefinition sila-mainnet = NetworkDefinition.SILA_MAINNET;
+    NetworkDefinition silaMainnet = NetworkDefinition.SILA_MAINNET;
     List<NativeRequirement.NativeRequirementResult> mockNativeRequirements =
         List.of(
             new NativeRequirement.NativeRequirementResult(
                 false, "MOCKLIB", Optional.of("Mock error")));
     try (MockedStatic<NativeRequirement> mockStatic = mockStatic(NativeRequirement.class)) {
       mockStatic
-          .when(() -> NativeRequirement.getNativeRequirements(sila-mainnet))
+          .when(() -> NativeRequirement.getNativeRequirements(silaMainnet))
           .thenReturn(mockNativeRequirements);
       assertThatExceptionOfType(UnsupportedOperationException.class)
           .isThrownBy(() -> mockCmd.checkRequiredNativeLibraries(sila-mainnet))
