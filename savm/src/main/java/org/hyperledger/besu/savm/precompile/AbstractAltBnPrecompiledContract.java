@@ -16,7 +16,7 @@ package org.hyperledger.besu.savm.precompile;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP196;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP196;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
@@ -48,7 +48,7 @@ public abstract class AbstractAltBnPrecompiledContract extends AbstractPrecompil
    */
   public static boolean maybeEnableNative() {
     try {
-      useNative = LibGnarkSIP196.ENABLED;
+      useNative = LibGnarkEIP196.ENABLED;
     } catch (UnsatisfiedLinkError | NoClassDefFoundError ule) {
       LOG.info("altbn128 native precompile not available: {}", ule.getMessage());
       useNative = false;
@@ -94,7 +94,7 @@ public abstract class AbstractAltBnPrecompiledContract extends AbstractPrecompil
     this.inputLimit = inputLen + 1;
     this.outputLength = outputLen;
 
-    if (!LibGnarkSIP196.ENABLED) {
+    if (!LibGnarkEIP196.ENABLED) {
       LOG.info("Native alt bn128 not available");
     }
   }
@@ -109,14 +109,14 @@ public abstract class AbstractAltBnPrecompiledContract extends AbstractPrecompil
   @NotNull
   public PrecompileContractResult computeNative(
       final @NotNull Bytes input, final MessageFrame messageFrame) {
-    final byte[] result = new byte[LibGnarkSIP196.SIP196_PREALLOCATE_FOR_RESULT_BYTES];
+    final byte[] result = new byte[LibGnarkEIP196.EIP196_PREALLOCATE_FOR_RESULT_BYTES];
 
     final int inputSize = Math.min(inputLimit, input.size());
     final int errorNo =
-        LibGnarkSIP196.sip196_perform_operation(
+        LibGnarkEIP196.eip196_perform_operation(
             operationId, input.slice(0, inputSize).toArrayUnsafe(), inputSize, result);
 
-    if (errorNo == LibGnarkSIP196.SIP196_ERR_CODE_SUCCESS) {
+    if (errorNo == LibGnarkEIP196.EIP196_ERR_CODE_SUCCESS) {
       return PrecompileContractResult.success(Bytes.wrap(result, 0, outputLength));
     } else {
       messageFrame.setRevertReason(Bytes.wrap("error".getBytes(UTF_8)));

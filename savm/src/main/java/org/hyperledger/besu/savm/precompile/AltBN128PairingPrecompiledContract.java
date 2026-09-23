@@ -20,7 +20,7 @@ import org.hyperledger.besu.crypto.altbn128.AltBn128Point;
 import org.hyperledger.besu.crypto.altbn128.Fq;
 import org.hyperledger.besu.crypto.altbn128.Fq12;
 import org.hyperledger.besu.crypto.altbn128.Fq2;
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP196;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP196;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
@@ -67,10 +67,10 @@ public class AltBN128PairingPrecompiledContract extends AbstractAltBnPrecompiled
     super(
         PRECOMPILE_NAME,
         gasCalculator,
-        LibGnarkSIP196.SIP196_PAIR_OPERATION_RAW_VALUE,
+        LibGnarkEIP196.EIP196_PAIR_OPERATION_RAW_VALUE,
         (Integer.MAX_VALUE / PARAMETER_LENGTH)
             * PARAMETER_LENGTH, // round down to nearest multiple of 192
-        LibGnarkSIP196.SIP196_PAIR_PREALLOCATE_FOR_RESULT_BYTES);
+        LibGnarkEIP196.EIP196_PAIR_PREALLOCATE_FOR_RESULT_BYTES);
     this.pairingGasCost = pairingGasCost;
     this.baseGasCost = baseGasCost;
   }
