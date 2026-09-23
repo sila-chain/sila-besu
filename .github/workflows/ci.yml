@@ -80,52 +80,113 @@ jobs:
         run: ./gradlew spotlessCheck
 
   upstreamSyncProbe:
-    name: "Sila transform reproduction probe"
+    name: "Latest Besu safe Sila generation probe"
     if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
     runs-on: ubuntu-latest
+    timeout-minutes: 30
     steps:
       - name: Checkout Sila closure branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - name: Reproduce the original Sila snapshot from its Besu authority
+      - name: Set up Java
+        uses: actions/setup-java@be666c2fcd27ec809703dec50e508c2fdc7f6654 # v5.2.0
+        with:
+          distribution: temurin
+          java-version: 25
+      - name: Setup Gradle
+        uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
+        with:
+          cache-disabled: true
+      - name: Generate safe Sila tree from latest Besu authority
         run: |
           git fetch --no-tags https://github.com/besu-eth/besu.git \
-            60184e579398a8cd396a048c251682f026d58bdb:refs/remotes/upstream/sila-base
-          git worktree add --detach /tmp/sila-repro refs/remotes/upstream/sila-base
-          cd /tmp/sila-repro
+            a7867768741ffe7239bab07c38926d065ab16229:refs/remotes/upstream/latest
+          git worktree add --detach /tmp/sila-latest refs/remotes/upstream/latest
+          cd /tmp/sila-latest
           python - <<'PY'
           from pathlib import Path
-          import os
+          import re
           import subprocess
 
-          replacements = [
-              ("ERCs", "SRCs"), ("ERCS", "SRCS"), ("ERC", "SRC"), ("erc", "src"),
-              ("EIP", "SIP"), ("eip", "sip"), ("EIPs", "SIPs"), ("eips", "sips"),
-              ("Ethereum", "Sila"), ("ethereum", "sila"), ("ETHEREUM", "SILA"),
-              ("ETH", "SIL"), ("Eth", "Sil"), ("eth", "sil"),
-              ("Ether", "Sila"), ("ether", "sila"),
-              ("WETH", "WSIL"), ("IWETH", "IWSIL"), ("IERC", "ISRC"),
-              ("AERC", "ASRC"), ("IEIP", "ISIP"),
-              ("EVM", "SAVM"), ("Evm", "Savm"), ("evm", "savm"),
-              ("mainnet", "sila-mainnet"), ("Mainnet", "SilaMainnet"), ("MAINNET", "SILA_MAINNET"),
-              ("Sepolia", "SilaSepolia"), ("Holesky", "SilaHolesky"),
-              ("Deneb", "SilaDeneb"), ("Fulu", "SilaFulu"), ("PeerDAS", "SilaPeerDAS"),
-              ("Cancun", "SilaCancun"), ("Shanghai", "SilaShanghai"),
-              ("Prague", "SilaPrague"), ("Osaka", "SilaOsaka"),
-              ("Paris", "SilaParis"), ("Amsterdam", "SilaAmsterdam"), ("Kovan", "SilaKovan"),
-          ]
+          def token_transform(s):
+              # Protocol-owned namespaces and explicit identity words only.
+              s = s.replace("org.hyperledger.besu.ethereum", "org.hyperledger.besu.sila")
+              s = s.replace("org.hyperledger.besu.evm", "org.hyperledger.besu.savm")
+              s = s.replace("github.com/ethereum", "github.com/sila")
+              s = s.replace("ethereum.org", "sila.org")
+              s = s.replace("eips.ethereum.org", "sips.sila.org")
+              s = s.replace("Ethereum Foundation", "Sila Foundation")
+              s = s.replace("Etherscan", "SilaScan")
 
-          def transform(s):
-              for old, new in replacements:
-                  s = s.replace(old, new)
+              # Exact/boundary protocol identifiers; never alter substrings in independent words.
+              rules = [
+                  (r"\bETHEREUM\b", "SILA"),
+                  (r"\bEthereum\b", "Sila"),
+                  (r"\bethereum\b", "sila"),
+                  (r"\bWETH\b", "WSIL"), (r"\bIWETH\b", "IWSIL"),
+                  (r"\bIERC(?=[A-Z0-9_]|\b)", "ISRC"),
+                  (r"\bAERC(?=[A-Z0-9_]|\b)", "ASRC"),
+                  (r"\bIEIP(?=[A-Z0-9_]|\b)", "ISIP"),
+                  (r"\bERCS\b", "SRCS"), (r"\bERCs\b", "SRCs"),
+                  (r"\bERC(?=[0-9A-Z_]|\b)", "SRC"),
+                  (r"\berc(?=[0-9_\-]|\b)", "src"),
+                  (r"\bEIPs\b", "SIPs"), (r"\beips\b", "sips"),
+                  (r"\bEIP(?=[0-9A-Z_]|\b)", "SIP"),
+                  (r"\beip(?=[0-9_\-]|\b)", "sip"),
+                  (r"\bEVM(?=[A-Z0-9_]|\b)", "SAVM"),
+                  (r"\bEvm(?=[A-Z0-9_]|\b)", "Savm"),
+                  (r"\bevm(?=[A-Z0-9_\-]|\b)", "savm"),
+                  (r"\bETH(?=[A-Z0-9_]|\b)", "SIL"),
+                  (r"\bEth(?=[A-Z0-9_]|\b)", "Sil"),
+                  (r"\beth(?=[A-Z0-9_]|\b)", "sil"),
+                  (r"\bEther(?=[A-Z0-9_]|\b)", "Sila"),
+                  (r"\bether(?=[A-Z0-9_]|\b)", "sila"),
+                  (r"\bMainnet(?=[A-Z0-9_]|\b)", "SilaMainnet"),
+                  (r"\bMAINNET\b", "SILA_MAINNET"),
+                  (r"\bSepolia(?=[A-Z0-9_]|\b)", "SilaSepolia"),
+                  (r"\bHolesky(?=[A-Z0-9_]|\b)", "SilaHolesky"),
+                  (r"\bDeneb(?=[A-Z0-9_]|\b)", "SilaDeneb"),
+                  (r"\bFulu(?=[A-Z0-9_]|\b)", "SilaFulu"),
+                  (r"\bPeerDAS(?=[A-Z0-9_]|\b)", "SilaPeerDAS"),
+                  (r"\bCancun(?=[A-Z0-9_]|\b)", "SilaCancun"),
+                  (r"\bShanghai(?=[A-Z0-9_]|\b)", "SilaShanghai"),
+                  (r"\bPrague(?=[A-Z0-9_]|\b)", "SilaPrague"),
+                  (r"\bOsaka(?=[A-Z0-9_]|\b)", "SilaOsaka"),
+                  (r"\bParis(?=[A-Z0-9_]|\b)", "SilaParis"),
+                  (r"\bAmsterdam(?=[A-Z0-9_]|\b)", "SilaAmsterdam"),
+                  (r"\bKovan(?=[A-Z0-9_]|\b)", "SilaKovan"),
+              ]
+              for pat, repl in rules:
+                  s = re.sub(pat, repl, s)
+
+              # Network value only; Java package mainnet is normalized separately below.
+              s = re.sub(r'(?<![A-Za-z0-9_-])mainnet(?![A-Za-z0-9_-])', 'sila-mainnet', s)
               return s
+
+          def path_transform(raw):
+              parts = raw.split("/")
+              out = []
+              java_path = "/java/" in ("/" + raw + "/")
+              for part in parts:
+                  if part == "ethereum":
+                      part = "sila"
+                  elif part == "eth":
+                      part = "sil"
+                  elif part == "evm":
+                      part = "savm"
+                  elif part == "mainnet":
+                      part = "silaMainnet" if java_path else "sila-mainnet"
+                  else:
+                      part = token_transform(part)
+                  out.append(part)
+              return "/".join(out)
 
           files = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
           files = [p for p in files if p]
-          collisions = []
 
+          # Rewrite text while preserving independent third-party words.
           for raw in files:
               p = Path(raw)
               if not p.is_file():
@@ -135,15 +196,26 @@ jobs:
                   text = data.decode("utf-8")
               except (UnicodeDecodeError, OSError):
                   continue
-              new_text = transform(text)
-              if new_text != text:
-                  p.write_text(new_text, encoding="utf-8")
 
+              # Parser-safe package segments first.
+              text = text.replace(".ethereum.", ".sila.")
+              text = text.replace("/ethereum/", "/sila/")
+              text = text.replace(".evm.", ".savm.")
+              text = text.replace("/evm/", "/savm/")
+              text = text.replace(".eth.", ".sil.")
+              text = text.replace("/eth/", "/sil/")
+              text = text.replace(".mainnet.", ".silaMainnet.")
+              text = text.replace("/mainnet/", "/sila-mainnet/")
+              text = token_transform(text)
+              if text != data.decode("utf-8"):
+                  p.write_text(text, encoding="utf-8")
+
+          collisions = []
           for raw in sorted(files, key=lambda x: (x.count("/"), len(x)), reverse=True):
               src = Path(raw)
               if not src.exists():
                   continue
-              dst = Path(transform(raw))
+              dst = Path(path_transform(raw))
               if dst == src:
                   continue
               dst.parent.mkdir(parents=True, exist_ok=True)
@@ -152,18 +224,43 @@ jobs:
                   continue
               src.rename(dst)
 
-          print(f"TRANSFORM_COLLISION_COUNT={len(collisions)}")
-          for old, new in collisions[:100]:
-              print(f"COLLISION {old} -> {new}")
+          if collisions:
+              print(f"PATH_COLLISION_COUNT={len(collisions)}")
+              for old, new in collisions[:100]:
+                  print(f"COLLISION {old} -> {new}")
+              raise SystemExit(2)
+
+          # Restore third-party / external API spellings that are not Sila-owned identities.
+          for path in Path(".").rglob("*"):
+              if not path.is_file():
+                  continue
+              try:
+                  text = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              fixes = {
+                  "de.undsrcouch": "de.undercouch",
+                  "io.promsileus": "io.prometheus",
+                  "Promsileus": "Prometheus",
+                  "promsileus": "prometheus",
+                  "savmVersion": "evmVersion",
+                  "jsonrpc.msilods": "jsonrpc.methods",
+                  "/msilods/": "/methods/",
+                  ".msilods.": ".methods.",
+              }
+              new = text
+              for old, good in fixes.items():
+                  new = new.replace(old, good)
+              if new != text:
+                  path.write_text(new, encoding="utf-8")
+
+          print("SAFE_SILA_GENERATION=PASS")
           PY
           git add -A
-          GENERATED_TREE=$(git write-tree)
-          TARGET_TREE=$(git rev-parse 9b7585c99d5c1194738af03109f043ed9f555c33^{tree})
-          echo "GENERATED_TREE=$GENERATED_TREE"
-          echo "TARGET_TREE=$TARGET_TREE"
-          echo "MISMATCH_COUNT=$(git diff --name-only $TARGET_TREE $GENERATED_TREE | wc -l)"
-          git diff --name-status $TARGET_TREE $GENERATED_TREE | head -300
-          test "$GENERATED_TREE" = "$TARGET_TREE"
+          echo "GENERATED_CHANGED_PATHS=$(git diff --cached --name-only | wc -l)"
+          ./gradlew spotlessApply
+          git add -A
+          ./gradlew build -x test -x spotlessCheck
 
   checkLicense:
     name: "Check License"
