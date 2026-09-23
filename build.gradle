@@ -443,8 +443,8 @@ configure(allprojects - project(':platform')) {
       '-org.hyperledger.besu.sila.debug,' +
       '-org.hyperledger.besu.sila.difficulty.fixed,' +
       '-org.hyperledger.besu.sila.forkid,' +
-      '-org.hyperledger.besu.sila.sila-mainnet,' +
-      '-org.hyperledger.besu.sila.sila-mainnet.*,' +
+      '-org.hyperledger.besu.sila.silaMainnet,' +
+      '-org.hyperledger.besu.sila.silaMainnet.*,' +
       '-org.hyperledger.besu.sila.processing,' +
       '-org.hyperledger.besu.sila.proof,' +
       '-org.hyperledger.besu.sila.storage,' +

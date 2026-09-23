@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.savm.precompile;
 
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP2537;
 
 import java.util.concurrent.TimeUnit;
 
@@ -34,7 +34,7 @@ public class BLS12PairingPrecompiledContract extends AbstractBLS12PrecompiledCon
   BLS12PairingPrecompiledContract() {
     super(
         "BLS12_PAIRING_CHECK",
-        LibGnarkSIP2537.BLS12_PAIR_OPERATION_SHIM_VALUE,
+        LibGnarkEIP2537.BLS12_PAIR_OPERATION_SHIM_VALUE,
         Integer.MAX_VALUE / PARAMETER_LENGTH * PARAMETER_LENGTH);
   }
 

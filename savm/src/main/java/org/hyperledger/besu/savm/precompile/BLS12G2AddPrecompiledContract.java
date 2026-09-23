@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.savm.precompile;
 
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP2537;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.tuweni.bytes.Bytes;
@@ -28,7 +28,7 @@ public class BLS12G2AddPrecompiledContract extends AbstractBLS12PrecompiledContr
 
   /** Instantiates a new BLS12_G2 Add precompiled contract. */
   BLS12G2AddPrecompiledContract() {
-    super("BLS12_G2ADD", LibGnarkSIP2537.BLS12_G2ADD_OPERATION_SHIM_VALUE, PARAMETER_LENGTH);
+    super("BLS12_G2ADD", LibGnarkEIP2537.BLS12_G2ADD_OPERATION_SHIM_VALUE, PARAMETER_LENGTH);
   }
 
   @Override

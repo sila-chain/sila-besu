@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.savm.precompile;
 
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP2537;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.tuweni.bytes.Bytes;
@@ -30,7 +30,7 @@ public class BLS12MapFpToG1PrecompiledContract extends AbstractBLS12PrecompiledC
   BLS12MapFpToG1PrecompiledContract() {
     super(
         "BLS12_MAP_FP_TO_G1",
-        LibGnarkSIP2537.BLS12_MAP_FP_TO_G1_OPERATION_SHIM_VALUE,
+        LibGnarkEIP2537.BLS12_MAP_FP_TO_G1_OPERATION_SHIM_VALUE,
         PARAMETER_LENGTH);
   }
 
