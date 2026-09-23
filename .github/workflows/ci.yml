@@ -84,6 +84,8 @@ jobs:
     if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
     runs-on: ubuntu-latest
     timeout-minutes: 30
+    permissions:
+      contents: write
     steps:
       - name: Checkout Sila closure branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -114,9 +116,20 @@ jobs:
               # Protocol-owned namespaces and explicit identity words only.
               s = s.replace("org.hyperledger.besu.ethereum", "org.hyperledger.besu.sila")
               s = s.replace("org.hyperledger.besu.evm", "org.hyperledger.besu.savm")
-              s = s.replace("github.com/ethereum", "github.com/sila")
-              s = s.replace("ethereum.org", "sila.org")
+              repo_mappings = {
+                  "github.com/ethereum/execution-apis": "github.com/sila-chain/execution-apis",
+                  "github.com/ethereum/execution-specs": "github.com/sila-chain/execution-specs",
+                  "github.com/ethereum/consensus-specs": "github.com/sila-chain/consensus-specs",
+                  "github.com/ethereum/EIPs": "github.com/sila-chain/SIPs",
+                  "github.com/ethereum/ERCs": "github.com/sila-chain/SRCs",
+                  "github.com/ethereum/pm": "github.com/sila-chain/sila-pm",
+                  "github.com/ethereum/beacon-APIs": "github.com/sila-chain/beacon-APIs",
+                  "github.com/ethereum/portal-network-specs": "github.com/sila-chain/sila-portal-network-specs",
+              }
+              for old, new in repo_mappings.items():
+                  s = s.replace(old, new)
               s = s.replace("eips.ethereum.org", "sips.sila.org")
+              s = s.replace("ethereum.org", "sila.org")
               s = s.replace("Ethereum Foundation", "Sila Foundation")
               s = s.replace("Etherscan", "SilaScan")
 
@@ -264,8 +277,6 @@ jobs:
                   "SIP196_": "EIP196_",
                   "sip196_": "eip196_",
                   "sila.ckzg4844": "ethereum.ckzg4844",
-                  "github.com/sila/solidity": "github.com/ethereum/solidity",
-                  "github.com/sila/solidity": "github.com/ethereum/solidity",
               }
               new = text
               for old, good in fixes.items():
@@ -280,6 +291,33 @@ jobs:
           ./gradlew spotlessApply
           git add -A
           ./gradlew build -x test -x spotlessCheck
+
+          parent_sha="${{ github.event.pull_request.head.sha }}"
+          git checkout "$parent_sha" -- .github/workflows
+          git add -A .github/workflows
+          generated_tree=$(git write-tree)
+          parent_tree=$(git rev-parse "${parent_sha}^{tree}")
+
+          if [ "$generated_tree" = "$parent_tree" ]; then
+            echo "GENERATED_TREE_ALREADY_CURRENT=1"
+          else
+            export GIT_AUTHOR_NAME="SILA Network"
+            export GIT_AUTHOR_EMAIL="pssd500@gmail.com"
+            export GIT_COMMITTER_NAME="SILA Network"
+            export GIT_COMMITTER_EMAIL="pssd500@gmail.com"
+            generated_commit=$(
+              printf '%s\n' \
+                'sync: regenerate latest Besu authority as Sila' \
+                '' \
+                'Upstream-Besu: a7867768741ffe7239bab07c38926d065ab16229' \
+                '' \
+                'Signed-off-by: SILA Network <pssd500@gmail.com>' \
+              | git commit-tree "$generated_tree" -p "$parent_sha"
+            )
+            echo "GENERATED_TREE=$generated_tree"
+            echo "GENERATED_COMMIT=$generated_commit"
+            git push origin "$generated_commit:refs/heads/sila/besu-close-20260923"
+          fi
 
   checkLicense:
     name: "Check License"
