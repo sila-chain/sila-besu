@@ -80,7 +80,7 @@ jobs:
         run: ./gradlew spotlessCheck
 
   upstreamSyncProbe:
-    name: "Latest Besu authority sync probe"
+    name: "Sila transform reproduction probe"
     if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
     runs-on: ubuntu-latest
     steps:
@@ -89,23 +89,81 @@ jobs:
         with:
           ref: ${{ github.event.pull_request.head.sha }}
           fetch-depth: 0
-      - name: Probe original Sila transform on latest Besu authority
+      - name: Reproduce the original Sila snapshot from its Besu authority
         run: |
           git fetch --no-tags https://github.com/besu-eth/besu.git \
-            60184e579398a8cd396a048c251682f026d58bdb:refs/remotes/upstream/sila-base \
-            a7867768741ffe7239bab07c38926d065ab16229:refs/remotes/upstream/latest
-          git diff --binary -M20% refs/remotes/upstream/sila-base 9b7585c99d5c1194738af03109f043ed9f555c33 > /tmp/sila-transform.patch
-          git worktree add --detach /tmp/sila-sync refs/remotes/upstream/latest
-          cd /tmp/sila-sync
-          if git apply --3way --index --whitespace=nowarn /tmp/sila-transform.patch; then
-            echo "SILA_TRANSFORM_APPLY=PASS"
-            git diff --cached --stat
-          else
-            echo "SILA_TRANSFORM_APPLY=CONFLICT"
-            echo "CONFLICT_COUNT=$(git diff --name-only --diff-filter=U | wc -l)"
-            git diff --name-only --diff-filter=U
-            exit 1
-          fi
+            60184e579398a8cd396a048c251682f026d58bdb:refs/remotes/upstream/sila-base
+          git worktree add --detach /tmp/sila-repro refs/remotes/upstream/sila-base
+          cd /tmp/sila-repro
+          python - <<'PY'
+          from pathlib import Path
+          import os
+          import subprocess
+
+          replacements = [
+              ("ERCs", "SRCs"), ("ERCS", "SRCS"), ("ERC", "SRC"), ("erc", "src"),
+              ("EIP", "SIP"), ("eip", "sip"), ("EIPs", "SIPs"), ("eips", "sips"),
+              ("Ethereum", "Sila"), ("ethereum", "sila"), ("ETHEREUM", "SILA"),
+              ("ETH", "SIL"), ("Eth", "Sil"), ("eth", "sil"),
+              ("Ether", "Sila"), ("ether", "sila"),
+              ("WETH", "WSIL"), ("IWETH", "IWSIL"), ("IERC", "ISRC"),
+              ("AERC", "ASRC"), ("IEIP", "ISIP"),
+              ("EVM", "SAVM"), ("Evm", "Savm"), ("evm", "savm"),
+              ("mainnet", "sila-mainnet"), ("Mainnet", "SilaMainnet"), ("MAINNET", "SILA_MAINNET"),
+              ("Sepolia", "SilaSepolia"), ("Holesky", "SilaHolesky"),
+              ("Deneb", "SilaDeneb"), ("Fulu", "SilaFulu"), ("PeerDAS", "SilaPeerDAS"),
+              ("Cancun", "SilaCancun"), ("Shanghai", "SilaShanghai"),
+              ("Prague", "SilaPrague"), ("Osaka", "SilaOsaka"),
+              ("Paris", "SilaParis"), ("Amsterdam", "SilaAmsterdam"), ("Kovan", "SilaKovan"),
+          ]
+
+          def transform(s):
+              for old, new in replacements:
+                  s = s.replace(old, new)
+              return s
+
+          files = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+          files = [p for p in files if p]
+          collisions = []
+
+          for raw in files:
+              p = Path(raw)
+              if not p.is_file():
+                  continue
+              try:
+                  data = p.read_bytes()
+                  text = data.decode("utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              new_text = transform(text)
+              if new_text != text:
+                  p.write_text(new_text, encoding="utf-8")
+
+          for raw in sorted(files, key=lambda x: (x.count("/"), len(x)), reverse=True):
+              src = Path(raw)
+              if not src.exists():
+                  continue
+              dst = Path(transform(raw))
+              if dst == src:
+                  continue
+              dst.parent.mkdir(parents=True, exist_ok=True)
+              if dst.exists():
+                  collisions.append((raw, str(dst)))
+                  continue
+              src.rename(dst)
+
+          print(f"TRANSFORM_COLLISION_COUNT={len(collisions)}")
+          for old, new in collisions[:100]:
+              print(f"COLLISION {old} -> {new}")
+          PY
+          git add -A
+          GENERATED_TREE=$(git write-tree)
+          TARGET_TREE=$(git rev-parse 9b7585c99d5c1194738af03109f043ed9f555c33^{tree})
+          echo "GENERATED_TREE=$GENERATED_TREE"
+          echo "TARGET_TREE=$TARGET_TREE"
+          echo "MISMATCH_COUNT=$(git diff --name-only $TARGET_TREE $GENERATED_TREE | wc -l)"
+          git diff --name-status $TARGET_TREE $GENERATED_TREE | head -300
+          test "$GENERATED_TREE" = "$TARGET_TREE"
 
   checkLicense:
     name: "Check License"
