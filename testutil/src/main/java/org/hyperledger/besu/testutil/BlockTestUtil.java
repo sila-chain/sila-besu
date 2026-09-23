@@ -42,7 +42,7 @@ public final class BlockTestUtil {
       Suppliers.memoize(BlockTestUtil::supplyHiveTestChainResources);
   private static final Supplier<ChainResources> testChainLondonSupplier =
       Suppliers.memoize(BlockTestUtil::supplyTestChainLondonResources);
-  private static final Supplier<ChainResources> sila-mainnetChainSupplier =
+  private static final Supplier<ChainResources> silaMainnetChainSupplier =
       Suppliers.memoize(BlockTestUtil::supplySilaMainnetChainResources);
   private static final Supplier<ChainResources> badPowChainSupplier =
       Suppliers.memoize(BlockTestUtil::supplyBadPowChainResources);
@@ -124,7 +124,7 @@ public final class BlockTestUtil {
    * @return the sila-mainnet resources
    */
   public static ChainResources getSilaMainnetResources() {
-    return sila-mainnetChainSupplier.get();
+    return silaMainnetChainSupplier.get();
   }
 
   private static ChainResources getBadPowResources() {
