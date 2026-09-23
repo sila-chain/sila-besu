@@ -310,6 +310,9 @@ jobs:
                   # Solidity is an external compiler authority, not a Sila-owned repository.
                   # Keep its real release URL; never invent github.com/sila/solidity.
                   "github.com/sila/solidity": "github.com/ethereum/solidity",
+                  # io.consensys.protocols:discovery owns this external Java API namespace.
+                  # Preserve the package published by that real dependency.
+                  "org.sila.beacon.discovery": "org.ethereum.beacon.discovery",
               }
               new = text
               for old, good in fixes.items():
