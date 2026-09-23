@@ -116,6 +116,12 @@ jobs:
               # Protocol-owned namespaces and explicit identity words only.
               s = s.replace("org.hyperledger.besu.ethereum", "org.hyperledger.besu.sila")
               s = s.replace("org.hyperledger.besu.evm", "org.hyperledger.besu.savm")
+              # EthStats is a protocol-owned Besu feature family. Transform only its
+              # canonical identifiers; do not broaden the generic "eth" substring rules.
+              s = s.replace("EthStats", "SilStats")
+              s = s.replace("ethStats", "silStats")
+              s = re.sub(r"\\bEthstats\\b", "Silstats", s)
+              s = re.sub(r"\\bethstats\\b", "silstats", s)
               # io.consensys.protocols:discovery is an external published dependency whose
               # Java namespace is org.ethereum.beacon.discovery. It has no verified Sila
               # counterpart, so shield it from generic Ethereum identity rewrites.
