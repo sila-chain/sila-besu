@@ -120,6 +120,10 @@ jobs:
               # canonical identifiers; do not broaden the generic "eth" substring rules.
               s = s.replace("EthStats", "SilStats")
               s = s.replace("ethStats", "silStats")
+              # ETH/65 is a Sila protocol-owned wire-version identifier. Handle its
+              # CamelCase/lowerCamel forms explicitly so generated Immutables accessors agree.
+              s = s.replace("Eth65", "Sil65")
+              s = s.replace("eth65", "sil65")
               s = re.sub(r"\\bEthstats\\b", "Silstats", s)
               s = re.sub(r"\\bethstats\\b", "silstats", s)
               # io.consensys.protocols:discovery is an external published dependency whose
