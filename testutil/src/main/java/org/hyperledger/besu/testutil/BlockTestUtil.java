@@ -210,16 +210,21 @@ public final class BlockTestUtil {
   private static ChainResources supplySilaMainnetChainResources() {
     final URL genesisURL =
         ensureFileUrl(
-            BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/sila-mainnet.json"));
+            BlockTestUtil.class
+                .getClassLoader()
+                .getResource("sila-mainnet-data/sila-mainnet.json"));
     final URL blocksURL =
-        ensureFileUrl(BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/1000.blocks"));
+        ensureFileUrl(
+            BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/1000.blocks"));
     return new ChainResources(genesisURL, blocksURL);
   }
 
   private static ChainResources supplyBadPowChainResources() {
     final URL genesisURL =
         ensureFileUrl(
-            BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/sila-mainnet.json"));
+            BlockTestUtil.class
+                .getClassLoader()
+                .getResource("sila-mainnet-data/sila-mainnet.json"));
     final URL blocksURL =
         ensureFileUrl(
             BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/badpow.blocks"));
