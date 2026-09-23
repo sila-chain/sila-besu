@@ -117,6 +117,9 @@ jobs:
               s = s.replace("org.hyperledger.besu.ethereum", "org.hyperledger.besu.sila")
               s = s.replace("org.hyperledger.besu.evm", "org.hyperledger.besu.savm")
               repo_mappings = {
+                  "github.com/besu-eth/besu": "github.com/sila-chain/sila-besu",
+                  "github.com/hyperledger/besu": "github.com/sila-chain/sila-besu",
+                  "github.com/ConsenSys/besu": "github.com/sila-chain/sila-besu",
                   "github.com/ethereum/execution-apis": "github.com/sila-chain/execution-apis",
                   "github.com/ethereum/execution-specs": "github.com/sila-chain/execution-specs",
                   "github.com/ethereum/consensus-specs": "github.com/sila-chain/consensus-specs",
