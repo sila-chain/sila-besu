@@ -76,8 +76,17 @@ jobs:
         uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
         with:
           cache-disabled: true
-      - name: run spotless
-        run: ./gradlew spotlessCheck
+      - name: run spotless apply
+        run: ./gradlew spotlessApply
+      - name: Capture spotless patch
+        run: git diff --binary > spotless.patch
+      - name: Upload spotless patch
+        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
+        with:
+          name: spotless-patch
+          path: spotless.patch
+      - name: Fail if formatting changes are required
+        run: test ! -s spotless.patch
 
   checkLicense:
     name: "Check License"
