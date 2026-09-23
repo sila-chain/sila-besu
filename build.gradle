@@ -1568,7 +1568,7 @@ ext.registerSolcDownload = { String version ->
     // static builds for the old pinned versions, and CI runs on linux x64).
     def os = System.getProperty('os.name').toLowerCase()
     def asset = os.contains('win') ? 'solc-windows.exe' : os.contains('mac') ? 'solc-macos' : 'solc-static-linux'
-    def url = "https://github.com/sila-chain/solidity/releases/download/v${version}/${asset}"
+    def url = "https://github.com/ethereum/solidity/releases/download/v${version}/${asset}"
     outputs.file(target)
     onlyIf { !target.exists() }
     doLast {

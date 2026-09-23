@@ -229,7 +229,7 @@ public class Blake2bfMessageDigest extends BCMessageDigest implements Cloneable 
       }
 
       if (useNative) {
-        LibBlake2bf.blake2bf_sip152(out, buffer);
+        LibBlake2bf.blake2bf_eip152(out, buffer);
       } else {
         compress();
         for (int i = 0; i < h.length; i++) {
