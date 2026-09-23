@@ -19,6 +19,7 @@ import org.hyperledger.besu.chainimport.internal.ChainData;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.sila.blockcreation.BlockCreator.BlockCreationResult;
 import org.hyperledger.besu.sila.blockcreation.GenericBlockCreator;
 import org.hyperledger.besu.sila.core.Block;
@@ -27,7 +28,6 @@ import org.hyperledger.besu.sila.core.BlockImporter;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sila-mainnet.BlockImportResult;
 import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.savm.worldstate.WorldState;
 
 import java.io.IOException;
 import java.util.ArrayList;

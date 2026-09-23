@@ -17,9 +17,9 @@ package org.hyperledger.besu.chainimport.internal;
 import org.hyperledger.besu.chainimport.internal.TransactionData.NonceProvider;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.worldstate.WorldState;
+import org.hyperledger.besu.sila.core.Transaction;
 
 import java.util.HashMap;
 import java.util.List;
