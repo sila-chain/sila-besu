@@ -15,11 +15,11 @@
 package org.hyperledger.besu.plugin.services.tracer;
 
 import org.hyperledger.besu.datatypes.Address;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
-import org.hyperledger.besu.savm.worldstate.WorldView;
 import org.hyperledger.besu.plugin.data.BlockBody;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.data.ProcessableBlockHeader;
+import org.hyperledger.besu.savm.tracing.OperationTracer;
+import org.hyperledger.besu.savm.worldstate.WorldView;
 
 /**
  * An extended operation tracer that can trace the start and end of a block.

@@ -15,8 +15,8 @@
 package org.hyperledger.besu.plugin.services;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.savm.worldstate.WorldView;
 import org.hyperledger.besu.plugin.Unstable;
+import org.hyperledger.besu.savm.worldstate.WorldView;
 
 import java.util.Optional;
 

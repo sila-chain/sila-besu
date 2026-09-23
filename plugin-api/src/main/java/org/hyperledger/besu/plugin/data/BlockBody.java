@@ -22,8 +22,8 @@ import java.util.Optional;
 /**
  * The parts of a Block not in the {@link BlockHeader}, information corresponding to the comprised
  * transactions in {@link #getTransactions()}, and a set of other block headers in {@link
- * #getOmmers()}, as defined in the <a
- * href="https://sila.github.io/yellowpaper/paper.pdf">Sila Yellow Paper</a>.
+ * #getOmmers()}, as defined in the <a href="https://sila.github.io/yellowpaper/paper.pdf">Sila
+ * Yellow Paper</a>.
  */
 public interface BlockBody {
   /**

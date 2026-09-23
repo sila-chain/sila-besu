@@ -23,8 +23,8 @@ import org.apache.tuweni.bytes.Bytes32;
 
 /**
  * Provides a generic interface for classes which wrap/hide a cryptographic private key. This
- * interface ensures cryptographic functions required by Sila are available to the application
- * at large, without releasing the content of the private key.
+ * interface ensures cryptographic functions required by Sila are available to the application at
+ * large, without releasing the content of the private key.
  */
 @Unstable
 public interface SecurityModule {

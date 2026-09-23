@@ -15,10 +15,10 @@
 package org.hyperledger.besu.plugin.services;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.plugin.Unstable;
 import org.hyperledger.besu.plugin.data.BlockTraceResult;
 import org.hyperledger.besu.plugin.services.tracer.BlockAwareOperationTracer;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 
 import java.util.function.Consumer;
 

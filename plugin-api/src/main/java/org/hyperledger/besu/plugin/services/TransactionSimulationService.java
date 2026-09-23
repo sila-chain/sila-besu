@@ -18,10 +18,10 @@ import org.hyperledger.besu.datatypes.CallParameter;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StateOverrideMap;
 import org.hyperledger.besu.datatypes.Transaction;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
 import org.hyperledger.besu.plugin.Unstable;
 import org.hyperledger.besu.plugin.data.ProcessableBlockHeader;
 import org.hyperledger.besu.plugin.data.TransactionSimulationResult;
+import org.hyperledger.besu.savm.tracing.OperationTracer;
 
 import java.util.EnumSet;
 import java.util.Optional;

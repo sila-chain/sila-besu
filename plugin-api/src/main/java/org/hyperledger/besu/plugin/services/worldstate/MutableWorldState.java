@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.plugin.services.worldstate;
 
+import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.savm.worldstate.MutableWorldView;
 import org.hyperledger.besu.savm.worldstate.WorldState;
-import org.hyperledger.besu.plugin.data.BlockHeader;
 
 /**
- * Represents a mutable view of the Sila world state, allowing queries and modifications to
- * account balances, nonces, code, and storage.
+ * Represents a mutable view of the Sila world state, allowing queries and modifications to account
+ * balances, nonces, code, and storage.
  *
  * <p>Implementations manage the state root hash and persist changes to underlying storage through
  * {@link StateRootCommitter}.
