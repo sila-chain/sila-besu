@@ -204,6 +204,10 @@ jobs:
               p = Path(raw)
               if not p.is_file():
                   continue
+              # Gradle dependency verification records external published coordinates and checksums.
+              # Keep it byte-identical to upstream; protocol identity rewrites here create nonexistent artifacts.
+              if raw == "gradle/verification-metadata.xml":
+                  continue
               try:
                   data = p.read_bytes()
                   text = data.decode("utf-8")
