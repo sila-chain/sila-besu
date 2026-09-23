@@ -205,14 +205,17 @@ jobs:
               text = text.replace(".eth.", ".sil.")
               text = text.replace("/eth/", "/sil/")
               text = text.replace(".mainnet.", ".silaMainnet.")
+              text = re.sub(r"(?<=\.)mainnet(?=[.;,*])", "silaMainnet", text)
               text = text.replace("/mainnet/", "/sila-mainnet/")
+              text = text.replace('"/mainnet.json"', '"/sila-mainnet.json"')
               if raw.endswith(".java"):
                   text = re.sub(r"\bmainnet\s*\(", "silaMainnet(", text)
-                  text = text.replace('"/mainnet.json"', '"/sila-mainnet.json"')
                   text = text.replace('"mainnet"', '"sila-mainnet"')
                   text = text.replace("'mainnet'", "'sila-mainnet'")
               else:
-                  text = re.sub(r'(?<![A-Za-z0-9_-])mainnet(?![A-Za-z0-9_-])', 'sila-mainnet', text)
+                  text = text.replace('"mainnet"', '"sila-mainnet"')
+                  text = text.replace("'mainnet'", "'sila-mainnet'")
+                  text = re.sub(r"([:=]\s*)mainnet\b", r"\1sila-mainnet", text)
               text = token_transform(text)
               if text != data.decode("utf-8"):
                   p.write_text(text, encoding="utf-8")
