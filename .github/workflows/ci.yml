@@ -131,6 +131,14 @@ jobs:
               }
               for old, new in repo_mappings.items():
                   s = s.replace(old, new)
+
+              # Any remaining github.com/ethereum/* reference has no verified Sila counterpart
+              # in the mapping above. Shield it from generic Ethereum word rewrites so we never
+              # invent repositories such as github.com/sila/solidity or github.com/sila/py_ecc.
+              s = s.replace(
+                  "github.com/ethereum/",
+                  "github.com/__SILA_KEEP_UPSTREAM_ETHEREUM__/",
+              )
               s = s.replace("eips.ethereum.org", "sips.sila.org")
               s = s.replace("ethereum.org", "sila.org")
               s = s.replace("Ethereum Foundation", "Sila Foundation")
@@ -177,6 +185,10 @@ jobs:
               for pat, repl in rules:
                   s = re.sub(pat, repl, s)
 
+              s = s.replace(
+                  "github.com/__SILA_KEEP_UPSTREAM_ETHEREUM__/",
+                  "github.com/ethereum/",
+              )
               return s
 
           def path_transform(raw):
