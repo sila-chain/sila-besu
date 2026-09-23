@@ -161,8 +161,6 @@ jobs:
               for pat, repl in rules:
                   s = re.sub(pat, repl, s)
 
-              # Network value only; Java package mainnet is normalized separately below.
-              s = re.sub(r'(?<![A-Za-z0-9_-])mainnet(?![A-Za-z0-9_-])', 'sila-mainnet', s)
               return s
 
           def path_transform(raw):
@@ -178,6 +176,8 @@ jobs:
                       part = "savm"
                   elif part == "mainnet":
                       part = "silaMainnet" if java_path else "sila-mainnet"
+                  elif part.startswith("mainnet."):
+                      part = "sila-mainnet" + part[len("mainnet"):]
                   else:
                       part = token_transform(part)
                   out.append(part)
@@ -206,6 +206,13 @@ jobs:
               text = text.replace("/eth/", "/sil/")
               text = text.replace(".mainnet.", ".silaMainnet.")
               text = text.replace("/mainnet/", "/sila-mainnet/")
+              if raw.endswith(".java"):
+                  text = re.sub(r"\bmainnet\s*\(", "silaMainnet(", text)
+                  text = text.replace('"/mainnet.json"', '"/sila-mainnet.json"')
+                  text = text.replace('"mainnet"', '"sila-mainnet"')
+                  text = text.replace("'mainnet'", "'sila-mainnet'")
+              else:
+                  text = re.sub(r'(?<![A-Za-z0-9_-])mainnet(?![A-Za-z0-9_-])', 'sila-mainnet', text)
               text = token_transform(text)
               if text != data.decode("utf-8"):
                   p.write_text(text, encoding="utf-8")
