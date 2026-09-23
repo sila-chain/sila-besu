@@ -313,6 +313,8 @@ jobs:
                   # io.consensys.protocols:discovery owns this external Java API namespace.
                   # Preserve the package published by that real dependency.
                   "org.sila.beacon.discovery": "org.ethereum.beacon.discovery",
+                  # Immutables generates this class from the renamed Sila interface.
+                  "ImmutableEthProtocolConfiguration": "ImmutableSilProtocolConfiguration",
               }
               new = text
               for old, good in fixes.items():
