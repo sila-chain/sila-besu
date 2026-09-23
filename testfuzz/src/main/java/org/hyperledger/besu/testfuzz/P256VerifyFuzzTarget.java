@@ -115,9 +115,11 @@ public class P256VerifyFuzzTarget implements FuzzTarget {
 
     // Create separate precompile instances for Java and Native verification
     this.verificationContractNative =
-        new P256VerifyPrecompiledContract(new SilaOsakaGasCalculator(), this.nativeSignatureAlgorithm);
+        new P256VerifyPrecompiledContract(
+            new SilaOsakaGasCalculator(), this.nativeSignatureAlgorithm);
     this.verificationContractJava =
-        new P256VerifyPrecompiledContract(new SilaOsakaGasCalculator(), this.javaSignatureAlgorithm);
+        new P256VerifyPrecompiledContract(
+            new SilaOsakaGasCalculator(), this.javaSignatureAlgorithm);
 
     this.random = new SecureRandom();
   }
