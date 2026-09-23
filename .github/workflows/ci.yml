@@ -62,8 +62,6 @@ jobs:
   spotless:
     name: "Spotless"
     runs-on: ubuntu-latest
-    permissions:
-      contents: write
     steps:
       - name: Checkout Repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -78,48 +76,8 @@ jobs:
         uses: gradle/actions/setup-gradle@39e147cb9de83bb9910b8ef8bd7fff0ee20fcd6f # v6.0.1
         with:
           cache-disabled: true
-      - name: Normalize parser-safe Sila mainnet Java packages
-        run: |
-          python - <<'PY'
-          from pathlib import Path
-
-          old = "org.hyperledger.besu.sila.sila-mainnet"
-          new = "org.hyperledger.besu.sila.silaMainnet"
-
-          for path in Path(".").rglob("*.java"):
-              text = path.read_text(encoding="utf-8")
-              if old in text:
-                  path.write_text(text.replace(old, new), encoding="utf-8")
-
-          for raw in (
-              "sila/core/src/main/java/org/hyperledger/besu/sila/sila-mainnet",
-              "sila/core/src/test/java/org/hyperledger/besu/sila/sila-mainnet",
-          ):
-              src = Path(raw)
-              if src.is_dir():
-                  src.rename(src.with_name("silaMainnet"))
-          PY
-      - name: run spotless apply
-        run: ./gradlew spotlessApply
-      - name: Capture spotless patch
-        run: git diff --binary -M > spotless.patch
-      - name: Upload spotless patch
-        uses: actions/upload-artifact@bbbca2ddaa5d8feaa63e36b76fdaad77386f024f # v7.0.0
-        with:
-          name: spotless-patch
-          path: spotless.patch
-      - name: Commit deterministic formatter output on closure branch
-        if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
-        run: |
-          if ! git diff --quiet; then
-            git config user.name "SILA Network"
-            git config user.email "pssd500@gmail.com"
-            git add -u
-            git commit -s -m "style: apply deterministic Spotless formatting"
-            git push origin HEAD:${{ github.head_ref }}
-          fi
-      - name: Verify formatter left no tracked changes
-        run: git diff --exit-code
+      - name: run spotless
+        run: ./gradlew spotlessCheck
 
   checkLicense:
     name: "Check License"
