@@ -236,7 +236,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
             false,
             BalConfiguration.DEFAULT,
             new NoOpMetricsSystem());
-    final SilaMainnetTransactionProcessor sila-mainnetTransactionProcessor =
+    final SilaMainnetTransactionProcessor silaMainnetTransactionProcessor =
         protocolSchedule.getByBlockHeader(blockHeader(0)).getTransactionProcessor();
 
     // The block should fit 5 transactions only
