@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.worldstate;
 
-import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration.PathBasedUnstable;
 import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration.PathBasedUnstable;
 
 import org.immutables.value.Value;
 

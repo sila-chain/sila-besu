@@ -16,14 +16,14 @@ package org.hyperledger.besu.sila.blockcreation.txselection;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.sila.GasLimitCalculator;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.blockhash.PreExecutionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.gascalculator.GasCalculator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.blockhash.PreExecutionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 public record BlockSelectionContext(
     MiningConfiguration miningConfiguration,

@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.methods.engine;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcError;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
-import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 
 import java.util.Optional;
 

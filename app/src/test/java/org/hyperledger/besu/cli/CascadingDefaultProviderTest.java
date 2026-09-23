@@ -28,14 +28,14 @@ import static org.mockito.Mockito.verify;
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
 
 import java.io.File;
 import java.io.IOException;

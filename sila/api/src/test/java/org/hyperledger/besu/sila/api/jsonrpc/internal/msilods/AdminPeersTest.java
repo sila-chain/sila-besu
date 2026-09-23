@@ -25,13 +25,13 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.PeerResult;
+import org.hyperledger.besu.sila.p2p.network.exceptions.P2PDisabledException;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.p2p.network.exceptions.P2PDisabledException;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.net.InetSocketAddress;

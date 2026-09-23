@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 
 import static com.google.common.base.Preconditions.checkNotNull;
 
+import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.CallTracerErrorHandler;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.CallTracerGasCalculator;
@@ -23,7 +24,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.OpcodeCa
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.StackExtractor;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.savm.tracing.TraceFrame;
 
 import java.util.Comparator;
 import java.util.HashMap;

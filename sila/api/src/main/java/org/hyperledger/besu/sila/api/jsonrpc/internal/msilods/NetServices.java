@@ -14,6 +14,8 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
@@ -22,8 +24,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 
 import com.google.common.collect.ImmutableMap;
 

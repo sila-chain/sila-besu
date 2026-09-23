@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila;
 
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.sila.core.Request;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -131,8 +131,8 @@ public class BlockProcessingOutputs {
   }
 
   /**
-   * Returns the cumulative block gas used. For SIP-7778 (SilaAmsterdam+), this is the pre-refund gas
-   * used for block gas limit enforcement. For earlier forks, this equals the receipt's
+   * Returns the cumulative block gas used. For SIP-7778 (SilaAmsterdam+), this is the pre-refund
+   * gas used for block gas limit enforcement. For earlier forks, this equals the receipt's
    * cumulativeGasUsed.
    *
    * @return the cumulative block gas used

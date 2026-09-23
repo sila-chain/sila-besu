@@ -21,6 +21,7 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.DebugTraceTransactionResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.FourByteTracerResult;
@@ -28,9 +29,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.OpCodeLoggerTracer
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.debug.TraceOptions;
 import org.hyperledger.besu.sila.debug.TracerType;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.Collections;
 import java.util.concurrent.CompletableFuture;

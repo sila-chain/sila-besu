@@ -16,6 +16,8 @@ package org.hyperledger.besu.sila.p2p.rlpx.connections.netty;
 
 import static java.util.concurrent.TimeUnit.SECONDS;
 
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.AbstractPeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnectionEventDispatcher;
@@ -24,8 +26,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.CapabilityMultiplexer;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 
 import java.net.InetSocketAddress;
 import java.util.concurrent.Callable;

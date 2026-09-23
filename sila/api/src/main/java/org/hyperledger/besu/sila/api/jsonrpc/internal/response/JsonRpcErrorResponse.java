@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.response;
 
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
 import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Arrays;
 import java.util.Collections;

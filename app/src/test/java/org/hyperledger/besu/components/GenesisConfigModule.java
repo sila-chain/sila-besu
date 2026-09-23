@@ -33,6 +33,6 @@ public class GenesisConfigModule {
   @Named("sila-mainnet")
   @Provides
   GenesisConfig provideSilaMainnetGenesisConfig() {
-    return GenesisConfig.sila-mainnet();
+    return GenesisConfig.sila - mainnet();
   }
 }

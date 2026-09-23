@@ -27,16 +27,16 @@ import static org.hyperledger.besu.config.NetworkDefinition.FUTURE_SIPS;
 import static org.hyperledger.besu.config.NetworkDefinition.HOODI;
 import static org.hyperledger.besu.config.NetworkDefinition.LINEA_SEPOLIA;
 import static org.hyperledger.besu.config.NetworkDefinition.LUKSO;
-import static org.hyperledger.besu.config.NetworkDefinition.SILA_MAINNET;
 import static org.hyperledger.besu.config.NetworkDefinition.SEPOLIA;
+import static org.hyperledger.besu.config.NetworkDefinition.SILA_MAINNET;
+import static org.hyperledger.besu.plugin.services.storage.DataStorageFormat.BONSAI;
 import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.ENGINE;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.HOODI_BOOTSTRAP_NODES;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.HOODI_DISCOVERY_URL;
-import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_BOOTSTRAP_NODES;
-import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_DISCOVERY_URL;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SEPOLIA_BOOTSTRAP_NODES;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SEPOLIA_DISCOVERY_URL;
-import static org.hyperledger.besu.plugin.services.storage.DataStorageFormat.BONSAI;
+import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_BOOTSTRAP_NODES;
+import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_DISCOVERY_URL;
 import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
@@ -51,14 +51,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.cli.config.NativeRequirement;
+import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.MergeConfiguration;
 import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.StandardMetricCategory;
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.savm.precompile.AbstractAltBnPrecompiledContract;
+import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
@@ -66,16 +72,10 @@ import org.hyperledger.besu.sila.api.handlers.TimeoutOptions;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.precompile.AbstractAltBnPrecompiledContract;
-import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
-import org.hyperledger.besu.metrics.StandardMetricCategory;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.data.EnodeURL;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.util.BesuVersionUtils;
 import org.hyperledger.besu.util.number.Fraction;
 import org.hyperledger.besu.util.number.Percentage;
@@ -178,7 +178,8 @@ public class BesuCommandTest extends CommandTestAbstract {
   private static final String NETWORK_SILA_MAINNET_CONFIG_LOG =
       String.format(
           "%s%s",
-          SILA_MAINNET.name().charAt(0), SILA_MAINNET.name().substring(1).toLowerCase(Locale.getDefault()));
+          SILA_MAINNET.name().charAt(0),
+          SILA_MAINNET.name().substring(1).toLowerCase(Locale.getDefault()));
   private static final String NETWORK_HOODI_CONFIG_LOG =
       String.format(
           "%s%s",
@@ -233,7 +234,8 @@ public class BesuCommandTest extends CommandTestAbstract {
     final GenesisConfig actualGenesisConfig = (config.genesisConfig());
     assertThat(actualGenesisConfig).isNotNull();
     assertThat(actualGenesisConfig.getConfigOptions().getSilaShanghaiTime()).isNotEmpty();
-    assertThat(actualGenesisConfig.getConfigOptions().getSilaShanghaiTime().getAsLong()).isEqualTo(123);
+    assertThat(actualGenesisConfig.getConfigOptions().getSilaShanghaiTime().getAsLong())
+        .isEqualTo(123);
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
@@ -261,7 +263,8 @@ public class BesuCommandTest extends CommandTestAbstract {
     final GenesisConfig actualGenesisConfig = (config.genesisConfig());
     assertThat(actualGenesisConfig).isNotNull();
     assertThat(actualGenesisConfig.getConfigOptions().getSilaShanghaiTime()).isNotEmpty();
-    assertThat(actualGenesisConfig.getConfigOptions().getSilaShanghaiTime().getAsLong()).isEqualTo(123);
+    assertThat(actualGenesisConfig.getConfigOptions().getSilaShanghaiTime().getAsLong())
+        .isEqualTo(123);
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
@@ -728,7 +731,8 @@ public class BesuCommandTest extends CommandTestAbstract {
   @Test
   public void predefinedNetworkIdsMustBeEqualToChainIds() {
     // check the network id against the one in sila-mainnet genesis config
-    // it implies that SilNetworkConfig.sila-mainnet().getNetworkId() returns a value equals to the chain
+    // it implies that SilNetworkConfig.sila-mainnet().getNetworkId() returns a value equals to the
+    // chain
     // id
     // in this network genesis file.
 
@@ -2443,7 +2447,7 @@ public class BesuCommandTest extends CommandTestAbstract {
           .when(() -> NativeRequirement.getNativeRequirements(silaMainnet))
           .thenReturn(mockNativeRequirements);
       assertThatExceptionOfType(UnsupportedOperationException.class)
-          .isThrownBy(() -> mockCmd.checkRequiredNativeLibraries(sila-mainnet))
+          .isThrownBy(() -> mockCmd.checkRequiredNativeLibraries(sila - mainnet))
           .withMessageContaining("MOCKLIB")
           .withMessageContaining("Mock error")
           .withMessageContaining(System.getProperty("os.arch"))
@@ -2462,7 +2466,8 @@ public class BesuCommandTest extends CommandTestAbstract {
 
       // assert no exception
       assertThatNoException()
-          .isThrownBy(() -> mockCmd.configureNativeLibs(Optional.of(NetworkDefinition.SILA_MAINNET)));
+          .isThrownBy(
+              () -> mockCmd.configureNativeLibs(Optional.of(NetworkDefinition.SILA_MAINNET)));
       // assert we didn't check for native requirements for a custom-genesis
       mockStatic.verify(() -> NativeRequirement.getNativeRequirements(any()), times(0));
     }

@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.savmtool;
 
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCacheModule;
-import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.metrics.MetricsConfigurationModule;
 import org.hyperledger.besu.metrics.MetricsSystemModule;
 import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.SAVM;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCacheModule;
 
 import javax.inject.Singleton;
 
@@ -83,16 +83,16 @@ public interface SavmToolComponent {
   WorldUpdater getWorldUpdater();
 
   /**
-   * Retrieves the MutableWorldState instance. MutableWorldState represents the world state of
-   * Sila, which includes all accounts, their balances, nonces, codes, and storage.
+   * Retrieves the MutableWorldState instance. MutableWorldState represents the world state of Sila,
+   * which includes all accounts, their balances, nonces, codes, and storage.
    *
    * @return The MutableWorldState instance.
    */
   MutableWorldState getWorldState();
 
   /**
-   * Retrieves the Blockchain instance. Blockchain represents the Sila blockchain, which
-   * includes blocks, transactions, and the world state.
+   * Retrieves the Blockchain instance. Blockchain represents the Sila blockchain, which includes
+   * blocks, transactions, and the world state.
    *
    * @return The Blockchain instance.
    */

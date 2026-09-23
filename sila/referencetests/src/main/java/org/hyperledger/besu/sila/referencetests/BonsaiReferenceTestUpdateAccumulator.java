@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.referencetests;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.account.BonsaiAccount;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiPreImageProxy;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiWorldStateUpdateAccumulator;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldV
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedValue;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.preload.Consumer;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.preload.StorageConsumingMap;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 
 import java.util.concurrent.ConcurrentHashMap;
 

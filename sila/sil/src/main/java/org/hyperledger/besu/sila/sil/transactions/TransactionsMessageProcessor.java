@@ -18,10 +18,10 @@ import static java.time.Instant.now;
 import static org.hyperledger.besu.sila.core.Transaction.toHashList;
 
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.sil.messages.TransactionsMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.sila.sil.messages.TransactionsMessage;
 
 import java.time.Duration;
 import java.time.Instant;

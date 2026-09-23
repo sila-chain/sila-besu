@@ -25,6 +25,7 @@ import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
@@ -38,8 +39,7 @@ import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.ExecutionContextTestFixture;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.io.ByteArrayOutputStream;
 import java.io.IOException;

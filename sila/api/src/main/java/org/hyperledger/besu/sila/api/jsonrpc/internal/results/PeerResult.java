@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 
-import org.hyperledger.besu.sila.sil.SilProtocol;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
+import org.hyperledger.besu.sila.sil.SilProtocol;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
 
 import java.util.List;
 import java.util.Map;

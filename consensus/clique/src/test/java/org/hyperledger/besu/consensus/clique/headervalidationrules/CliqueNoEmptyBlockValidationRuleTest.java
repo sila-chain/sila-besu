@@ -23,7 +23,7 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
 
 import java.util.List;
 

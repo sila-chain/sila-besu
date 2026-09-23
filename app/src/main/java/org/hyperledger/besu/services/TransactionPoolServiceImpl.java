@@ -15,8 +15,8 @@
 package org.hyperledger.besu.services;
 
 import org.hyperledger.besu.datatypes.PendingTransaction;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.plugin.services.transactionpool.TransactionPoolService;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 
 import java.util.Collection;
 

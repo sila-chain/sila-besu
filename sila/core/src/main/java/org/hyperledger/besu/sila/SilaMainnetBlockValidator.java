@@ -14,23 +14,23 @@
  */
 package org.hyperledger.besu.sila;
 
+import org.hyperledger.besu.plugin.services.exception.StorageException;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.sila.chain.BadBlockCause;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Request;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockBodyValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockBodyValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.trie.MerkleTrieException;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
-import org.hyperledger.besu.plugin.services.exception.StorageException;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,8 +41,8 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * The SilaMainnetBlockValidator class implements the BlockValidator interface for the SilaMainnet Sila
- * network. It validates and processes blocks according to the rules of the SilaMainnet Sila
+ * The SilaMainnetBlockValidator class implements the BlockValidator interface for the SilaMainnet
+ * Sila network. It validates and processes blocks according to the rules of the SilaMainnet Sila
  * network.
  */
 public class SilaMainnetBlockValidator implements BlockValidator {
@@ -65,8 +65,8 @@ public class SilaMainnetBlockValidator implements BlockValidator {
   private final int maxRlpBlockSize;
 
   /**
-   * Constructs a new SilaMainnetBlockValidator with the given BlockHeaderValidator, BlockBodyValidator,
-   * BlockProcessor, BlockAccessListValidator, and maximum RLP block size.
+   * Constructs a new SilaMainnetBlockValidator with the given BlockHeaderValidator,
+   * BlockBodyValidator, BlockProcessor, BlockAccessListValidator, and maximum RLP block size.
    *
    * @param blockHeaderValidator the BlockHeaderValidator used to validate block headers
    * @param blockBodyValidator the BlockBodyValidator used to validate block bodies

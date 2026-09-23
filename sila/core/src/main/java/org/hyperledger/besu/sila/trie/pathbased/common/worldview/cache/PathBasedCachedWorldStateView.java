@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.trie.pathbased.common.worldview.cache;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.StorageSubscriber;
-import org.hyperledger.besu.plugin.data.BlockHeader;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription;
 import static org.junit.jupiter.api.Assertions.assertEquals;
 import static org.mockito.Mockito.mock;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.JsonRpcResult;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscribeRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscriptionType;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.response.SubscriptionResponse;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.UUID;
 import java.util.concurrent.TimeUnit;

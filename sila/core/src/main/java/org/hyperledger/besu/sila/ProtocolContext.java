@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila;
 
+import org.hyperledger.besu.plugin.ServiceManager;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.plugin.ServiceManager;
 
 import java.util.Optional;
 

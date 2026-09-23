@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.SyncStatus;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.InvalidJsonRpcParameters;
@@ -26,7 +27,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.plugin.data.SyncStatus;
 
 import java.util.Optional;
 import java.util.function.Supplier;

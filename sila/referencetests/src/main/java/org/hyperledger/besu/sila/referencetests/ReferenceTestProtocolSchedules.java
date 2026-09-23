@@ -16,18 +16,18 @@ package org.hyperledger.besu.sila.referencetests;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolScheduleBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecAdapters;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolScheduleBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -96,9 +96,11 @@ public class ReferenceTestProtocolSchedules {
                     createSchedule(
                         genesisStub.clone().homesteadBlock(0).daoForkBlock(5), savmConfiguration)),
                 Map.entry(
-                    "SIP150", createSchedule(genesisStub.clone().sip150Block(0), savmConfiguration)),
+                    "SIP150",
+                    createSchedule(genesisStub.clone().sip150Block(0), savmConfiguration)),
                 Map.entry(
-                    "SIP158", createSchedule(genesisStub.clone().sip158Block(0), savmConfiguration)),
+                    "SIP158",
+                    createSchedule(genesisStub.clone().sip158Block(0), savmConfiguration)),
                 Map.entry(
                     "SIP158ToByzantiumAt5",
                     createSchedule(
@@ -122,9 +124,11 @@ public class ReferenceTestProtocolSchedules {
                     "MuirGlacier",
                     createSchedule(genesisStub.clone().muirGlacierBlock(0), savmConfiguration)),
                 Map.entry(
-                    "Berlin", createSchedule(genesisStub.clone().berlinBlock(0), savmConfiguration)),
+                    "Berlin",
+                    createSchedule(genesisStub.clone().berlinBlock(0), savmConfiguration)),
                 Map.entry(
-                    "London", createSchedule(genesisStub.clone().londonBlock(0), savmConfiguration)),
+                    "London",
+                    createSchedule(genesisStub.clone().londonBlock(0), savmConfiguration)),
                 Map.entry(
                     "ArrowGlacier",
                     createSchedule(genesisStub.clone().arrowGlacierBlock(0), savmConfiguration)),
@@ -145,15 +149,18 @@ public class ReferenceTestProtocolSchedules {
                     createSchedule(
                         genesisStub.clone().shanghaiTime(0).cancunTime(15000), savmConfiguration)),
                 Map.entry(
-                    "SilaCancun", createSchedule(genesisStub.clone().cancunTime(0), savmConfiguration)),
+                    "SilaCancun",
+                    createSchedule(genesisStub.clone().cancunTime(0), savmConfiguration)),
                 Map.entry(
                     "SilaCancunToSilaPragueAtTime15k",
                     createSchedule(
                         genesisStub.clone().cancunTime(0).pragueTime(15000), savmConfiguration)),
                 Map.entry(
-                    "SilaPrague", createSchedule(genesisStub.clone().pragueTime(0), savmConfiguration)),
+                    "SilaPrague",
+                    createSchedule(genesisStub.clone().pragueTime(0), savmConfiguration)),
                 Map.entry(
-                    "SilaOsaka", createSchedule(genesisStub.clone().osakaTime(0), savmConfiguration)),
+                    "SilaOsaka",
+                    createSchedule(genesisStub.clone().osakaTime(0), savmConfiguration)),
                 Map.entry(
                     "SilaAmsterdam",
                     createSchedule(genesisStub.clone().amsterdamTime(0), savmConfiguration)),

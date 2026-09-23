@@ -18,6 +18,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 import org.hyperledger.besu.sila.api.jsonrpc.BlockchainImporter;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcTestMethodsFactory;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequest;
@@ -31,7 +32,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.CallTracerResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.OpCodeLoggerTracerResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.StructLog;
-import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 import org.hyperledger.besu.testutil.BlockTestUtil;
 
 import java.nio.charset.StandardCharsets;

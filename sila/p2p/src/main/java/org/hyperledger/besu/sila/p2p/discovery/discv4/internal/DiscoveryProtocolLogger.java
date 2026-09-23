@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv4.internal;
 
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
-import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
+import org.hyperledger.besu.sila.p2p.peers.Peer;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

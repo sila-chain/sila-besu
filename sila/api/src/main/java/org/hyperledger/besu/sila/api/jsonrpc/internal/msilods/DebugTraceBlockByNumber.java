@@ -27,7 +27,7 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.debug.TraceOptions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.io.IOException;
 import java.io.OutputStream;

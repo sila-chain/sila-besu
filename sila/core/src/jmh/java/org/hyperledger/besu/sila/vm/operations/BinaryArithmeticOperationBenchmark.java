@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.vm.operations;
 
-import org.hyperledger.besu.sila.utils.Range;
 import org.hyperledger.besu.savm.UInt256;
+import org.hyperledger.besu.sila.utils.Range;
 
 import java.math.BigInteger;
 import java.util.Random;

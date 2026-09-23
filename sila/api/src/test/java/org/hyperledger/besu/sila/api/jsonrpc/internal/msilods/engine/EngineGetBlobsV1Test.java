@@ -30,6 +30,7 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.VersionedHash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequest;
@@ -45,7 +46,6 @@ import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
 import org.hyperledger.besu.sila.core.kzg.BlobsWithCommitments;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

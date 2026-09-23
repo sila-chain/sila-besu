@@ -20,6 +20,7 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.BlockTracer;
@@ -30,7 +31,6 @@ import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.nio.file.Path;
 import java.util.HashMap;

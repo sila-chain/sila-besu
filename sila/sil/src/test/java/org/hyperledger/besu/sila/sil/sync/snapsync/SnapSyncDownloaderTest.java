@@ -26,6 +26,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.sil.sync.ChainDownloader;
@@ -35,7 +36,6 @@ import org.hyperledger.besu.sila.sil.sync.common.SyncError;
 import org.hyperledger.besu.sila.sil.sync.common.SyncException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.StalledDownloadException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloader;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
 
 import java.nio.file.Path;
 import java.util.concurrent.CancellationException;

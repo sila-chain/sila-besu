@@ -165,7 +165,9 @@ public class AltBN128Benchmark extends BenchmarkExecutor {
                 + "03b48ca7e6d84fca619aaf81745fbf9c30e5a78ed4766cc62b0f12aea5044f56"));
 
     final PrecompiledContract contract =
-        SavmSpec.savmSpec(forkVersion).getPrecompileContractRegistry().get(Address.ALTBN128_PAIRING);
+        SavmSpec.savmSpec(forkVersion)
+            .getPrecompileContractRegistry()
+            .get(Address.ALTBN128_PAIRING);
 
     precompile(testCases, contract, forkVersion);
   }

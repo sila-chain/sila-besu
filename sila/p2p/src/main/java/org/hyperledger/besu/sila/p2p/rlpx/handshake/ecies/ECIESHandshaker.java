@@ -24,10 +24,10 @@ import org.hyperledger.besu.crypto.SecureRandomProvider;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
 import org.hyperledger.besu.sila.p2p.rlpx.handshake.HandshakeException;
 import org.hyperledger.besu.sila.p2p.rlpx.handshake.HandshakeSecrets;
 import org.hyperledger.besu.sila.p2p.rlpx.handshake.Handshaker;
-import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
 
 import java.security.SecureRandom;
 import java.util.Optional;

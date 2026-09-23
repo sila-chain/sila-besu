@@ -19,6 +19,9 @@ import static org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider.cre
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaShanghaiGasCalculator;
 import org.hyperledger.besu.sila.GasLimitCalculator;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
@@ -26,14 +29,11 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessRes
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
-import org.hyperledger.besu.sila.sila-mainnet.SilaCancunTargetingGasLimitCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
-import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.savm.gascalculator.SilaShanghaiGasCalculator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaCancunTargetingGasLimitCalculator;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.util.Optional;
 

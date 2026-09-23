@@ -24,8 +24,8 @@ import org.hyperledger.besu.savm.contractvalidation.ContractValidationRule;
 import org.hyperledger.besu.savm.contractvalidation.MaxCodeSizeRule;
 import org.hyperledger.besu.savm.contractvalidation.PrefixCodeRule;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.savm.precompile.SilaMainnetPrecompiledContracts;
 import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
+import org.hyperledger.besu.savm.precompile.SilaMainnetPrecompiledContracts;
 
 import java.math.BigInteger;
 import java.util.Collection;
@@ -254,7 +254,8 @@ public final class SavmSpec {
    * @deprecated Migrate to use {@link SavmSpec#savmSpec(SavmSpecVersion)}.
    */
   @InlineMe(
-      replacement = "SavmSpec.savmSpec(SavmSpecVersion.ISTANBUL, BigInteger.ONE, savmConfiguration)",
+      replacement =
+          "SavmSpec.savmSpec(SavmSpecVersion.ISTANBUL, BigInteger.ONE, savmConfiguration)",
       imports = {
         "java.math.BigInteger",
         "org.hyperledger.besu.savm.SavmSpecVersion",
@@ -307,7 +308,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec berlin(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec berlin(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.berlin(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.istanbul(savmSpec.savm.getGasCalculator());
@@ -341,7 +343,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec london(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec london(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.london(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.istanbul(savmSpec.savm.getGasCalculator());
@@ -374,7 +377,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec paris(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec paris(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.paris(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.istanbul(savmSpec.savm.getGasCalculator());
@@ -389,7 +393,8 @@ public final class SavmSpec {
    * @deprecated Migrate to use {@link SavmSpec#savmSpec(SavmSpecVersion)}.
    */
   @InlineMe(
-      replacement = "SavmSpec.savmSpec(SavmSpecVersion.SHANGHAI, BigInteger.ONE, savmConfiguration)",
+      replacement =
+          "SavmSpec.savmSpec(SavmSpecVersion.SHANGHAI, BigInteger.ONE, savmConfiguration)",
       imports = {
         "java.math.BigInteger",
         "org.hyperledger.besu.savm.SavmSpecVersion",
@@ -441,7 +446,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec cancun(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec cancun(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.cancun(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.cancun(savmSpec.savm.getGasCalculator());
@@ -455,7 +461,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec prague(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec prague(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.prague(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.prague(savmSpec.savm.getGasCalculator());
@@ -469,7 +476,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec osaka(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec osaka(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.osaka(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.osaka(savmSpec.savm.getGasCalculator());
@@ -498,7 +506,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec bogota(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec bogota(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.bogota(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.prague(savmSpec.savm.getGasCalculator());
@@ -512,7 +521,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec polis(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec polis(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.polis(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.prague(savmSpec.savm.getGasCalculator());
@@ -526,7 +536,8 @@ public final class SavmSpec {
    * @param savmConfiguration the savm configuration
    * @return the savm spec
    */
-  public static SavmSpec bangkok(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SavmSpec bangkok(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.bangkok(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.prague(savmSpec.savm.getGasCalculator());
@@ -542,7 +553,8 @@ public final class SavmSpec {
    */
   @SuppressWarnings("DeprecatedIsStillUsed")
   @InlineMe(
-      replacement = "SavmSpec.savmSpec(SavmSpecVersion.FUTURE_SIPS, BigInteger.ONE, savmConfiguration)",
+      replacement =
+          "SavmSpec.savmSpec(SavmSpecVersion.FUTURE_SIPS, BigInteger.ONE, savmConfiguration)",
       imports = {
         "java.math.BigInteger",
         "org.hyperledger.besu.savm.SavmSpecVersion",
@@ -577,7 +589,8 @@ public final class SavmSpec {
    */
   public static SavmSpec experimentalSips(
       final BigInteger chainId, final SavmConfiguration savmConfiguration) {
-    final SavmSpec savmSpec = new SavmSpec(SilaMainnetSAVMs.experimentalSips(chainId, savmConfiguration));
+    final SavmSpec savmSpec =
+        new SavmSpec(SilaMainnetSAVMs.experimentalSips(chainId, savmConfiguration));
     savmSpec.precompileContractRegistry =
         SilaMainnetPrecompiledContracts.futureSIPs(savmSpec.savm.getGasCalculator());
     return savmSpec;

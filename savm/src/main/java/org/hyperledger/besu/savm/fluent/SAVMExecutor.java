@@ -80,7 +80,8 @@ public class SAVMExecutor {
   private MessageCallProcessor thisMessageCallProcessor() {
     return Objects.requireNonNullElseGet(
         messageCallProcessor,
-        () -> new MessageCallProcessor(savmSpec.getSavm(), savmSpec.getPrecompileContractRegistry()));
+        () ->
+            new MessageCallProcessor(savmSpec.getSavm(), savmSpec.getPrecompileContractRegistry()));
   }
 
   private ContractCreationProcessor thisContractCreationProcessor() {
@@ -509,7 +510,8 @@ public class SAVMExecutor {
    * @param accessListWarmStorage the access list warm storage
    * @return the savm executor
    */
-  public SAVMExecutor accessListWarmStorage(final Multimap<Address, Bytes32> accessListWarmStorage) {
+  public SAVMExecutor accessListWarmStorage(
+      final Multimap<Address, Bytes32> accessListWarmStorage) {
     this.accessListWarmStorage = accessListWarmStorage;
     return this;
   }

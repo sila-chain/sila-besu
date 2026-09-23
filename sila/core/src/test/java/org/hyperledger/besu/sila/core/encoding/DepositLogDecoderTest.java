@@ -20,7 +20,7 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Log;
 import org.hyperledger.besu.datatypes.LogTopic;
-import org.hyperledger.besu.sila.sila-mainnet.requests.InvalidDepositLogLayoutException;
+import org.hyperledger.besu.sila.silaMainnet.requests.InvalidDepositLogLayoutException;
 
 import java.util.List;
 

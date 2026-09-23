@@ -17,16 +17,16 @@ package org.hyperledger.besu.sila.sil.sync.common;
 import static org.mockito.Mockito.mock;
 
 import org.hyperledger.besu.sila.core.Difficulty;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.sil.manager.ChainState;
+import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 
 import java.util.stream.Stream;
 

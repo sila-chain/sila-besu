@@ -16,13 +16,13 @@ package org.hyperledger.besu.sila.sil.sync;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
 import org.hyperledger.besu.sila.sil.sync.tasks.DetermineCommonAncestorTask;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.time.Duration;
 import java.util.Optional;

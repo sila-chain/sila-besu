@@ -14,17 +14,17 @@
  */
 package org.hyperledger.besu.services;
 
-import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
-import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptDecoder;
-import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncoder;
-import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.plugin.data.BlockBody;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.data.TransactionReceipt;
 import org.hyperledger.besu.plugin.services.rlp.RlpConverterService;
+import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
+import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptDecoder;
+import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncoder;
+import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
+import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
 
 import org.apache.tuweni.bytes.Bytes;
 
@@ -71,8 +71,7 @@ public class RlpConverterServiceImpl implements RlpConverterService {
   public Bytes buildRlpFromBody(final BlockBody blockBody) {
     return RLP.encode(
         rlpOutput ->
-            ((org.hyperledger.besu.sila.core.BlockBody) blockBody)
-                .writeWrappedBodyTo(rlpOutput));
+            ((org.hyperledger.besu.sila.core.BlockBody) blockBody).writeWrappedBodyTo(rlpOutput));
   }
 
   @Override

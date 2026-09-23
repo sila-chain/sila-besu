@@ -18,10 +18,10 @@ import static org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifi
 import static org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier.TRIE_BRANCH_STORAGE;
 import static org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage.WORLD_ROOT_HASH_KEY;
 
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorage;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;

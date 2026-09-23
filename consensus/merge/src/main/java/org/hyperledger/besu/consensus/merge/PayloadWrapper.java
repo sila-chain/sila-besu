@@ -20,7 +20,7 @@ import org.hyperledger.besu.sila.blockcreation.BlockCreationTiming;
 import org.hyperledger.besu.sila.core.BlockValueCalculator;
 import org.hyperledger.besu.sila.core.BlockWithReceipts;
 import org.hyperledger.besu.sila.core.Request;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;

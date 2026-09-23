@@ -21,23 +21,23 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.ExecutionContextTestFixture;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.AccountChanges;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.BalanceChange;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.CodeChange;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.NonceChange;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.SlotChanges;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.StorageChange;
-import org.hyperledger.besu.sila.sila-mainnet.staterootcommitter.BalRootComputation;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.AccountChanges;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.BalanceChange;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.CodeChange;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.NonceChange;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.SlotChanges;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.StorageChange;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.BalRootComputation;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiWorldStateUpdateAccumulator;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.bal.BlockAccessListStateRootCalculator;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
-import org.hyperledger.besu.savm.account.MutableAccount;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 
 import java.time.Duration;
 import java.util.List;
@@ -63,7 +63,7 @@ class BlockAccessListStateRootCalculatorTest {
   @BeforeEach
   void setUp() {
     contextTestFixture =
-        ExecutionContextTestFixture.builder(GenesisConfig.sila-mainnet())
+        ExecutionContextTestFixture.builder(GenesisConfig.sila - mainnet())
             .dataStorageFormat(DataStorageFormat.BONSAI)
             .build();
     protocolContext = contextTestFixture.getProtocolContext();

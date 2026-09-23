@@ -16,13 +16,13 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace;
 
 import static org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.OpcodeCategory.isCreateOp;
 
+import org.hyperledger.besu.savm.Code;
+import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
+import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.CallTracerResult;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.savm.Code;
-import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
-import org.hyperledger.besu.savm.tracing.TraceFrame;
 
 import java.nio.charset.StandardCharsets;
 

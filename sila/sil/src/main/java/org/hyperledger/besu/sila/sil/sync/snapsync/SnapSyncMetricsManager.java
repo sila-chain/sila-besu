@@ -17,10 +17,10 @@ package org.hyperledger.besu.sila.sil.sync.snapsync;
 import static io.netty.util.internal.ObjectUtil.checkNonEmpty;
 import static org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncMetricsManager.Step.HEAL_TRIE;
 
-import org.hyperledger.besu.sila.sil.manager.SilContext;
-import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.sil.manager.SilContext;
+import org.hyperledger.besu.sila.trie.RangeManager;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;

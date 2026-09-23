@@ -22,11 +22,11 @@ import static org.hyperledger.besu.metrics.BesuMetricCategory.RPC;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.Observation;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessResponse;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.Observation;
 
 import java.util.Collections;
 import java.util.List;

@@ -18,7 +18,7 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Log;
 import org.hyperledger.besu.datatypes.LogsBloomFilter;
 import org.hyperledger.besu.datatypes.TransactionType;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionReceiptType;
+import org.hyperledger.besu.sila.silaMainnet.TransactionReceiptType;
 
 import java.util.List;
 import java.util.Objects;

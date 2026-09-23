@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace;
 
+import static org.hyperledger.besu.savm.internal.Words.toAddress;
 import static org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.CallTracerHelper.bytesToInt;
 import static org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.CallTracerHelper.extractCallDataFromMemory;
-import static org.hyperledger.besu.savm.internal.Words.toAddress;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;

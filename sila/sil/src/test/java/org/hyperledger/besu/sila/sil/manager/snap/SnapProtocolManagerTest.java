@@ -20,16 +20,16 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Synchronizer;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
+import org.hyperledger.besu.sila.sil.manager.MockPeerConnection;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.MockPeerConnection;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 
 import java.util.Collections;

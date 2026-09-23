@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
+import org.hyperledger.besu.savm.tracing.OperationTracer;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 import org.hyperledger.besu.sila.transaction.CallParameter;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.transaction.TransactionSimulatorResult;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
 
 import java.util.Optional;
 

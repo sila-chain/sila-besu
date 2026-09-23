@@ -38,8 +38,7 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * }
  * }</pre>
  *
- * @see <a
- *     href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#4byte-tracer">
+ * @see <a href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#4byte-tracer">
  *     Gsil 4byteTracer Documentation</a>
  */
 public class FourByteTracerResult {

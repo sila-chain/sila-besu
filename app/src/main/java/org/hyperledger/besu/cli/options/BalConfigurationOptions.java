@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.cli.options;
 
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ImmutableBalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ImmutableBalConfiguration;
 
 import picocli.CommandLine;
 

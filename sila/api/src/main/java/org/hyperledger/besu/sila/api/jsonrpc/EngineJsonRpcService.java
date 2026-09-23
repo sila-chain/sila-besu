@@ -18,6 +18,16 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static org.apache.tuweni.net.tls.VertxTrustOptions.allowlistClients;
 import static org.hyperledger.besu.sila.api.jsonrpc.authentication.AuthenticationUtils.truncToken;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.metrics.opentelemetry.OpenTelemetrySystem;
+import org.hyperledger.besu.nat.NatMethod;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.nat.core.domain.NatServiceType;
+import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
+import org.hyperledger.besu.nat.upnp.UpnpNatManager;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
+import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
 import org.hyperledger.besu.sila.api.handlers.HandlerFactory;
 import org.hyperledger.besu.sila.api.handlers.TimeoutOptions;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.AuthenticationService;
@@ -39,16 +49,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.Subscription
 import org.hyperledger.besu.sila.api.tls.TlsClientAuthConfiguration;
 import org.hyperledger.besu.sila.api.tls.TlsConfiguration;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.metrics.opentelemetry.OpenTelemetrySystem;
-import org.hyperledger.besu.nat.NatMethod;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.nat.core.domain.NatServiceType;
-import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
-import org.hyperledger.besu.nat.upnp.UpnpNatManager;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
-import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
 import org.hyperledger.besu.util.ExceptionUtils;
 import org.hyperledger.besu.util.NetworkUtility;
 

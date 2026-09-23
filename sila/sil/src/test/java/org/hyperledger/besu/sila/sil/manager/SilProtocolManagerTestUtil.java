@@ -23,12 +23,12 @@ import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.ChainHead;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.snap.SnapProtocolManager;
 import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.sila.sil.sync.ChainHeadTracker;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.testutil.DeterministicSilScheduler;
 
 import java.util.OptionalLong;

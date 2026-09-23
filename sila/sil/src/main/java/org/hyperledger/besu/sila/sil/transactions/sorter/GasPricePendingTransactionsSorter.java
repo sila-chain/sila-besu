@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.transactions.sorter;
 
 import static java.util.Comparator.comparing;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.time.Clock;
 import java.util.Comparator;

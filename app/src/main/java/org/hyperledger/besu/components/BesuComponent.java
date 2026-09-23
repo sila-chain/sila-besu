@@ -15,15 +15,15 @@
 package org.hyperledger.besu.components;
 
 import org.hyperledger.besu.cli.BesuCommand;
+import org.hyperledger.besu.metrics.MetricsSystemModule;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.sila.sil.transactions.BlobCache;
 import org.hyperledger.besu.sila.sil.transactions.BlobCacheModule;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoaderModule;
 import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCacheModule;
-import org.hyperledger.besu.metrics.MetricsSystemModule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.services.BesuPluginContextImpl;
 
 import javax.inject.Named;
 import javax.inject.Singleton;

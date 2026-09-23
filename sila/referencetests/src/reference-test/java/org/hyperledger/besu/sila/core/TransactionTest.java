@@ -17,9 +17,9 @@ package org.hyperledger.besu.sila.core;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidator;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidator;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 import org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLP;

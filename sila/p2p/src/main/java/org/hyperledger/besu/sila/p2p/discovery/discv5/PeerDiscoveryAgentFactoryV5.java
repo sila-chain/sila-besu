@@ -18,6 +18,8 @@ import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
@@ -32,8 +34,6 @@ import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.net.InetSocketAddress;
 import java.util.Objects;
@@ -196,9 +196,9 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
    *
    * <p>The {@code allow(InetSocketAddress)} method delegates to {@code
    * peerPermissions.isPermitted(address)}, which in turn checks subnet restrictions via {@link
-   * org.hyperledger.besu.sila.p2p.permissions.PeerPermissionSubnet} if configured. This
-   * provides the earliest possible filtering — raw UDP packets from disallowed IPs are dropped
-   * before protocol processing.
+   * org.hyperledger.besu.sila.p2p.permissions.PeerPermissionSubnet} if configured. This provides
+   * the earliest possible filtering — raw UDP packets from disallowed IPs are dropped before
+   * protocol processing.
    *
    * <p>The {@code allow(NodeRecord)} method first checks the node record's addresses via the same
    * IP-level permissions, then creates a {@link DiscoveryPeer} from the ENR and checks full {@link

@@ -25,7 +25,7 @@ import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
 import org.hyperledger.besu.sila.core.kzg.BlobProofBundle;
 import org.hyperledger.besu.sila.sil.transactions.sorter.BaseFeePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.time.ZoneId;

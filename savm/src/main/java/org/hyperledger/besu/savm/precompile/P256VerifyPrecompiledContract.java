@@ -18,9 +18,9 @@ import org.hyperledger.besu.crypto.SECP256R1;
 import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SECPSignature;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
+import org.hyperledger.besu.nativelib.boringssl.BoringSSLPrecompiles;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.nativelib.boringssl.BoringSSLPrecompiles;
 
 import java.math.BigInteger;
 

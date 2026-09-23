@@ -15,7 +15,10 @@
 package org.hyperledger.besu.sila.sil.sync.snapsync.v2;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.services.tasks.Task;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.snap.RetryingGetAccountRangeFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.snap.RetryingGetBytecodeFromPeerTask;
@@ -27,11 +30,8 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.v2.SnapV2AccountRangeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.v2.SnapV2BytecodeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.v2.SnapV2StorageRangeRequest;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.services.tasks.Task;
 
 import java.util.List;
 import java.util.Map;

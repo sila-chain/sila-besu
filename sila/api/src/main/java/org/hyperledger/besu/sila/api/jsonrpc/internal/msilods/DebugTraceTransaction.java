@@ -30,7 +30,7 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.DebugTraceTransact
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.api.query.TransactionWithMetadata;
 import org.hyperledger.besu.sila.debug.TraceOptions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.vm.DebugOperationTracer;
 
 import java.util.Optional;

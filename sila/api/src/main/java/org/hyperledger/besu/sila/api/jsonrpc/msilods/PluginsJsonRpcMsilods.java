@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.methods;
 
+import org.hyperledger.besu.plugin.BesuPlugin;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.PluginsReloadConfiguration;
-import org.hyperledger.besu.plugin.BesuPlugin;
 
 import java.util.Map;
 

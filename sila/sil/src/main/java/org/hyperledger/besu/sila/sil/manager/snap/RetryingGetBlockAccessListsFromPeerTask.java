@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.sil.manager.snap;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.SyncBlockAccessList;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
@@ -22,7 +23,6 @@ import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.exceptions.IncompleteResultsException;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractRetryingSwitchingPeerTask;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.ArrayList;
 import java.util.Collections;

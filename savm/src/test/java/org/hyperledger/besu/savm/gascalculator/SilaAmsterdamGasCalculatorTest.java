@@ -34,7 +34,8 @@ import org.mockito.junit.jupiter.MockitoExtension;
 @ExtendWith(MockitoExtension.class)
 class SilaAmsterdamGasCalculatorTest {
 
-  private final SilaAmsterdamGasCalculator amsterdamGasCalculator = new SilaAmsterdamGasCalculator();
+  private final SilaAmsterdamGasCalculator amsterdamGasCalculator =
+      new SilaAmsterdamGasCalculator();
 
   @Mock private Transaction transaction;
 

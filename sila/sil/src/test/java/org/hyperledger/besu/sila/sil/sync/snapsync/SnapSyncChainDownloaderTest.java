@@ -24,6 +24,7 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
@@ -35,9 +36,8 @@ import org.hyperledger.besu.sila.sil.sync.common.ChainSyncState;
 import org.hyperledger.besu.sila.sil.sync.common.ChainSyncStateStorage;
 import org.hyperledger.besu.sila.sil.sync.common.SingleBlockHeaderDownloader;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.nio.file.Path;
 import java.time.Duration;

@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.blockcreation.txselection;
 
 import org.hyperledger.besu.datatypes.TransactionType;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 
 import java.util.ArrayList;
 import java.util.EnumMap;

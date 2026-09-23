@@ -24,6 +24,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
@@ -35,7 +36,6 @@ import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionSubnet;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionsDenylist;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.net.InetSocketAddress;
 import java.util.List;
@@ -44,15 +44,15 @@ import java.util.Optional;
 import inet.ipaddr.IPAddress;
 import inet.ipaddr.IPAddressString;
 import org.apache.tuweni.bytes.Bytes;
-import org.sila.beacon.discovery.AddressAccessPolicy;
-import org.sila.beacon.discovery.schema.EnrField;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.sila.beacon.discovery.AddressAccessPolicy;
+import org.sila.beacon.discovery.schema.EnrField;
+import org.sila.beacon.discovery.schema.NodeRecord;
+import org.sila.beacon.discovery.schema.NodeRecordFactory;
 
 @ExtendWith(MockitoExtension.class)
 class PeerDiscoveryAgentFactoryV5Test {

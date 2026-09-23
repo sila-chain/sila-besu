@@ -16,14 +16,14 @@ package org.hyperledger.besu.sila.referencetests;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.account.AccountStorageEntry;
+import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.account.BonsaiAccount;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiPreImageProxy;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateLayerStorage;
 import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldView;
-import org.hyperledger.besu.savm.account.AccountStorageEntry;
-import org.hyperledger.besu.savm.worldstate.WorldState;
 
 import java.util.Comparator;
 import java.util.Map;

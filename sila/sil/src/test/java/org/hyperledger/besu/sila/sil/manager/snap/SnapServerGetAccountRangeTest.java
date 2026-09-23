@@ -18,6 +18,7 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.mockito.Mockito.mock;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.Synchronizer;
@@ -26,10 +27,9 @@ import org.hyperledger.besu.sila.sil.messages.snap.AccountRangeMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.GetAccountRangeMessage;
 import org.hyperledger.besu.sila.sil.sync.snapsync.ImmutableSnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldStateProvider;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 
 import java.math.BigInteger;
 import java.util.NavigableMap;

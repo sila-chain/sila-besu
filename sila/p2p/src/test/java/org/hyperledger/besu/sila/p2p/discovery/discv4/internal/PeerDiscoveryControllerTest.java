@@ -35,6 +35,7 @@ import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.Endpoint;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.DaggerPacketPackage;
@@ -56,7 +57,6 @@ import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions.Action;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionsDenylist;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -92,15 +92,15 @@ import org.apache.tuweni.units.bigints.UInt256;
 import org.apache.tuweni.units.bigints.UInt64;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
+import org.junit.jupiter.api.AfterEach;
+import org.junit.jupiter.api.BeforeEach;
+import org.junit.jupiter.api.Test;
+import org.mockito.ArgumentCaptor;
 import org.sila.beacon.discovery.schema.EnrField;
 import org.sila.beacon.discovery.schema.IdentitySchema;
 import org.sila.beacon.discovery.schema.IdentitySchemaInterpreter;
 import org.sila.beacon.discovery.schema.NodeRecord;
 import org.sila.beacon.discovery.schema.NodeRecordFactory;
-import org.junit.jupiter.api.AfterEach;
-import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
-import org.mockito.ArgumentCaptor;
 
 public class PeerDiscoveryControllerTest {
 

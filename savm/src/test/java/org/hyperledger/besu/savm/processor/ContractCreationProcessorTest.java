@@ -48,7 +48,8 @@ class ContractCreationProcessorTest
   @Test
   void shouldThrowAnExceptionWhenCodeContractFormatInvalidPreEOF() {
     processor =
-        new ContractCreationProcessor(savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
+        new ContractCreationProcessor(
+            savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
     final Bytes contractCode = Bytes.fromHexString("EF01010101010101");
     final MessageFrame messageFrame = new TestMessageFrameBuilder().build();
     messageFrame.setOutputData(contractCode);
@@ -64,7 +65,8 @@ class ContractCreationProcessorTest
   @Test
   void shouldNotThrowAnExceptionWhenCodeContractIsValid() {
     processor =
-        new ContractCreationProcessor(savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
+        new ContractCreationProcessor(
+            savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
     final Bytes contractCode = Bytes.fromHexString("0101010101010101");
     final MessageFrame messageFrame = new TestMessageFrameBuilder().build();
     messageFrame.setOutputData(contractCode);

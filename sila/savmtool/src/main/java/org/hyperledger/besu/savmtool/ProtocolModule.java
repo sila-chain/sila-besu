@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.savmtool;
 
-import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
 import org.hyperledger.besu.savm.SAVM;
+import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import javax.inject.Singleton;
 

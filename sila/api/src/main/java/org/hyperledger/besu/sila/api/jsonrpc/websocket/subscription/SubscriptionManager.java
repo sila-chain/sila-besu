@@ -14,6 +14,10 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcObjectMapperFactory;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.JsonRpcResult;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscribeRequest;
@@ -21,10 +25,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.Subs
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.UnsubscribeRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.response.SubscriptionResponse;
 import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 
 import java.util.List;
 import java.util.Map;

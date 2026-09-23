@@ -14,15 +14,15 @@
  */
 package org.hyperledger.besu.sila.permissioning;
 
-import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
-import org.hyperledger.besu.sila.permissioning.AllowlistPersistor.ALLOWLIST_TYPE;
-import org.hyperledger.besu.sila.permissioning.node.NodeAllowlistUpdatedEvent;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
+import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.permissioning.AllowlistPersistor.ALLOWLIST_TYPE;
+import org.hyperledger.besu.sila.permissioning.node.NodeAllowlistUpdatedEvent;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.io.IOException;

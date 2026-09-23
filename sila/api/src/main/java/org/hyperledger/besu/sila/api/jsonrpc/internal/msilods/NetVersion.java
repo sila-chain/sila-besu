@@ -26,7 +26,8 @@ import java.util.Optional;
  * In ConsenSys' client, net_version maps to the network id, as specified in *
  * https://github.com/sila-chain/wiki/wiki/JSON-RPC#net_version
  *
- * <p>This method can be deprecated in the future, @see https://github.com/sila-chain/SIPs/issues/611
+ * <p>This method can be deprecated in the future, @see
+ * https://github.com/sila-chain/SIPs/issues/611
  */
 public class NetVersion implements JsonRpcMethod {
   private final String networkId;

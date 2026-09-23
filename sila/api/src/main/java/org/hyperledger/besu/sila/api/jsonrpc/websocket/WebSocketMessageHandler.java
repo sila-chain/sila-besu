@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.websocket;
 
 import static org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType.INVALID_REQUEST;
 
+import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 import org.hyperledger.besu.sila.api.handlers.IsAliveHandler;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcObjectMapperFactory;
 import org.hyperledger.besu.sila.api.jsonrpc.execution.JsonRpcExecutor;
@@ -24,7 +25,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.methods.WebSocketRpcRequest;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 
 import java.io.IOException;
 import java.util.ArrayList;

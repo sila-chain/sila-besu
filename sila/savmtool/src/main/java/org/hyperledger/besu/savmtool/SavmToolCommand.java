@@ -22,12 +22,8 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.LogsBloomFilter;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
-import org.hyperledger.besu.sila.core.Difficulty;
-import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.metrics.MetricsSystemModule;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.SavmSpecVersion;
@@ -37,8 +33,12 @@ import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
 import org.hyperledger.besu.savm.tracing.OperationTracer;
 import org.hyperledger.besu.savm.tracing.StreamingOperationTracer;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.metrics.MetricsSystemModule;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
+import org.hyperledger.besu.sila.core.Difficulty;
+import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.util.LogConfigurator;
 
 import java.io.BufferedWriter;
@@ -71,8 +71,8 @@ import picocli.CommandLine.Command;
 import picocli.CommandLine.Option;
 
 /**
- * This class, SavmToolCommand, serves as the main command for the SAVM (Sila Virtual Machine)
- * tool. The SAVM tool is used to execute Sila transactions and contracts in a local environment.
+ * This class, SavmToolCommand, serves as the main command for the SAVM (Sila Virtual Machine) tool.
+ * The SAVM tool is used to execute Sila transactions and contracts in a local environment.
  *
  * <p>SavmToolCommand implements the Runnable interface, making it the entrypoint for PicoCLI to
  * execute this command.
@@ -272,8 +272,8 @@ public class SavmToolCommand implements Runnable {
   InputStream in;
 
   /**
-   * Default constructor for the SavmToolCommand class. It initializes the input stream with an empty
-   * byte array and the output stream with the standard output.
+   * Default constructor for the SavmToolCommand class. It initializes the input stream with an
+   * empty byte array and the output stream with the standard output.
    */
   public SavmToolCommand() {
     this(
@@ -590,8 +590,8 @@ public class SavmToolCommand implements Runnable {
   }
 
   /**
-   * Dumps the current state of the Sila world state to the provided PrintWriter. The state
-   * includes account balances, nonces, codes, and storage. The output is in JSON format.
+   * Dumps the current state of the Sila world state to the provided PrintWriter. The state includes
+   * account balances, nonces, codes, and storage. The output is in JSON format.
    *
    * @param worldState The Sila world state to be dumped.
    * @param out The PrintWriter to which the state is dumped.

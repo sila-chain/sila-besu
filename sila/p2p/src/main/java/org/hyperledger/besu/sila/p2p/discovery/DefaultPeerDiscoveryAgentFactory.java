@@ -15,6 +15,8 @@
 package org.hyperledger.besu.sila.p2p.discovery;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
@@ -23,8 +25,6 @@ import org.hyperledger.besu.sila.p2p.discovery.discv5.PeerDiscoveryAgentFactoryV
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Objects;

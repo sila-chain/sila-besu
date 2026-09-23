@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
 import org.hyperledger.besu.datatypes.AccessListEntry;
+import org.hyperledger.besu.savm.tracing.AccessListOperationTracer;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.transaction.CallParameter;
 import org.hyperledger.besu.sila.transaction.ImmutableCallParameter;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.transaction.TransactionSimulatorResult;
-import org.hyperledger.besu.savm.tracing.AccessListOperationTracer;
 
 import java.util.List;
 import java.util.Objects;

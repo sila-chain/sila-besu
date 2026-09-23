@@ -16,7 +16,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.methods.engine;
 
 import org.hyperledger.besu.datatypes.HardforkId;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Optional;
 

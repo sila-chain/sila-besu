@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.methods;
 
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.NetServices;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.NetVersion;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
 
 import java.math.BigInteger;
 import java.util.Map;

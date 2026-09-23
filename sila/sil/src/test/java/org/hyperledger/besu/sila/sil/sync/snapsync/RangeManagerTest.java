@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.sil.sync.snapsync;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.core.TrieGenerator;
 import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.trie.RangeStorageEntriesCollector;
 import org.hyperledger.besu.sila.trie.TrieIterator;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.math.BigInteger;
 import java.util.HashMap;

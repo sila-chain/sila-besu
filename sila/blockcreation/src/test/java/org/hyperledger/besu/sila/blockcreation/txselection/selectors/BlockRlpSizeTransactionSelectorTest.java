@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.blockcreation.txselection.selectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hyperledger.besu.plugin.data.TransactionSelectionResult.SELECTED;
 import static org.hyperledger.besu.sila.blockcreation.txselection.selectors.BlockRlpSizeTransactionSelector.INITIAL_RLP_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MAX_SCORE;
-import static org.hyperledger.besu.plugin.data.TransactionSelectionResult.SELECTED;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.when;
 
@@ -26,14 +26,14 @@ import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.TransactionType;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
+import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionEvaluationContext;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
-import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
-import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
+import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 
 import java.util.Optional;
 

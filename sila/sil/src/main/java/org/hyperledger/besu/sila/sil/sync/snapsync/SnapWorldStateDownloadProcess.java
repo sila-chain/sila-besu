@@ -15,14 +15,9 @@
 package org.hyperledger.besu.sila.sil.sync.snapsync;
 
 import static com.google.common.base.Preconditions.checkNotNull;
-import static org.hyperledger.besu.sila.sil.sync.snapsync.DynamicPivotBlockSelector.doNothingOnPivotChange;
 import static org.hyperledger.besu.services.pipeline.PipelineBuilder.createPipelineFrom;
+import static org.hyperledger.besu.sila.sil.sync.snapsync.DynamicPivotBlockSelector.doNothingOnPivotChange;
 
-import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.sync.snapsync.request.BytecodeRequest;
-import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
-import org.hyperledger.besu.sila.sil.sync.worldstate.TaskQueueIterator;
-import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloadProcess;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
@@ -32,6 +27,11 @@ import org.hyperledger.besu.services.pipeline.Pipeline;
 import org.hyperledger.besu.services.pipeline.PipelineBuilder;
 import org.hyperledger.besu.services.pipeline.WritePipe;
 import org.hyperledger.besu.services.tasks.Task;
+import org.hyperledger.besu.sila.sil.manager.SilScheduler;
+import org.hyperledger.besu.sila.sil.sync.snapsync.request.BytecodeRequest;
+import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
+import org.hyperledger.besu.sila.sil.sync.worldstate.TaskQueueIterator;
+import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloadProcess;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.List;

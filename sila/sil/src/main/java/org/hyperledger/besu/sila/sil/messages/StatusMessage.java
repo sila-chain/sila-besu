@@ -19,7 +19,6 @@ import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.Difficulty;
-import org.hyperledger.besu.sila.sil.SilProtocolVersion;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.AbstractMessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
@@ -28,6 +27,7 @@ import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 import org.hyperledger.besu.sila.rlp.RLPOutput;
+import org.hyperledger.besu.sila.sil.SilProtocolVersion;
 
 import java.math.BigInteger;
 import java.util.Optional;

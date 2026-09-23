@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.trie.pathbased.common.code;
 import static org.hyperledger.besu.metrics.BesuMetricCategory.BONSAI_CACHE;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.util.cache.MemoryBoundCache;
 
 /** The path-based bytecode cache. */

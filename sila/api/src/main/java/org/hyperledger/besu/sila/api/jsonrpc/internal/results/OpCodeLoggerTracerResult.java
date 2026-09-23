@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 
-import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 import org.hyperledger.besu.savm.tracing.TraceFrame;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 
 import java.util.ArrayList;
 import java.util.Collection;

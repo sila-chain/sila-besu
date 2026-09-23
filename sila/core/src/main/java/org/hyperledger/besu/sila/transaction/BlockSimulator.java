@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.sila.transaction;
 
-import static org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
+import static org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
 import static org.hyperledger.besu.sila.transaction.BlockStateCalls.fillBlockStateCalls;
 import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
 
@@ -25,6 +25,14 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StateOverride;
 import org.hyperledger.besu.datatypes.StateOverrideMap;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.data.BlockOverrides;
+import org.hyperledger.besu.plugin.services.tracer.BlockAwareOperationTracer;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.account.MutableAccount;
+import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
+import org.hyperledger.besu.savm.tracing.OperationTracer;
+import org.hyperledger.besu.savm.tracing.SilTransferLogOperationTracer;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
@@ -38,35 +46,27 @@ import org.hyperledger.besu.sila.core.Request;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.core.Withdrawal;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.MiningBeneficiaryCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.WithdrawalsValidator.AllowedWithdrawals;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.AccessLocationTracker;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.BlockAccessListBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListFactory;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.requests.RequestProcessingContext;
-import org.hyperledger.besu.sila.sila-mainnet.requests.RequestProcessorCoordinator;
-import org.hyperledger.besu.sila.sila-mainnet.systemcall.BlockProcessingContext;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.MiningBeneficiaryCalculator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.WithdrawalsValidator.AllowedWithdrawals;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.AccessLocationTracker;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.BlockAccessListBuilder;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListFactory;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.requests.RequestProcessingContext;
+import org.hyperledger.besu.sila.silaMainnet.requests.RequestProcessorCoordinator;
+import org.hyperledger.besu.sila.silaMainnet.systemcall.BlockProcessingContext;
 import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallError;
 import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallException;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.account.MutableAccount;
-import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
-import org.hyperledger.besu.savm.tracing.SilTransferLogOperationTracer;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.data.BlockOverrides;
-import org.hyperledger.besu.plugin.services.tracer.BlockAwareOperationTracer;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -543,7 +543,8 @@ public class BlockSimulator {
     List<Transaction> transactions = simResult.getTransactions();
     List<TransactionReceipt> receipts = simResult.getReceipts();
 
-    boolean isSilaShanghaiPlus = protocolSpec.getWithdrawalsValidator() instanceof AllowedWithdrawals;
+    boolean isSilaShanghaiPlus =
+        protocolSpec.getWithdrawalsValidator() instanceof AllowedWithdrawals;
     boolean isSilaCancunPlus = protocolSpec.getFeeMarket().implementsBlobFee();
 
     BlockHeaderBuilder headerBuilder =

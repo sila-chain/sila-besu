@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache;
 
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiSnapshotWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldSta
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.cache.PathBasedWorldStateCacheManager;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 
 import java.util.concurrent.ConcurrentHashMap;
 

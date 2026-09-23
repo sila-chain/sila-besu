@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
-import static org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
+import static org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
 
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
@@ -24,8 +24,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessRes
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.Quantity;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 public class SilBlobBaseFee implements JsonRpcMethod {
 

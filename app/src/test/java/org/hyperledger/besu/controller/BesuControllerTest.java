@@ -156,7 +156,7 @@ public class BesuControllerTest {
   @Test
   public void defaultSilaMainnetSnapSyncUsesMergeControllerBuilder() {
     final BesuControllerBuilder besuControllerBuilder =
-        new BesuController.Builder().fromGenesisFile(GenesisConfig.sila-mainnet(), SyncMode.SNAP);
+        new BesuController.Builder().fromGenesisFile(GenesisConfig.sila - mainnet(), SyncMode.SNAP);
 
     assertThat(besuControllerBuilder).isInstanceOf(MergeBesuControllerBuilder.class);
   }
@@ -187,7 +187,7 @@ public class BesuControllerTest {
   @Test
   public void fullSyncUsesTransitionControllerBuild() {
     final BesuControllerBuilder besuControllerBuilder =
-        new BesuController.Builder().fromGenesisFile(GenesisConfig.sila-mainnet(), SyncMode.FULL);
+        new BesuController.Builder().fromGenesisFile(GenesisConfig.sila - mainnet(), SyncMode.FULL);
 
     assertThat(besuControllerBuilder).isInstanceOf(TransitionBesuControllerBuilder.class);
   }

@@ -16,10 +16,10 @@ package org.hyperledger.besu.savm.precompile;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 
+import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP196;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP196;
 
 import java.util.Optional;
 

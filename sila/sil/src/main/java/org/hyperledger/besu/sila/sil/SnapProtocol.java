@@ -14,13 +14,14 @@
  */
 package org.hyperledger.besu.sila.sil;
 
-import org.hyperledger.besu.sila.sil.messages.snap.SnapV1;
-import org.hyperledger.besu.sila.sil.messages.snap.SnapV2;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.sil.messages.snap.SnapV1;
+import org.hyperledger.besu.sila.sil.messages.snap.SnapV2;
 
 /**
- * Snap protocol messages as defined in https://github.com/sila-chain/devp2p/blob/master/caps/snap.md}
+ * Snap protocol messages as defined in
+ * https://github.com/sila-chain/devp2p/blob/master/caps/snap.md}
  */
 public class SnapProtocol implements SubProtocol {
   public static final String NAME = "snap";

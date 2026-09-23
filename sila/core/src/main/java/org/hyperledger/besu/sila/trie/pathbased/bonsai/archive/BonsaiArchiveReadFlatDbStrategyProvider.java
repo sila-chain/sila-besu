@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.sila.trie.pathbased.bonsai.archive;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.flat.BonsaiFlatDbStrategyProvider;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.CodeStorageStrategy;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.FlatDbStrategy;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 /**
  * A {@link BonsaiFlatDbStrategyProvider} that always returns {@link BonsaiArchiveFlatDbStrategy},

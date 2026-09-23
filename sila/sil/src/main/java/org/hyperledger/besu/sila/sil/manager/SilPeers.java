@@ -14,7 +14,22 @@
  */
 package org.hyperledger.besu.sila.sil.manager;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledSuppliedMetric;
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.forkid.ForkId;
+import org.hyperledger.besu.sila.forkid.ForkIdManager;
+import org.hyperledger.besu.sila.p2p.peers.Peer;
+import org.hyperledger.besu.sila.p2p.peers.PeerId;
+import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerClientName;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeer.DisconnectCallback;
@@ -24,22 +39,7 @@ import org.hyperledger.besu.sila.sil.sync.ChainHeadTracker;
 import org.hyperledger.besu.sila.sil.sync.SnapServerChecker;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.TrailingPeerRequirements;
-import org.hyperledger.besu.sila.forkid.ForkId;
-import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.p2p.peers.Peer;
-import org.hyperledger.besu.sila.p2p.peers.PeerId;
-import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerClientName;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledSuppliedMetric;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.time.Clock;

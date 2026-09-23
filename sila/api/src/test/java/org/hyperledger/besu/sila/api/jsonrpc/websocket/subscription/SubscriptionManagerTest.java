@@ -18,12 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.blockheaders.NewBlockHeadersSubscription;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscribeRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscriptionType;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.UnsubscribeRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.syncing.SyncingSubscription;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.List;
 import java.util.UUID;

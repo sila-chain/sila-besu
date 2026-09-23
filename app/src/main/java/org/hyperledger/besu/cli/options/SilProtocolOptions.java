@@ -15,8 +15,8 @@
 package org.hyperledger.besu.cli.options;
 
 import org.hyperledger.besu.cli.util.CommandLineUtils;
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.ImmutableSilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.util.number.PositiveNumber;
 
 import java.util.List;

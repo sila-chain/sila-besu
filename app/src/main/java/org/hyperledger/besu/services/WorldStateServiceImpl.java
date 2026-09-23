@@ -17,11 +17,11 @@ package org.hyperledger.besu.services;
 import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.worldstate.WorldView;
 import org.hyperledger.besu.plugin.Unstable;
 import org.hyperledger.besu.plugin.services.WorldStateService;
+import org.hyperledger.besu.savm.worldstate.WorldView;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 
 import java.util.Optional;
 

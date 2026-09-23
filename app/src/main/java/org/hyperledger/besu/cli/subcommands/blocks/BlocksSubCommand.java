@@ -31,14 +31,14 @@ import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.MetricsService;
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitValues;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
-import org.hyperledger.besu.metrics.MetricsService;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
 
 import java.io.File;
 import java.io.FileNotFoundException;

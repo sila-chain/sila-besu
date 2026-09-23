@@ -16,8 +16,8 @@ package org.hyperledger.besu.cli.options;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.SIL;
 import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.NET;
+import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.SIL;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 

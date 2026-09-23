@@ -28,9 +28,9 @@ import static org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfigur
 
 import org.hyperledger.besu.cli.options.CLIOptions;
 import org.hyperledger.besu.cli.util.CommandLineUtils;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 
 import java.util.List;
 

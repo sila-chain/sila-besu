@@ -77,8 +77,8 @@ public interface GasLimitCalculator {
   /**
    * Return the transaction gas limit cap.
    *
-   * <p>Before SilaOsaka, there was no limit, and it is safe to use long max value to represent that,
-   * since no transaction has ever reached it.
+   * <p>Before SilaOsaka, there was no limit, and it is safe to use long max value to represent
+   * that, since no transaction has ever reached it.
    *
    * @return the transaction gas limit cap.
    */

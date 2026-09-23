@@ -29,8 +29,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory
 import org.hyperledger.besu.sila.blockcreation.BlockCreationTiming;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockWithReceipts;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Optional;
 

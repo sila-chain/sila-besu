@@ -29,9 +29,9 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessRes
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.util.DomainObjectDecodeUtils;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
 import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 
 import java.util.concurrent.CompletableFuture;

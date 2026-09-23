@@ -15,9 +15,12 @@
 package org.hyperledger.besu.sila.api.jsonrpc.methods;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.filter.FilterManager;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilAccounts;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilBaseFee;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilBlobBaseFee;
@@ -64,18 +67,15 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilSendTransaction
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilSimulateV1;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilSyncing;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.SilUninstallFilter;
-import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.plugin.ServiceManager;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Map;
 import java.util.Set;

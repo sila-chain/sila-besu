@@ -20,6 +20,7 @@ import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.OS
 import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.PRAGUE;
 
 import org.hyperledger.besu.consensus.merge.blockcreation.MergeMiningCoordinator;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
@@ -54,8 +55,7 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.ArrayList;
 import java.util.Arrays;

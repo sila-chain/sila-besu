@@ -20,8 +20,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.EnginePayloadAttributesParameter;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Optional;
 

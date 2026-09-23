@@ -25,21 +25,21 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sil.SilPeerTestUtil;
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.messages.BlockBodiesMessage;
-import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
-import org.hyperledger.besu.sila.sil.messages.ReceiptsMessage;
-import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.PingMessage;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.sila.sil.SilPeerTestUtil;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.messages.BlockBodiesMessage;
+import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
+import org.hyperledger.besu.sila.sil.messages.ReceiptsMessage;
+import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.math.BigInteger;

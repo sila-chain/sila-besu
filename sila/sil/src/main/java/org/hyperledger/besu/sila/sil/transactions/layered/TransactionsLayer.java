@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.sil.transactions.layered;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
@@ -24,8 +25,7 @@ import org.hyperledger.besu.sila.sil.transactions.PendingTransactionDroppedListe
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.TransactionAddedResult;
 import org.hyperledger.besu.sila.sil.transactions.layered.LayeredRemovalReason.PoolRemovalReason;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.util.List;
 import java.util.Map;

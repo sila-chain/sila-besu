@@ -15,8 +15,8 @@
 package org.hyperledger.besu.sila.trie.pathbased.common.provider;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListOverlay;
 import org.hyperledger.besu.plugin.data.BlockHeader;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListOverlay;
 
 import java.util.Objects;
 import java.util.Optional;

@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.messages;
 
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListDecoder;
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListEncoder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;

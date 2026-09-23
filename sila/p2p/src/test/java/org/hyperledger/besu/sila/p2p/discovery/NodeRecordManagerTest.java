@@ -24,20 +24,20 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.chain.VariablesStorage;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.nat.NatService;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicReference;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.sila.beacon.discovery.schema.EnrField;
-import org.sila.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import org.sila.beacon.discovery.schema.EnrField;
+import org.sila.beacon.discovery.schema.NodeRecord;
 
 class NodeRecordManagerTest {
 

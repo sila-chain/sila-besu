@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.HashSet;
 import java.util.Optional;

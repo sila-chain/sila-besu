@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.sil.sync.snapsync;
 
 import static org.hyperledger.besu.util.FutureUtils.exceptionallyCompose;
 
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.sila.sil.manager.exceptions.MaxRetriesReachedException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
 import org.hyperledger.besu.sila.sil.sync.ChainDownloader;
@@ -27,7 +28,6 @@ import org.hyperledger.besu.sila.sil.sync.common.PivotUpdateListener;
 import org.hyperledger.besu.sila.sil.sync.common.SyncException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.StalledDownloadException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloader;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.io.IOException;

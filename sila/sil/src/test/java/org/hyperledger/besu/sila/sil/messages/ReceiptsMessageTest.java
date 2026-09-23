@@ -19,9 +19,9 @@ import static org.hyperledger.besu.sila.sil.core.Utils.serializeReceiptsList;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sil.core.Utils;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
+import org.hyperledger.besu.sila.sil.core.Utils;
 
 import java.util.ArrayList;
 import java.util.Iterator;

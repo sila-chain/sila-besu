@@ -28,12 +28,12 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.query.BftQueryService;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.NonBesuBlockHeader;
 import org.hyperledger.besu.sila.core.Util;
-import org.hyperledger.besu.plugin.services.query.BftQueryService;
 
 import java.util.List;
 import java.util.NoSuchElementException;

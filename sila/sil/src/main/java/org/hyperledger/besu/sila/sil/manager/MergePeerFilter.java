@@ -18,10 +18,10 @@ import org.hyperledger.besu.consensus.merge.ForkchoiceEvent;
 import org.hyperledger.besu.consensus.merge.MergeStateHandler;
 import org.hyperledger.besu.consensus.merge.UnverifiedForkchoiceListener;
 import org.hyperledger.besu.sila.core.Difficulty;
-import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
-import org.hyperledger.besu.sila.sil.messages.StatusMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Message;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
+import org.hyperledger.besu.sila.sil.messages.StatusMessage;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;

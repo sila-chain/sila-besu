@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.api.graphql.internal.pojoadapter;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.api.query.BlockchainQueries;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.account.BonsaiAccount;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.account.AccountState;
+import org.hyperledger.besu.sila.api.query.BlockchainQueries;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.account.BonsaiAccount;
 
 import java.util.Optional;
 

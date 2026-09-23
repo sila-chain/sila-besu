@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.health;
 
+import org.hyperledger.besu.plugin.data.SyncStatus;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
-import org.hyperledger.besu.plugin.data.SyncStatus;
 
 import java.util.Optional;
 

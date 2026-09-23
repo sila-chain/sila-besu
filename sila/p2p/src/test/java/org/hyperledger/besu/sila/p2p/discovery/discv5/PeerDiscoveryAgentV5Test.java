@@ -23,6 +23,8 @@ import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.StubMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
@@ -36,8 +38,6 @@ import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions.Action;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionsDenylist;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
@@ -49,10 +49,6 @@ import java.util.concurrent.TimeUnit;
 import java.util.stream.Stream;
 
 import org.awaitility.Awaitility;
-import org.sila.beacon.discovery.MutableDiscoverySystem;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
-import org.sila.beacon.discovery.storage.BucketStats;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -60,6 +56,10 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.sila.beacon.discovery.MutableDiscoverySystem;
+import org.sila.beacon.discovery.schema.NodeRecord;
+import org.sila.beacon.discovery.schema.NodeRecordFactory;
+import org.sila.beacon.discovery.storage.BucketStats;
 
 @ExtendWith(MockitoExtension.class)
 class PeerDiscoveryAgentV5Test {

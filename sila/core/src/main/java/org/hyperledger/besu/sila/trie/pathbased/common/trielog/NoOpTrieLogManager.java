@@ -15,10 +15,10 @@
 package org.hyperledger.besu.sila.trie.pathbased.common.trielog;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedWorldStateUpdateAccumulator;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.services.trielogs.TrieLog;
+import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedWorldStateUpdateAccumulator;
 
 import java.util.Optional;
 

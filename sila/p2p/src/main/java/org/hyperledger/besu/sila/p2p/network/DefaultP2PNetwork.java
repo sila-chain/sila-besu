@@ -18,6 +18,13 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.nat.NatMethod;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.nat.core.NatManager;
+import org.hyperledger.besu.nat.core.domain.NatServiceType;
+import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
+import org.hyperledger.besu.nat.upnp.UpnpNatManager;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.Util;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
@@ -45,13 +52,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerLookup;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.nat.NatMethod;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.nat.core.NatManager;
-import org.hyperledger.besu.nat.core.domain.NatServiceType;
-import org.hyperledger.besu.nat.core.domain.NetworkProtocol;
-import org.hyperledger.besu.nat.upnp.UpnpNatManager;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.net.InetAddress;
 import java.time.Duration;
@@ -83,8 +83,7 @@ import org.slf4j.LoggerFactory;
 
 /**
  * The peer network service (defunct PeerNetworkingService) is the entrypoint to the peer-to-peer
- * components of the Sila client. It implements the devp2p framework from the Sila
- * specifications.
+ * components of the Sila client. It implements the devp2p framework from the Sila specifications.
  *
  * <p>This component manages the peer discovery layer, the RLPx wire protocol and the subprotocols
  * supported by this client.

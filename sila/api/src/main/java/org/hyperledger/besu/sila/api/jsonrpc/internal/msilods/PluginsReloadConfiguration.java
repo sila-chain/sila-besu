@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
+import org.hyperledger.besu.plugin.BesuPlugin;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.JsonRpcParameter.JsonRpcParameterException;
@@ -22,7 +23,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorRespo
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.plugin.BesuPlugin;
 
 import java.util.Collections;
 import java.util.Map;

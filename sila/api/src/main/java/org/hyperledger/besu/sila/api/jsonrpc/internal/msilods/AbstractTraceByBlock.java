@@ -16,6 +16,8 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
 import static org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.TraceTypeParameter.TraceType;
 
+import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
+import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.InvalidJsonRpcParameters;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.BlockParameter;
@@ -33,12 +35,10 @@ import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.debug.TraceOptions;
 import org.hyperledger.besu.sila.debug.TracerType;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.transaction.TransactionSimulatorResult;
-import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
-import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
 
 import java.util.Map;
 import java.util.Optional;

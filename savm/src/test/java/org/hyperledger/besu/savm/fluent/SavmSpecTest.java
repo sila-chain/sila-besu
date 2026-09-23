@@ -65,7 +65,8 @@ public class SavmSpecTest {
 
   @Test
   void nullSavmSpec() {
-    assertThrows(NullPointerException.class, () -> new SAVMExecutor(SavmSpec.savmSpec((SAVM) null)));
+    assertThrows(
+        NullPointerException.class, () -> new SAVMExecutor(SavmSpec.savmSpec((SAVM) null)));
   }
 
   @Test

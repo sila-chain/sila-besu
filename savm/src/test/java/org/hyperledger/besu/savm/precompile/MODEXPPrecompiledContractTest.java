@@ -32,7 +32,9 @@ class MODEXPPrecompiledContractTest {
   @Mock private MessageFrame messageFrame;
 
   private final PrecompiledContract byzantiumContract =
-      SavmSpec.savmSpec(SavmSpecVersion.BYZANTIUM).getPrecompileContractRegistry().get(Address.MODEXP);
+      SavmSpec.savmSpec(SavmSpecVersion.BYZANTIUM)
+          .getPrecompileContractRegistry()
+          .get(Address.MODEXP);
   private final PrecompiledContract berlinContract =
       SavmSpec.savmSpec(SavmSpecVersion.BERLIN).getPrecompileContractRegistry().get(Address.MODEXP);
 

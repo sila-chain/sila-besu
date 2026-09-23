@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.p2p.discovery.discv4;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeer;
@@ -38,7 +39,6 @@ import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.peers.PeerId;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.NetworkUtility;
 
 import java.net.InetSocketAddress;

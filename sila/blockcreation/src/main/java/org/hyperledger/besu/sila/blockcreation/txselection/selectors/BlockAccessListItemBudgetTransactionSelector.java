@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.sila.blockcreation.txselection.selectors;
 
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionEvaluationContext;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListItemSizeCheck;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListItemSizeCheck;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 
@@ -29,7 +29,7 @@ import org.slf4j.LoggerFactory;
 /**
  * Rejects a transaction when applying its partial block access view would exceed the SIP-7928 item
  * budget for the block (same rule as block import in {@link
- * org.hyperledger.besu.sila.sila-mainnet.AbstractBlockProcessor}).
+ * org.hyperledger.besu.sila.silaMainnet.AbstractBlockProcessor}).
  */
 public class BlockAccessListItemBudgetTransactionSelector extends AbstractTransactionSelector {
 

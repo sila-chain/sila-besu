@@ -18,9 +18,9 @@ import static org.hyperledger.besu.savmtool.B11rSubCommand.COMMAND_ALIAS;
 import static org.hyperledger.besu.savmtool.B11rSubCommand.COMMAND_NAME;
 
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.referencetests.BlockchainReferenceTestCaseSpec.ReferenceTestBlockHeader;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.util.LogConfigurator;
 
 import java.io.FileNotFoundException;

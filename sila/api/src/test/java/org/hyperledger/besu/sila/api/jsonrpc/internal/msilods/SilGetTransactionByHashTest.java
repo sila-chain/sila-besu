@@ -110,8 +110,7 @@ class SilGetTransactionByHashTest {
   @Test
   void shouldReturnPendingTransactionWhenTransactionExistsAndIsPending() {
     final org.hyperledger.besu.sila.core.Transaction transaction =
-        org.hyperledger.besu.sila.core.Transaction.readFrom(
-            Bytes.fromHexString(VALID_TRANSACTION));
+        org.hyperledger.besu.sila.core.Transaction.readFrom(Bytes.fromHexString(VALID_TRANSACTION));
 
     when(transactionPool.getTransactionByHash(transaction.getHash()))
         .thenReturn(Optional.of(transaction));
@@ -135,8 +134,7 @@ class SilGetTransactionByHashTest {
   @Test
   void shouldReturnCompleteTransactionWhenTransactionExistsInBlockchain() {
     final org.hyperledger.besu.sila.core.Transaction transaction =
-        org.hyperledger.besu.sila.core.Transaction.readFrom(
-            Bytes.fromHexString(VALID_TRANSACTION));
+        org.hyperledger.besu.sila.core.Transaction.readFrom(Bytes.fromHexString(VALID_TRANSACTION));
     final TransactionWithMetadata transactionWithMetadata =
         new TransactionWithMetadata(transaction, 1, Optional.empty(), Hash.ZERO, 0, 0L);
 

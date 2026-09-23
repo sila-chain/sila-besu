@@ -14,15 +14,6 @@
  */
 package org.hyperledger.besu.sila.storage.keyvalue;
 
-import org.hyperledger.besu.sila.chain.BlockchainStorage;
-import org.hyperledger.besu.sila.chain.VariablesStorage;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.SegmentIdentifier;
@@ -30,6 +21,15 @@ import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
 import org.hyperledger.besu.services.kvstore.SegmentedKeyValueStorageAdapter;
+import org.hyperledger.besu.sila.chain.BlockchainStorage;
+import org.hyperledger.besu.sila.chain.VariablesStorage;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
+import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 
 import java.io.IOException;
 import java.util.HashMap;

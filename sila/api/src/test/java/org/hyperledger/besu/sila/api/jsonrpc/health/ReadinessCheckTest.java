@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.data.SyncStatus;
 import org.hyperledger.besu.sila.core.DefaultSyncStatus;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
-import org.hyperledger.besu.plugin.data.SyncStatus;
 
 import java.util.HashMap;
 import java.util.Map;

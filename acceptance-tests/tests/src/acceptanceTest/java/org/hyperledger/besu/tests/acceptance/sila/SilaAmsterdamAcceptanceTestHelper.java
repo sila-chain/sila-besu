@@ -49,7 +49,8 @@ public class SilaAmsterdamAcceptanceTestHelper {
   private long blockTimeStamp = 0;
   private long slotNumber = 0;
 
-  SilaAmsterdamAcceptanceTestHelper(final BesuNode besuNode, final SilTransactions silTransactions) {
+  SilaAmsterdamAcceptanceTestHelper(
+      final BesuNode besuNode, final SilTransactions silTransactions) {
     this.besuNode = besuNode;
     this.silTransactions = silTransactions;
     httpClient = new OkHttpClient();
@@ -178,8 +179,8 @@ public class SilaAmsterdamAcceptanceTestHelper {
 
   /**
    * Sends a payload-building {@code engine_forkchoiceUpdatedV4} whose payload attributes omit the
-   * {@code targetGasLimit} field, which is mandatory from SilaAmsterdam onwards, and returns the parsed
-   * JSON-RPC response so callers can assert the error.
+   * {@code targetGasLimit} field, which is mandatory from SilaAmsterdam onwards, and returns the
+   * parsed JSON-RPC response so callers can assert the error.
    *
    * @return the parsed JSON-RPC response
    * @throws IOException if the engine call fails

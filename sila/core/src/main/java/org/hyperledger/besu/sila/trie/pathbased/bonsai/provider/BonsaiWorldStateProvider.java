@@ -16,6 +16,8 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.provider;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
@@ -28,8 +30,6 @@ import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldSt
 import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
 import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.plugin.ServiceManager;
 
 import java.util.HashSet;
 import java.util.Optional;

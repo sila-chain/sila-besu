@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.sil.manager;
 
 import static org.hyperledger.besu.util.FutureUtils.propagateResult;
 
-import org.hyperledger.besu.sila.sil.manager.task.SilTask;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.services.pipeline.Pipeline;
+import org.hyperledger.besu.sila.sil.manager.task.SilTask;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;

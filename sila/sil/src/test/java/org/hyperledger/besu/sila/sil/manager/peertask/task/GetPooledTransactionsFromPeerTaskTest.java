@@ -17,13 +17,13 @@ package org.hyperledger.besu.sila.sil.manager.peertask.task;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.peertask.InvalidPeerTaskResponseException;
 import org.hyperledger.besu.sila.sil.manager.peertask.MalformedRlpFromPeerException;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskValidationResponse;
 import org.hyperledger.besu.sila.sil.messages.PooledTransactionsMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 
 import java.util.List;
 import java.util.Set;

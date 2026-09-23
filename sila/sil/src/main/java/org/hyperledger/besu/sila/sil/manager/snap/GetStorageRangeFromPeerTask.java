@@ -14,20 +14,20 @@
  */
 package org.hyperledger.besu.sila.sil.manager.snap;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
-import org.hyperledger.besu.sila.sil.manager.SilContext;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.PeerRequest;
 import org.hyperledger.besu.sila.sil.manager.PendingPeerRequest;
 import org.hyperledger.besu.sila.sil.manager.RequestManager;
+import org.hyperledger.besu.sila.sil.manager.SilContext;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerRequestTask;
 import org.hyperledger.besu.sila.sil.messages.snap.SnapV1;
 import org.hyperledger.besu.sila.sil.messages.snap.StorageRangeMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;

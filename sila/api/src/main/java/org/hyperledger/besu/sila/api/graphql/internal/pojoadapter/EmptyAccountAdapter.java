@@ -22,10 +22,9 @@ import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 
 /**
- * Represents an empty account in the Sila blockchain. This class is used when an account does
- * not exist at a specific address. It provides default values for the account's properties. It
- * extends the {@link org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.AccountAdapter}
- * class.
+ * Represents an empty account in the Sila blockchain. This class is used when an account does not
+ * exist at a specific address. It provides default values for the account's properties. It extends
+ * the {@link org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.AccountAdapter} class.
  *
  * @see org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.AccountAdapter
  */

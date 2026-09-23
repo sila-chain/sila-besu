@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.vm.operations;
 
-import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
-import org.hyperledger.besu.sila.vm.BlockchainBasedBlockHashLookup;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.PetersburgGasCalculator;
 import org.hyperledger.besu.savm.operation.BlockHashOperation;
+import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
+import org.hyperledger.besu.sila.vm.BlockchainBasedBlockHashLookup;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt256;

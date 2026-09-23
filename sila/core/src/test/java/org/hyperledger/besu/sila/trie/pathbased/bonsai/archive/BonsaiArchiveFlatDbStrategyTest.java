@@ -21,11 +21,11 @@ import static org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedW
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.CodeHashCodeStorageStrategy;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorageTransaction;
 import org.hyperledger.besu.services.kvstore.SegmentedInMemoryKeyValueStorage;
+import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.CodeHashCodeStorageStrategy;
 
 import java.util.Optional;
 

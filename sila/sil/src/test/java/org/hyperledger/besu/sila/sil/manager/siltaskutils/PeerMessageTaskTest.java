@@ -16,16 +16,16 @@ package org.hyperledger.besu.sila.sil.manager.siltaskutils;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
 import org.hyperledger.besu.sila.sil.manager.MockPeerConnection;
 import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
 import org.hyperledger.besu.sila.sil.manager.exceptions.SilTaskException;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerTask;
 import org.hyperledger.besu.sila.sil.manager.task.SilTask;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.ExceptionUtils;
 

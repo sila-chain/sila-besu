@@ -15,8 +15,8 @@
 package org.hyperledger.besu.sila.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.datatypes.TransactionType.SIP1559;
 import static org.hyperledger.besu.datatypes.TransactionType.FRONTIER;
+import static org.hyperledger.besu.datatypes.TransactionType.SIP1559;
 import static org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration.DEFAULT_NETWORK_CONFIGURATION;
 import static org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration.SIL69_RECEIPT_CONFIGURATION;
 import static org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration.STORAGE_WITHOUT_COMPACTION;

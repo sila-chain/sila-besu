@@ -343,8 +343,8 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
    * effectively a no-op - the contract is NOT destroyed and retains its balance.
    *
    * <p>Per SIP-7708, since no actual destruction or value transfer occurs, no log should be
-   * emitted. This is different from pre-SilaCancun behavior where the contract would be destroyed and a
-   * Burn log would be emitted.
+   * emitted. This is different from pre-SilaCancun behavior where the contract would be destroyed
+   * and a Burn log would be emitted.
    */
   @Test
   public void shouldNotEmitLogForPreExistingContractSelfDestructToSelf() throws IOException {

@@ -54,8 +54,7 @@ import org.apache.tuweni.bytes.Bytes;
  * }
  * }</pre>
  *
- * @see <a
- *     href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#call-tracer">
+ * @see <a href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#call-tracer">
  *     Gsil CallTracer Documentation</a>
  */
 @JsonPropertyOrder({

@@ -20,13 +20,13 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import org.hyperledger.besu.cli.options.NetworkingOptions;
 import org.hyperledger.besu.cli.options.TransactionPoolOptions;
 import org.hyperledger.besu.cli.options.storage.DataStorageOptions;
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.services.metrics.MetricCategory;
 import org.hyperledger.besu.sila.api.jsonrpc.ipc.JsonRpcIpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.plugins.PluginConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.ImmutableTransactionPoolConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.metrics.MetricCategory;
+import org.hyperledger.besu.sila.sil.transactions.ImmutableTransactionPoolConfiguration;
 import org.hyperledger.besu.tests.acceptance.dsl.StaticNodesUtils;
 
 import java.io.BufferedReader;

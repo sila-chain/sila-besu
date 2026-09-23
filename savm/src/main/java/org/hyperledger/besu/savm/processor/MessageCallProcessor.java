@@ -16,8 +16,8 @@ package org.hyperledger.besu.savm.processor;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.ModificationNotAllowedException;
+import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;

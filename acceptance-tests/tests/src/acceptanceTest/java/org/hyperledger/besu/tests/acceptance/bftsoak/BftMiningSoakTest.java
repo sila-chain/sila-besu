@@ -317,7 +317,8 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     LOG.info(
         "Deploying a smart contract that should only work if the chain is running on the shanghai fork");
     SimpleStorageSilaShanghai simpleStorageContractSilaShanghai =
-        minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageSilaShanghai.class));
+        minerNode1.execute(
+            contractTransactions.createSmartContract(SimpleStorageSilaShanghai.class));
 
     assertThat(simpleStorageContractSilaShanghai.getContractAddress()).isNotNull();
 
@@ -425,7 +426,8 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     LOG.info(
         "Checking that the archive node shows us the original smart contract value if we set a historic block number");
     // Wait for the archive node to fully sync to the current chain height before querying
-    // historical state. The archive was restarted during the SilaShanghai and SilaOsaka upgrades, so
+    // historical state. The archive was restarted during the SilaShanghai and SilaOsaka upgrades,
+    // so
     // without this wait it may not yet have processed all blocks and could return stale state.
     BigInteger currentChainHeight = minerNode1.execute(silTransactions.blockNumber());
     minerNode2.verify(blockchain.minimumHeight(currentChainHeight.intValue(), 180));

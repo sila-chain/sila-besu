@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.parameters;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
-import org.hyperledger.besu.sila.debug.TraceOptions;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
+import org.hyperledger.besu.sila.debug.TraceOptions;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import org.junit.jupiter.api.Test;

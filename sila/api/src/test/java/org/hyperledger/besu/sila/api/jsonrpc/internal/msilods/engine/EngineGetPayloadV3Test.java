@@ -125,7 +125,8 @@ public class EngineGetPayloadV3Test extends AbstractEngineGetPayloadTest {
             Optional.empty(),
             BlockCreationTiming.EMPTY);
 
-    when(mergeContext.retrievePayloadById(shanghaiPid)).thenReturn(Optional.of(payloadSilaShanghai));
+    when(mergeContext.retrievePayloadById(shanghaiPid))
+        .thenReturn(Optional.of(payloadSilaShanghai));
 
     final var resp = resp(RpcMethod.ENGINE_GET_PAYLOAD_V3.getMethodName(), shanghaiPid);
 

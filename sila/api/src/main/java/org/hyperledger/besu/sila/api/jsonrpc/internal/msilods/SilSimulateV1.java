@@ -19,6 +19,10 @@ import static org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorTy
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.plugin.services.BlockImportTracerProvider;
+import org.hyperledger.besu.plugin.services.tracer.BlockAwareOperationTracer;
+import org.hyperledger.besu.savm.tracing.OperationTracer;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
@@ -34,16 +38,12 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockStateCallResu
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.BlockSimulationResult;
 import org.hyperledger.besu.sila.transaction.BlockSimulator;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallError;
 import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallException;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
-import org.hyperledger.besu.plugin.ServiceManager;
-import org.hyperledger.besu.plugin.services.BlockImportTracerProvider;
-import org.hyperledger.besu.plugin.services.tracer.BlockAwareOperationTracer;
 
 import java.util.List;
 import java.util.Optional;

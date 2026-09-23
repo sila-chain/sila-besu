@@ -15,6 +15,9 @@
 package org.hyperledger.besu.sila.p2p.rlpx.connections.netty;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.p2p.config.RlpxConfiguration;
 import org.hyperledger.besu.sila.p2p.peers.LocalNode;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
@@ -29,9 +32,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.handshake.HandshakeSecrets;
 import org.hyperledger.besu.sila.p2p.rlpx.handshake.Handshaker;
 import org.hyperledger.besu.sila.p2p.rlpx.handshake.HandshakerProvider;
 import org.hyperledger.besu.sila.p2p.rlpx.handshake.ecies.ECIESHandshaker;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.data.EnodeURL;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.io.IOException;

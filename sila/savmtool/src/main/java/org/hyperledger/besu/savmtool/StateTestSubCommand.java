@@ -15,24 +15,14 @@
 package org.hyperledger.besu.savmtool;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
-import static org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules.shouldClearEmptyAccounts;
 import static org.hyperledger.besu.savmtool.StateTestSubCommand.COMMAND_NAME;
+import static org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules.shouldClearEmptyAccounts;
 
 import org.hyperledger.besu.datatypes.BlobGas;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Log;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseSipSpec;
-import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseSpec;
-import org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules;
-import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.precompile.AbstractBLS12PrecompiledContract;
 import org.hyperledger.besu.savm.precompile.AbstractPrecompiledContract;
@@ -42,7 +32,17 @@ import org.hyperledger.besu.savm.tracing.OperationTracer;
 import org.hyperledger.besu.savm.tracing.StreamingOperationTracer;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.savmtool.exception.UnsupportedForkException;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
+import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseSipSpec;
+import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseSpec;
+import org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules;
+import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
 import org.hyperledger.besu.util.LogConfigurator;
 
 import java.io.BufferedReader;
@@ -68,8 +68,8 @@ import picocli.CommandLine.Parameters;
 import picocli.CommandLine.ParentCommand;
 
 /**
- * This class, StateTestSubCommand, is a command-line interface (CLI) command that executes an
- * Sila State Test. It implements the Runnable interface, meaning it can be used in a thread of
+ * This class, StateTestSubCommand, is a command-line interface (CLI) command that executes an Sila
+ * State Test. It implements the Runnable interface, meaning it can be used in a thread of
  * execution.
  *
  * <p>The class is annotated with @CommandLine.Command, which is a PicoCLI annotation that

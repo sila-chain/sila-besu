@@ -20,8 +20,8 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -50,7 +50,8 @@ public class ChainSyncStateStorageTest {
   @Test
   public void shouldReturnNullWhenNoStateFileExists() {
     assertThat(
-            storage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
+            storage.loadState(
+                rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
         .isNull();
   }
 
@@ -132,7 +133,8 @@ public class ChainSyncStateStorageTest {
     // Create a new storage instance pointing to the same directory
     final ChainSyncStateStorage newStorage = new ChainSyncStateStorage(tempDir);
     final ChainSyncState loadedState =
-        newStorage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions()));
+        newStorage.loadState(
+            rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions()));
 
     assertThat(loadedState).isNotNull();
     assertThat(loadedState.pivotBlockHeader()).isEqualTo(pivotBlockHeader);
@@ -179,7 +181,8 @@ public class ChainSyncStateStorageTest {
 
     // Load should return null after deletion
     assertThat(
-            storage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
+            storage.loadState(
+                rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
         .isNull();
   }
 
@@ -263,7 +266,8 @@ public class ChainSyncStateStorageTest {
   public void shouldHandleCompleteStateLifecycle() {
     // 1. Initially no state exists
     assertThat(
-            storage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
+            storage.loadState(
+                rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
         .isNull();
 
     // 2. Store initial sync state
@@ -280,7 +284,8 @@ public class ChainSyncStateStorageTest {
     final ChainSyncState updatedState = loaded.withHeadersDownloadComplete();
     storage.storeState(updatedState);
 
-    loaded = storage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions()));
+    loaded =
+        storage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions()));
     assertThat(loaded.headersDownloadComplete()).isTrue();
     assertThat(loaded.headerDownloadAnchor()).isNull();
 
@@ -288,7 +293,8 @@ public class ChainSyncStateStorageTest {
     storage.deleteState();
 
     assertThat(
-            storage.loadState(rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
+            storage.loadState(
+                rlp -> BlockHeader.readFrom(rlp, new SilaMainnetBlockHeaderFunctions())))
         .isNull();
   }
 

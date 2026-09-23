@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.trie.patricia;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.trie.KeyValueMerkleStorage;
 import org.hyperledger.besu.sila.trie.MerkleStorage;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.util.Optional;
 import java.util.function.Function;

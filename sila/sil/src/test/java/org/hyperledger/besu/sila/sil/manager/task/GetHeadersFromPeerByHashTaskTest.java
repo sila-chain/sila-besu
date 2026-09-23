@@ -20,13 +20,13 @@ import static org.hyperledger.besu.sila.referencetests.ReferenceTestBlockchain.g
 
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.sil.manager.MockPeerConnection;
 import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
 import org.hyperledger.besu.sila.sil.manager.siltaskutils.PeerMessageTaskTest;
 import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;

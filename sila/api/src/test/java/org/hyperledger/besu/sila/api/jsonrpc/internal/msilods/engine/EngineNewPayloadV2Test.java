@@ -28,6 +28,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.BlobGas;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.BlockProcessingOutputs;
 import org.hyperledger.besu.sila.BlockProcessingResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.ExecutionEngineJsonRpcMethod;
@@ -35,9 +36,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.WithdrawalParam
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcError;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Withdrawal;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.WithdrawalsValidator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.WithdrawalsValidator;
 
 import java.util.Collections;
 import java.util.List;

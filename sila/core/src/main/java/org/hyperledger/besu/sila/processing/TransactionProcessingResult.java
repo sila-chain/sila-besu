@@ -15,11 +15,11 @@
 package org.hyperledger.besu.sila.processing;
 
 import org.hyperledger.besu.datatypes.Log;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.PartialBlockAccessView;
+import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.PartialBlockAccessView;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedWorldStateUpdateAccumulator;
-import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 
 import java.util.List;
 import java.util.Optional;
@@ -150,7 +150,8 @@ public class TransactionProcessingResult
 
   /**
    * Factory method for successful transactions where gasSpent equals gasUsedByTransaction. This is
-   * the standard behavior for pre-SilaAmsterdam forks where block gas accounting uses post-refund gas.
+   * the standard behavior for pre-SilaAmsterdam forks where block gas accounting uses post-refund
+   * gas.
    */
   public static TransactionProcessingResult successful(
       final List<Log> logs,
@@ -198,8 +199,8 @@ public class TransactionProcessingResult
 
   /**
    * Carries the multidimensional gas fields ({@code gasSpent} and {@code stateGasUsed}) needed by
-   * SilaAmsterdam+ forks under SIP-7778 / SIP-8037 — pre-SilaAmsterdam callers use the shorter overload
-   * above.
+   * SilaAmsterdam+ forks under SIP-7778 / SIP-8037 — pre-SilaAmsterdam callers use the shorter
+   * overload above.
    */
   public TransactionProcessingResult(
       final Status status,
@@ -253,7 +254,9 @@ public class TransactionProcessingResult
         partialBlockAccessView);
   }
 
-  /** Constructor with gasSpent and stateGasUsed (for SilaAmsterdam+ forks with SIP-7778/SIP-8037). */
+  /**
+   * Constructor with gasSpent and stateGasUsed (for SilaAmsterdam+ forks with SIP-7778/SIP-8037).
+   */
   public TransactionProcessingResult(
       final Status status,
       final List<Log> logs,
@@ -309,18 +312,19 @@ public class TransactionProcessingResult
    * <p>This value has different semantics depending on the protocol version:
    *
    * <ul>
-   *   <li><b>Pre-SilaPrague:</b> Equals the execution gas (gasLimit - gasRemaining), same as what would
-   *       be charged to the user before refunds.
+   *   <li><b>Pre-SilaPrague:</b> Equals the execution gas (gasLimit - gasRemaining), same as what
+   *       would be charged to the user before refunds.
    *   <li><b>SilaPrague+ (SIP-7623):</b> {@code max(executionGas, floorCost)} where floorCost is
    *       calculated based on calldata costs. This implements the "floor gas" mechanism that
    *       prevents calldata-heavy transactions from paying less than their fair share of block
    *       space.
-   *   <li><b>SilaAmsterdam+ (SIP-7778):</b> This value is used for block gas limit accounting instead
-   *       of the post-refund gas, preventing block gas limit circumvention through refund credits.
+   *   <li><b>SilaAmsterdam+ (SIP-7778):</b> This value is used for block gas limit accounting
+   *       instead of the post-refund gas, preventing block gas limit circumvention through refund
+   *       credits.
    * </ul>
    *
    * <p>Note: This value is set by {@link
-   * org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor} during transaction
+   * org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor} during transaction
    * processing.
    *
    * @return the estimated gas used for block accounting purposes

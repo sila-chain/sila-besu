@@ -14,17 +14,16 @@
  */
 package org.hyperledger.besu.sila.sil;
 
-import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 
 import java.util.BitSet;
 import java.util.Set;
 
 /**
  * Sil protocol messages as defined in <a
- * href="https://github.com/sila-chain/devp2p/blob/master/caps/sil.md">Sila Wire Protocol
- * (SIL)</a>
+ * href="https://github.com/sila-chain/devp2p/blob/master/caps/sil.md">Sila Wire Protocol (SIL)</a>
  */
 public class SilProtocol implements SubProtocol {
   public static final String NAME = "sil";

@@ -16,13 +16,13 @@ package org.hyperledger.besu.sila.api.jsonrpc.websocket;
 
 import static org.hyperledger.besu.sila.api.jsonrpc.authentication.AuthenticationUtils.truncToken;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.AuthenticationService;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.AuthenticationUtils;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.DefaultAuthenticationService;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.Logging403ErrorHandler;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.SubscriptionManager;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.net.InetSocketAddress;
 import java.util.Locale;

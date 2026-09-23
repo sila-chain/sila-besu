@@ -16,6 +16,8 @@ package org.hyperledger.besu.sila.sil.transactions;
 
 import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration.Implementation.LAYERED;
 
+import org.hyperledger.besu.plugin.services.BesuEvents;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
@@ -34,10 +36,8 @@ import org.hyperledger.besu.sila.sil.transactions.layered.SparseTransactions;
 import org.hyperledger.besu.sila.sil.transactions.sorter.AbstractPendingTransactionsSorter;
 import org.hyperledger.besu.sila.sil.transactions.sorter.BaseFeePendingTransactionsSorter;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.plugin.services.BesuEvents;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.time.Clock;
 import java.util.function.BiFunction;

@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.trie.pathbased.common.worldview;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
+import org.hyperledger.besu.savm.worldstate.WorldView;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.savm.worldstate.WorldView;
 
 import java.util.Map;
 import java.util.Optional;

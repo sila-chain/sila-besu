@@ -15,8 +15,8 @@
 package org.hyperledger.besu.savm.processor;
 
 import org.hyperledger.besu.datatypes.Address;
-import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.ModificationNotAllowedException;
+import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.contractvalidation.ContractValidationRule;
@@ -216,7 +216,9 @@ public class ContractCreationProcessor extends AbstractMessageProcessor {
 
     // Only now charge state gas for code deposit (cpsb * codeSize).
     if (!frame.consumeStateGas(
-        savm.getGasCalculator().stateGasCostCalculator().codeDepositStateGas(contractCode.size()))) {
+        savm.getGasCalculator()
+            .stateGasCostCalculator()
+            .codeDepositStateGas(contractCode.size()))) {
       LOG.trace("Contract creation error: insufficient state gas for code deposit");
       // SIP-8037: code deposit OOG is an exceptional halt. handleStateGasHalt refunds the
       // execution-time state gas (including any spillover) to the reservoir; intrinsic state gas

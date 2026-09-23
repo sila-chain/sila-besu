@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.messages;
 
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.AbstractMessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 import java.util.stream.StreamSupport;

@@ -19,10 +19,10 @@ import static org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider.cre
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.account.AccountStorageEntry;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.util.Map;
 import java.util.Random;

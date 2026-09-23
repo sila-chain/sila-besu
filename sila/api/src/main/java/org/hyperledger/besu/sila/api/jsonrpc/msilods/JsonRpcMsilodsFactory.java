@@ -15,6 +15,10 @@
 package org.hyperledger.besu.sila.api.jsonrpc.methods;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.plugin.BesuPlugin;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
@@ -27,20 +31,16 @@ import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.p2p.peers.EnodeDnsConfiguration;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.permissioning.AccountLocalConfigPermissioningController;
 import org.hyperledger.besu.sila.permissioning.NodeLocalConfigPermissioningController;
+import org.hyperledger.besu.sila.sil.manager.SilPeers;
+import org.hyperledger.besu.sila.sil.manager.SilScheduler;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.plugin.BesuPlugin;
 
 import java.math.BigInteger;
 import java.nio.file.Path;

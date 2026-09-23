@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.permissioning.node;
 
+import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.permissioning.NodeLocalConfigPermissioningController;
-import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.util.List;

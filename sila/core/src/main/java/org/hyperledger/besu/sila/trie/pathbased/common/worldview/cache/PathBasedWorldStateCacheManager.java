@@ -17,6 +17,8 @@ package org.hyperledger.besu.sila.trie.pathbased.common.worldview.cache;
 import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.BlockHeader;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldStateProvider;
@@ -25,8 +27,6 @@ import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldSta
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.StorageSubscriber;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.plugin.data.BlockHeader;
 
 import java.util.ArrayList;
 import java.util.Comparator;

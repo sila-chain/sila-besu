@@ -24,8 +24,8 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 /**
- * This interface represents the connection options for Sila statistics. It provides methods to
- * get the scheme, node name, secret, host, port, contact, and CA certificate.
+ * This interface represents the connection options for Sila statistics. It provides methods to get
+ * the scheme, node name, secret, host, port, contact, and CA certificate.
  */
 @Value.Immutable
 public interface SilStatsConnectOptions {

@@ -23,8 +23,8 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.datatypes.VersionedHash;
 import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.frame.MessageFrame;
-import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.LondonGasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
 
 import java.util.ArrayList;
 import java.util.Arrays;

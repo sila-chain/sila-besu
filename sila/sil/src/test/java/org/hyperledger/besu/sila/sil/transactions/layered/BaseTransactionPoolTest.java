@@ -29,6 +29,8 @@ import org.hyperledger.besu.datatypes.BlobType;
 import org.hyperledger.besu.datatypes.CodeDelegation;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.StubMetricsSystem;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.core.BlobTestFixture;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
@@ -40,8 +42,6 @@ import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.util.TrustedSetupClassLoaderExtension;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
 import org.hyperledger.besu.testutil.DeterministicSilScheduler;
 
 import java.math.BigInteger;

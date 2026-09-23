@@ -17,13 +17,13 @@ package org.hyperledger.besu.sila.trie.pathbased.common.worldview.cache;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 
 import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;

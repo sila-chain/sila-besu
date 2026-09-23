@@ -32,15 +32,15 @@ import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
 import org.hyperledger.besu.sila.core.encoding.EncodingContext;
 import org.hyperledger.besu.sila.core.encoding.TransactionEncoder;
+import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.sil.transactions.layered.BaseFeePrioritizedTransactions;
 import org.hyperledger.besu.sila.sil.transactions.layered.EndLayer;
 import org.hyperledger.besu.sila.sil.transactions.layered.LayeredPendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.layered.ReadyTransactions;
 import org.hyperledger.besu.sila.sil.transactions.layered.SparseTransactions;
 import org.hyperledger.besu.sila.sil.transactions.layered.TransactionsLayer;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.transactionpool.TransactionPoolPreProcessor;
-import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.transactionpool.TransactionPoolPreProcessor;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;

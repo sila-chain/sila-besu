@@ -17,10 +17,10 @@ package org.hyperledger.besu.savmtool;
 import static org.hyperledger.besu.cli.DefaultCommandValues.getDefaultBesuDataPath;
 
 import org.hyperledger.besu.controller.BesuController;
-import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.BlockParameter;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.plugin.services.BesuConfiguration;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.services.BesuConfigurationImpl;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.BlockParameter;
 
 import java.nio.file.Path;
 import java.util.Optional;

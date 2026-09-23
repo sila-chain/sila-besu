@@ -19,10 +19,6 @@ import org.hyperledger.besu.datatypes.Log;
 import org.hyperledger.besu.datatypes.PendingTransaction;
 import org.hyperledger.besu.datatypes.Transaction;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
-import org.hyperledger.besu.savm.frame.MessageFrame;
-import org.hyperledger.besu.savm.operation.Operation;
-import org.hyperledger.besu.savm.worldstate.WorldView;
 import org.hyperledger.besu.plugin.data.BlockBody;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.data.ProcessableBlockHeader;
@@ -35,6 +31,10 @@ import org.hyperledger.besu.plugin.services.txselection.PluginTransactionSelecto
 import org.hyperledger.besu.plugin.services.txselection.PluginTransactionSelectorFactory;
 import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
 import org.hyperledger.besu.plugin.services.txselection.TransactionEvaluationContext;
+import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
+import org.hyperledger.besu.savm.frame.MessageFrame;
+import org.hyperledger.besu.savm.operation.Operation;
+import org.hyperledger.besu.savm.worldstate.WorldView;
 
 import java.util.ArrayList;
 import java.util.List;

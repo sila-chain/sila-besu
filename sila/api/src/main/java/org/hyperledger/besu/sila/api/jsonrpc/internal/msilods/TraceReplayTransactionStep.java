@@ -23,7 +23,7 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.flat.FlatT
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.vm.VmTrace;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.vm.VmTraceGenerator;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.Set;
 import java.util.concurrent.CompletableFuture;

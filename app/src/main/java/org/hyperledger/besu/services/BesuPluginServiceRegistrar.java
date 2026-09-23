@@ -16,8 +16,6 @@ package org.hyperledger.besu.services;
 
 import org.hyperledger.besu.Runner;
 import org.hyperledger.besu.controller.BesuController;
-import org.hyperledger.besu.sila.api.query.BlockchainQueries;
-import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.plugin.services.BesuEvents;
 import org.hyperledger.besu.plugin.services.BlockSimulationService;
 import org.hyperledger.besu.plugin.services.BlockchainService;
@@ -39,6 +37,8 @@ import org.hyperledger.besu.plugin.services.p2p.P2PService;
 import org.hyperledger.besu.plugin.services.rlp.RlpConverterService;
 import org.hyperledger.besu.plugin.services.sync.SynchronizationService;
 import org.hyperledger.besu.plugin.services.transactionpool.TransactionPoolService;
+import org.hyperledger.besu.sila.api.query.BlockchainQueries;
+import org.hyperledger.besu.sila.core.MiningConfiguration;
 
 /**
  * Single source of truth for registering plugin services with a {@link BesuPluginContextImpl}.

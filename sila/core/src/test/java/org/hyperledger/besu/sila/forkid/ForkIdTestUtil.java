@@ -112,7 +112,8 @@ public class ForkIdTestUtil {
         Arrays.asList(
             new ForkId(Bytes.fromHexString("0xfe3366e7"), 1735371L),
             new ForkId(Bytes.fromHexString("0xb96cbd13"), 1677557088L),
-            new ForkId(Bytes.fromHexString("0xf7f9bc08"), 0L)); // First SilaShanghai block (timestamp)
+            new ForkId(
+                Bytes.fromHexString("0xf7f9bc08"), 0L)); // First SilaShanghai block (timestamp)
     public static final List<ForkId> HOODI =
         List.of(
             new ForkId(Bytes.fromHexString("0xbef71d30"), 1742999832L),
@@ -140,7 +141,8 @@ public class ForkIdTestUtil {
   }
 
   public static class Network {
-    public static final Network SILA_MAINNET = network(GenesisHash.SILA_MAINNET, Forks.SILA_MAINNET, emptyList());
+    public static final Network SILA_MAINNET =
+        network(GenesisHash.SILA_MAINNET, Forks.SILA_MAINNET, emptyList());
     public static final Network SEPOLIA =
         network(GenesisHash.SEPOLIA, Forks.SEPOLIA_BLOCKNUMBERS, Forks.SEPOLIA_TIMESTAMPS);
     public static final Network HOODI =

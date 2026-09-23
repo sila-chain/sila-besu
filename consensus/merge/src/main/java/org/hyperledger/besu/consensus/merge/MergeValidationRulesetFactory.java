@@ -14,24 +14,24 @@
  */
 package org.hyperledger.besu.consensus.merge;
 
-import static org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderValidator.MIN_GAS_LIMIT;
-import static org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderValidator.TIMESTAMP_TOLERANCE_S;
+import static org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderValidator.MIN_GAS_LIMIT;
+import static org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderValidator.TIMESTAMP_TOLERANCE_S;
 
 import org.hyperledger.besu.consensus.merge.headervalidationrules.ConstantOmmersHashRule;
 import org.hyperledger.besu.consensus.merge.headervalidationrules.IncrementalTimestampRule;
 import org.hyperledger.besu.consensus.merge.headervalidationrules.NoDifficultyRule;
 import org.hyperledger.besu.consensus.merge.headervalidationrules.NoNonceRule;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.AncestryValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.BaseFeeMarketBlockHeaderGasPriceValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.ExtraDataMaxLengthValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.GasLimitRangeAndDeltaValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.GasUsageValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.TimestampBoundedByFutureParameter;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.AncestryValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.BaseFeeMarketBlockHeaderGasPriceValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.ExtraDataMaxLengthValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.GasLimitRangeAndDeltaValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.GasUsageValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.TimestampBoundedByFutureParameter;
 
 import java.util.Optional;
 
@@ -45,8 +45,8 @@ public class MergeValidationRulesetFactory {
    * Creates a set of rules which when executed will determine if a given block header is valid with
    * respect to its parent (or chain).
    *
-   * <p>Specifically the set of rules provided by this function are to be used for a SilaMainnet Merge
-   * chain.
+   * <p>Specifically the set of rules provided by this function are to be used for a SilaMainnet
+   * Merge chain.
    *
    * @param feeMarket the applicable {@link FeeMarket}
    * @return the header validator.

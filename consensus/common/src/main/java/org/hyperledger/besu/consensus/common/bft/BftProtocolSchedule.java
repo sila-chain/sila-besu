@@ -17,9 +17,9 @@ package org.hyperledger.besu.consensus.common.bft;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.hyperledger.besu.consensus.common.ForkSpec;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
 
 import java.util.List;
 

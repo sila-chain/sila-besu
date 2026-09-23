@@ -22,6 +22,7 @@ import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.PLUGINS;
 import static org.hyperledger.besu.tests.acceptance.dsl.transaction.bft.ConsensusType.QBFT;
 
 import org.hyperledger.besu.crypto.KeyPair;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.AddressHelpers;
@@ -30,7 +31,6 @@ import org.hyperledger.besu.sila.core.plugins.PluginConfiguration;
 import org.hyperledger.besu.sila.permissioning.LocalPermissioningConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.tests.acceptance.dsl.node.BesuNode;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
 import org.hyperledger.besu.tests.acceptance.dsl.node.RunnableNode;

@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.flat;
 
 import static com.fasterxml.jackson.annotation.JsonInclude.Include.NON_NULL;
 
+import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.Quantity;
-import org.hyperledger.besu.savm.tracing.TraceFrame;
 
 import com.fasterxml.jackson.annotation.JsonInclude;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;

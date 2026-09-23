@@ -18,6 +18,8 @@ import static com.google.common.base.Preconditions.checkNotNull;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.p2p.config.RlpxConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeer;
 import org.hyperledger.besu.sila.p2p.peers.LocalNode;
@@ -33,8 +35,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.connections.netty.NettyConnectionIniti
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerConnectionGatekeeper;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.plugin.data.EnodeURL;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.net.InetSocketAddress;

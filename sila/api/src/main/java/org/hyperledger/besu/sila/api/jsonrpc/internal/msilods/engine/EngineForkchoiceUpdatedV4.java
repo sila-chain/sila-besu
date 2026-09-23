@@ -23,8 +23,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.EngineForkchoic
 import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.EnginePayloadAttributesParameter;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Optional;
 
@@ -32,7 +32,9 @@ import io.vertx.core.Vertx;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** The EngineForkchoiceUpdatedV4 method for SilaAmsterdam fork with slotNumber support (SIP-7843). */
+/**
+ * The EngineForkchoiceUpdatedV4 method for SilaAmsterdam fork with slotNumber support (SIP-7843).
+ */
 public class EngineForkchoiceUpdatedV4 extends AbstractEngineForkchoiceUpdatedV4 {
 
   private static final Logger LOG = LoggerFactory.getLogger(EngineForkchoiceUpdatedV4.class);

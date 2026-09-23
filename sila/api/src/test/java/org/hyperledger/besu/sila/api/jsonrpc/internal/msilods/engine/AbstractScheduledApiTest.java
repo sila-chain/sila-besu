@@ -25,8 +25,8 @@ import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.SH
 import static org.mockito.Mockito.lenient;
 import static org.mockito.Mockito.mock;
 
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
 import org.hyperledger.besu.sila.util.TrustedSetupClassLoaderExtension;
 
 import java.util.Optional;

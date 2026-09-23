@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.vm;
 import static org.hyperledger.besu.datatypes.Hash.ZERO;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.operation.BlockHashOperation;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;

@@ -17,11 +17,6 @@ package org.hyperledger.besu.sila.vm;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.sila.core.ExecutionContextTestFixture;
-import org.hyperledger.besu.sila.core.MessageFrameTestFixture;
-import org.hyperledger.besu.sila.referencetests.ReferenceTestBlockchain;
 import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
@@ -34,6 +29,11 @@ import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
 import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
+import org.hyperledger.besu.sila.core.ExecutionContextTestFixture;
+import org.hyperledger.besu.sila.core.MessageFrameTestFixture;
+import org.hyperledger.besu.sila.referencetests.ReferenceTestBlockchain;
 
 import java.util.List;
 import java.util.OptionalLong;

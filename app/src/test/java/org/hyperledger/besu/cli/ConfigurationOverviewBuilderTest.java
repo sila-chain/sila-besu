@@ -21,8 +21,8 @@ import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfigur
 import static org.mockito.Mockito.mock;
 
 import org.hyperledger.besu.cli.config.InternalProfileName;
-import org.hyperledger.besu.sila.chain.ChainDataPruner.ChainPruningStrategy;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.chain.ChainDataPruner.ChainPruningStrategy;
 
 import java.math.BigInteger;
 import java.util.ArrayList;

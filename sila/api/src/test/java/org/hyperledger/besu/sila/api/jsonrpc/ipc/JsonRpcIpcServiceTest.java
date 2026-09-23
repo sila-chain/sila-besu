@@ -19,13 +19,13 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.api.jsonrpc.execution.BaseJsonRpcProcessor;
 import org.hyperledger.besu.sila.api.jsonrpc.execution.JsonRpcExecutor;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.methods.WebSocketMethodsFactory;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.SubscriptionManager;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.nio.file.Path;
 import java.util.Arrays;

@@ -18,12 +18,12 @@ import org.hyperledger.besu.datatypes.AccountValue;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldView;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.ModificationNotAllowedException;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.internal.CodeCache;
+import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldView;
 
 import java.util.HashMap;
 import java.util.Map;

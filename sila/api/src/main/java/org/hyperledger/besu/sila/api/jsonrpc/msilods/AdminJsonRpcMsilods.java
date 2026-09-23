@@ -15,6 +15,8 @@
 package org.hyperledger.besu.sila.api.jsonrpc.methods;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.plugin.BesuPlugin;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.AdminAddPeer;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.AdminChangeLogLevel;
@@ -27,12 +29,10 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.AdminRemovePeer;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.PluginsReloadConfiguration;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
-import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.p2p.peers.EnodeDnsConfiguration;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.plugin.BesuPlugin;
+import org.hyperledger.besu.sila.sil.manager.SilPeers;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.math.BigInteger;
 import java.util.Map;

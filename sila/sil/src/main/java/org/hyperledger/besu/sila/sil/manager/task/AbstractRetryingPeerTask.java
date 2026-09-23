@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
@@ -21,7 +22,6 @@ import org.hyperledger.besu.sila.sil.manager.exceptions.MaxRetriesReachedExcepti
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.PeerBreachedProtocolException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.PeerDisconnectedException;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;

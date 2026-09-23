@@ -21,10 +21,10 @@ import static org.hyperledger.besu.sila.api.query.cache.TransactionLogBloomCache
 
 import org.hyperledger.besu.cli.util.VersionProvider;
 import org.hyperledger.besu.controller.BesuController;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.api.query.cache.TransactionLogBloomCacher;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.nio.file.Path;
 

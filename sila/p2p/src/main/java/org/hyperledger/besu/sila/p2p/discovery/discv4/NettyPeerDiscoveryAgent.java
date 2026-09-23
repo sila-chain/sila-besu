@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.p2p.discovery.discv4;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
@@ -32,7 +33,6 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPack
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketSerializer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.net.SocketException;
 import java.nio.channels.UnsupportedAddressTypeException;

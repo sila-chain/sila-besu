@@ -19,12 +19,12 @@ import static org.junit.jupiter.api.Assumptions.assumeTrue;
 import static org.mockito.Mockito.mock;
 
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.p2p.config.RlpxConfiguration;
 import org.hyperledger.besu.sila.p2p.peers.LocalNode;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.ConnectionInitializer.ListeningAddresses;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnectionEventDispatcher;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerLookup;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.util.NetworkUtility;
 
 import java.net.InetAddress;

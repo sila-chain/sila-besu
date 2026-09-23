@@ -14,6 +14,10 @@
  */
 package org.hyperledger.besu.sila.p2p.rlpx.connections.netty;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.sila.p2p.network.exceptions.BreachOfProtocolException;
 import org.hyperledger.besu.sila.p2p.network.exceptions.IncompatiblePeerException;
 import org.hyperledger.besu.sila.p2p.network.exceptions.PeerChannelClosedException;
@@ -37,10 +41,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.HelloMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.WireMessageCodes;
 import org.hyperledger.besu.sila.rlp.RLPException;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;

@@ -15,11 +15,11 @@
 package org.hyperledger.besu.sila.components;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetProtocolSpecs;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecBuilder;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecBuilder;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSpecs;
 
 import javax.inject.Named;
 

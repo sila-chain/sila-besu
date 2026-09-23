@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hyperledger.besu.config.NetworkDefinition.SILA_MAINNET;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.HOODI_BOOTSTRAP_NODES;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.HOODI_DISCOVERY_URL;
-import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_BOOTSTRAP_NODES;
-import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_DISCOVERY_URL;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SEPOLIA_BOOTSTRAP_NODES;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SEPOLIA_DISCOVERY_URL;
+import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_BOOTSTRAP_NODES;
+import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_DISCOVERY_URL;
 
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.NetworkDefinition;

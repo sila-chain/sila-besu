@@ -18,9 +18,6 @@ import static org.hyperledger.besu.sila.sil.sync.StorageExceptionManager.canRetr
 import static org.hyperledger.besu.sila.sil.sync.StorageExceptionManager.errorCountAtThreshold;
 import static org.hyperledger.besu.sila.sil.sync.StorageExceptionManager.getRetryableErrorCounter;
 
-import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
-import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.TrieNodeHealingRequest;
-import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.exception.StorageException;
@@ -28,6 +25,9 @@ import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 import org.hyperledger.besu.services.pipeline.Pipe;
 import org.hyperledger.besu.services.tasks.Task;
+import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
+import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.TrieNodeHealingRequest;
+import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 
 import java.util.Optional;
 import java.util.stream.Stream;

@@ -15,7 +15,7 @@
 package org.hyperledger.besu.sila.core.encoding;
 
 import org.hyperledger.besu.datatypes.Log;
-import org.hyperledger.besu.sila.sila-mainnet.requests.InvalidDepositLogLayoutException;
+import org.hyperledger.besu.sila.silaMainnet.requests.InvalidDepositLogLayoutException;
 
 import java.math.BigInteger;
 
@@ -24,8 +24,8 @@ import org.apache.tuweni.bytes.Bytes;
 /**
  * Decodes a deposit log into its constituent parts.
  *
- * <p>Deposit logs are emitted by the Sila 2.0 deposit contract when a validator deposits funds
- * into the contract.
+ * <p>Deposit logs are emitted by the Sila 2.0 deposit contract when a validator deposits funds into
+ * the contract.
  *
  * <p>The data of the deposit log is organized in 32 bytes chunks. The data layout is:
  *

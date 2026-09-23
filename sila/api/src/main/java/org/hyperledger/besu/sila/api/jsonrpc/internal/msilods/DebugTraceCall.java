@@ -28,10 +28,10 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorRespo
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.debug.TraceOptions;
-import org.hyperledger.besu.sila.sila-mainnet.ImmutableTransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.ImmutableTransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
 import org.hyperledger.besu.sila.transaction.PreCloseStateHandler;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.vm.DebugOperationTracer;

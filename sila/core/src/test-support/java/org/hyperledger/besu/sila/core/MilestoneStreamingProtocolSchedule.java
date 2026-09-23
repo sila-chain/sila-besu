@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.core;
 
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
 
 import java.util.Comparator;
 import java.util.stream.Stream;

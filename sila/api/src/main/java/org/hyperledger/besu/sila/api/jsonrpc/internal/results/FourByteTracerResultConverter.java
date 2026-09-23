@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.calltrace.OpcodeCategory;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.savm.tracing.TraceFrame;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.List;
 import java.util.Map;
@@ -54,8 +54,8 @@ import org.apache.tuweni.bytes.Bytes;
  * a key in the format "0x[4-byte-selector]-[remaining-size]". The result is a map of these keys to
  * their occurrence counts.
  *
- * @see <a href="https://github.com/sila-chain/go-sila/blob/master/sil/tracers/native/4byte.go">
- *     Gsil 4byteTracer Implementation</a>
+ * @see <a href="https://github.com/sila-chain/go-sila/blob/master/sil/tracers/native/4byte.go">Gsil
+ *     4byteTracer Implementation</a>
  */
 public final class FourByteTracerResultConverter {
 

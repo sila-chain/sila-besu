@@ -16,15 +16,15 @@ package org.hyperledger.besu.savm;
 
 import org.hyperledger.besu.savm.gascalculator.BerlinGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.ByzantiumGasCalculator;
-import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.ConstantinopleGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.FrontierGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.gascalculator.HomesteadGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.IstanbulGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.LondonGasCalculator;
-import org.hyperledger.besu.savm.gascalculator.SilaOsakaGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.PetersburgGasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaOsakaGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.SilaPragueGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.SilaShanghaiGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.SpuriousDragonGasCalculator;
@@ -1093,7 +1093,8 @@ public class SilaMainnetSAVMs {
    * @param savmConfiguration the savm configuration
    * @return the savm
    */
-  public static SAVM amsterdam(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SAVM amsterdam(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     return amsterdam(new SilaPragueGasCalculator(), chainId, savmConfiguration);
   }
 
@@ -1389,7 +1390,8 @@ public class SilaMainnetSAVMs {
    * @param savmConfiguration the savm configuration
    * @return the savm
    */
-  public static SAVM futureSips(final BigInteger chainId, final SavmConfiguration savmConfiguration) {
+  public static SAVM futureSips(
+      final BigInteger chainId, final SavmConfiguration savmConfiguration) {
     return futureSips(new SilaPragueGasCalculator(), chainId, savmConfiguration);
   }
 
@@ -1499,7 +1501,8 @@ public class SilaMainnetSAVMs {
       final BigInteger chainId,
       final SavmConfiguration savmConfiguration) {
     OperationRegistry operationRegistry = new OperationRegistry();
-    registerExperimentalSipsOperations(operationRegistry, gasCalculator, chainId, savmConfiguration);
+    registerExperimentalSipsOperations(
+        operationRegistry, gasCalculator, chainId, savmConfiguration);
     return operationRegistry;
   }
 

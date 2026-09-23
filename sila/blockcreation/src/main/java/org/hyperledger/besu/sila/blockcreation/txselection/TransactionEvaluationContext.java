@@ -16,8 +16,8 @@ package org.hyperledger.besu.sila.blockcreation.txselection;
 
 import org.hyperledger.besu.datatypes.PendingTransaction;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.plugin.data.ProcessableBlockHeader;
+import org.hyperledger.besu.sila.core.Transaction;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;

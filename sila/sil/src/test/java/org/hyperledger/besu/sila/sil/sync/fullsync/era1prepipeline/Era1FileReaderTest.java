@@ -15,7 +15,7 @@
 package org.hyperledger.besu.sila.sil.sync.fullsync.era1prepipeline;
 
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.testutil.DeterministicSilScheduler;
 
 import java.net.URI;

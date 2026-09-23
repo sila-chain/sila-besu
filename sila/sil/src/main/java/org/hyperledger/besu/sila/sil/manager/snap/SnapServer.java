@@ -15,9 +15,14 @@
 package org.hyperledger.besu.sila.sil.manager.snap;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.BesuEvents;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.Synchronizer;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
+import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.messages.snap.AccountRangeMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.BlockAccessListsMessage;
@@ -32,18 +37,13 @@ import org.hyperledger.besu.sila.sil.messages.snap.SnapV2;
 import org.hyperledger.besu.sila.sil.messages.snap.StorageRangeMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.TrieNodesMessage;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
-import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
-import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.trie.CompactEncoding;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.BesuEvents;
 
 import java.util.ArrayList;
 import java.util.Collections;

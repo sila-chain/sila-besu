@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.services;
 
-import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.plugin.services.mining.MiningService;
+import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 
 /**
  * Implementation of the {@link MiningService} interface. This class provides methods to start and

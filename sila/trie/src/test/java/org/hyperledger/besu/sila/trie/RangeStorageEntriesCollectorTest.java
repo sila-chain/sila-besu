@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.trie;
 
-import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
+import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 
 import java.util.List;
 

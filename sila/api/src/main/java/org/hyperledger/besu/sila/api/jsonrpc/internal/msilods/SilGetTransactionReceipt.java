@@ -27,8 +27,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.TransactionReceipt
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.TransactionReceiptStatusResult;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.api.query.TransactionReceiptWithMetadata;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionReceiptType;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.TransactionReceiptType;
 
 public class SilGetTransactionReceipt implements JsonRpcMethod {
 

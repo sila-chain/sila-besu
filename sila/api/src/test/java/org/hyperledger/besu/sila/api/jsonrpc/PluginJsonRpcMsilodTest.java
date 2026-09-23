@@ -16,13 +16,13 @@ package org.hyperledger.besu.sila.api.jsonrpc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.plugin.services.exception.PluginRpcEndpointException;
+import org.hyperledger.besu.plugin.services.rpc.PluginRpcRequest;
+import org.hyperledger.besu.plugin.services.rpc.RpcMethodError;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.InvalidJsonRpcParameters;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.PluginJsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcError;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.plugin.services.exception.PluginRpcEndpointException;
-import org.hyperledger.besu.plugin.services.rpc.PluginRpcRequest;
-import org.hyperledger.besu.plugin.services.rpc.RpcMethodError;
 
 import java.util.Locale;
 import java.util.Optional;

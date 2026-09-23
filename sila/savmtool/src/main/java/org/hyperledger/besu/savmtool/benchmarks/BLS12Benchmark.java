@@ -196,7 +196,9 @@ public class BLS12Benchmark extends BenchmarkExecutor {
     }
 
     PrecompiledContract g1msmContract =
-        SavmSpec.savmSpec(forkVersion).getPrecompileContractRegistry().get(Address.BLS12_G1MULTIEXP);
+        SavmSpec.savmSpec(forkVersion)
+            .getPrecompileContractRegistry()
+            .get(Address.BLS12_G1MULTIEXP);
 
     precompile(testCases, g1msmContract, forkVersion);
   }
@@ -240,7 +242,9 @@ public class BLS12Benchmark extends BenchmarkExecutor {
     }
 
     PrecompiledContract g2msmContract =
-        SavmSpec.savmSpec(forkVersion).getPrecompileContractRegistry().get(Address.BLS12_G2MULTIEXP);
+        SavmSpec.savmSpec(forkVersion)
+            .getPrecompileContractRegistry()
+            .get(Address.BLS12_G2MULTIEXP);
 
     precompile(testCases, g2msmContract, forkVersion);
   }

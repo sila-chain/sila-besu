@@ -44,9 +44,9 @@ public class Sip8037StateGasCostCalculator implements StateGasCostCalculator {
   static final long KECCAK256_WORD_GAS_COST = 6L;
 
   /**
-   * The sila-mainnet transaction gas limit cap from SIP-7825 (2^24), enforced at runtime on regular gas.
-   * Mirrors {@code SilaOsakaTargetingGasLimitCalculator.SIP_7825_TRANSACTION_GAS_LIMIT_CAP} in the
-   * sila/core module; the value is duplicated here because the savm module cannot depend on
+   * The sila-mainnet transaction gas limit cap from SIP-7825 (2^24), enforced at runtime on regular
+   * gas. Mirrors {@code SilaOsakaTargetingGasLimitCalculator.SIP_7825_TRANSACTION_GAS_LIMIT_CAP} in
+   * the sila/core module; the value is duplicated here because the savm module cannot depend on
    * sila/core. Keep the two in sync.
    */
   static final long TX_MAX_GAS_LIMIT = 16_777_216L;

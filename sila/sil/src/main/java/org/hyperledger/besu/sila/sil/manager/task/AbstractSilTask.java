@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
-import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
+import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 
 import java.util.Collection;
 import java.util.concurrent.CancellationException;

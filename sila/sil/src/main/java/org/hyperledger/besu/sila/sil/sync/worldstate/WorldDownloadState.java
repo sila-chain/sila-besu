@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.sila.sil.sync.worldstate;
 
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.task.SilTask;
-import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.services.tasks.InMemoryTasksPriorityQueues;
 import org.hyperledger.besu.services.tasks.Task;
 import org.hyperledger.besu.services.tasks.TasksPriorityProvider;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.sil.manager.SilScheduler;
+import org.hyperledger.besu.sila.sil.manager.task.SilTask;
+import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Clock;

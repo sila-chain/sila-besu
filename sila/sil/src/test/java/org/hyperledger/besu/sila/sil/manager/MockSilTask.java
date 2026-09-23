@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.sil.manager;
 
-import org.hyperledger.besu.sila.sil.manager.task.AbstractSilTask;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.sil.manager.task.AbstractSilTask;
 
 import java.util.concurrent.CountDownLatch;
 

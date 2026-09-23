@@ -49,8 +49,8 @@ import org.bouncycastle.util.Pack;
  *
  * <p>This class has been inspired by the <code>IESEngine</code> implementation in Bouncy Castle. It
  * has been modified heavily to accommodate our usage, yet the core logic remains unchanged. It
- * implements a peculiarity of the Sila encryption protocol: updating the encryption MAC with
- * the IV.
+ * implements a peculiarity of the Sila encryption protocol: updating the encryption MAC with the
+ * IV.
  */
 public class ECIESEncryptionEngine {
 

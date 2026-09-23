@@ -30,8 +30,8 @@ import org.junit.jupiter.api.Test;
  * Acceptance test for the {@code targetGasLimit} payload attribute on {@code
  * engine_forkchoiceUpdatedV4}.
  *
- * <p>From SilaAmsterdam onwards the consensus layer must supply {@code targetGasLimit} when requesting
- * a payload; a payload-building fcU that omits it is rejected with {@code
+ * <p>From SilaAmsterdam onwards the consensus layer must supply {@code targetGasLimit} when
+ * requesting a payload; a payload-building fcU that omits it is rejected with {@code
  * INVALID_TARGET_GAS_LIMIT_PARAMS} (-32602).
  */
 public class EngineForkchoiceUpdatedV4TargetGasLimitAcceptanceTest extends AcceptanceTestBase {

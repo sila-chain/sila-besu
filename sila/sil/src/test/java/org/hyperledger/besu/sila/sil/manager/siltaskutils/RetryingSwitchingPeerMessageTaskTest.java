@@ -17,9 +17,9 @@ package org.hyperledger.besu.sila.sil.manager.siltaskutils;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
+import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.exceptions.MaxRetriesReachedException;
 import org.hyperledger.besu.sila.sil.manager.task.SilTask;
 

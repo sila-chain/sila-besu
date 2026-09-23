@@ -17,9 +17,9 @@ package org.hyperledger.besu.savm.precompile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hyperledger.besu.savm.precompile.AbstractPrecompiledContract.cacheEventConsumer;
 
+import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
 
 import java.util.Optional;
 

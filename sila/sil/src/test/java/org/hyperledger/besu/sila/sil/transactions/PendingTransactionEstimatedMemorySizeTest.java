@@ -21,7 +21,6 @@ import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.Memo
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.BLOB_PROOF_BUNDLE_SIZE_V0;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.BLOB_PROOF_BUNDLE_SIZE_V1;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.CODE_DELEGATION_ENTRY_SIZE;
-import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.SIP1559_AND_SIP4844_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.FRONTIER_AND_ACCESS_LIST_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.KZG_PROOF_CONTAINER_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.KZG_PROOF_SIZE;
@@ -31,6 +30,7 @@ import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.Memo
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.OPTIONAL_TO_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.PAYLOAD_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.PENDING_TRANSACTION_SHALLOW_SIZE;
+import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.SIP1559_AND_SIP4844_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.calculateListShallowSize;
 
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
@@ -47,9 +47,9 @@ import org.hyperledger.besu.sila.core.encoding.TransactionDecoder;
 import org.hyperledger.besu.sila.core.encoding.TransactionEncoder;
 import org.hyperledger.besu.sila.core.kzg.BlobProofBundle;
 import org.hyperledger.besu.sila.core.kzg.BlobsWithCommitments;
-import org.hyperledger.besu.sila.sil.transactions.layered.BaseTransactionPoolTest;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.sil.transactions.layered.BaseTransactionPoolTest;
 
 import java.io.IOException;
 import java.lang.management.ManagementFactory;

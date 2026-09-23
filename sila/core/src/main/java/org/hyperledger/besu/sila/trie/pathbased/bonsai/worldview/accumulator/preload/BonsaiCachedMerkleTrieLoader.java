@@ -19,12 +19,12 @@ import static org.hyperledger.besu.metrics.BesuMetricCategory.BLOCKCHAIN;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.MerkleTrieException;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.StorageSubscriber;
 import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

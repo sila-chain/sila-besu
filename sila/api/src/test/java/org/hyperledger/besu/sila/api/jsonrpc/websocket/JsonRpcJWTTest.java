@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.fail;
 import static org.mockito.Mockito.spy;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.api.jsonrpc.EngineJsonRpcService;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.AuthenticationService;
@@ -31,8 +33,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.MutableJsonRpcSuc
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.methods.WebSocketMethodsFactory;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.SubscriptionManager;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.nat.NatService;
 
 import java.io.File;
 import java.io.IOException;

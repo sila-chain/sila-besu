@@ -19,7 +19,7 @@ import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.PR
 import static org.hyperledger.besu.sila.api.jsonrpc.internal.methods.engine.ForkSupportHelper.validateForkSupported;
 
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Optional;
 

@@ -20,9 +20,6 @@ import java.util.Map;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.sila.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -30,6 +27,9 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import org.sila.beacon.discovery.schema.NodeRecord;
+import org.sila.beacon.discovery.schema.NodeRecordFactory;
 
 @ExtendWith(MockitoExtension.class)
 public class EnrResponsePacketDataRlpReaderTest {

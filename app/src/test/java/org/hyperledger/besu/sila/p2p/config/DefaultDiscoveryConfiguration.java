@@ -16,8 +16,8 @@ package org.hyperledger.besu.sila.p2p.config;
 
 import static java.util.stream.Collectors.toList;
 
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 
 import java.util.Collections;
 import java.util.List;

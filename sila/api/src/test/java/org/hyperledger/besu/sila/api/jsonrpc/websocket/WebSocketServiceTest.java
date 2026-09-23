@@ -23,6 +23,7 @@ import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verifyNoInteractions;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.api.handlers.TimeoutOptions;
 import org.hyperledger.besu.sila.api.jsonrpc.execution.BaseJsonRpcProcessor;
 import org.hyperledger.besu.sila.api.jsonrpc.execution.JsonRpcExecutor;
@@ -31,7 +32,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.websocket.methods.WebSocketMethodsF
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.SubscriptionManager;
 import org.hyperledger.besu.sila.api.util.TestJsonRpcMethodsUtil;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.Arrays;
 import java.util.Collections;

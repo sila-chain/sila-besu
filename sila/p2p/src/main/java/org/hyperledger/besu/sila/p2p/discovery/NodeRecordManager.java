@@ -18,12 +18,12 @@ import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.chain.VariablesStorage;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.util.NetworkUtility;
 
 import java.util.ArrayList;
@@ -300,12 +300,12 @@ public class NodeRecordManager {
    * locally-bound IPv6 TCP port hint registered at {@link #initializeLocalNode(HostEndpoint,
    * Optional, Optional)}. Writes a new ENR with an incremented {@code seq} and returns it.
    *
-   * <p><b>Fire-once semantics.</b> Sila nodes are expected to keep a stable advertised address
-   * for the lifetime of a session. If {@code ipv6Endpoint} is already set — either because the
-   * operator pinned {@code --p2p-host-ipv6} or because a prior auto-discovery write has already
-   * happened this session — this method is a no-op and returns {@link Optional#empty()}. The
-   * handler enforces the same principle by short-circuiting on operator pin upstream; this method
-   * provides the second guarantee against mid-session address churn.
+   * <p><b>Fire-once semantics.</b> Sila nodes are expected to keep a stable advertised address for
+   * the lifetime of a session. If {@code ipv6Endpoint} is already set — either because the operator
+   * pinned {@code --p2p-host-ipv6} or because a prior auto-discovery write has already happened
+   * this session — this method is a no-op and returns {@link Optional#empty()}. The handler
+   * enforces the same principle by short-circuiting on operator pin upstream; this method provides
+   * the second guarantee against mid-session address churn.
    *
    * <p>If no IPv6 TCP port hint was registered (i.e. dual-stack bind is not active, or RLPx did not
    * bind an IPv6 socket), this method is also a no-op.

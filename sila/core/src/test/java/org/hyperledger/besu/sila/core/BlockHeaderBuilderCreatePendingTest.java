@@ -19,9 +19,9 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.sila.GasLimitCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.DifficultyCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.DifficultyCalculator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.math.BigInteger;
 import java.util.Optional;

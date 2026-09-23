@@ -20,8 +20,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.ExecutionEngineJso
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockBody;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 

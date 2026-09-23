@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.worldstate.WorldState.StreamableAccount;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.InvalidJsonRpcParameters;
@@ -28,7 +29,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.DebugAccountRangeA
 import org.hyperledger.besu.sila.api.query.BlockWithMetadata;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.savm.worldstate.WorldState.StreamableAccount;
 
 import java.util.Collections;
 import java.util.List;

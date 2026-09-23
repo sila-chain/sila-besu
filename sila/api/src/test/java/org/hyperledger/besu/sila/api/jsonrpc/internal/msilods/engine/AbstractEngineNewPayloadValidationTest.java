@@ -22,16 +22,16 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.consensus.merge.blockcreation.MergeMiningCoordinator;
 import org.hyperledger.besu.datatypes.BlobGas;
 import org.hyperledger.besu.datatypes.VersionedHash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator;
-import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator;
 
 import java.util.List;
 import java.util.Optional;
@@ -281,7 +281,7 @@ public class AbstractEngineNewPayloadValidationTest {
       return "engine_test";
     }
 
-    public org.hyperledger.besu.sila.sila-mainnet.ValidationResult<
+    public org.hyperledger.besu.sila.silaMainnet.ValidationResult<
             org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType>
         testValidateBlobs(
             final List<Transaction> blobTransactions,

@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.sil.manager;
 
-import org.hyperledger.besu.sila.sil.manager.RequestManager.ResponseStream;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
+import org.hyperledger.besu.sila.sil.manager.RequestManager.ResponseStream;
 
 public interface PeerRequest {
   ResponseStream sendRequest(SilPeer peer) throws PeerNotConnected;

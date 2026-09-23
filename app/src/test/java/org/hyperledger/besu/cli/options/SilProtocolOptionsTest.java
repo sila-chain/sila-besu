@@ -18,8 +18,8 @@ import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.Mockito.verifyNoInteractions;
 
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.ImmutableSilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 
 import java.util.List;
 import java.util.function.ToIntFunction;

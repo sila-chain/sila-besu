@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
@@ -22,12 +23,11 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcSuccessRes
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec.Hardfork;
-import org.hyperledger.besu.sila.sila-mainnet.requests.RequestProcessorCoordinator;
-import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec.Hardfork;
+import org.hyperledger.besu.sila.silaMainnet.requests.RequestProcessorCoordinator;
 
 import java.util.Map;
 import java.util.Map.Entry;

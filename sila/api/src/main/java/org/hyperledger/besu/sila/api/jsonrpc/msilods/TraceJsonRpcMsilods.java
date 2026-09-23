@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.methods;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
@@ -30,9 +31,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.BlockReplay;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.BlockTracer;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Map;
 

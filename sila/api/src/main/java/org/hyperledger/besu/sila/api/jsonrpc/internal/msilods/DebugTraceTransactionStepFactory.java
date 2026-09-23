@@ -24,7 +24,7 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.diff.State
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.diff.StateTraceResult;
 import org.hyperledger.besu.sila.debug.TraceOptions;
 import org.hyperledger.besu.sila.debug.TracerType;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.function.Function;

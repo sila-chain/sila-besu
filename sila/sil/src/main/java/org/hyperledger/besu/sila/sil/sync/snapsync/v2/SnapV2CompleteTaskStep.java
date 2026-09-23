@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.sil.sync.snapsync.v2;
 
-import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
-import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
-import org.hyperledger.besu.sila.sil.sync.worldstate.WorldDownloadState;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.services.tasks.Task;
+import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
+import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
+import org.hyperledger.besu.sila.sil.sync.worldstate.WorldDownloadState;
 
 /** Snap/2 task completion step. Manages completion status. */
 public class SnapV2CompleteTaskStep {

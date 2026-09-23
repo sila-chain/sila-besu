@@ -15,6 +15,8 @@
 package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
+import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.BlockTrace;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.BlockTracer;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.Tracer;
@@ -24,10 +26,8 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.flat.FlatT
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.api.query.TransactionWithMetadata;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.vm.DebugOperationTracer;
-import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
-import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
 
 import java.util.Collections;
 import java.util.Optional;

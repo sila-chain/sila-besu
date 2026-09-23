@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.sil.sync;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkNotNull;
 
-import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.services.tasks.CachingTaskCollection;
+import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 
 import java.net.URI;
 import java.util.concurrent.TimeUnit;
@@ -57,7 +57,8 @@ public class SynchronizerConfiguration {
   public static final long DEFAULT_BODIES_DOWNLOAD_STEP_TIMEOUT_MILLIS =
       TimeUnit.SECONDS.toMillis(60);
   public static final Boolean DEFAULT_ERA1_IMPORT_PREPIPELINE_ENABLED = Boolean.FALSE;
-  public static final URI DEFAULT_ERA1_DATA_URI = URI.create("https://sila-mainnet.era1.nimbus.team/");
+  public static final URI DEFAULT_ERA1_DATA_URI =
+      URI.create("https://sila-mainnet.era1.nimbus.team/");
   public static final Integer DEFAULT_ERA1_IMPORT_PREPIPELINE_CONCURRENCY = 1;
   // Fast sync config
   private final int syncPivotDistance;

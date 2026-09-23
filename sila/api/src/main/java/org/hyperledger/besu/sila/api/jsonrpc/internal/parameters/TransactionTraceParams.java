@@ -15,10 +15,10 @@
 package org.hyperledger.besu.sila.api.jsonrpc.internal.parameters;
 
 import org.hyperledger.besu.datatypes.StateOverrideMap;
-import org.hyperledger.besu.sila.debug.TraceOptions;
-import org.hyperledger.besu.sila.debug.TracerType;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
+import org.hyperledger.besu.sila.debug.TraceOptions;
+import org.hyperledger.besu.sila.debug.TracerType;
 
 import java.util.Collections;
 import java.util.LinkedHashMap;

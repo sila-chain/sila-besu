@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.processor;
 
+import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.AccessLocationTracker;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.savm.tracing.TraceFrame;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.AccessLocationTracker;
 
 import java.util.Collection;
 import java.util.List;

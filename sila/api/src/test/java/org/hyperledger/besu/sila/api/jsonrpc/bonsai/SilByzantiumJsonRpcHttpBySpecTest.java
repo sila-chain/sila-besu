@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.bonsai;
 
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.api.jsonrpc.AbstractJsonRpcHttpBySpecTest;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 
 public class SilByzantiumJsonRpcHttpBySpecTest extends AbstractJsonRpcHttpBySpecTest {
 

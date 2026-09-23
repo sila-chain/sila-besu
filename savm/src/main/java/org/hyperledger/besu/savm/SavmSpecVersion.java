@@ -33,14 +33,20 @@ public enum SavmSpecVersion {
   TANGERINE_WHISTLE(SilaMainnetHardforkId.TANGERINE_WHISTLE, Integer.MAX_VALUE, Integer.MAX_VALUE),
   /** Spurious Dragon savm spec version. */
   SPURIOUS_DRAGON(
-      SilaMainnetHardforkId.SPURIOUS_DRAGON, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
+      SilaMainnetHardforkId.SPURIOUS_DRAGON,
+      Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON,
+      Integer.MAX_VALUE),
   /** Byzantium savm spec version. */
-  BYZANTIUM(SilaMainnetHardforkId.BYZANTIUM, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
+  BYZANTIUM(
+      SilaMainnetHardforkId.BYZANTIUM, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
   /** Constantinople savm spec version. */
   CONSTANTINOPLE(
-      SilaMainnetHardforkId.CONSTANTINOPLE, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
+      SilaMainnetHardforkId.CONSTANTINOPLE,
+      Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON,
+      Integer.MAX_VALUE),
   /** Petersburg / ConstantinopleFix savm spec version. */
-  PETERSBURG(SilaMainnetHardforkId.PETERSBURG, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
+  PETERSBURG(
+      SilaMainnetHardforkId.PETERSBURG, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
   /** Istanbul savm spec version. */
   ISTANBUL(SilaMainnetHardforkId.ISTANBUL, Limits.MAX_CODE_SIZE_SPURIOUS_DRAGON, Integer.MAX_VALUE),
   /** Berlin savm spec version */
@@ -76,10 +82,14 @@ public enum SavmSpecVersion {
       Limits.MAX_INITCODE_SIZE_AMSTERDAM),
   /** Bogota savm spec version. */
   BOGOTA(
-      SilaMainnetHardforkId.BOGOTA, Limits.MAX_CODE_SIZE_AMSTERDAM, Limits.MAX_INITCODE_SIZE_AMSTERDAM),
+      SilaMainnetHardforkId.BOGOTA,
+      Limits.MAX_CODE_SIZE_AMSTERDAM,
+      Limits.MAX_INITCODE_SIZE_AMSTERDAM),
   /** Polis savm spec version. */
   POLIS(
-      SilaMainnetHardforkId.POLIS, Limits.MAX_CODE_SIZE_AMSTERDAM, Limits.MAX_INITCODE_SIZE_AMSTERDAM),
+      SilaMainnetHardforkId.POLIS,
+      Limits.MAX_CODE_SIZE_AMSTERDAM,
+      Limits.MAX_INITCODE_SIZE_AMSTERDAM),
   /** Bangkok savm spec version. */
   BANGKOK(
       SilaMainnetHardforkId.BANGKOK,

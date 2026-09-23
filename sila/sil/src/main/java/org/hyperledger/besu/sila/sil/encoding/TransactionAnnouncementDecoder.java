@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.encoding;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.TransactionType;
-import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -19,7 +19,7 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
 import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -39,7 +39,8 @@ import org.jspecify.annotations.Nullable;
 public class GeneralStateTestCaseSpec {
 
   private final Map<String, List<GeneralStateTestCaseSipSpec>> finalStateSpecs;
-  private static final BlockHeaderFunctions SILA_MAINNET_FUNCTIONS = new SilaMainnetBlockHeaderFunctions();
+  private static final BlockHeaderFunctions SILA_MAINNET_FUNCTIONS =
+      new SilaMainnetBlockHeaderFunctions();
 
   @JsonCreator
   public GeneralStateTestCaseSpec(

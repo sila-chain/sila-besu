@@ -16,17 +16,17 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.bal;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.BlockHeader;
+import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.sila.ProtocolContext;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListChanges;
-import org.hyperledger.besu.sila.sila-mainnet.staterootcommitter.BalRootComputation;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListChanges;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.BalRootComputation;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
 import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedWorldStateUpdateAccumulator;
-import org.hyperledger.besu.savm.account.MutableAccount;
-import org.hyperledger.besu.plugin.data.BlockHeader;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

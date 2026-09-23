@@ -16,12 +16,12 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.processor;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.api.query.BlockchainQueries;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.plugin.services.worldstate.StateRootCommitter;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
+import org.hyperledger.besu.sila.api.query.BlockchainQueries;
+import org.hyperledger.besu.sila.core.BlockHeader;
 
 import java.util.Optional;
 import java.util.function.Function;

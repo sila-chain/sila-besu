@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.cli;
 
+import org.hyperledger.besu.nat.NatMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.JwtAlgorithm;
 import org.hyperledger.besu.sila.p2p.config.RlpxConfiguration;
-import org.hyperledger.besu.nat.NatMethod;
 
 import java.io.File;
 import java.io.IOException;

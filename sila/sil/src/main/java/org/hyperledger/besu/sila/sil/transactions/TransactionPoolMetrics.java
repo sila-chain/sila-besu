@@ -15,8 +15,6 @@
 package org.hyperledger.besu.sila.sil.transactions;
 
 import org.hyperledger.besu.datatypes.TransactionType;
-import org.hyperledger.besu.sila.sil.transactions.layered.AddReason;
-import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.metrics.ReplaceableDoubleSupplier;
 import org.hyperledger.besu.metrics.RunnableCounter;
@@ -24,6 +22,8 @@ import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.plugin.services.metrics.LabelledSuppliedMetric;
+import org.hyperledger.besu.sila.sil.transactions.layered.AddReason;
+import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 
 import java.util.HashMap;
 import java.util.Map;

@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.methods;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.parameters.UInt256Parameter;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.InvalidJsonRpcParameters;
@@ -27,7 +28,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcError;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
-import org.hyperledger.besu.savm.account.Account;
 
 import java.util.ArrayList;
 import java.util.HashMap;

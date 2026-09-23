@@ -21,8 +21,8 @@ import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.SilaMainnetSAVMs;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.savm.precompile.SilaMainnetPrecompiledContracts;
 import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
+import org.hyperledger.besu.savm.precompile.SilaMainnetPrecompiledContracts;
 import org.hyperledger.besu.savm.processor.ContractCreationProcessor;
 import org.hyperledger.besu.savm.processor.MessageCallProcessor;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
@@ -200,7 +200,8 @@ public class SavmToyCommand implements Runnable {
               .build();
 
       final MessageCallProcessor mcp = new MessageCallProcessor(savm, precompileContractRegistry);
-      final ContractCreationProcessor ccp = new ContractCreationProcessor(savm, false, List.of(), 0);
+      final ContractCreationProcessor ccp =
+          new ContractCreationProcessor(savm, false, List.of(), 0);
       stopwatch.start();
       Deque<MessageFrame> messageFrameStack = initialMessageFrame.getMessageFrameStack();
       while (!messageFrameStack.isEmpty()) {

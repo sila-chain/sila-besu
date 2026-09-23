@@ -30,15 +30,16 @@ import static org.hyperledger.besu.silstats.request.SilStatsRequest.Type.READY;
 import static org.hyperledger.besu.silstats.request.SilStatsRequest.Type.STATS;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.silstats.authentication.ImmutableAuthenticationData;
 import org.hyperledger.besu.silstats.authentication.ImmutableNodeInfo;
 import org.hyperledger.besu.silstats.authentication.NodeInfo;
@@ -51,9 +52,8 @@ import org.hyperledger.besu.silstats.report.ImmutablePingReport;
 import org.hyperledger.besu.silstats.report.NodeStatsReport;
 import org.hyperledger.besu.silstats.report.PendingTransactionsReport;
 import org.hyperledger.besu.silstats.request.SilStatsRequest;
-import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.silstats.util.PrimusHeartBeatsHelper;
-import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.util.platform.PlatformDetector;
 
 import java.math.BigInteger;
