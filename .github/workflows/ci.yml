@@ -264,6 +264,8 @@ jobs:
                   external_symbols.update(
                       re.findall(r"(?<=\.)(eth[A-Z][A-Za-z0-9_]*)(?=\s*\()", text)
                   )
+                  if "org.web3j.utils.Convert" in text:
+                      external_symbols.add("ETHER")
                   for symbol in sorted(external_symbols, key=len, reverse=True):
                       marker = f"__W3J_KEEP_{len(protected)}__"
                       pattern = rf"(?<![A-Za-z0-9_]){re.escape(symbol)}(?![A-Za-z0-9_])"
