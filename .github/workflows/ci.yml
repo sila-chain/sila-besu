@@ -395,6 +395,11 @@ jobs:
           ./gradlew build -x test -x spotlessCheck
 
           parent_sha="${{ github.event.pull_request.head.sha }}"
+          # Keep the Sila workflow set exactly as it exists on the PR head. Upstream Besu may
+          # add new workflow files, but the Actions token used by this probe cannot push
+          # workflow changes. Remove the generated workflow directory first so upstream-only
+          # workflow files are not left staged, then restore the authoritative Sila set.
+          rm -rf .github/workflows
           git checkout "$parent_sha" -- .github/workflows
           git add -A .github/workflows
           generated_tree=$(git write-tree)
