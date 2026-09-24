@@ -32,7 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.web3j.protocol.core.methods.response.SilBlock;
+import org.web3j.protocol.core.methods.response.EthBlock;
 
 /** Acceptance test helper for SilaAmsterdam fork. */
 public class SilaAmsterdamAcceptanceTestHelper {
@@ -58,7 +58,7 @@ public class SilaAmsterdamAcceptanceTestHelper {
   }
 
   public void buildNewBlock() throws IOException {
-    final SilBlock.Block block = besuNode.execute(silTransactions.block());
+    final EthBlock.Block block = besuNode.execute(silTransactions.block());
 
     blockTimeStamp += 1;
     slotNumber += 1;
@@ -185,7 +185,7 @@ public class SilaAmsterdamAcceptanceTestHelper {
    * @throws IOException if the engine call fails
    */
   public JsonNode forkChoiceUpdatedWithoutTargetGasLimit() throws IOException {
-    final SilBlock.Block block = besuNode.execute(silTransactions.block());
+    final EthBlock.Block block = besuNode.execute(silTransactions.block());
 
     blockTimeStamp += 1;
     slotNumber += 1;

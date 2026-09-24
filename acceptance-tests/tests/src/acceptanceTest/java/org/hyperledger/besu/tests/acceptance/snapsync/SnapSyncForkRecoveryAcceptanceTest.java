@@ -50,7 +50,7 @@ import org.web3j.crypto.Credentials;
 import org.web3j.crypto.RawTransaction;
 import org.web3j.crypto.TransactionEncoder;
 import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.SilBlock;
+import org.web3j.protocol.core.methods.response.EthBlock;
 import org.web3j.utils.Numeric;
 
 /**
@@ -268,14 +268,14 @@ public class SnapSyncForkRecoveryAcceptanceTest extends AcceptanceTestBase {
         .until(
             () -> {
               fcuHeadOnly(syncNode, forkBHeadHash);
-              final SilBlock.Block head =
+              final EthBlock.Block head =
                   syncNode.execute(
                       silTransactions.block(
                           DefaultBlockParameter.valueOf(BigInteger.valueOf(FORK_B_HEIGHT))));
               return head != null && forkBHeadHash.equals(head.getHash());
             });
 
-    final SilBlock.Block syncedHead =
+    final EthBlock.Block syncedHead =
         syncNode.execute(
             silTransactions.block(
                 DefaultBlockParameter.valueOf(BigInteger.valueOf(FORK_B_HEIGHT))));
@@ -373,14 +373,14 @@ public class SnapSyncForkRecoveryAcceptanceTest extends AcceptanceTestBase {
         .until(
             () -> {
               fcuHeadOnly(syncNode, headHash);
-              final SilBlock.Block h =
+              final EthBlock.Block h =
                   syncNode.execute(
                       silTransactions.block(
                           DefaultBlockParameter.valueOf(BigInteger.valueOf(FORK_A_HEIGHT))));
               return h != null && headHash.equals(h.getHash());
             });
 
-    final SilBlock.Block syncedHead =
+    final EthBlock.Block syncedHead =
         syncNode.execute(
             silTransactions.block(
                 DefaultBlockParameter.valueOf(BigInteger.valueOf(FORK_A_HEIGHT))));
@@ -523,7 +523,7 @@ public class SnapSyncForkRecoveryAcceptanceTest extends AcceptanceTestBase {
   private ObjectNode buildBlock(
       final BesuNode miner, final String feeRecipient, final int expectedTxCount)
       throws IOException {
-    final SilBlock.Block head = miner.execute(silTransactions.block());
+    final EthBlock.Block head = miner.execute(silTransactions.block());
     final String headHash = head.getHash();
     final long baseTimestamp = head.getTimestamp().longValue() + 1;
 

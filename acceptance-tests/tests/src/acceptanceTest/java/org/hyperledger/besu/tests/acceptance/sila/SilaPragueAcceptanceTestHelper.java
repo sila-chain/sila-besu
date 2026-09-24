@@ -32,7 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.web3j.protocol.core.methods.response.SilBlock;
+import org.web3j.protocol.core.methods.response.EthBlock;
 
 public class SilaPragueAcceptanceTestHelper {
   protected static final MediaType MEDIA_TYPE_JSON =
@@ -55,7 +55,7 @@ public class SilaPragueAcceptanceTestHelper {
   }
 
   public void buildNewBlock() throws IOException {
-    final SilBlock.Block block = besuNode.execute(silTransactions.block());
+    final EthBlock.Block block = besuNode.execute(silTransactions.block());
 
     blockTimeStamp += 1;
     final Call buildBlockRequest =

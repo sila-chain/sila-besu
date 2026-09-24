@@ -234,7 +234,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
 
     final Transaction txSendEthToOtherAccount =
         Transaction.builder()
-            .type(TransactionType.SIP1559)
+            .type(TransactionType.EIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(2)
             .maxPriorityFeePerGas(Wei.of(10))
