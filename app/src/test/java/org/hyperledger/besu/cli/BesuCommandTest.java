@@ -1456,27 +1456,27 @@ public class BesuCommandTest extends CommandTestAbstract {
   @Test
   public void silStatsOptionIsParsedCorrectly() {
     final String url = "besu-node:secret@host:443";
-    parseCommand("--ethstats", url);
-    verify(mockRunnerBuilder).ethstatsOptions(ethstatsOptionsArgumentCaptor.capture());
-    assertThat(ethstatsOptionsArgumentCaptor.getValue().getEthstatsUrl()).isEqualTo(url);
+    parseCommand("--silstats", url);
+    verify(mockRunnerBuilder).silStatsOptions(silStatsOptionsArgumentCaptor.capture());
+    assertThat(silStatsOptionsArgumentCaptor.getValue().getSilStatsUrl()).isEqualTo(url);
   }
 
   @Test
   public void silStatsContactOptionIsParsedCorrectly() {
     final String contact = "contact@mail.net";
-    parseCommand("--ethstats", "besu-node:secret@host:443", "--ethstats-contact", contact);
-    verify(mockRunnerBuilder).ethstatsOptions(ethstatsOptionsArgumentCaptor.capture());
-    assertThat(ethstatsOptionsArgumentCaptor.getValue().getEthstatsContact()).isEqualTo(contact);
+    parseCommand("--silstats", "besu-node:secret@host:443", "--silstats-contact", contact);
+    verify(mockRunnerBuilder).silStatsOptions(silStatsOptionsArgumentCaptor.capture());
+    assertThat(silStatsOptionsArgumentCaptor.getValue().getSilStatsContact()).isEqualTo(contact);
   }
 
   @Test
   public void silStatsContactOptionCannotBeUsedWithoutSilStatsServerProvided() {
-    parseCommand("--ethstats-contact", "besu-updated");
+    parseCommand("--silstats-contact", "besu-updated");
     verifyNoInteractions(mockRunnerBuilder);
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8))
         .contains(
-            "The `--ethstats-contact` requires ethstats server URL to be provided. Either remove --ethstats-contact or provide a URL (via --ethstats=nodename:secret@host:port)");
+            "The `--silstats-contact` requires silstats server URL to be provided. Either remove --silstats-contact or provide a URL (via --silstats=nodename:secret@host:port)");
   }
 
   @Test

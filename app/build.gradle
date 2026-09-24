@@ -60,7 +60,7 @@ dependencies {
   implementation project(':sila:permissioning')
   implementation project(':sila:rlp')
   implementation project(':sila:trie')
-  implementation project(':sila:ethstats')
+  implementation project(':sila:silstats')
   implementation project(':savm')
   implementation project(':metrics:core')
   implementation project(':nat')

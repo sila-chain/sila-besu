@@ -48,7 +48,7 @@ import org.hyperledger.besu.cli.options.ChainPruningOptions;
 import org.hyperledger.besu.cli.options.DnsOptions;
 import org.hyperledger.besu.cli.options.EngineRPCConfiguration;
 import org.hyperledger.besu.cli.options.EngineRPCOptions;
-import org.hyperledger.besu.cli.options.EthstatsOptions;
+import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.cli.options.GraphQlOptions;
 import org.hyperledger.besu.cli.options.InProcessRpcOptions;
 import org.hyperledger.besu.cli.options.IpcOptions;
@@ -316,7 +316,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
   // stable CLI options
   final DataStorageOptions dataStorageOptions = DataStorageOptions.create();
-  private final EthstatsOptions ethstatsOptions = EthstatsOptions.create();
+  private final SilStatsOptions silStatsOptions = SilStatsOptions.create();
   private final NodePrivateKeyFileOption nodePrivateKeyFileOption =
       NodePrivateKeyFileOption.create();
   private final LoggingLevelOption loggingLevelOption = LoggingLevelOption.create();
@@ -1315,7 +1315,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   private void handleStableOptions() {
-    commandLine.addMixin("Ethstats", ethstatsOptions);
+    commandLine.addMixin("SilStats", silStatsOptions);
     commandLine.addMixin("Private key file", nodePrivateKeyFileOption);
     commandLine.addMixin("Logging level", loggingLevelOption);
     commandLine.addMixin("Data Storage Options", dataStorageOptions);
@@ -1653,12 +1653,12 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   private void validateNetStatsParams() {
-    if (Strings.isNullOrEmpty(ethstatsOptions.getEthstatsUrl())
-        && !ethstatsOptions.getEthstatsContact().isEmpty()) {
+    if (Strings.isNullOrEmpty(silStatsOptions.getSilStatsUrl())
+        && !silStatsOptions.getSilStatsContact().isEmpty()) {
       throw new ParameterException(
           this.commandLine,
-          "The `--ethstats-contact` requires ethstats server URL to be provided. Either remove --ethstats-contact"
-              + " or provide a URL (via --ethstats=nodename:secret@host:port)");
+          "The `--silstats-contact` requires silstats server URL to be provided. Either remove --silstats-contact"
+              + " or provide a URL (via --silstats=nodename:secret@host:port)");
     }
   }
 
@@ -2521,7 +2521,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
             .identityString(identityString)
             .besuPluginContext(besuPluginContext)
             .autoLogBloomCaching(autoLogBloomCachingEnabled)
-            .ethstatsOptions(ethstatsOptions)
+            .silStatsOptions(silStatsOptions)
             .storageProvider(keyValueStorageProvider(keyValueStorageName))
             .rpcEndpointService(rpcEndpointServiceImpl)
             .enodeDnsConfiguration(getEnodeDnsConfiguration())

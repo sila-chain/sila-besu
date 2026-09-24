@@ -32,7 +32,7 @@ import org.hyperledger.besu.chainimport.Era1BlockImporter;
 import org.hyperledger.besu.chainimport.JsonBlockImporter;
 import org.hyperledger.besu.chainimport.RlpBlockImporter;
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
-import org.hyperledger.besu.cli.options.EthstatsOptions;
+import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.cli.options.MiningOptions;
 import org.hyperledger.besu.cli.options.NetworkingOptions;
 import org.hyperledger.besu.cli.options.P2PDiscoveryOptions;
@@ -270,7 +270,7 @@ public abstract class CommandTestAbstract {
   @Captor protected ArgumentCaptor<TransactionPoolConfiguration> transactionPoolConfigCaptor;
   @Captor protected ArgumentCaptor<ApiConfiguration> apiConfigurationCaptor;
 
-  @Captor protected ArgumentCaptor<EthstatsOptions> ethstatsOptionsArgumentCaptor;
+  @Captor protected ArgumentCaptor<SilStatsOptions> silStatsOptionsArgumentCaptor;
   @Captor protected ArgumentCaptor<List<IPAddress>> allowedSubnetsArgumentCaptor;
 
   @BeforeEach

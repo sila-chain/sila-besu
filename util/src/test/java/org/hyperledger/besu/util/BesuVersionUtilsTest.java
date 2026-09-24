@@ -27,13 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public final class BesuVersionUtilsTest {
 
   /**
-   * Ethstats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
+   * SilStats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
    * client identity (besu, Geth, Parity, etc). Bar is the version, in semantic version form
    * (1.2.3-whatever), baz is OS and chip architecture, and bif is "compiler" - which we use as JVM
    * info.
    */
   @Test
-  public void versionStringIsEthstatsFriendly() {
+  public void versionStringIsSilStatsFriendly() {
     assertThat(BesuVersionUtils.version())
         .matches(
             "[^/]+/v(\\d+\\.\\d+\\.\\d+[^/]*|"
@@ -42,13 +42,13 @@ public final class BesuVersionUtilsTest {
   }
 
   /**
-   * Ethstats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
+   * SilStats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
    * client identity (besu, Geth, Parity, etc). Bar is the version, in semantic version form
    * (1.2.3-whatever), baz is OS and chip architecture, and bif is "compiler" - which we use as JVM
    * info.
    */
   @Test
-  public void noIdentityNodeNameIsEthstatsFriendly() {
+  public void noIdentityNodeNameIsSilStatsFriendly() {
     assertThat(BesuVersionUtils.nodeName(Optional.empty()))
         .matches(
             "[^/]+/v(\\d+\\.\\d+\\.\\d+[^/]*|"
@@ -57,14 +57,14 @@ public final class BesuVersionUtilsTest {
   }
 
   /**
-   * Ethstats also accepts a version string like
+   * SilStats also accepts a version string like
    * &lt;foo&gt/%lt;qux&gt;/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the client identity (besu,
    * Geth, Parity, etc). Qux is user identity (PegaSysEng, Yes-SIP-1679, etc) Bar is the version, in
    * semantic version form (1.2.3-whatever), baz is OS and chip architecture, and bif is "compiler"
    * - which we use as JVM info.
    */
   @Test
-  public void userIdentityNodeNameIsEthstatsFriendly() {
+  public void userIdentityNodeNameIsSilStatsFriendly() {
     assertThat(BesuVersionUtils.nodeName(Optional.of("TestUserIdentity")))
         .matches(
             "[^/]+/[^/]+/v(\\d+\\.\\d+\\.\\d+[^/]*|"

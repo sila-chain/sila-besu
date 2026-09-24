@@ -21,11 +21,11 @@ import static java.util.function.Predicate.not;
 import static org.hyperledger.besu.controller.BesuController.CACHE_PATH;
 
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
-import org.hyperledger.besu.cli.options.EthstatsOptions;
+import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.cryptoservices.NodeKey;
-import org.hyperledger.besu.ethstats.SilStatsService;
-import org.hyperledger.besu.ethstats.util.SilStatsConnectOptions;
+import org.hyperledger.besu.silstats.SilStatsService;
+import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.metrics.MetricsService;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
@@ -179,7 +179,7 @@ public class RunnerBuilder {
   private NatMethod natMethod = NatMethod.AUTO;
   private boolean natMethodFallbackEnabled;
   private SilNetworkConfig silNetworkConfig;
-  private EthstatsOptions ethstatsOptions;
+  private SilStatsOptions silStatsOptions;
   private JsonRpcConfiguration jsonRpcConfiguration;
   private Optional<JsonRpcConfiguration> engineJsonRpcConfiguration = Optional.empty();
   private GraphQLConfiguration graphQLConfiguration;
@@ -399,11 +399,11 @@ public class RunnerBuilder {
   /**
    * Add SilStatsOptions
    *
-   * @param ethstatsOptions the ethstats options
+   * @param silStatsOptions the silstats options
    * @return Runner builder instance
    */
-  public RunnerBuilder ethstatsOptions(final EthstatsOptions ethstatsOptions) {
-    this.ethstatsOptions = ethstatsOptions;
+  public RunnerBuilder silStatsOptions(final SilStatsOptions silStatsOptions) {
+    this.silStatsOptions = silStatsOptions;
     return this;
   }
 
@@ -1135,10 +1135,10 @@ public class RunnerBuilder {
           Optional.of(
               new SilStatsService(
                   SilStatsConnectOptions.fromParams(
-                      ethstatsOptions.getEthstatsUrl(),
-                      ethstatsOptions.getEthstatsContact(),
-                      ethstatsOptions.getEthstatsCaCert(),
-                      ethstatsOptions.getEthstatsReportInterval()),
+                      silStatsOptions.getSilStatsUrl(),
+                      silStatsOptions.getSilStatsContact(),
+                      silStatsOptions.getSilStatsCaCert(),
+                      silStatsOptions.getSilStatsReportInterval()),
                   blockchainQueries,
                   besuController.getProtocolManager(),
                   transactionPool,
@@ -1252,7 +1252,7 @@ public class RunnerBuilder {
   }
 
   private boolean isSilStatsEnabled() {
-    return ethstatsOptions != null && !Strings.isNullOrEmpty(ethstatsOptions.getEthstatsUrl());
+    return silStatsOptions != null && !Strings.isNullOrEmpty(silStatsOptions.getSilStatsUrl());
   }
 
   private Stream<EnodeURLImpl> sanitizePeers(
