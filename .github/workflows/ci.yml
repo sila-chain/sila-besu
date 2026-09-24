@@ -104,7 +104,7 @@ jobs:
       - name: Generate safe Sila tree from latest Besu authority
         run: |
           git fetch --no-tags https://github.com/besu-eth/besu.git \
-            a7867768741ffe7239bab07c38926d065ab16229:refs/remotes/upstream/latest
+            cf89071f9d6dddf7997f35e09929fe059f82ecd1:refs/remotes/upstream/latest
           git worktree add --detach /tmp/sila-latest refs/remotes/upstream/latest
           cd /tmp/sila-latest
           python - <<'PY'
@@ -250,6 +250,32 @@ jobs:
               except (UnicodeDecodeError, OSError):
                   continue
 
+              # Preserve independent Web3j API symbols used by the acceptance DSL.
+              # Their published Java names remain Eth*/eth* even though the local Besu-owned
+              # wrapper classes and packages are converted to Sila/Sil.
+              protected = {}
+              if raw.startswith("acceptance-tests/dsl/") and "org.web3j" in text:
+                  external_symbols = set(
+                      re.findall(
+                          r"org\\.web3j\\.protocol\\.core\\.methods\\.response\\.([A-Z][A-Za-z0-9_]*)",
+                          text,
+                      )
+                  )
+                  external_symbols.update(
+                      re.findall(r"(?<=\\.)(eth[A-Z][A-Za-z0-9_]*)(?=\\s*\\()", text)
+                  )
+                  for symbol in sorted(external_symbols, key=len, reverse=True):
+                      marker = f"__W3J_KEEP_{len(protected)}__"
+                      pattern = rf"(?<![A-Za-z0-9_]){re.escape(symbol)}(?![A-Za-z0-9_])"
+                      text, replaced = re.subn(pattern, marker, text)
+                      if replaced:
+                          protected[marker] = symbol
+                  for literal in ("TransactionType.EIP1559", "Convert.Unit.ETHER"):
+                      if literal in text:
+                          marker = f"__W3J_KEEP_{len(protected)}__"
+                          text = text.replace(literal, marker)
+                          protected[marker] = literal
+
               # Parser-safe package segments first.
               text = text.replace(".ethereum.", ".sila.")
               text = text.replace("/ethereum/", "/sila/")
@@ -270,6 +296,8 @@ jobs:
                   text = text.replace("'mainnet'", "'sila-mainnet'")
                   text = re.sub(r"([:=]\s*)mainnet\b", r"\1sila-mainnet", text)
               text = token_transform(text)
+              for marker, literal in protected.items():
+                  text = text.replace(marker, literal)
               if text != data.decode("utf-8"):
                   p.write_text(text, encoding="utf-8")
 
@@ -327,6 +355,8 @@ jobs:
                   "ImmutableEthProtocolConfiguration": "ImmutableSilProtocolConfiguration",
                   "ImmutableEthStatsConnectOptions": "ImmutableSilStatsConnectOptions",
                   "getEthStatsReportInterval": "getSilStatsReportInterval",
+                  # Dagger names the generated implementation after the renamed Besu-owned component.
+                  "DaggerEvmToolComponent": "DaggerSavmToolComponent",
               }
               new = text
               for old, good in fixes.items():
@@ -379,7 +409,7 @@ jobs:
               printf '%s\n' \
                 'sync: regenerate latest Besu authority as Sila' \
                 '' \
-                'Upstream-Besu: a7867768741ffe7239bab07c38926d065ab16229' \
+                'Upstream-Besu: cf89071f9d6dddf7997f35e09929fe059f82ecd1' \
                 '' \
                 'Signed-off-by: SILA Network <pssd500@gmail.com>' \
               | git commit-tree "$generated_tree" -p "$parent_sha"
