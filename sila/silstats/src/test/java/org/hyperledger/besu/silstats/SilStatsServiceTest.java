@@ -24,9 +24,6 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.silstats.request.SilStatsRequest;
-import org.hyperledger.besu.silstats.util.ImmutableSilStatsConnectOptions;
-import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory;
 import org.hyperledger.besu.sila.api.query.BlockWithMetadata;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
@@ -42,6 +39,9 @@ import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.silstats.request.SilStatsRequest;
+import org.hyperledger.besu.silstats.util.ImmutableSilStatsConnectOptions;
+import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 
 import java.lang.reflect.Field;
 import java.math.BigInteger;
