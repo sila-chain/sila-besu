@@ -15,27 +15,27 @@
 package org.hyperledger.besu.tests.acceptance.dsl.condition.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.catchThrowable;
 
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilSendRawTransactionTransaction;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptTransaction;
 
-public class ExpectEthSendRawTransactionException implements Condition {
+import java.util.Optional;
 
-  private final SilSendRawTransactionTransaction transaction;
-  private final String expectedMessage;
+import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
-  public ExpectEthSendRawTransactionException(
-      final SilSendRawTransactionTransaction transaction, final String expectedMessage) {
+public class ExpectSilGetTransactionReceiptIsAbsent implements Condition {
+
+  private final SilGetTransactionReceiptTransaction transaction;
+
+  public ExpectSilGetTransactionReceiptIsAbsent(
+      final SilGetTransactionReceiptTransaction transaction) {
     this.transaction = transaction;
-    this.expectedMessage = expectedMessage;
   }
 
   @Override
   public void verify(final Node node) {
-    final Throwable thrown = catchThrowable(() -> node.execute(transaction));
-    assertThat(thrown).isInstanceOf(RuntimeException.class);
-    assertThat(thrown.getMessage()).contains(expectedMessage);
+    final Optional<TransactionReceipt> response = node.execute(transaction);
+    assertThat(response.isPresent()).isFalse();
   }
 }

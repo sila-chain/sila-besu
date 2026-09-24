@@ -15,31 +15,27 @@
 package org.hyperledger.besu.tests.acceptance.dsl.condition.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
-import org.hyperledger.besu.tests.acceptance.dsl.WaitUtils;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFactory.TransactionReceiptWithRevertReason;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptWithRevertReason;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilSendRawTransactionTransaction;
 
-public class ExpectSuccessfulEthGetTransactionReceiptWithoutReason implements Condition {
+public class ExpectSilSendRawTransactionException implements Condition {
 
-  private final SilGetTransactionReceiptWithRevertReason transaction;
+  private final SilSendRawTransactionTransaction transaction;
+  private final String expectedMessage;
 
-  public ExpectSuccessfulEthGetTransactionReceiptWithoutReason(
-      final SilGetTransactionReceiptWithRevertReason transaction) {
+  public ExpectSilSendRawTransactionException(
+      final SilSendRawTransactionTransaction transaction, final String expectedMessage) {
     this.transaction = transaction;
+    this.expectedMessage = expectedMessage;
   }
 
   @Override
   public void verify(final Node node) {
-    WaitUtils.waitFor(() -> assertThat(revertReasonIsEmpty(node)).isTrue());
-  }
-
-  private boolean revertReasonIsEmpty(final Node node) {
-    return node.execute(transaction)
-        .map(TransactionReceiptWithRevertReason::getRevertReason)
-        .filter(str -> str.equals("0x"))
-        .isPresent();
+    final Throwable thrown = catchThrowable(() -> node.execute(transaction));
+    assertThat(thrown).isInstanceOf(RuntimeException.class);
+    assertThat(thrown.getMessage()).contains(expectedMessage);
   }
 }

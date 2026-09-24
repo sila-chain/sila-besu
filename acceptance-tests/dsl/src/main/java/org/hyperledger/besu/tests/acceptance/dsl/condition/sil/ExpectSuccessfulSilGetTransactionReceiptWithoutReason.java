@@ -16,26 +16,30 @@ package org.hyperledger.besu.tests.acceptance.dsl.condition.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.tests.acceptance.dsl.WaitUtils;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptTransaction;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFactory.TransactionReceiptWithRevertReason;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptWithRevertReason;
 
-import java.util.Optional;
+public class ExpectSuccessfulSilGetTransactionReceiptWithoutReason implements Condition {
 
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+  private final SilGetTransactionReceiptWithRevertReason transaction;
 
-public class ExpectEthGetTransactionReceiptIsAbsent implements Condition {
-
-  private final SilGetTransactionReceiptTransaction transaction;
-
-  public ExpectEthGetTransactionReceiptIsAbsent(
-      final SilGetTransactionReceiptTransaction transaction) {
+  public ExpectSuccessfulSilGetTransactionReceiptWithoutReason(
+      final SilGetTransactionReceiptWithRevertReason transaction) {
     this.transaction = transaction;
   }
 
   @Override
   public void verify(final Node node) {
-    final Optional<TransactionReceipt> response = node.execute(transaction);
-    assertThat(response.isPresent()).isFalse();
+    WaitUtils.waitFor(() -> assertThat(revertReasonIsEmpty(node)).isTrue());
+  }
+
+  private boolean revertReasonIsEmpty(final Node node) {
+    return node.execute(transaction)
+        .map(TransactionReceiptWithRevertReason::getRevertReason)
+        .filter(str -> str.equals("0x"))
+        .isPresent();
   }
 }

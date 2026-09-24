@@ -25,12 +25,12 @@ import java.nio.charset.StandardCharsets;
 
 import org.web3j.utils.Numeric;
 
-public class ExpectSuccessfulEthGetTransactionReceiptWithReason implements Condition {
+public class ExpectSuccessfulSilGetTransactionReceiptWithReason implements Condition {
 
   private final SilGetTransactionReceiptWithRevertReason transaction;
   private final String expectedRevertReason;
 
-  public ExpectSuccessfulEthGetTransactionReceiptWithReason(
+  public ExpectSuccessfulSilGetTransactionReceiptWithReason(
       final SilGetTransactionReceiptWithRevertReason transaction,
       final String expectedRevertReason) {
     this.transaction = transaction;

@@ -21,11 +21,11 @@ import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptTransaction;
 
-public class ExpectSuccessfulEthGetTransactionReceipt implements Condition {
+public class ExpectSuccessfulSilGetTransactionReceipt implements Condition {
 
   private final SilGetTransactionReceiptTransaction transaction;
 
-  public ExpectSuccessfulEthGetTransactionReceipt(
+  public ExpectSuccessfulSilGetTransactionReceipt(
       final SilGetTransactionReceiptTransaction transaction) {
     this.transaction = transaction;
   }

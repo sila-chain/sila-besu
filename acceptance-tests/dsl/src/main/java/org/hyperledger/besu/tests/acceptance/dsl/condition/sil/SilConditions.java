@@ -29,38 +29,38 @@ public class SilConditions {
   }
 
   public Condition accountsExceptional(final String expectedMessage) {
-    return new ExpectEthAccountsException(transactions.accounts(), expectedMessage);
+    return new ExpectSilAccountsException(transactions.accounts(), expectedMessage);
   }
 
   public Condition expectSuccessfulTransactionReceipt(final String transactionHash) {
-    return new ExpectSuccessfulEthGetTransactionReceipt(
+    return new ExpectSuccessfulSilGetTransactionReceipt(
         transactions.getTransactionReceipt(transactionHash));
   }
 
   public Condition expectNoTransactionReceipt(final String transactionHash) {
-    return new ExpectEthGetTransactionReceiptIsAbsent(
+    return new ExpectSilGetTransactionReceiptIsAbsent(
         transactions.getTransactionReceipt(transactionHash));
   }
 
   public Condition expectEthSendRawTransactionException(
       final String transactionData, final String expectedMessage) {
-    return new ExpectEthSendRawTransactionException(
+    return new ExpectSilSendRawTransactionException(
         transactions.sendRawTransaction(transactionData), expectedMessage);
   }
 
   public Condition expectSuccessfulEthRawTransaction(final String transactionData) {
-    return new ExpectSuccessfulEthSendRawTransaction(
+    return new ExpectSuccessfulSilSendRawTransaction(
         transactions.sendRawTransaction(transactionData));
   }
 
   public Condition expectSuccessfulTransactionReceiptWithReason(
       final String transactionHash, final String revertReason) {
-    return new ExpectSuccessfulEthGetTransactionReceiptWithReason(
+    return new ExpectSuccessfulSilGetTransactionReceiptWithReason(
         transactions.getTransactionReceiptWithRevertReason(transactionHash), revertReason);
   }
 
   public Condition expectSuccessfulTransactionReceiptWithoutReason(final String transactionHash) {
-    return new ExpectSuccessfulEthGetTransactionReceiptWithoutReason(
+    return new ExpectSuccessfulSilGetTransactionReceiptWithoutReason(
         transactions.getTransactionReceiptWithRevertReason(transactionHash));
   }
 

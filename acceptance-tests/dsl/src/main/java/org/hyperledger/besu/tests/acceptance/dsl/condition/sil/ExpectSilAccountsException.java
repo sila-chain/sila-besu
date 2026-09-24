@@ -15,29 +15,27 @@
 package org.hyperledger.besu.tests.acceptance.dsl.condition.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.catchThrowable;
 
-import org.hyperledger.besu.tests.acceptance.dsl.WaitUtils;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilSendRawTransactionTransaction;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilAccountsTransaction;
 
-import org.apache.tuweni.bytes.Bytes32;
+public class ExpectSilAccountsException implements Condition {
 
-public class ExpectSuccessfulEthSendRawTransaction implements Condition {
+  private final String expectedMessage;
+  private final SilAccountsTransaction transaction;
 
-  private final SilSendRawTransactionTransaction transaction;
-
-  public ExpectSuccessfulEthSendRawTransaction(final SilSendRawTransactionTransaction transaction) {
+  public ExpectSilAccountsException(
+      final SilAccountsTransaction transaction, final String expectedMessage) {
+    this.expectedMessage = expectedMessage;
     this.transaction = transaction;
   }
 
   @Override
   public void verify(final Node node) {
-    WaitUtils.waitFor(
-        5,
-        () -> {
-          final Bytes32 txHash = Bytes32.fromHexString(node.execute(transaction));
-          assertThat(txHash).isNotNull();
-        });
+    final Throwable thrown = catchThrowable(() -> node.execute(transaction));
+    assertThat(thrown).isInstanceOf(RuntimeException.class);
+    assertThat(thrown.getMessage()).contains(expectedMessage);
   }
 }
