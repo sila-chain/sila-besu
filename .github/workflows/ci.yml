@@ -20,6 +20,7 @@ env:
   GRADLE_OPTS: "-Xmx6g -Dorg.gradle.parallel=true"
 
 # Job matrix:
+# Generated Besu-authority commits are workflow-neutral; this PR-head run is the CI authority.
 #
 #   push to main:      [gradleWrapper, spotless, checkLicense]
 #                    → build
