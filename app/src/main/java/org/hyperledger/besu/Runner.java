@@ -20,7 +20,6 @@ import org.hyperledger.besu.cli.BesuCommand;
 import org.hyperledger.besu.cli.options.PluginsConfigurationOptions;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.crypto.KeyPairUtil;
-import org.hyperledger.besu.silstats.SilStatsService;
 import org.hyperledger.besu.metrics.MetricsService;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.api.graphql.GraphQLHttpService;
@@ -36,6 +35,7 @@ import org.hyperledger.besu.sila.p2p.network.NetworkRunner;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolEvictionService;
+import org.hyperledger.besu.silstats.SilStatsService;
 
 import java.io.File;
 import java.io.FileOutputStream;

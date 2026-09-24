@@ -24,8 +24,6 @@ import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.cryptoservices.NodeKey;
-import org.hyperledger.besu.silstats.SilStatsService;
-import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.metrics.MetricsService;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
@@ -125,6 +123,8 @@ import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
+import org.hyperledger.besu.silstats.SilStatsService;
+import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.util.BesuVersionUtils;
 import org.hyperledger.besu.util.NetworkUtility;
 
