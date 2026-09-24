@@ -257,12 +257,12 @@ jobs:
               if raw.startswith("acceptance-tests/dsl/") and "org.web3j" in text:
                   external_symbols = set(
                       re.findall(
-                          r"org\\.web3j\\.protocol\\.core\\.methods\\.response\\.([A-Z][A-Za-z0-9_]*)",
+                          r"org\.web3j\.protocol\.core\.methods\.response\.([A-Z][A-Za-z0-9_]*)",
                           text,
                       )
                   )
                   external_symbols.update(
-                      re.findall(r"(?<=\\.)(eth[A-Z][A-Za-z0-9_]*)(?=\\s*\\()", text)
+                      re.findall(r"(?<=\.)(eth[A-Z][A-Za-z0-9_]*)(?=\s*\()", text)
                   )
                   for symbol in sorted(external_symbols, key=len, reverse=True):
                       marker = f"__W3J_KEEP_{len(protected)}__"
