@@ -91,11 +91,11 @@ class SIP7708TransferLogEmitterTest {
   @Test
   void createTransferLogWithLargeValue() {
     // Test with a large value (1 SIL = 10^18 Wei)
-    final Wei oneSil = Wei.of(new BigInteger("1000000000000000000"));
-    final Log log = SIP7708TransferLogEmitter.createTransferLog(SENDER, RECIPIENT, oneSil);
+    final Wei oneEth = Wei.of(new BigInteger("1000000000000000000"));
+    final Log log = SIP7708TransferLogEmitter.createTransferLog(SENDER, RECIPIENT, oneEth);
 
     assertThat(log.getLogger()).isEqualTo(SIP7708_SYSTEM_ADDRESS);
-    assertThat(log.getData()).isEqualTo(Bytes32.leftPad(oneSil));
+    assertThat(log.getData()).isEqualTo(Bytes32.leftPad(oneEth));
   }
 
   @Test

@@ -331,11 +331,11 @@ public abstract class AbstractJsonRpcHttpBySpecTest extends AbstractJsonRpcHttpS
       if (method.equals(Method.TRACE_CALL_MANY)) {
         // TODO: There are differences in gas cost (causing different balances as well). These are
         // caused by
-        // OpenSila not implementing "Istanbul" correctly. Specially the SSTORE to dirty storage
+        // OpenEthereum not implementing "Istanbul" correctly. Specially the SSTORE to dirty storage
         // Slots should cost 800 gas rather than 5000
         // This should be fixed, e.g. by using
         // Erigon to
-        // create the expected output, or by making OpenSila work correctly.
+        // create the expected output, or by making OpenEthereum work correctly.
         switch (traceType) {
           case TRACE:
             expectedResult = filterStringTrace(expectedResult);
@@ -414,7 +414,7 @@ public abstract class AbstractJsonRpcHttpBySpecTest extends AbstractJsonRpcHttpS
       return null;
     }
 
-    // Convert to lowsrcase for case-insensitive matching
+    // Convert to lowercase for case-insensitive matching
     String lowerError = errorMessage.toLowerCase(Locale.ROOT);
 
     // Normalize precompile input length errors

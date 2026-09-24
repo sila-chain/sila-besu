@@ -272,7 +272,11 @@ public class BlockHeaderBuilder {
         .baseFee(baseFee)
         .prevRandao(prevRandao)
         .parentBeaconBlockRoot(parentBeaconBlockRoot)
-        .slotNumber(maybeSlotNumber.orElse(null));
+        // From SilaAmsterdam (SIP-7843) an absent slot number fails our own header validation, so
+        // callers with no beacon slot to supply get 0. Before SilaAmsterdam it must stay absent, or
+        // the block hash changes.
+        .slotNumber(
+            maybeSlotNumber.orElseGet(() -> protocolSpec.isSlotNumberRequired() ? 0L : null));
   }
 
   public BlockHeader buildBlockHeader() {

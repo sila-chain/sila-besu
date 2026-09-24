@@ -51,7 +51,7 @@ public class BlockAccessListsMessageTest {
   }
 
   @Test
-  public void wrapsWithSil71WireShape() {
+  public void wrapsWithEth71WireShape() {
     // [request-id, [access-lists]]
     final BlockAccessList blockAccessList = new BlockDataGenerator(1).blockAccessList();
 

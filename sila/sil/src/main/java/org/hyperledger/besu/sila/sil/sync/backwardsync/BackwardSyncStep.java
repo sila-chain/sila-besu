@@ -83,7 +83,7 @@ public class BackwardSyncStep {
     LOG.trace("Requesting headers for hash {}, with batch size {}", hash, batchSize);
 
     return context
-        .getSilContext()
+        .getEthContext()
         .getScheduler()
         .scheduleServiceTask(
             () -> {
@@ -94,10 +94,10 @@ public class BackwardSyncStep {
                       batchSize,
                       0,
                       Direction.REVERSE,
-                      context.getSilContext().getSilPeers().peerCount(),
+                      context.getEthContext().getEthPeers().peerCount(),
                       context.getProtocolSchedule());
               PeerTaskExecutorResult<List<BlockHeader>> taskResult =
-                  context.getSilContext().getPeerTaskExecutor().execute(task);
+                  context.getEthContext().getPeerTaskExecutor().execute(task);
               if (taskResult.responseCode() != PeerTaskExecutorResponseCode.SUCCESS
                   || taskResult.result().isEmpty()) {
                 throw new RuntimeException("Unable to retrieve headers");
@@ -149,13 +149,13 @@ public class BackwardSyncStep {
                 completedPercentage,
                 downloaded,
                 estimatedTotal,
-                context.getSilContext().getSilPeers().peerCount()));
+                context.getEthContext().getEthPeers().peerCount()));
       }
     } else {
       LOG.info(
           String.format(
               "Backward sync phase 1 of 2 completed, downloaded a total of %d headers. Peers: %d",
-              downloaded, context.getSilContext().getSilPeers().peerCount()));
+              downloaded, context.getEthContext().getEthPeers().peerCount()));
     }
   }
 }

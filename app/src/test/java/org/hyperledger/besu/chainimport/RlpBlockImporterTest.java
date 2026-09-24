@@ -64,7 +64,7 @@ public final class RlpBlockImporterTest {
     BlockTestUtil.write1000Blocks(source);
     final BesuController targetController =
         new BesuController.Builder()
-            .fromSilNetworkConfig(
+            .fromEthNetworkConfig(
                 SilNetworkConfig.getNetworkConfig(NetworkDefinition.SILA_MAINNET), SyncMode.FULL)
             .synchronizerConfiguration(SynchronizerConfiguration.builder().build())
             .silProtocolConfiguration(SilProtocolConfiguration.DEFAULT)

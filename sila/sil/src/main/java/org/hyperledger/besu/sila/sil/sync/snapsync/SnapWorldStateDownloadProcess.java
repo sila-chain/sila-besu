@@ -232,7 +232,7 @@ public class SnapWorldStateDownloadProcess implements WorldStateDownloadProcess 
               "action");
 
       /*
-      The logic and intsrcommunication of different pipelines can be summarized as follows:
+      The logic and intercommunication of different pipelines can be summarized as follows:
 
       1. Account Data Pipeline (fetchAccountDataPipeline): This process starts with downloading the leaves of the account tree in ranges, with multiple ranges being processed simultaneously.
          If the downloaded accounts are smart contracts, tasks are created in the storage pipeline to download the storage tree of the smart contract, and in the code download pipeline for the smart contract.

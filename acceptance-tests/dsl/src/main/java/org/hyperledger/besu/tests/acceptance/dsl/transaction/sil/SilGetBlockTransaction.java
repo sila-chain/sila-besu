@@ -22,8 +22,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 
 import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.SilBlock;
-import org.web3j.protocol.core.methods.response.SilBlock.Block;
+import org.web3j.protocol.core.methods.response.EthBlock;
+import org.web3j.protocol.core.methods.response.EthBlock.Block;
 
 public class SilGetBlockTransaction implements Transaction<Block> {
   private final DefaultBlockParameter blockParameter;
@@ -38,8 +38,8 @@ public class SilGetBlockTransaction implements Transaction<Block> {
   @Override
   public Block execute(final NodeRequests node) {
     try {
-      final SilBlock result =
-          node.sil().silGetBlockByNumber(blockParameter, fullTransactionObjects).send();
+      final EthBlock result =
+          node.sil().ethGetBlockByNumber(blockParameter, fullTransactionObjects).send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
       return result.getBlock();

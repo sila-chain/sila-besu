@@ -35,7 +35,7 @@ import org.immutables.value.Value;
 @Value.Style(allParameters = true)
 public interface PeerResult {
 
-  static PeerResult fromSilPeer(final SilPeer peer) {
+  static PeerResult fromEthPeer(final SilPeer peer) {
     final PeerConnection connection = peer.getConnection();
     final PeerInfo peerInfo = connection.getPeerInfo();
     return ImmutablePeerResult.builder()
@@ -53,7 +53,7 @@ public interface PeerResult {
                 connection.inboundInitiated()))
         .port(Quantity.create(peerInfo.getPort()))
         .id(peerInfo.getNodeId().toString())
-        .protocols(Map.of(SilProtocol.NAME, ProtocolsResult.fromSilPeer(peer)))
+        .protocols(Map.of(SilProtocol.NAME, ProtocolsResult.fromEthPeer(peer)))
         .enode(connection.getRemoteEnode().toString())
         .build();
   }

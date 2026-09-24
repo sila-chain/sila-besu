@@ -38,12 +38,12 @@ public class WeiTest {
         .isEqualTo(String.format("%.2f gwei", 1.0));
 
     assertThat(Wei.of(new BigInteger("1000000000000000000")).toHumanReadableString())
-        .isEqualTo(String.format("%.2f siler", 1.0));
+        .isEqualTo(String.format("%.2f sila", 1.0));
 
     final char[] manyZeros = new char[32];
     Arrays.fill(manyZeros, '0');
     assertThat(Wei.of(new BigInteger("1" + String.valueOf(manyZeros))).toHumanReadableString())
-        .isEqualTo(String.format("%.2f tsiler", 100.0));
+        .isEqualTo(String.format("%.2f tether", 100.0));
   }
 
   @Test
@@ -65,12 +65,12 @@ public class WeiTest {
         .isEqualTo(String.format("  %.2f gwei", 1.0));
 
     assertThat(Wei.of(new BigInteger("1000000000000000000")).toHumanReadablePaddedString())
-        .isEqualTo(String.format("  %.2f siler", 1.0));
+        .isEqualTo(String.format("  %.2f sila", 1.0));
 
     final char[] manyZeros = new char[32];
     Arrays.fill(manyZeros, '0');
     assertThat(
             Wei.of(new BigInteger("1" + String.valueOf(manyZeros))).toHumanReadablePaddedString())
-        .isEqualTo(String.format("%.2f tsiler", 100.0));
+        .isEqualTo(String.format("%.2f tether", 100.0));
   }
 }

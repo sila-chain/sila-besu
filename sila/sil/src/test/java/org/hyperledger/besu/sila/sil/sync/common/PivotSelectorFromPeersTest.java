@@ -62,7 +62,7 @@ public class PivotSelectorFromPeersTest {
     SilPeerImmutableAttributes peer1 = SilPeerImmutableAttributes.from(mockPeer(true, 10, true));
     SilPeerImmutableAttributes peer2 = SilPeerImmutableAttributes.from(mockPeer(true, 8, true));
 
-    Mockito.when(silContext.getSilPeers()).thenReturn(silPeers);
+    Mockito.when(silContext.getEthPeers()).thenReturn(silPeers);
     Mockito.when(silPeers.streamAvailablePeers()).thenReturn(Stream.of(peer1, peer2));
     Mockito.when(silPeers.getBestPeerComparator())
         .thenReturn((p1, ignored) -> p1 == peer1 ? 1 : -1);
@@ -88,7 +88,7 @@ public class PivotSelectorFromPeersTest {
     final SilPeerImmutableAttributes peer99 =
         SilPeerImmutableAttributes.from(mockPeer(true, 99, true));
 
-    Mockito.when(silContext.getSilPeers()).thenReturn(silPeers);
+    Mockito.when(silContext.getEthPeers()).thenReturn(silPeers);
     Mockito.when(silPeers.streamAvailablePeers())
         .thenReturn(Stream.of(peer10a, peer10b))
         .thenReturn(Stream.of(peer100, peer99));
@@ -119,7 +119,7 @@ public class PivotSelectorFromPeersTest {
     final SilPeerImmutableAttributes peer199 =
         SilPeerImmutableAttributes.from(mockPeer(true, 199, true));
 
-    Mockito.when(silContext.getSilPeers()).thenReturn(silPeers);
+    Mockito.when(silContext.getEthPeers()).thenReturn(silPeers);
     Mockito.when(silPeers.streamAvailablePeers())
         .thenReturn(Stream.of(peer10a, peer10b))
         .thenReturn(Stream.of(peer200, peer199));
@@ -140,7 +140,7 @@ public class PivotSelectorFromPeersTest {
 
   @Test
   public void testSelectNewPivotBlockWithInsufficientPeers() {
-    Mockito.when(silContext.getSilPeers()).thenReturn(silPeers);
+    Mockito.when(silContext.getEthPeers()).thenReturn(silPeers);
     Mockito.when(silPeers.streamAvailablePeers()).thenReturn(Stream.empty());
 
     try {

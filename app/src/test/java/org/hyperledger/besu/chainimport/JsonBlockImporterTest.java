@@ -46,8 +46,8 @@ import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.BlobCacheModule;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCacheModule;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCacheModule;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.io.IOException;
@@ -414,7 +414,7 @@ public abstract class JsonBlockImporterTest {
         JsonBlockImporterModule.class,
         BesuPluginContextModule.class,
         BlobCacheModule.class,
-        PathBasedCodeCacheModule.class,
+        BonsaiCodeCacheModule.class,
       })
   interface JsonBlockImportComponent extends BesuComponent {}
 }

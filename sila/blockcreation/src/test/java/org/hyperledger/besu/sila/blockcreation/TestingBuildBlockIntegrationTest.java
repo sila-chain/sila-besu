@@ -67,7 +67,7 @@ import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.AccountChanges;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListFactory;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.time.Clock;
@@ -100,7 +100,7 @@ class TestingBuildBlockIntegrationTest {
   protected final List<GenesisAccount> accounts =
       genesisConfig.streamAllocations().filter(ga -> ga.privateKey() != null).toList();
 
-  protected SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected SilScheduler silScheduler = new DeterministicEthScheduler();
 
   @Test
   void shouldCreateBlockWithBAL() {
@@ -114,7 +114,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -168,7 +168,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -238,7 +238,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -280,7 +280,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient1.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -289,7 +289,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient2.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce() + 1)
             .createTransaction(keyPair);
@@ -324,7 +324,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -410,7 +410,7 @@ class TestingBuildBlockIntegrationTest {
             Suppliers.ofInstance(parentHeader));
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(

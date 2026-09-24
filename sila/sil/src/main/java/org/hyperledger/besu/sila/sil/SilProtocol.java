@@ -23,7 +23,7 @@ import java.util.Set;
 
 /**
  * Sil protocol messages as defined in <a
- * href="https://github.com/sila-chain/devp2p/blob/master/caps/sil.md">Sila Wire Protocol (SIL)</a>
+ * href="https://github.com/sila/devp2p/blob/master/caps/sil.md">Sila Wire Protocol (SIL)</a>
  */
 public class SilProtocol implements SubProtocol {
   public static final String NAME = "sil";
@@ -106,15 +106,15 @@ public class SilProtocol implements SubProtocol {
     return INSTANCE;
   }
 
-  public static boolean isSil69Compatible(final Capability capability) {
+  public static boolean isEth69Compatible(final Capability capability) {
     return NAME.equals(capability.getName()) && capability.getVersion() >= SIL69.getVersion();
   }
 
-  public static boolean isSil70Compatible(final Capability capability) {
+  public static boolean isEth70Compatible(final Capability capability) {
     return NAME.equals(capability.getName()) && capability.getVersion() >= SIL70.getVersion();
   }
 
-  public static boolean isSil71Compatible(final Capability capability) {
+  public static boolean isEth71Compatible(final Capability capability) {
     return NAME.equals(capability.getName()) && capability.getVersion() >= SIL71.getVersion();
   }
 }

@@ -15,12 +15,15 @@
 package org.hyperledger.besu.controller;
 
 import static com.google.common.base.Preconditions.checkNotNull;
+import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.AMSTERDAM;
 
 import org.hyperledger.besu.chainimport.BlockHeadersCachePreload;
 import org.hyperledger.besu.components.BesuComponent;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.consensus.merge.MergeContext;
+import org.hyperledger.besu.consensus.merge.NewPayloadListener;
+import org.hyperledger.besu.consensus.merge.UnverifiedForkchoiceListener;
 import org.hyperledger.besu.consensus.qbft.BFTPivotSelectorFromPeers;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Hash;
@@ -50,7 +53,6 @@ import org.hyperledger.besu.sila.chain.GenesisState;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.chain.VariablesStorage;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
@@ -75,11 +77,11 @@ import org.hyperledger.besu.sila.sil.sync.DefaultSynchronizer;
 import org.hyperledger.besu.sila.sil.sync.PivotBlockSelector;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.sync.common.PivotSelectorAtHead;
 import org.hyperledger.besu.sila.sil.sync.common.PivotSelectorFromPeers;
 import org.hyperledger.besu.sila.sil.sync.common.PivotSelectorFromSafeBlock;
 import org.hyperledger.besu.sila.sil.sync.common.SingleBlockHeaderDownloader;
 import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
-import org.hyperledger.besu.sila.sil.sync.common.checkpoint.ImmutableCheckpoint;
 import org.hyperledger.besu.sila.sil.sync.fullsync.SyncTerminationCondition;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.BlobCache;
@@ -96,18 +98,18 @@ import org.hyperledger.besu.sila.trie.forest.ForestWorldStateArchive;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.archive.BonsaiArchiveFlatDbStrategy;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.archive.BonsaiArchiveWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.archive.BonsaiFlatDbToArchiveMigrator;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.archive.trienode.ArchiveTrieNodeStrategy;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.code.CodeHashCodeStorageStrategy;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogPruner;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.CodeHashCodeStorageStrategy;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogPruner;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ExtraStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
-import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.sila.worldstate.WorldStateArchive.WorldStateHealer;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 
 import java.io.Closeable;
@@ -120,10 +122,10 @@ import java.util.List;
 import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
+import java.util.concurrent.ExecutorService;
 import java.util.concurrent.ScheduledExecutorService;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.atomic.AtomicReference;
 import java.util.function.Supplier;
 
 import org.slf4j.Logger;
@@ -146,7 +148,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
   protected SynchronizerConfiguration syncConfig;
 
   /** The Sila wire protocol configuration. */
-  protected SilProtocolConfiguration silaWireProtocolConfiguration;
+  protected SilProtocolConfiguration ethereumWireProtocolConfiguration;
 
   /** The Transaction pool configuration. */
   protected TransactionPoolConfiguration transactionPoolConfiguration;
@@ -237,7 +239,10 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
   protected boolean isLegacyBftProtocolEncodingEnabled = false;
 
   /** The global code cache */
-  protected PathBasedCodeCache codeCache;
+  protected BonsaiCodeCache codeCache;
+
+  /** The effective checkpoint to sync to (CLI override or genesis). */
+  protected Optional<Checkpoint> checkpoint = Optional.empty();
 
   /** Instantiates a new Besu controller builder. */
   protected BesuControllerBuilder() {}
@@ -319,7 +324,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
    */
   public BesuControllerBuilder silProtocolConfiguration(
       final SilProtocolConfiguration silProtocolConfiguration) {
-    this.silaWireProtocolConfiguration = silProtocolConfiguration;
+    this.ethereumWireProtocolConfiguration = silProtocolConfiguration;
     return this;
   }
 
@@ -421,6 +426,17 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
    */
   public BesuControllerBuilder requiredBlocks(final Map<Long, Hash> requiredBlocks) {
     this.requiredBlocks = requiredBlocks;
+    return this;
+  }
+
+  /**
+   * Sets the effective checkpoint to sync to.
+   *
+   * @param checkpoint the resolved checkpoint, or empty if none applies
+   * @return the besu controller builder
+   */
+  public BesuControllerBuilder checkpoint(final Optional<Checkpoint> checkpoint) {
+    this.checkpoint = checkpoint;
     return this;
   }
 
@@ -630,7 +646,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
     checkNotNull(genesisConfig, "Missing genesis config file");
     checkNotNull(genesisConfigOptions, "Missing genesis config options");
     checkNotNull(syncConfig, "Missing sync config");
-    checkNotNull(silaWireProtocolConfiguration, "Missing sila protocol configuration");
+    checkNotNull(ethereumWireProtocolConfiguration, "Missing sila protocol configuration");
     checkNotNull(networkId, "Missing network ID");
     checkNotNull(miningConfiguration, "Missing mining parameters");
     checkNotNull(metricsSystem, "Missing metrics system");
@@ -645,12 +661,12 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
     checkNotNull(dataStorageConfiguration, "Missing data storage configuration");
     checkNotNull(besuComponent, "Must supply a BesuComponent");
 
-    this.codeCache =
-        besuComponent.map(BesuComponent::getCodeCache).orElse(new PathBasedCodeCache());
+    this.codeCache = besuComponent.map(BesuComponent::getCodeCache).orElse(new BonsaiCodeCache());
     this.codeCache.setupMetricsSystem(metricsSystem);
 
     prepForBuild();
 
+    final List<Closeable> closeables = new ArrayList<>();
     final ProtocolSchedule protocolSchedule = createProtocolSchedule();
 
     final VariablesStorage variablesStorage = storageProvider.createVariablesStorage();
@@ -699,14 +715,37 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             .map(BesuComponent::getCachedMerkleTrieLoader)
             .orElseGet(() -> new BonsaiCachedMerkleTrieLoader(metricsSystem));
 
-    final var worldStateHealerSupplier = new AtomicReference<WorldStateHealer>();
-
     final WorldStateArchive worldStateArchive =
         createWorldStateArchive(
             worldStateStorageCoordinator,
             blockchain,
             bonsaiCachedMerkleTrieLoader,
-            worldStateHealerSupplier::get);
+            protocolSchedule);
+
+    // Install the archive strategy before the genesis write so block 0 is captured.
+    ArchiveTrieNodeStrategy archiveTrieNodeStrategy = null;
+    if (DataStorageFormat.X_BONSAI_ARCHIVE.equals(dataStorageConfiguration.getDataStorageFormat())
+        && dataStorageConfiguration
+            .getExtraStorageConfiguration()
+            .getUnstable()
+            .getBonsaiArchiveStateProofsEnabled()) {
+      final ExtraStorageConfiguration.Unstable archiveUnstable =
+          dataStorageConfiguration.getExtraStorageConfiguration().getUnstable();
+      final BonsaiWorldStateKeyValueStorage keyValueStorage =
+          worldStateStorageCoordinator.getStrategy(BonsaiWorldStateKeyValueStorage.class);
+      final ExecutorService trieCapturePool =
+          MonitoredExecutors.newFixedThreadPool(
+              "trie-capture", syncConfig.getComputationParallelism(), metricsSystem);
+      archiveTrieNodeStrategy =
+          ArchiveTrieNodeStrategy.createArchiveStrategy(
+              keyValueStorage.getComposedWorldStateStorage(),
+              trieCapturePool,
+              archiveUnstable.getBonsaiArchiveShallowCheckpointInterval(),
+              archiveUnstable.getBonsaiArchiveDeepCheckpointInterval());
+      keyValueStorage.setTrieNodeStrategy(archiveTrieNodeStrategy);
+      closeables.add(archiveTrieNodeStrategy);
+      LOG.info("Bonsai archive proofs enabled (--Xbonsai-archive-state-proofs-enabled)");
+    }
 
     if (maybeStoredGenesisBlockHash.isEmpty()) {
       genesisState.writeStateTo(worldStateArchive.getWorldState());
@@ -733,7 +772,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
                 .orElse(new BesuPluginContextImpl()));
     validateContext(protocolContext);
 
-    final int maxMessageSize = silaWireProtocolConfiguration.getMaxMessageSize();
+    final int maxMessageSize = ethereumWireProtocolConfiguration.getMaxMessageSize();
     final Supplier<ProtocolSpec> currentProtocolSpecSupplier =
         () -> protocolSchedule.getByBlockHeader(blockchain.getChainHeadHeader());
     final ForkIdManager forkIdManager =
@@ -758,21 +797,6 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
     final SilMessages silMessages = new SilMessages();
     final SilMessages snapMessages = new SilMessages();
 
-    Optional<Checkpoint> checkpoint = Optional.empty();
-    if (genesisConfigOptions.getCheckpointOptions().isValid()) {
-      checkpoint =
-          Optional.of(
-              ImmutableCheckpoint.builder()
-                  .blockHash(
-                      Hash.fromHexString(
-                          genesisConfigOptions.getCheckpointOptions().getHash().get()))
-                  .blockNumber(genesisConfigOptions.getCheckpointOptions().getNumber().getAsLong())
-                  .totalDifficulty(
-                      Difficulty.fromHexString(
-                          genesisConfigOptions.getCheckpointOptions().getTotalDifficulty().get()))
-                  .build());
-    }
-
     final PeerTaskExecutor peerTaskExecutor =
         new PeerTaskExecutor(
             silPeers,
@@ -792,15 +816,17 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
     final ChainPruningStrategy pruningMode = chainPrunerConfiguration.pruningMode();
     final boolean preMergeEnabled = dataStorageConfiguration.getHistoryExpiryPruneEnabled();
 
+    final Optional<ChainDataPruner> chainDataPruner;
     if (pruningMode != ChainPruningStrategy.NONE || preMergeEnabled) {
       LOG.info("Adding ChainDataPruner to observe block added events");
       final AtomicLong chainDataPrunerObserverId = new AtomicLong();
-      final ChainDataPruner chainDataPruner =
+      final ChainDataPruner pruner =
           createChainPruner(
               blockchainStorage,
               () -> blockchain.removeObserver(chainDataPrunerObserverId.get()),
               syncState);
-      chainDataPrunerObserverId.set(blockchain.observeBlockAdded(chainDataPruner));
+      chainDataPrunerObserverId.set(blockchain.observeBlockAdded(pruner));
+      chainDataPruner = Optional.of(pruner);
 
       if (pruningMode == ChainPruningStrategy.ALL) {
         LOG.info(
@@ -829,6 +855,8 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             chainPrunerConfiguration.chainPruningFrequency(),
             chainPrunerConfiguration.preMergePruningBlocksQuantity());
       }
+    } else {
+      chainDataPruner = Optional.empty();
     }
 
     final TransactionPool transactionPool =
@@ -840,7 +868,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             metricsSystem,
             syncState,
             transactionPoolConfiguration,
-            silaWireProtocolConfiguration,
+            ethereumWireProtocolConfiguration,
             besuComponent.map(BesuComponent::getBlobCache).orElse(new BlobCache()),
             miningConfiguration);
 
@@ -848,11 +876,11 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
         createPeerValidators(protocolSchedule, peerTaskExecutor);
 
     final SilProtocolManager silProtocolManager =
-        createSilProtocolManager(
+        createEthProtocolManager(
             protocolContext,
             syncConfig,
             transactionPool,
-            silaWireProtocolConfiguration,
+            ethereumWireProtocolConfiguration,
             silPeers,
             silContext,
             silMessages,
@@ -873,11 +901,18 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             peerTaskExecutor,
             syncState,
             silProtocolManager,
-            pivotBlockSelector);
-
-    worldStateHealerSupplier.set(synchronizer::healWorldState);
+            pivotBlockSelector,
+            chainDataPruner);
 
     silPeers.setTrailingPeerRequirementsSupplier(synchronizer::calculateTrailingPeerRequirements);
+
+    if (archiveTrieNodeStrategy != null) {
+      archiveTrieNodeStrategy.setHasChainEstimate(
+          () -> syncState.getBestPeerChainHead().isPresent());
+      synchronizer.subscribeInSync(
+          archiveTrieNodeStrategy,
+          dataStorageConfiguration.getExtraStorageConfiguration().getMaxLayersToLoad());
+    }
 
     if (syncConfig.getSyncMode() == SyncMode.SNAP) {
       synchronizer.subscribeInSync((b) -> silPeers.snapServerPeersNeeded(!b));
@@ -915,8 +950,8 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             protocolContext, protocolSchedule, miningConfiguration);
 
     if (DataStorageFormat.BONSAI.equals(dataStorageConfiguration.getDataStorageFormat())) {
-      final PathBasedExtraStorageConfiguration subStorageConfiguration =
-          dataStorageConfiguration.getPathBasedExtraStorageConfiguration();
+      final ExtraStorageConfiguration subStorageConfiguration =
+          dataStorageConfiguration.getExtraStorageConfiguration();
       if (subStorageConfiguration.getLimitTrieLogsEnabled()) {
         final TrieLogManager trieLogManager =
             ((BonsaiWorldStateProvider) worldStateArchive).getTrieLogManager();
@@ -928,7 +963,6 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
       }
     }
 
-    final List<Closeable> closeables = new ArrayList<>();
     closeables.add(protocolContext.getWorldStateArchive());
     closeables.add(storageProvider);
 
@@ -1026,7 +1060,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
   private GenesisState getGenesisState(
       final Optional<BlockHeader> maybeGenesisBlockHeader,
       final ProtocolSchedule protocolSchedule,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     final Optional<Hash> maybeGenesisStateRoot =
         genesisStateHashCacheEnabled
             ? maybeGenesisBlockHeader.map(BlockHeader::getStateRoot)
@@ -1047,8 +1081,8 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
       final Blockchain blockchain,
       final SilScheduler scheduler) {
     final boolean isProofOfStake = genesisConfigOptions.getTerminalTotalDifficulty().isPresent();
-    final PathBasedExtraStorageConfiguration subStorageConfiguration =
-        dataStorageConfiguration.getPathBasedExtraStorageConfiguration();
+    final ExtraStorageConfiguration subStorageConfiguration =
+        dataStorageConfiguration.getExtraStorageConfiguration();
     final TrieLogPruner trieLogPruner =
         new TrieLogPruner(
             (BonsaiWorldStateKeyValueStorage) worldStateStorage,
@@ -1095,6 +1129,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
    * @param syncState the sync state
    * @param silProtocolManager the sil protocol manager
    * @param pivotBlockSelector the pivot block selector
+   * @param chainDataPruner the chain data pruner
    * @return the synchronizer
    */
   protected DefaultSynchronizer createSynchronizer(
@@ -1105,7 +1140,8 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
       final PeerTaskExecutor peerTaskExecutor,
       final SyncState syncState,
       final SilProtocolManager silProtocolManager,
-      final PivotBlockSelector pivotBlockSelector) {
+      final PivotBlockSelector pivotBlockSelector,
+      final Optional<ChainDataPruner> chainDataPruner) {
 
     return new DefaultSynchronizer(
         syncConfig,
@@ -1121,7 +1157,8 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
         clock,
         metricsSystem,
         getFullSyncTerminationCondition(protocolContext.getBlockchain()),
-        pivotBlockSelector);
+        pivotBlockSelector,
+        chainDataPruner);
   }
 
   private PivotBlockSelector createPivotSelector(
@@ -1152,26 +1189,58 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
           new SingleBlockHeaderDownloader(silContext, protocolSchedule);
 
       final List<Runnable> cleanups = new ArrayList<>();
+      final Runnable cleanupAction =
+          () -> {
+            cleanups.forEach(Runnable::run);
+          };
 
-      final PivotSelectorFromSafeBlock selector =
-          new PivotSelectorFromSafeBlock(
-              protocolContext,
-              genesisConfigOptions,
-              headerDownloader,
-              protocolSchedule,
-              Clock.systemUTC(),
-              syncConfig.getSnapSyncConfiguration().getPivotBlockWindowValidity(),
-              () -> {
-                cleanups.forEach(Runnable::run);
-                LOG.info("Initial sync done, unsubscribing forkchoice + newPayload listeners");
-              });
+      final PivotBlockSelector selector;
+      final NewPayloadListener newPayloadListener;
+      final UnverifiedForkchoiceListener forkchoiceListener;
+      if (Boolean.TRUE.equals(syncConfig.getSnapSyncConfiguration().isSnap2Enabled())) {
+        final PivotSelectorAtHead atHeadSelector =
+            new PivotSelectorAtHead(
+                protocolContext,
+                genesisConfigOptions,
+                headerDownloader,
+                protocolSchedule,
+                silContext,
+                syncConfig.getSyncMinimumPeerCount(),
+                Clock.systemUTC(),
+                syncConfig.getSnapSyncConfiguration().getPivotBlockWindowValidity(),
+                cleanupAction);
+        selector = atHeadSelector;
+        newPayloadListener = atHeadSelector;
+        forkchoiceListener = atHeadSelector;
+      } else {
+        final PivotSelectorFromSafeBlock safeBlockSelector =
+            new PivotSelectorFromSafeBlock(
+                protocolContext,
+                genesisConfigOptions,
+                headerDownloader,
+                protocolSchedule,
+                Clock.systemUTC(),
+                syncConfig.getSnapSyncConfiguration().getPivotBlockWindowValidity(),
+                cleanupAction);
+        selector = safeBlockSelector;
+        newPayloadListener = safeBlockSelector;
+        forkchoiceListener = safeBlockSelector;
+      }
 
-      final long newPayloadSubscriptionId = mergeContext.addNewPayloadListener(selector);
-      cleanups.add(() -> mergeContext.removeNewPayloadListener(newPayloadSubscriptionId));
-
-      final long selectorSubscriptionId = mergeContext.addNewUnverifiedForkchoiceListener(selector);
+      final long newPayloadSubscriptionId = mergeContext.addNewPayloadListener(newPayloadListener);
       cleanups.add(
-          () -> mergeContext.removeNewUnverifiedForkchoiceListener(selectorSubscriptionId));
+          () -> {
+            mergeContext.removeNewPayloadListener(newPayloadSubscriptionId);
+            LOG.info("Unsubscribed newPayload listener");
+          });
+
+      final long selectorSubscriptionId =
+          mergeContext.addNewUnverifiedForkchoiceListener(forkchoiceListener);
+      cleanups.add(
+          () -> {
+            mergeContext.removeNewUnverifiedForkchoiceListener(selectorSubscriptionId);
+            LOG.info("Unsubscribed forkchoice listener");
+          });
 
       return selector;
     } else {
@@ -1285,7 +1354,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
    * @param protocolContext the protocol context
    * @param synchronizerConfiguration the synchronizer configuration
    * @param transactionPool the transaction pool
-   * @param silaWireProtocolConfiguration the sila wire protocol configuration
+   * @param ethereumWireProtocolConfiguration the sila wire protocol configuration
    * @param silPeers the sil peers
    * @param silContext the sil context
    * @param silMessages the sil messages
@@ -1295,11 +1364,11 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
    * @param forkIdManager the fork id manager
    * @return the sil protocol manager
    */
-  protected SilProtocolManager createSilProtocolManager(
+  protected SilProtocolManager createEthProtocolManager(
       final ProtocolContext protocolContext,
       final SynchronizerConfiguration synchronizerConfiguration,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilContext silContext,
       final SilMessages silMessages,
@@ -1312,7 +1381,7 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
         networkId,
         protocolContext.getWorldStateArchive(),
         transactionPool,
-        silaWireProtocolConfiguration,
+        ethereumWireProtocolConfiguration,
         silPeers,
         silMessages,
         silContext,
@@ -1361,14 +1430,16 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             snapMessages,
             silScheduler,
             protocolContext,
-            synchronizer));
+            synchronizer,
+            metricsSystem));
   }
 
   WorldStateArchive createWorldStateArchive(
       final WorldStateStorageCoordinator worldStateStorageCoordinator,
       final Blockchain blockchain,
       final BonsaiCachedMerkleTrieLoader bonsaiCachedMerkleTrieLoader,
-      final Supplier<WorldStateHealer> worldStateHealerSupplier) {
+      final ProtocolSchedule protocolSchedule) {
+    final Optional<Long> amsterdamMilestone = protocolSchedule.milestoneFor(AMSTERDAM);
     return switch (dataStorageConfiguration.getDataStorageFormat()) {
       case BONSAI -> {
         final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage =
@@ -1377,12 +1448,12 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
         yield new BonsaiWorldStateProvider(
             worldStateKeyValueStorage,
             blockchain,
-            dataStorageConfiguration.getPathBasedExtraStorageConfiguration(),
+            dataStorageConfiguration.getExtraStorageConfiguration(),
             bonsaiCachedMerkleTrieLoader,
             besuComponent.map(BesuComponent::getBesuPluginContext).orElse(null),
             savmConfiguration,
-            worldStateHealerSupplier,
-            codeCache);
+            codeCache,
+            amsterdamMilestone);
       }
       case X_BONSAI_ARCHIVE -> {
         final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage =
@@ -1395,9 +1466,9 @@ public abstract class BesuControllerBuilder implements MiningConfigurationOverri
             bonsaiCachedMerkleTrieLoader,
             besuComponent.map(BesuComponent::getBesuPluginContext).orElse(null),
             savmConfiguration,
-            worldStateHealerSupplier,
             codeCache,
-            metricsSystem);
+            metricsSystem,
+            amsterdamMilestone);
       }
       case FOREST -> {
         final WorldStatePreimageStorage preimageStorage =

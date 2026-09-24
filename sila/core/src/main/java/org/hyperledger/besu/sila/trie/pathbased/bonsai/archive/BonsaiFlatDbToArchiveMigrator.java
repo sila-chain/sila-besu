@@ -23,7 +23,7 @@ import org.hyperledger.besu.plugin.services.trielogs.TrieLog;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogManager;
 import org.hyperledger.besu.util.log.LogUtil;
 
 import java.io.Closeable;

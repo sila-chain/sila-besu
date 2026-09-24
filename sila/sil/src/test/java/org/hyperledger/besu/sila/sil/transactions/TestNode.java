@@ -76,7 +76,7 @@ import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.testutil.TestClock;
 
@@ -141,7 +141,7 @@ public class TestNode implements Closeable {
             new NoOpMetricsSystem());
 
     final GenesisState genesisState =
-        GenesisState.fromConfig(genesisConfig, protocolSchedule, new PathBasedCodeCache());
+        GenesisState.fromConfig(genesisConfig, protocolSchedule, new BonsaiCodeCache());
     final BlockHeaderFunctions blockHeaderFunctions =
         ScheduleBasedBlockHeaderFunctions.create(protocolSchedule);
     final MutableBlockchain blockchain =

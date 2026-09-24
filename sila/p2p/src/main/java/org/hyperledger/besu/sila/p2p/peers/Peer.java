@@ -20,7 +20,7 @@ import org.hyperledger.besu.sila.forkid.ForkId;
 import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.sila.beacon.discovery.schema.NodeRecord;
+import org.ethereum.beacon.discovery.schema.NodeRecord;
 
 public interface Peer extends org.hyperledger.besu.plugin.data.p2p.Peer, PeerId {
 

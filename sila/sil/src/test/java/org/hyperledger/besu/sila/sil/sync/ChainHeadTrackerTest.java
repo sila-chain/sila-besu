@@ -26,7 +26,7 @@ import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.difficulty.fixed.FixedDifficultyProtocolSchedule;
 import org.hyperledger.besu.sila.sil.manager.ChainState;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
@@ -51,7 +51,7 @@ public class ChainHeadTrackerTest {
   private BlockchainSetupUtil blockchainSetupUtil;
   private MutableBlockchain blockchain;
   private SilProtocolManager silProtocolManager;
-  private RespondingSilPeer respondingPeer;
+  private RespondingEthPeer respondingPeer;
 
   private PeerTaskExecutor peerTaskExecutor;
 
@@ -86,7 +86,7 @@ public class ChainHeadTrackerTest {
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     respondingPeer =
-        RespondingSilPeer.builder()
+        RespondingEthPeer.builder()
             .silProtocolManager(silProtocolManager)
             .chainHeadHash(blockchain.getChainHeadHash())
             .totalDifficulty(blockchain.getChainHead().getTotalDifficulty())
@@ -94,7 +94,7 @@ public class ChainHeadTrackerTest {
             .build();
     GetHeadersFromPeerTaskExecutorAnswer getHeadersAnswer =
         new GetHeadersFromPeerTaskExecutorAnswer(
-            blockchain, silProtocolManager.silContext().getSilPeers());
+            blockchain, silProtocolManager.silContext().getEthPeers());
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetHeadersFromPeerTask.class)))
         .thenAnswer(getHeadersAnswer);
     Mockito.when(
@@ -109,7 +109,7 @@ public class ChainHeadTrackerTest {
   public void shouldRequestHeaderChainHeadWhenNewPeerConnects(
       final DataStorageFormat storageFormat) {
     setup(storageFormat);
-    chainHeadTracker.getBestHeaderFromPeer(respondingPeer.getSilPeer());
+    chainHeadTracker.getBestHeaderFromPeer(respondingPeer.getEthPeer());
 
     Assertions.assertThat(chainHeadState().getEstimatedHeight()).isZero();
     Assertions.assertThat(chainHeadState().getEstimatedHeight())
@@ -121,10 +121,10 @@ public class ChainHeadTrackerTest {
   public void shouldIgnoreHeadersIfChainHeadHasAlreadyBeenUpdatedWhileWaiting(
       final DataStorageFormat storageFormat) {
     setup(storageFormat);
-    chainHeadTracker.getBestHeaderFromPeer(respondingPeer.getSilPeer());
+    chainHeadTracker.getBestHeaderFromPeer(respondingPeer.getEthPeer());
 
     // Change the hash of the current known head
-    respondingPeer.getSilPeer().chainState().statusReceived(Hash.EMPTY_TRIE_HASH, Difficulty.ONE);
+    respondingPeer.getEthPeer().chainState().statusReceived(Hash.EMPTY_TRIE_HASH, Difficulty.ONE);
 
     Assertions.assertThat(chainHeadState().getEstimatedHeight()).isZero();
   }
@@ -133,7 +133,7 @@ public class ChainHeadTrackerTest {
   @ArgumentsSource(ChainHeadTrackerTestArguments.class)
   public void shouldCheckTrialingPeerLimits(final DataStorageFormat storageFormat) {
     setup(storageFormat);
-    chainHeadTracker.getBestHeaderFromPeer(respondingPeer.getSilPeer());
+    chainHeadTracker.getBestHeaderFromPeer(respondingPeer.getEthPeer());
 
     Assertions.assertThat(chainHeadState().getEstimatedHeight()).isZero();
     Assertions.assertThat(chainHeadState().getEstimatedHeight())
@@ -141,6 +141,6 @@ public class ChainHeadTrackerTest {
   }
 
   private ChainState chainHeadState() {
-    return respondingPeer.getSilPeer().chainState();
+    return respondingPeer.getEthPeer().chainState();
   }
 }

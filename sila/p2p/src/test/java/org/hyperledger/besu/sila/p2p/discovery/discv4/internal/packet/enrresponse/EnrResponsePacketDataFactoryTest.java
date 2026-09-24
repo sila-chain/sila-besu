@@ -18,6 +18,7 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.RequestHashValidator;
 
 import org.apache.tuweni.bytes.Bytes;
+import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -25,7 +26,6 @@ import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.Mockito;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.sila.beacon.discovery.schema.NodeRecord;
 
 @ExtendWith(MockitoExtension.class)
 public class EnrResponsePacketDataFactoryTest {

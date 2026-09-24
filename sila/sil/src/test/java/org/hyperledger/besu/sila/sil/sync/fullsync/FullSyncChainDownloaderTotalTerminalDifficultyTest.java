@@ -26,7 +26,7 @@ import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
@@ -93,17 +93,17 @@ public class FullSyncChainDownloaderTotalTerminalDifficultyTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(localBlockchainSetup.getWorldArchive())
             .setTransactionPool(localBlockchainSetup.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     silContext = silProtocolManager.silContext();
-    syncState = new SyncState(protocolContext.getBlockchain(), silContext.getSilPeers());
+    syncState = new SyncState(protocolContext.getBlockchain(), silContext.getEthPeers());
 
     GetHeadersFromPeerTaskExecutorAnswer headersAnswer =
-        new GetHeadersFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getSilPeers());
+        new GetHeadersFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getEthPeers());
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetHeadersFromPeerTask.class)))
         .thenAnswer(headersAnswer);
     Mockito.when(
@@ -113,7 +113,7 @@ public class FullSyncChainDownloaderTotalTerminalDifficultyTest {
 
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetBodiesFromPeerTask.class)))
         .thenAnswer(
-            new GetBodiesFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getSilPeers()));
+            new GetBodiesFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getEthPeers()));
   }
 
   @AfterEach
@@ -151,10 +151,10 @@ public class FullSyncChainDownloaderTotalTerminalDifficultyTest {
     // Sanity check
     assertThat(targetBlock).isGreaterThan(localBlockchain.getChainHeadBlockNumber());
 
-    final RespondingSilPeer peer =
+    final RespondingEthPeer peer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, otherBlockchain);
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(otherBlockchain);
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(otherBlockchain);
 
     final SynchronizerConfiguration syncConfig =
         syncConfigBuilder().downloaderChainSegmentSize(1).downloaderParallelism(1).build();
@@ -168,7 +168,7 @@ public class FullSyncChainDownloaderTotalTerminalDifficultyTest {
 
     peer.respondWhileOtherThreadsWork(responder, () -> syncState.syncTarget().isEmpty());
     assertThat(syncState.syncTarget()).isPresent();
-    assertThat(syncState.syncTarget().get().peer()).isEqualTo(peer.getSilPeer());
+    assertThat(syncState.syncTarget().get().peer()).isEqualTo(peer.getEthPeer());
 
     peer.respondWhileOtherThreadsWork(responder, () -> !future.isDone());
 
@@ -187,10 +187,10 @@ public class FullSyncChainDownloaderTotalTerminalDifficultyTest {
     // Sanity check
     assertThat(targetBlock).isGreaterThan(localBlockchain.getChainHeadBlockNumber());
 
-    final RespondingSilPeer peer =
+    final RespondingEthPeer peer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, otherBlockchain);
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(otherBlockchain);
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(otherBlockchain);
 
     final SynchronizerConfiguration syncConfig =
         syncConfigBuilder().downloaderChainSegmentSize(1).downloaderParallelism(1).build();
@@ -201,7 +201,7 @@ public class FullSyncChainDownloaderTotalTerminalDifficultyTest {
 
     peer.respondWhileOtherThreadsWork(responder, () -> !syncState.syncTarget().isPresent());
     assertThat(syncState.syncTarget()).isPresent();
-    assertThat(syncState.syncTarget().get().peer()).isEqualTo(peer.getSilPeer());
+    assertThat(syncState.syncTarget().get().peer()).isEqualTo(peer.getEthPeer());
 
     peer.respondWhileOtherThreadsWork(
         responder, () -> localBlockchain.getChainHeadBlockNumber() < targetBlock);

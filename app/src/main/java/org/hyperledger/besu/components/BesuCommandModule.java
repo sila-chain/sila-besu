@@ -28,7 +28,7 @@ import org.hyperledger.besu.cli.BesuCommand;
 import org.hyperledger.besu.cli.options.P2PDiscoveryOptions;
 import org.hyperledger.besu.cli.options.RPCOptions;
 import org.hyperledger.besu.controller.BesuController;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.sila.core.encoding.BlockBodyEncoder;
 import org.hyperledger.besu.sila.core.encoding.BlockHeaderEncoder;

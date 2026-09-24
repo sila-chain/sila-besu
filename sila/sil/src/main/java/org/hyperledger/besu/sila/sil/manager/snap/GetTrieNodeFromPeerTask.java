@@ -99,7 +99,7 @@ public class GetTrieNodeFromPeerTask extends AbstractPeerRequestTask<Map<Bytes, 
           }
 
           @Override
-          public boolean isSilPeerSuitable(final SilPeerImmutableAttributes silPeer) {
+          public boolean isEthPeerSuitable(final SilPeerImmutableAttributes silPeer) {
             return silPeer.isServingSnap();
           }
         },

@@ -87,7 +87,7 @@ public class CliqueProtocolScheduleTest {
   }
 
   @Test
-  public void parametersAlignWithSilaMainnetWithAdjustments() {
+  public void parametersAlignWithMainnetWithAdjustments() {
     final ForksSchedule<CliqueConfigOptions> forksSchedule =
         new ForksSchedule<>(List.of(new ForkSpec<>(0, JsonCliqueConfigOptions.DEFAULT)));
     final ProtocolSpec homestead =

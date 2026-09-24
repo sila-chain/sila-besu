@@ -88,7 +88,7 @@ public final class RlpBlockExporterTest {
 
   private static BesuController createController(final @TempDir Path dataDir) throws IOException {
     return new BesuController.Builder()
-        .fromSilNetworkConfig(
+        .fromEthNetworkConfig(
             SilNetworkConfig.getNetworkConfig(NetworkDefinition.SILA_MAINNET), SyncMode.FULL)
         .synchronizerConfiguration(SynchronizerConfiguration.builder().build())
         .silProtocolConfiguration(SilProtocolConfiguration.DEFAULT)

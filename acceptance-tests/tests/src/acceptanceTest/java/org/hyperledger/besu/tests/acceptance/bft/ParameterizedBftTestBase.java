@@ -52,7 +52,7 @@ public abstract class ParameterizedBftTestBase extends AcceptanceTestBase {
     minerNode.setGenesisConfig(genesisConfigNode.toString());
   }
 
-  static void updateGenesisConfigToSilaShanghai(
+  static void updateGenesisConfigToShanghai(
       final BesuNode minerNode, final boolean zeroBaseFeeEnabled) {
     final Optional<String> genesisConfig =
         minerNode.getGenesisConfigProvider().create(List.of(minerNode));

@@ -80,7 +80,7 @@ public class TransactionBroadcasterTest {
     sendTaskCapture = ArgumentCaptor.forClass(Runnable.class);
     doNothing().when(silScheduler).scheduleSyncWorkerTask(sendTaskCapture.capture());
 
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(silContext.getScheduler()).thenReturn(silScheduler);
 
     // we use the fixed random seed to have a predictable shuffle of peers

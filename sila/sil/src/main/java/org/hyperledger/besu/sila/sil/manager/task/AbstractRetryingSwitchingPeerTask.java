@@ -126,8 +126,8 @@ public abstract class AbstractRetryingSwitchingPeerTask<T> extends AbstractRetry
   }
 
   protected Optional<SilPeer> nextPeerToTry() {
-    return getSilContext()
-        .getSilPeers()
+    return getEthContext()
+        .getEthPeers()
         .streamBestPeers()
         .filter((peer) -> isSuitablePeer(peer) && !triedPeers.contains(peer.silPeer()))
         .map(SilPeerImmutableAttributes::silPeer)
@@ -135,7 +135,7 @@ public abstract class AbstractRetryingSwitchingPeerTask<T> extends AbstractRetry
   }
 
   private void refreshPeers() {
-    final SilPeers peers = getSilContext().getSilPeers();
+    final SilPeers peers = getEthContext().getEthPeers();
     // If we are at max connections, then refresh peers disconnecting one of the failed peers,
     // or the least useful
 

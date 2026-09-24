@@ -27,6 +27,7 @@ import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -120,8 +121,9 @@ public abstract class AbstractSyncTargetManager {
         .scheduleFutureTask(
             () ->
                 silContext
-                    .getSilPeers()
+                    .getEthPeers()
                     .waitForPeer((peer) -> true)
+                    .orTimeout(5, TimeUnit.SECONDS)
                     .handle((ignored, ignored2) -> null)
                     .thenCompose((r) -> findSyncTarget()),
             Duration.ofSeconds(5));

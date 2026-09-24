@@ -35,7 +35,7 @@ import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
 
-public class SilGraphQLHttpBySpecTest extends AbstractSilGraphQLHttpServiceTest {
+public class SilGraphQLHttpBySpecTest extends AbstractEthGraphQLHttpServiceTest {
 
   @SuppressWarnings("StreamResourceLeak")
   public static Stream<Arguments> specs() throws IOException, URISyntaxException {

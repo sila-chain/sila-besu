@@ -3,7 +3,7 @@
  [![OpenSSF Best Practices](https://www.bestpractices.dev/projects/3174/badge)](https://www.bestpractices.dev/en/projects/3174)
  [![License](https://img.shields.io/badge/License-Apache%202.0-blue.svg)](https://github.com/sila-chain/sila-besu/blob/main/LICENSE)
  [![Discord](https://img.shields.io/discord/905194001349627914?logo=Hyperledger&style=plastic)](https://discord.com/invite/hyperledger)
- [![X Follow](https://img.shields.io/twitter/follow/Besu_sil)](https://x.com/Besu_sil)
+ [![X Follow](https://img.shields.io/twitter/follow/Besu_eth)](https://x.com/Besu_eth)
 
 [Download](https://github.com/sila-chain/sila-besu/releases)
 
@@ -34,7 +34,7 @@ The [Besu documentation](https://docs.besu-sil.org/) answers many common questio
 ### Chat
 
 * Join the [Besu Discord](https://discord.com/invite/hyperledger): `#besu` to interact with the dev team and get support, and `#besu-contributors` if you are interested in contributing to the client.
-* Besu is an execution client and must be paired with a consensus client. If you are also running the [Teku](https://github.com/Consensys/teku) consensus client, the [Consensys Discord](https://discord.com/invite/consensys) is useful too (SilaMainnet Clients -> `#teku`).
+* Besu is an execution client and must be paired with a consensus client. If you are also running the [Teku](https://github.com/Consensys/teku) consensus client, the [Teku Discord](https://discord.com/invite/teku) is useful too.
 
 ### GitHub
 
@@ -42,7 +42,7 @@ The [Besu GitHub repository](https://github.com/sila-chain/sila-besu) tracks rec
 
 ### Announcements
 
-Version announcements are posted in the Discord announcements channel. Occasionally, the team also posts emergency alerts and support information on Discord and [X](https://x.com/Besu_sil).
+Version announcements are posted in the Discord announcements channel. Occasionally, the team also posts emergency alerts and support information on Discord and [X](https://x.com/Besu_eth).
 
 ## Issues 
 
@@ -77,10 +77,10 @@ Instructions for how to get started with developing on the Besu codebase. Please
 This project uses [Gradle dependency verification](https://docs.gradle.org/current/userguide/dependency_verification.html). When adding or updating dependencies, regenerate `gradle/verification-metadata.xml` with:
 
 ```shell
-./gradlew --write-verification-metadata sha256 resolveSourceArtifacts
+./gradlew --write-verification-metadata sha256 --refresh-dependencies resolveSourceArtifacts :plugin-api:checkAPICompatibility --rerun-tasks
 ```
 
-The `resolveSourceArtifacts` task ensures source JARs are included in the metadata, which is required for IDE sync (e.g. IntelliJ automatically downloads sources).
+The `resolveSourceArtifacts` task ensures source JARs are included in the metadata, which is required for IDE sync (e.g. IntelliJ automatically downloads sources). The `:plugin-api:checkAPICompatibility` task resolves the released Plugin API baseline so its artifacts are recorded as well. The `--rerun-tasks` and `--refresh-dependencies` flags make the regeneration behave like a clean checkout: without them, cached task results and cached dependency metadata can produce a silently incomplete file that passes locally but fails on a fresh clone.
 
 ### Profiling Besu
 

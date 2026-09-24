@@ -23,10 +23,10 @@ import java.util.Collections;
 import org.web3j.abi.FunctionEncoder;
 import org.web3j.abi.datatypes.Function;
 import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.methods.response.SilSendTransaction;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.tx.RawTransactionManager;
 
-public class CallSmartContractFunction implements Transaction<SilSendTransaction> {
+public class CallSmartContractFunction implements Transaction<EthSendTransaction> {
 
   private static final BigInteger GAS_PRICE = BigInteger.valueOf(1000);
 
@@ -58,7 +58,7 @@ public class CallSmartContractFunction implements Transaction<SilSendTransaction
   }
 
   @Override
-  public SilSendTransaction execute(final NodeRequests node) {
+  public EthSendTransaction execute(final NodeRequests node) {
     final RawTransactionManager transactionManager =
         new RawTransactionManager(node.sil(), BENEFACTOR_ONE);
     try {

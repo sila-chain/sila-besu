@@ -25,7 +25,7 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.frame.BlockValues;
 import org.hyperledger.besu.savm.frame.MessageFrame;
@@ -54,7 +54,7 @@ public class SelfDestructOperationTest {
   @Mock private WorldUpdater worldUpdater;
   @Mock private MutableAccount accountOriginator;
   @Mock private MutableAccount accountBeneficiary;
-  private final SAVM savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+  private final SAVM savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
 
   private final SelfDestructOperation frontierOperation =
       new SelfDestructOperation(new ConstantinopleGasCalculator());
@@ -158,7 +158,7 @@ public class SelfDestructOperationTest {
 
   @ParameterizedTest
   @MethodSource("params")
-  void checkContractDeletionSIP6780(
+  void checkContractDeletionEIP6780(
       final String originator,
       final String beneficiary,
       final boolean newAccount,

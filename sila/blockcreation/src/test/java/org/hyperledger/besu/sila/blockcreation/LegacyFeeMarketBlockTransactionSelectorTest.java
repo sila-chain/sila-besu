@@ -47,7 +47,7 @@ import java.util.function.Function;
 
 import org.junit.jupiter.api.Disabled;
 
-@Disabled("flaky https://github.com/hyperledger/besu/issues/8238")
+@Disabled("flaky https://github.com/sila-chain/sila-besu/issues/8238")
 public class LegacyFeeMarketBlockTransactionSelectorTest
     extends AbstractBlockTransactionSelectorTest {
 
@@ -89,7 +89,7 @@ public class LegacyFeeMarketBlockTransactionSelectorTest
             blockchain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(

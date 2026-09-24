@@ -135,20 +135,20 @@ public class BackwardSyncAlgorithm implements BesuEvents.InitialSyncCompletionLi
       final Throwable error, final Hash firstHash, final CompletableFuture<Void> syncStep) {
     if (error instanceof CompletionException
         && error.getCause() instanceof MaxRetriesReachedException) {
-      handleSilPeerMaxRetriesException(firstHash);
+      handleEthPeerMaxRetriesException(firstHash);
       syncStep.complete(null);
     } else {
       syncStep.completeExceptionally(error);
     }
   }
 
-  private void handleSilPeerMaxRetriesException(final Hash firstHash) {
+  private void handleEthPeerMaxRetriesException(final Hash firstHash) {
     context.getBackwardChain().removeFromHashToAppend(firstHash);
     LOG.atWarn()
         .setMessage(
             "Unable to retrieve block {} from any peer, with {} peers available. Could be a reorged block. Waiting for the next block from the consensus client to try again.")
         .addArgument(firstHash)
-        .addArgument(context.getSilContext().getSilPeers().peerCount())
+        .addArgument(context.getEthContext().getEthPeers().peerCount())
         .log();
     LOG.atDebug().setMessage("Removing hash {} from hashesToAppend").addArgument(firstHash).log();
   }
@@ -177,7 +177,11 @@ public class BackwardSyncAlgorithm implements BesuEvents.InitialSyncCompletionLi
   protected CompletableFuture<Void> waitForReady() {
     final long idTTD = context.getSyncState().subscribeTTDReached(reached -> countDownIfReady());
     final long idIS = context.getSyncState().subscribeCompletionReached(this);
-    return CompletableFuture.runAsync(() -> checkReadiness(idTTD, idIS));
+    final CompletableFuture<?> peerConnection =
+        context.getEthContext().getEthPeers().waitForPeer(peer -> true);
+    peerConnection.thenRun(this::countDownIfReady);
+    return CompletableFuture.runAsync(() -> checkReadiness(idTTD, idIS))
+        .whenComplete((unused, throwable) -> peerConnection.cancel(false));
   }
 
   private void checkReadiness(final long idTTD, final long idIS) {
@@ -188,8 +192,8 @@ public class BackwardSyncAlgorithm implements BesuEvents.InitialSyncCompletionLi
         if (await) {
           LOG.debug("Preconditions meet, ensure at least one peer is connected");
           context
-              .getSilContext()
-              .getSilPeers()
+              .getEthContext()
+              .getEthPeers()
               .waitForPeer((peer) -> true)
               .orTimeout(5, TimeUnit.SECONDS)
               .get();

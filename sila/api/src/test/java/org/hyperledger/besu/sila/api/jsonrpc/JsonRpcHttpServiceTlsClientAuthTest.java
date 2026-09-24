@@ -26,7 +26,7 @@ import static org.mockito.Mockito.mock;
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
@@ -56,7 +56,7 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.io.FileOutputStream;
 import java.io.IOException;
@@ -168,7 +168,7 @@ public class JsonRpcHttpServiceTlsClientAuthTest {
                 mock(ApiConfiguration.class),
                 Optional.empty(),
                 mock(TransactionSimulator.class),
-                new DeterministicSilScheduler());
+                new DeterministicEthScheduler());
 
     System.setProperty("javax.net.ssl.trustStore", CLIENT_AS_CA_CERT.getKeyStoreFile().toString());
     System.setProperty(

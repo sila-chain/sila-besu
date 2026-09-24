@@ -64,7 +64,7 @@ public class BlockRangeBroadcasterTest {
 
   @BeforeEach
   public void setup() {
-    when(silContext.getSilMessages()).thenReturn(mock(SilMessages.class));
+    when(silContext.getEthMessages()).thenReturn(mock(SilMessages.class));
     when(silContext.getScheduler()).thenReturn(mock(SilScheduler.class));
     blockRangeBroadcaster = spy(new BlockRangeBroadcaster(silContext, blockchain));
   }
@@ -79,7 +79,7 @@ public class BlockRangeBroadcasterTest {
   }
 
   @Test
-  public void shouldSendBlockRangeOnlyToSil69Peers() throws PeerConnection.PeerNotConnected {
+  public void shouldSendBlockRangeOnlyToEth69Peers() throws PeerConnection.PeerNotConnected {
     setupPeers(silPeerWithoutSupport, silPeerWithSupport);
     when(silPeerWithSupport.hasSupportForMessage(SilProtocolMessages.BLOCK_RANGE_UPDATE))
         .thenReturn(true);
@@ -91,7 +91,7 @@ public class BlockRangeBroadcasterTest {
   }
 
   private void setupPeers(final SilPeer... peers) {
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(silPeers.streamAvailablePeers())
         .thenReturn(Stream.of(peers).map(SilPeerImmutableAttributes::from));
     for (SilPeer silPeer : peers) {

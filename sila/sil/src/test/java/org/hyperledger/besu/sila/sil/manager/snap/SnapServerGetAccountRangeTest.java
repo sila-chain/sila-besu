@@ -28,7 +28,7 @@ import org.hyperledger.besu.sila.sil.messages.snap.GetAccountRangeMessage;
 import org.hyperledger.besu.sila.sil.sync.snapsync.ImmutableSnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldStateProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.PathBasedWorldStateProvider;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 
 import java.math.BigInteger;

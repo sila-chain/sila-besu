@@ -20,8 +20,8 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.savm.worldstate.UpdateTrackingAccount;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt256;
@@ -44,7 +44,7 @@ public class BonsaiAccountTest {
             Hash.EMPTY_TRIE_HASH,
             Hash.EMPTY,
             true,
-            new PathBasedCodeCache());
+            new BonsaiCodeCache());
     trackedAccount.setCode(Bytes.of(1));
     final UpdateTrackingAccount<BonsaiAccount> bonsaiAccountUpdateTrackingAccount =
         new UpdateTrackingAccount<>(trackedAccount);
@@ -72,7 +72,7 @@ public class BonsaiAccountTest {
             Hash.EMPTY_TRIE_HASH,
             Hash.EMPTY,
             true,
-            new PathBasedCodeCache());
+            new BonsaiCodeCache());
     account.setCode(Bytes.of(1));
     account.setStorageValue(UInt256.ONE, UInt256.ONE);
     assertThat(new BonsaiAccount(account, bonsaiWorldState, true))

@@ -410,13 +410,13 @@ public class MiningOptionsTest extends AbstractCLIOptionsTest<MiningConfiguratio
   }
 
   @Test
-  public void warnsWhenTargetGasLimitSetOnBuiltInGenesisWithSilaAmsterdamScheduled() {
+  public void warnsWhenTargetGasLimitSetOnBuiltInGenesisWithAmsterdamScheduled() {
     final MiningConfiguration miningConfiguration = MiningConfiguration.newDefault();
     miningConfiguration.setTargetGasLimit(36_000_000L);
     final MiningOptions options = MiningOptions.fromConfig(miningConfiguration);
 
     final GenesisConfigOptions genesisConfigOptions = mock(GenesisConfigOptions.class);
-    when(genesisConfigOptions.getSilaAmsterdamTime()).thenReturn(OptionalLong.of(1_777_000_000L));
+    when(genesisConfigOptions.getAmsterdamTime()).thenReturn(OptionalLong.of(1_777_000_000L));
 
     options.validate(new CommandLine(options), genesisConfigOptions, true, true, mockLogger);
 
@@ -439,13 +439,13 @@ public class MiningOptionsTest extends AbstractCLIOptionsTest<MiningConfiguratio
   }
 
   @Test
-  public void doesNotWarnAboutTargetGasLimitWhenSilaAmsterdamUnscheduled() {
+  public void doesNotWarnAboutTargetGasLimitWhenAmsterdamUnscheduled() {
     final MiningConfiguration miningConfiguration = MiningConfiguration.newDefault();
     miningConfiguration.setTargetGasLimit(36_000_000L);
     final MiningOptions options = MiningOptions.fromConfig(miningConfiguration);
 
     final GenesisConfigOptions genesisConfigOptions = mock(GenesisConfigOptions.class);
-    when(genesisConfigOptions.getSilaAmsterdamTime()).thenReturn(OptionalLong.empty());
+    when(genesisConfigOptions.getAmsterdamTime()).thenReturn(OptionalLong.empty());
 
     options.validate(new CommandLine(options), genesisConfigOptions, true, true, mockLogger);
 

@@ -26,7 +26,7 @@ import org.immutables.value.Value;
 @Value.Style(allParameters = true)
 public interface ProtocolsResult {
 
-  static ProtocolsResult fromSilPeer(final SilPeer silPeer) {
+  static ProtocolsResult fromEthPeer(final SilPeer silPeer) {
     final BestBlock bestBlock = silPeer.chainState().getBestBlock();
     return ImmutableProtocolsResult.builder()
         .difficulty(Quantity.create(bestBlock.getTotalDifficulty()))

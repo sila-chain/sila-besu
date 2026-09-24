@@ -19,6 +19,7 @@ import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
 import org.hyperledger.besu.sila.vm.DebugOperationTracer;
 
@@ -52,7 +53,13 @@ public class BlockTracer {
 
   private BlockReplay.TransactionAction<TransactionTrace> prepareReplayAction(
       final MutableWorldState mutableWorldState, final DebugOperationTracer tracer) {
-    return (transaction, header, blockchain, transactionProcessor, blobGasPrice) -> {
+    return (transaction,
+        transactionIndex,
+        block,
+        blockchain,
+        transactionProcessor,
+        blobGasPrice) -> {
+      final BlockHeader header = block.getHeader();
       // if we have no prior updater, it must be the first TX, so use the block's initial state
       if (chainedUpdater == null) {
         chainedUpdater = mutableWorldState.updater();

@@ -40,9 +40,9 @@ public class SilProtocolOptionsTest
   static List<MaxSizeTestInput> parsesValidMaxSizeOptions =
       List.of(
           new MaxSizeTestInput(
-              "--Xsil-max-message-size", SilProtocolConfiguration::getMaxMessageSize),
+              "--Xeth-max-message-size", SilProtocolConfiguration::getMaxMessageSize),
           new MaxSizeTestInput(
-              "--Xsil-max-transactions-message-size",
+              "--Xeth-max-transactions-message-size",
               SilProtocolConfiguration::getMaxTransactionsMessageSize));
 
   @ParameterizedTest
@@ -137,24 +137,24 @@ public class SilProtocolOptionsTest
   }
 
   @Test
-  public void parsesValidSilMaxProtocol() {
-    final TestBesuCommand cmd = parseCommand("--Xsil-capability-max", "66");
+  public void parsesValidEthMaxProtocol() {
+    final TestBesuCommand cmd = parseCommand("--Xeth-capability-max", "66");
 
     final SilProtocolOptions options = getOptionsFromBesuCommand(cmd);
     final SilProtocolConfiguration config = options.toDomainObject();
-    assertThat(config.getMaxSilCapability()).isEqualTo(66);
+    assertThat(config.getMaxEthCapability()).isEqualTo(66);
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
   }
 
   @Test
-  public void parsesValidSilMinProtocol() {
-    final TestBesuCommand cmd = parseCommand("--Xsil-capability-min", "66");
+  public void parsesValidEthMinProtocol() {
+    final TestBesuCommand cmd = parseCommand("--Xeth-capability-min", "66");
 
     final SilProtocolOptions options = getOptionsFromBesuCommand(cmd);
     final SilProtocolConfiguration config = options.toDomainObject();
-    assertThat(config.getMinSilCapability()).isEqualTo(66);
+    assertThat(config.getMinEthCapability()).isEqualTo(66);
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
@@ -175,8 +175,8 @@ public class SilProtocolOptionsTest
         .maxGetBlockBodies(SilProtocolConfiguration.DEFAULT_MAX_GET_BLOCK_BODIES + 2)
         .maxGetReceipts(SilProtocolConfiguration.DEFAULT_MAX_GET_RECEIPTS + 2)
         .maxGetPooledTransactions(SilProtocolConfiguration.DEFAULT_MAX_GET_POOLED_TRANSACTIONS + 2)
-        .maxSilCapability(SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY)
-        .minSilCapability(SilProtocolConfiguration.DEFAULT_MIN_CAPABILITY)
+        .maxEthCapability(SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY)
+        .minEthCapability(SilProtocolConfiguration.DEFAULT_MIN_CAPABILITY)
         .build();
   }
 
@@ -188,6 +188,6 @@ public class SilProtocolOptionsTest
 
   @Override
   protected SilProtocolOptions getOptionsFromBesuCommand(final TestBesuCommand besuCommand) {
-    return besuCommand.getSilProtocolOptions();
+    return besuCommand.getEthProtocolOptions();
   }
 }

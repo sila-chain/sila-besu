@@ -74,7 +74,7 @@ public class SpuriousDragonGasCalculator extends TangerineWhistleGasCalculator {
 
     long cost = staticCallCost;
     final Account recipient = frame.getWorldUpdater().get(recipientAddress);
-    frame.getSip7928AccessList().ifPresent(t -> t.addTouchedAccount(recipientAddress));
+    frame.getEip7928AccessList().ifPresent(t -> t.addTouchedAccount(recipientAddress));
     if (recipient == null || recipient.isEmpty()) {
       cost = clampedAdd(cost, newAccountGasCost());
     }

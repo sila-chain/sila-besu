@@ -32,6 +32,7 @@ import org.hyperledger.besu.sila.core.TransactionTestFixture;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -50,7 +51,9 @@ public class TestingBuildBlockJsonRpcHttpBySpecTest extends AbstractJsonRpcHttpB
   @Override
   protected void doSetup() throws Exception {
     blockchainSetupUtil = getBlockchainSetupUtil(DataStorageFormat.BONSAI);
-    blockchainSetupUtil.importAllBlocks();
+    // Header validation is skipped, as in every other by-spec test: the canned SilaAmsterdam chain
+    // predates the SIP-7843 slotNumber, and what is under test is the response, not the fixture.
+    blockchainSetupUtil.importAllBlocks(HeaderValidationMode.NONE, HeaderValidationMode.NONE);
     startService();
   }
 

@@ -81,10 +81,10 @@ public class PivotBlockRetrieverTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(blockchainSetupUtil.getWorldArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
 
@@ -93,7 +93,7 @@ public class PivotBlockRetrieverTest {
 
   private PivotBlockRetriever createPivotBlockRetriever(
       final int peersToQuery, final long pivotBlockDelta, final int maxRetries) {
-    return pivotBlockRetriever =
+    pivotBlockRetriever =
         Mockito.spy(
             new PivotBlockRetriever(
                 protocolSchedule,
@@ -102,6 +102,7 @@ public class PivotBlockRetrieverTest {
                 peersToQuery,
                 pivotBlockDelta,
                 maxRetries));
+    return pivotBlockRetriever;
   }
 
   @ParameterizedTest
@@ -109,11 +110,11 @@ public class PivotBlockRetrieverTest {
   public void shouldSucceedWhenAllPeersAgree(final DataStorageFormat storageFormat) {
     setUp(storageFormat);
     final SilPeer peerA =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerB =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerC =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -154,7 +155,7 @@ public class PivotBlockRetrieverTest {
 
     assertThat(future)
         .isCompletedWithValue(
-            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get(), false));
+            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get()));
   }
 
   @ParameterizedTest
@@ -165,13 +166,13 @@ public class PivotBlockRetrieverTest {
 
     final SilPeer peerA =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, Difficulty.of(1000), 1000)
-            .getSilPeer();
+            .getEthPeer();
     final SilPeer peerB =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, Difficulty.of(500), 500)
-            .getSilPeer();
+            .getEthPeer();
     final SilPeer peerC =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, Difficulty.of(1000), 1000)
-            .getSilPeer();
+            .getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -204,7 +205,7 @@ public class PivotBlockRetrieverTest {
 
     assertThat(future)
         .isCompletedWithValue(
-            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get(), false));
+            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get()));
   }
 
   @ParameterizedTest
@@ -214,11 +215,11 @@ public class PivotBlockRetrieverTest {
     pivotBlockRetriever = createPivotBlockRetriever(2, 1, 1);
 
     final SilPeer peerA =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerB =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerC =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 500).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 500).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -264,7 +265,7 @@ public class PivotBlockRetrieverTest {
 
     assertThat(future)
         .isCompletedWithValue(
-            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get(), false));
+            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get()));
   }
 
   @ParameterizedTest
@@ -276,9 +277,9 @@ public class PivotBlockRetrieverTest {
     pivotBlockRetriever = createPivotBlockRetriever(2, pivotBlockDelta, 1);
 
     final SilPeer peerA =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerB =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -324,8 +325,7 @@ public class PivotBlockRetrieverTest {
 
     assertThat(future)
         .isCompletedWithValue(
-            new SnapSyncProcessState(
-                blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER - 1).get(), false));
+            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER - 1).get()));
   }
 
   @ParameterizedTest
@@ -337,9 +337,9 @@ public class PivotBlockRetrieverTest {
     pivotBlockRetriever = createPivotBlockRetriever(2, pivotBlockDelta, 1);
 
     final SilPeer peerA =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerB =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -405,9 +405,9 @@ public class PivotBlockRetrieverTest {
     pivotBlockRetriever = createPivotBlockRetriever(2, pivotBlockDelta, 1);
 
     final SilPeer peerA =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
     final SilPeer peerB =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(

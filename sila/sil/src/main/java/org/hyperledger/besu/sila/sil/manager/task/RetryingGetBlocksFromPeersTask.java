@@ -64,7 +64,7 @@ public class RetryingGetBlocksFromPeersTask
       final SilPeer currentPeer) {
     final GetBodiesFromPeerTask getBodiesTask =
         GetBodiesFromPeerTask.forHeaders(
-            protocolSchedule, getSilContext(), headers, getMetricsSystem());
+            protocolSchedule, getEthContext(), headers, getMetricsSystem());
     getBodiesTask.assignPeer(currentPeer);
 
     return executeSubTask(getBodiesTask::run)

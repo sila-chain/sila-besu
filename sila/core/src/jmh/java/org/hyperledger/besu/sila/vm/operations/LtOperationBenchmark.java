@@ -15,13 +15,21 @@
 package org.hyperledger.besu.sila.vm.operations;
 
 import org.hyperledger.besu.savm.frame.MessageFrame;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.operation.LtOperation;
 import org.hyperledger.besu.savm.operation.Operation;
 
-public class LtOperationBenchmark extends BinaryOperationBenchmark {
+import org.openjdk.jmh.infra.BenchmarkParams;
+
+public class LtOperationBenchmark extends BinaryOperationBenchmark implements GasCostBenchmark {
 
   @Override
   protected Operation.OperationResult invoke(final MessageFrame frame) {
     return LtOperation.staticOperation(frame);
+  }
+
+  @Override
+  public long getGasCost(final BenchmarkParams params, final GasCalculator calc) {
+    return new LtOperation(calc).getGasCost();
   }
 }

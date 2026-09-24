@@ -121,7 +121,7 @@ public final class Wei extends BaseUInt256Value<Wei> implements Quantity {
    * @param sil the sil
    * @return the wei
    */
-  public static Wei fromSil(final long sil) {
+  public static Wei fromEth(final long sil) {
     return Wei.of(BigInteger.valueOf(sil).multiply(BigInteger.TEN.pow(18)));
   }
 
@@ -131,13 +131,20 @@ public final class Wei extends BaseUInt256Value<Wei> implements Quantity {
   }
 
   @Override
+  public boolean isZero() {
+    // Compares the eight backing ints rather than walking all 32 bytes through the
+    // Bytes delegation chain, which is the default Bytes#isZero implementation.
+    return toUInt256().isZero();
+  }
+
+  @Override
   public String toHexString() {
     return super.toHexString();
   }
 
   @Override
   public String toShortHexString() {
-    return super.isZero() ? "0x0" : super.toShortHexString();
+    return isZero() ? "0x0" : super.toShortHexString();
   }
 
   /**
@@ -197,16 +204,16 @@ public final class Wei extends BaseUInt256Value<Wei> implements Quantity {
     Szabo(12),
     /** Finney unit. */
     Finney(15),
-    /** Siler unit. */
-    Siler(18),
-    /** K siler unit. */
-    KSiler(21),
-    /** M siler unit. */
-    MSiler(24),
-    /** G siler unit. */
-    GSiler(27),
-    /** T siler unit. */
-    TSiler(30);
+    /** Sila unit. */
+    Sila(18),
+    /** K sila unit. */
+    KEther(21),
+    /** M sila unit. */
+    MEther(24),
+    /** G sila unit. */
+    GEther(27),
+    /** T sila unit. */
+    TEther(30);
 
     /** The Pow. */
     final int pow;
@@ -237,7 +244,7 @@ public final class Wei extends BaseUInt256Value<Wei> implements Quantity {
       return Arrays.stream(values())
           .filter(u -> numOfDigits <= u.pow + 3)
           .findFirst()
-          .orElse(TSiler);
+          .orElse(TEther);
     }
 
     @Override

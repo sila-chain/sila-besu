@@ -103,7 +103,7 @@ public final class DisconnectMessage extends AbstractMessageData {
   /**
    * Reasons for disconnection, modelled as specified in the wire protocol DISCONNECT message.
    *
-   * @see <a href="https://github.com/sila-chain/devp2p/blob/master/rlpx.md#disconnect-0x01">RLPx
+   * @see <a href="https://github.com/sila/devp2p/blob/master/rlpx.md#disconnect-0x01">RLPx
    *     Transport Protocol</a>
    */
   public enum DisconnectReason {

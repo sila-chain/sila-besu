@@ -54,7 +54,7 @@ public class TransactionAnnouncementEncoderDecoderTest {
     final List<TransactionType> types =
         List.of(TransactionType.FRONTIER, TransactionType.ACCESS_LIST, TransactionType.SIP1559);
 
-    final Bytes bytes = TransactionAnnouncementEncoder.encodeForSil68(types, sizes, hashes);
+    final Bytes bytes = TransactionAnnouncementEncoder.encodeForEth68(types, sizes, hashes);
     assertThat(expected).isEqualTo(bytes.toHexString());
   }
 
@@ -103,7 +103,7 @@ public class TransactionAnnouncementEncoderDecoderTest {
   }
 
   @Test
-  void shouldEncodeAndDecodeTransactionAnnouncement_Sil68() {
+  void shouldEncodeAndDecodeTransactionAnnouncement_Eth68() {
     final Transaction t1 = generator.transaction(TransactionType.FRONTIER);
     final Transaction t2 = generator.transaction(TransactionType.ACCESS_LIST);
     final Transaction t3 = generator.transaction(TransactionType.SIP1559);
@@ -136,7 +136,7 @@ public class TransactionAnnouncementEncoderDecoderTest {
   void shouldThrowInvalidArgumentExceptionWhenEncodingListsWithDifferentSizes() {
     assertThatThrownBy(
             () ->
-                TransactionAnnouncementEncoder.encodeForSil68(
+                TransactionAnnouncementEncoder.encodeForEth68(
                     new ArrayList<>(), List.of(1), new ArrayList<>()))
         .isInstanceOf(IllegalArgumentException.class)
         .hasMessage("Hashes, sizes and types must have the same number of elements");

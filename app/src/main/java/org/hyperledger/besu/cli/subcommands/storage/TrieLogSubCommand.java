@@ -26,10 +26,10 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogPruner;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogPruner;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.ImmutableDataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ImmutableExtraStorageConfiguration;
 
 import java.io.IOException;
 import java.io.PrintWriter;
@@ -90,9 +90,8 @@ public class TrieLogSubCommand implements Runnable {
         .setupControllerBuilder()
         .dataStorageConfiguration(
             ImmutableDataStorageConfiguration.copyOf(config)
-                .withPathBasedExtraStorageConfiguration(
-                    ImmutablePathBasedExtraStorageConfiguration.copyOf(
-                            config.getPathBasedExtraStorageConfiguration())
+                .withExtraStorageConfiguration(
+                    ImmutableExtraStorageConfiguration.copyOf(config.getExtraStorageConfiguration())
                         .withLimitTrieLogsEnabled(false)))
         .build();
   }

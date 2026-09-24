@@ -29,7 +29,7 @@ public class SilaMainnetBlockValidatorBuilder {
   private SilaMainnetBlockValidatorBuilder() {}
 
   /**
-   * Creates a block validator for the sila-mainnet with no block size limit.
+   * Creates a block validator for the mainnet with no block size limit.
    *
    * @param blockHeaderValidator the block header validator
    * @param blockBodyValidator the block body validator

@@ -37,7 +37,7 @@ public class ProtocolScheduleFixture {
 
   public static final ProtocolSchedule SILA_MAINNET =
       SilaMainnetProtocolSchedule.fromConfig(
-          getSilaMainnetConfigOptions(),
+          getMainnetConfigOptions(),
           Optional.empty(),
           Optional.empty(),
           MiningConfiguration.newDefault(),
@@ -50,7 +50,7 @@ public class ProtocolScheduleFixture {
   // One spot to change if we permanently or temporarily want to run tests with a different network.
   public static final ProtocolSchedule TESTING_NETWORK = ProtocolScheduleFixture.SILA_MAINNET;
 
-  private static GenesisConfigOptions getSilaMainnetConfigOptions() {
+  private static GenesisConfigOptions getMainnetConfigOptions() {
     return getGenesisConfigOptions("/sila-mainnet.json");
   }
 
@@ -67,8 +67,8 @@ public class ProtocolScheduleFixture {
         }
       }
     } catch (IOException e) {
-      throw new RuntimeException("Failed open or parse sila-mainnet genesis json", e);
+      throw new RuntimeException("Failed open or parse mainnet genesis json", e);
     }
-    throw new IllegalArgumentException("sila-mainnet json file had no config section");
+    throw new IllegalArgumentException("mainnet json file had no config section");
   }
 }

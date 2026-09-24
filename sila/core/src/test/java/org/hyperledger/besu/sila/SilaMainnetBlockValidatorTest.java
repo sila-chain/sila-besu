@@ -15,7 +15,7 @@
 package org.hyperledger.besu.sila;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndUpdateNodeHead;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
@@ -23,7 +23,9 @@ import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
 import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Address;
@@ -34,6 +36,7 @@ import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
@@ -48,8 +51,8 @@ import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.trie.MerkleTrieException;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 
 import java.util.Collections;
 import java.util.List;
@@ -66,7 +69,7 @@ import org.mockito.ArgumentCaptor;
 
 public class SilaMainnetBlockValidatorTest {
 
-  private final BlockchainSetupUtil chainUtil = BlockchainSetupUtil.forSilaMainnet();
+  private final BlockchainSetupUtil chainUtil = BlockchainSetupUtil.forMainnet();
   private final Block block = chainUtil.getBlock(3);
   private final Block blockParent = chainUtil.getBlock(2);
 
@@ -82,7 +85,7 @@ public class SilaMainnetBlockValidatorTest {
   private final BlockAccessListValidator blockAccessListValidator =
       mock(BlockAccessListValidator.class);
 
-  private final BlockValidator silaMainnetFrontierBlockValidator =
+  private final BlockValidator mainnetFrontierBlockValidator =
       SilaMainnetBlockValidatorBuilder.frontier(
           blockHeaderValidator, blockBodyValidator, blockProcessor, blockAccessListValidator);
 
@@ -156,7 +159,7 @@ public class SilaMainnetBlockValidatorTest {
   @Test
   public void validateAndProcessBlock_onSuccess() {
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -182,7 +185,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(false);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -212,7 +215,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(new BlockProcessingResult(Optional.empty(), false));
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -225,12 +228,38 @@ public class SilaMainnetBlockValidatorTest {
   }
 
   @Test
+  public void validateAndProcessBlock_whenTransactionExceedsBlockGasLimit() {
+    final Transaction oversizedTransaction = mock(Transaction.class);
+    when(oversizedTransaction.getGasLimit()).thenReturn(block.getHeader().getGasLimit() + 1);
+    final Block blockWithOversizedTransaction =
+        new Block(
+            block.getHeader(),
+            new BlockBody(List.of(oversizedTransaction), block.getBody().getOmmers()));
+    final Optional<BlockAccessList> bal = Optional.of(new BlockAccessList(List.of()));
+    when(blockAccessListValidator.validate(any(), any(), anyInt())).thenReturn(false);
+
+    BlockProcessingResult result =
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
+            protocolContext,
+            blockWithOversizedTransaction,
+            HeaderValidationMode.DETACHED_ONLY,
+            HeaderValidationMode.DETACHED_ONLY,
+            bal,
+            true);
+
+    assertValidationFailed(result, "provided gas insufficient");
+    verify(blockAccessListValidator, never()).validate(any(), any(), anyInt());
+    verify(blockProcessor, never()).processBlock(eq(protocolContext), any(), any(), any(), eq(bal));
+    assertThat(badBlockManager.getBadBlocks()).containsExactly(blockWithOversizedTransaction);
+  }
+
+  @Test
   public void validateAndProcessBlock_whenParentBlockNotPresent() {
     final Hash parentHash = blockParent.getHash();
     doReturn(Optional.empty()).when(blockchain).getBlockHeader(eq(parentHash));
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -251,7 +280,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(false);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -268,7 +297,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(false);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -294,7 +323,7 @@ public class SilaMainnetBlockValidatorTest {
             });
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -319,7 +348,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(BlockProcessingResult.FAILED);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -337,7 +366,7 @@ public class SilaMainnetBlockValidatorTest {
     doThrow(storageException).when(blockchain).getBlockHeader(eq(parentHash));
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -361,7 +390,7 @@ public class SilaMainnetBlockValidatorTest {
             eq(Optional.empty()));
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -381,7 +410,7 @@ public class SilaMainnetBlockValidatorTest {
         .getWorldState(eq(withBlockHeaderAndUpdateNodeHead(parentHeader)));
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -406,7 +435,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(exceptionalResult);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -427,7 +456,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(BlockProcessingResult.FAILED);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -451,7 +480,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(BlockProcessingResult.FAILED);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -475,7 +504,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(BlockProcessingResult.FAILED);
 
     BlockProcessingResult result =
-        silaMainnetFrontierBlockValidator.validateAndProcessBlock(
+        mainnetFrontierBlockValidator.validateAndProcessBlock(
             protocolContext,
             block,
             HeaderValidationMode.DETACHED_ONLY,
@@ -490,7 +519,7 @@ public class SilaMainnetBlockValidatorTest {
   @Test
   public void validateBlockForSyncing_onSuccess() {
     final boolean isValid =
-        silaMainnetFrontierBlockValidator.validateBlockForSyncing(
+        mainnetFrontierBlockValidator.validateBlockForSyncing(
             protocolContext,
             block,
             Collections.emptyList(),
@@ -510,7 +539,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(false);
 
     final boolean isValid =
-        silaMainnetFrontierBlockValidator.validateBlockForSyncing(
+        mainnetFrontierBlockValidator.validateBlockForSyncing(
             protocolContext,
             block,
             Collections.emptyList(),
@@ -530,7 +559,7 @@ public class SilaMainnetBlockValidatorTest {
         .thenReturn(false);
 
     final boolean isValid =
-        silaMainnetFrontierBlockValidator.validateBlockForSyncing(
+        mainnetFrontierBlockValidator.validateBlockForSyncing(
             protocolContext,
             block,
             Collections.emptyList(),
@@ -548,7 +577,7 @@ public class SilaMainnetBlockValidatorTest {
     assertThrows(
         UnsupportedOperationException.class,
         () ->
-            silaMainnetFrontierBlockValidator.validateBlockForSyncing(
+            mainnetFrontierBlockValidator.validateBlockForSyncing(
                 protocolContext,
                 block,
                 Collections.emptyList(),

@@ -52,7 +52,7 @@ public class SilSynchronizerUpdaterTest {
   }
 
   @Test
-  public void chainStateUpdateIsAttemptedIfSilPeerExists() {
+  public void chainStateUpdateIsAttemptedIfEthPeerExists() {
     when(silPeers.peer(any(PeerConnection.class))).thenReturn(silPeer);
     when(silPeer.chainState()).thenReturn(chainState);
 

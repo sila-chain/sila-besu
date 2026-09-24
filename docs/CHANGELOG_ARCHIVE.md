@@ -1,11 +1,11 @@
 # Changelog Archive
 
 ## 23.10.3-hotfix
-This is a hotfix for a selfdestruct defect that occurred on sila-mainnet at block [18947893](https://silascan.io/block/18947893)
+This is a hotfix for a selfdestruct defect that occurred on mainnet at block [18947893](https://etherscan.io/block/18947893)
 
 ### Bug fixes
-- Hotfix for selfdestruct preimages on bonsai [#6359]((https://github.com/hyperledger/besu/pull/6359)
-- mitigation for trielog failure [#6315]((https://github.com/hyperledger/besu/pull/6315)
+- Hotfix for selfdestruct preimages on bonsai [#6359]((https://github.com/sila-chain/sila-besu/pull/6359)
+- mitigation for trielog failure [#6315]((https://github.com/sila-chain/sila-besu/pull/6315)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.3-hotfix/besu-23.10.3-hotfix.zip / sha256 1c37762909858a40eca749fb85b77fb4d1e918f247aff56d518144828bd85378
@@ -14,23 +14,23 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.3-hotfix/besu-
 ## 23.10.3
 
 ### Additions and Improvements
-- Implement debug_traceCall [#5885](https://github.com/hyperledger/besu/pull/5885)
-- Transactions that takes too long to evaluate, during block creation, are dropped from the txpool [#6163](https://github.com/hyperledger/besu/pull/6163)
-- New option `tx-pool-min-gas-price` to set a lower bound when accepting txs to the pool [#6098](https://github.com/hyperledger/besu/pull/6098)
-- Update OpenJDK latest Docker image to use Java 21 [#6189](https://github.com/hyperledger/besu/pull/6189)
-- Allow a transaction selection plugin to specify custom selection results [#6190](https://github.com/hyperledger/besu/pull/6190)
-- Add `rpc-gas-cap` to allow users to set gas limit to the RPC methods used to simulate transactions[#6156](https://github.com/hyperledger/besu/pull/6156)
-- Fix the unavailability of `address` field when returning an `Account` entity on GraphQL in case of unreachable world state [#6198](https://github.com/hyperledger/besu/pull/6198)
-- Update OpenJ9 Docker image to latest version [#6226](https://github.com/hyperledger/besu/pull/6226)
-- Add error messages on authentication failures with username and password [#6212](https://github.com/hyperledger/besu/pull/6212)
-- Add `rocksdb usage` to the `storage` subcommand to allow users and dev to check columns families usage [#6185](https://github.com/hyperledger/besu/pull/6185)
-- Sila Classic Spiral network upgrade [#6078](https://github.com/hyperledger/besu/pull/6078)
-- Fix self destruct collision [#6205](https://github.com/hyperledger/besu/pull/6205)
-- Mark deleted storage on cleared [#6305](https://github.com/hyperledger/besu/pull/6305)
+- Implement debug_traceCall [#5885](https://github.com/sila-chain/sila-besu/pull/5885)
+- Transactions that takes too long to evaluate, during block creation, are dropped from the txpool [#6163](https://github.com/sila-chain/sila-besu/pull/6163)
+- New option `tx-pool-min-gas-price` to set a lower bound when accepting txs to the pool [#6098](https://github.com/sila-chain/sila-besu/pull/6098)
+- Update OpenJDK latest Docker image to use Java 21 [#6189](https://github.com/sila-chain/sila-besu/pull/6189)
+- Allow a transaction selection plugin to specify custom selection results [#6190](https://github.com/sila-chain/sila-besu/pull/6190)
+- Add `rpc-gas-cap` to allow users to set gas limit to the RPC methods used to simulate transactions[#6156](https://github.com/sila-chain/sila-besu/pull/6156)
+- Fix the unavailability of `address` field when returning an `Account` entity on GraphQL in case of unreachable world state [#6198](https://github.com/sila-chain/sila-besu/pull/6198)
+- Update OpenJ9 Docker image to latest version [#6226](https://github.com/sila-chain/sila-besu/pull/6226)
+- Add error messages on authentication failures with username and password [#6212](https://github.com/sila-chain/sila-besu/pull/6212)
+- Add `rocksdb usage` to the `storage` subcommand to allow users and dev to check columns families usage [#6185](https://github.com/sila-chain/sila-besu/pull/6185)
+- Sila Classic Spiral network upgrade [#6078](https://github.com/sila-chain/sila-besu/pull/6078)
+- Fix self destruct collision [#6205](https://github.com/sila-chain/sila-besu/pull/6205)
+- Mark deleted storage on cleared [#6305](https://github.com/sila-chain/sila-besu/pull/6305)
 
 ### Bug fixes
-- Fix Docker image name clash between Besu and savmtool [#6194](https://github.com/hyperledger/besu/pull/6194)
-- Fix `logIndex` in `sil_getTransactionReceipt` JSON RPC method [#6206](https://github.com/hyperledger/besu/pull/6206)
+- Fix Docker image name clash between Besu and evmtool [#6194](https://github.com/sila-chain/sila-besu/pull/6194)
+- Fix `logIndex` in `sil_getTransactionReceipt` JSON RPC method [#6206](https://github.com/sila-chain/sila-besu/pull/6206)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.3/besu-23.10.3.zip / sha256 da7ef8a6ceb88d3e327cacddcdb32218d1750b464c14165a74068f6dc6e0871a
@@ -39,31 +39,31 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.3/besu-23.10.3
 ## 23.10.2
 
 ### Breaking Changes
-- TX pool eviction in the legacy TX pool now favours keeping oldest transactions (more likely to evict higher nonces, less likely to introduce nonce gaps) [#6106](https://github.com/hyperledger/besu/pull/6106) and [#6146](https://github.com/hyperledger/besu/pull/6146)
+- TX pool eviction in the legacy TX pool now favours keeping oldest transactions (more likely to evict higher nonces, less likely to introduce nonce gaps) [#6106](https://github.com/sila-chain/sila-besu/pull/6106) and [#6146](https://github.com/sila-chain/sila-besu/pull/6146)
 
 ### Deprecations
 
 ### Additions and Improvements
-- Sila Classic Spiral network upgrade [#6078](https://github.com/hyperledger/besu/pull/6078)
-- Add a method to read from a `Memory` instance without altering its inner state [#6073](https://github.com/hyperledger/besu/pull/6073)
-- Accept `input` and `data` field for the payload of transaction-related RPC methods [#6094](https://github.com/hyperledger/besu/pull/6094)
-- Add APIs to set and get the min gas price a transaction must pay for being selected during block creation [#6097](https://github.com/hyperledger/besu/pull/6097)
-- TraceService: return results for transactions in block [#6086](https://github.com/hyperledger/besu/pull/6086)
-- New option `--min-priority-fee` that sets the minimum priority fee a transaction must meet to be selected for a block. [#6080](https://github.com/hyperledger/besu/pull/6080) [#6083](https://github.com/hyperledger/besu/pull/6083)
-- Implement new `miner_setMinPriorityFee` and `miner_getMinPriorityFee` RPC methods [#6080](https://github.com/hyperledger/besu/pull/6080)
-- Clique config option `createemptyblocks` to not create empty blocks [#6082](https://github.com/hyperledger/besu/pull/6082)
-- Upgrade SAVM Reference Tests to v13 (SilaCancun) [#6114](https://github.com/hyperledger/besu/pull/6114)
-- Add `yParity` to GraphQL and JSON-RPC for relevant queries. [6119](https://github.com/hyperledger/besu/pull/6119)
-- Force tx replacement price bump to zero when zero base fee market is configured or `--min-gas-price` is set to 0. This allows for easier tx replacement in networks where there is not gas price. [#6079](https://github.com/hyperledger/besu/pull/6079)
-- Introduce the possibility to limit the time spent selecting pending transactions during block creation, using the new experimental option `Xblock-txs-selection-max-time` on PoS and PoW networks (by default set to 5000ms) or `Xpoa-block-txs-selection-max-time` on PoA networks (by default 75% of the min block time) [#6044](https://github.com/hyperledger/besu/pull/6044)
-- Remove LowestInvalidNonceCache from `legacy` transaction pool to make it more private networks friendly [#6148](https://github.com/hyperledger/besu/pull/6148)
-- Optimization: Delete leftPad when capturing the stack before and after a frame execution [#6102](https://github.com/hyperledger/besu/pull/6102)
+- Sila Classic Spiral network upgrade [#6078](https://github.com/sila-chain/sila-besu/pull/6078)
+- Add a method to read from a `Memory` instance without altering its inner state [#6073](https://github.com/sila-chain/sila-besu/pull/6073)
+- Accept `input` and `data` field for the payload of transaction-related RPC methods [#6094](https://github.com/sila-chain/sila-besu/pull/6094)
+- Add APIs to set and get the min gas price a transaction must pay for being selected during block creation [#6097](https://github.com/sila-chain/sila-besu/pull/6097)
+- TraceService: return results for transactions in block [#6086](https://github.com/sila-chain/sila-besu/pull/6086)
+- New option `--min-priority-fee` that sets the minimum priority fee a transaction must meet to be selected for a block. [#6080](https://github.com/sila-chain/sila-besu/pull/6080) [#6083](https://github.com/sila-chain/sila-besu/pull/6083)
+- Implement new `miner_setMinPriorityFee` and `miner_getMinPriorityFee` RPC methods [#6080](https://github.com/sila-chain/sila-besu/pull/6080)
+- Clique config option `createemptyblocks` to not create empty blocks [#6082](https://github.com/sila-chain/sila-besu/pull/6082)
+- Upgrade SAVM Reference Tests to v13 (SilaCancun) [#6114](https://github.com/sila-chain/sila-besu/pull/6114)
+- Add `yParity` to GraphQL and JSON-RPC for relevant queries. [6119](https://github.com/sila-chain/sila-besu/pull/6119)
+- Force tx replacement price bump to zero when zero base fee market is configured or `--min-gas-price` is set to 0. This allows for easier tx replacement in networks where there is not gas price. [#6079](https://github.com/sila-chain/sila-besu/pull/6079)
+- Introduce the possibility to limit the time spent selecting pending transactions during block creation, using the new experimental option `Xblock-txs-selection-max-time` on PoS and PoW networks (by default set to 5000ms) or `Xpoa-block-txs-selection-max-time` on PoA networks (by default 75% of the min block time) [#6044](https://github.com/sila-chain/sila-besu/pull/6044)
+- Remove LowestInvalidNonceCache from `legacy` transaction pool to make it more private networks friendly [#6148](https://github.com/sila-chain/sila-besu/pull/6148)
+- Optimization: Delete leftPad when capturing the stack before and after a frame execution [#6102](https://github.com/sila-chain/sila-besu/pull/6102)
 
 ### Bug fixes
-- Upgrade netty to address CVE-2023-44487, CVE-2023-34462 [#6100](https://github.com/hyperledger/besu/pull/6100)
-- Upgrade grpc to address CVE-2023-32731, CVE-2023-33953, CVE-2023-44487, CVE-2023-4785 [#6100](https://github.com/hyperledger/besu/pull/6100)
-- Fix blob gas calculation in reference tests [#6107](https://github.com/hyperledger/besu/pull/6107)
-- Limit memory used in handling invalid blocks [#6138](https://github.com/hyperledger/besu/pull/6138)
+- Upgrade netty to address CVE-2023-44487, CVE-2023-34462 [#6100](https://github.com/sila-chain/sila-besu/pull/6100)
+- Upgrade grpc to address CVE-2023-32731, CVE-2023-33953, CVE-2023-44487, CVE-2023-4785 [#6100](https://github.com/sila-chain/sila-besu/pull/6100)
+- Fix blob gas calculation in reference tests [#6107](https://github.com/sila-chain/sila-besu/pull/6107)
+- Limit memory used in handling invalid blocks [#6138](https://github.com/sila-chain/sila-besu/pull/6138)
 
 ---
 
@@ -75,22 +75,22 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.2/besu-23.10.2
 ## 23.10.1
 
 ### Additions and Improvements
-- New option `--tx-pool-priority-senders` to specify a list of senders, that has the effect to prioritize any transactions sent by these senders from any source [#5959](https://github.com/hyperledger/besu/pull/5959)
-- Cache last n blocks by using a new Besu flag `--cache-last-blocks=n` [#6009](https://github.com/hyperledger/besu/pull/6009)
-- Optimize performances of RPC method `sil_feeHistory` [#6011](https://github.com/hyperledger/besu/pull/6011) [#6035](https://github.com/hyperledger/besu/pull/6035)
-- Logging summary of plugins at Info as part of the config overview [#5964](https://github.com/hyperledger/besu/pull/5964) [#6049](https://github.com/hyperledger/besu/pull/6049)
-- Layered tx pool memory improvements [#5985](https://github.com/hyperledger/besu/pull/5985) [#5974](https://github.com/hyperledger/besu/pull/5974)
-- Update Bouncy Castle to 1.76, and force the use of the `jdk18on` variant [#5748](https://github.com/hyperledger/besu/pull/5748)
-- Add GraphQL support for new fields in SilaCancun [#5923](https://github.com/hyperledger/besu/pull/5923) [#5975](https://github.com/hyperledger/besu/pull/5975)
-- Add new configuration options to the SAVM Fluent APIs [#5930](https://github.com/hyperledger/besu/pull/5930)
+- New option `--tx-pool-priority-senders` to specify a list of senders, that has the effect to prioritize any transactions sent by these senders from any source [#5959](https://github.com/sila-chain/sila-besu/pull/5959)
+- Cache last n blocks by using a new Besu flag `--cache-last-blocks=n` [#6009](https://github.com/sila-chain/sila-besu/pull/6009)
+- Optimize performances of RPC method `sil_feeHistory` [#6011](https://github.com/sila-chain/sila-besu/pull/6011) [#6035](https://github.com/sila-chain/sila-besu/pull/6035)
+- Logging summary of plugins at Info as part of the config overview [#5964](https://github.com/sila-chain/sila-besu/pull/5964) [#6049](https://github.com/sila-chain/sila-besu/pull/6049)
+- Layered tx pool memory improvements [#5985](https://github.com/sila-chain/sila-besu/pull/5985) [#5974](https://github.com/sila-chain/sila-besu/pull/5974)
+- Update Bouncy Castle to 1.76, and force the use of the `jdk18on` variant [#5748](https://github.com/sila-chain/sila-besu/pull/5748)
+- Add GraphQL support for new fields in SilaCancun [#5923](https://github.com/sila-chain/sila-besu/pull/5923) [#5975](https://github.com/sila-chain/sila-besu/pull/5975)
+- Add new configuration options to the SAVM Fluent APIs [#5930](https://github.com/sila-chain/sila-besu/pull/5930)
 
 
 ### Deprecations
-- `--tx-pool-disable-locals` has been deprecated for removal in favor of `--tx-pool-no-local-priority`, no semantic change, only a renaming [#5959](https://github.com/hyperledger/besu/pull/5959)
+- `--tx-pool-disable-locals` has been deprecated for removal in favor of `--tx-pool-no-local-priority`, no semantic change, only a renaming [#5959](https://github.com/sila-chain/sila-besu/pull/5959)
 
 ### Bug Fixes
-- Fix regression with t8n tool filling [#5979](https://github.com/hyperledger/besu/pull/5979)
-- Fix EOF and SIP-4788 regressions in reference tests  [#6060](https://github.com/hyperledger/besu/pull/6060)
+- Fix regression with t8n tool filling [#5979](https://github.com/sila-chain/sila-besu/pull/5979)
+- Fix EOF and SIP-4788 regressions in reference tests  [#6060](https://github.com/sila-chain/sila-besu/pull/6060)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.1/besu-23.10.1.tar.gz / sha256: e27645f345583f3ee447e5418302382c6f8335d2da8707bdd20033aabd86ce4c
@@ -113,7 +113,7 @@ then you need to update your configuration as described below:
 You can still opt-out of the Layered txpool, setting `tx-pool=legacy` in config file or via cli argument, but be warned that the Legacy implementation will be deprecated for removal soon, so start testing the new implementation.
 
 #### Configuring the Layered Transaction Pool
-By default, the txpool is tuned for sila-mainnet usage, but if you are using private networks or want to otherwise tune it, these are the new options:
+By default, the txpool is tuned for mainnet usage, but if you are using private networks or want to otherwise tune it, these are the new options:
 - `tx-pool-max-future-by-sender`: specify the max number of sequential transactions of a single sender are kept in the txpool, by default it is 200, increase it to allow a single sender to fit more transactions in a single block. For private networks, this can safely be set in the hundreds or thousands if you want to ensure future transactions (with large nonce gaps) remain in the pool.
 - `tx-pool-layer-max-capacity`: set the max amount of memory<sup>*</sup> in bytes, a single memory limited layer can occupy, by default is 12.5MB, keep in mind that there are 2 memory limited layers, so the expected memory consumption is twice the value specified by this option, so 25MB by default. Increase this value if you have spare RAM and the eviction rate is high for your network.
 - `tx-pool-max-prioritized`: set the max number of transactions allowed in the first layer, that only contains transactions that are candidate for inclusion in the next block creation task. It makes sense to limit the value to the max number of transactions that fit in a block in your network, by default is 2000.
@@ -121,22 +121,22 @@ By default, the txpool is tuned for sila-mainnet usage, but if you are using pri
 <sup>*</sup>: the memory used by the txpool is an estimation, we are working to make it always more accurate.
 
 ### Breaking Changes
-- Removed support for Kotti network (ETC) [#5816](https://github.com/hyperledger/besu/pull/5816)
-- Layered transaction pool implementation is now stable and enabled by default, so the following changes to experimental options have been done [#5772](https://github.com/hyperledger/besu/pull/5772):
+- Removed support for Kotti network (ETC) [#5816](https://github.com/sila-chain/sila-besu/pull/5816)
+- Layered transaction pool implementation is now stable and enabled by default, so the following changes to experimental options have been done [#5772](https://github.com/sila-chain/sila-besu/pull/5772):
     - `--Xlayered-tx-pool` is gone, to select the implementation use the new `--tx-pool` option with values `layered` (default) or `legacy`
     - `--Xlayered-tx-pool-layer-max-capacity`, `--Xlayered-tx-pool-max-prioritized` and `--Xlayered-tx-pool-max-future-by-sender` just drop the `Xlayered-` and keep the same behavior
 
 ### Additions and Improvements
-- Add access to an immutable world view to start/end transaction hooks in the tracing API[#5836](https://github.com/hyperledger/besu/pull/5836)
+- Add access to an immutable world view to start/end transaction hooks in the tracing API[#5836](https://github.com/sila-chain/sila-besu/pull/5836)
 - Layered transaction pool implementation is now stable and enabled by default. If you want still to use the legacy implementation, use `--tx-pool=legacy`. 
-  By default, the new transaction pool is capped at using 25MB of memory, this limit can be raised using `--layered-tx-pool-layer-max-capacity` options  [#5772](https://github.com/hyperledger/besu/pull/5772)
-- Tune G1GC to reduce Besu memory footprint, and new `besu-untuned` start scripts to run without any specific G1GC flags [#5879](https://github.com/hyperledger/besu/pull/5879)
-- Reduce `engine_forkchoiceUpdatedV?` response time by asynchronously process block added events in the transaction pool [#5909](https://github.com/hyperledger/besu/pull/5909)
+  By default, the new transaction pool is capped at using 25MB of memory, this limit can be raised using `--layered-tx-pool-layer-max-capacity` options  [#5772](https://github.com/sila-chain/sila-besu/pull/5772)
+- Tune G1GC to reduce Besu memory footprint, and new `besu-untuned` start scripts to run without any specific G1GC flags [#5879](https://github.com/sila-chain/sila-besu/pull/5879)
+- Reduce `engine_forkchoiceUpdatedV?` response time by asynchronously process block added events in the transaction pool [#5909](https://github.com/sila-chain/sila-besu/pull/5909)
 
 ### Bug Fixes
-- do not create ignorable storage on revert storage-variables subcommand [#5830](https://github.com/hyperledger/besu/pull/5830) 
-- fix duplicate key errors in SilScheduler-Transactions [#5857](https://github.com/hyperledger/besu/pull/5857)
-- Don't put control characters, escaped or otherwise, in t8n stacktraces [#5910](https://github.com/hyperledger/besu/pull/5910)
+- do not create ignorable storage on revert storage-variables subcommand [#5830](https://github.com/sila-chain/sila-besu/pull/5830) 
+- fix duplicate key errors in SilScheduler-Transactions [#5857](https://github.com/sila-chain/sila-besu/pull/5857)
+- Don't put control characters, escaped or otherwise, in t8n stacktraces [#5910](https://github.com/sila-chain/sila-besu/pull/5910)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.0/besu-23.10.0.tar.gz / sha256: 3c75f3792bfdb0892705b378f0b8bfc14ef6cecf1d8afe711d8d8687ed6687cf
@@ -145,7 +145,7 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.10.0/besu-23.10.0
 ## 23.7.3
 
 ### Additions and Improvements
-- Update Holešky config for re-launch [#5890](https://github.com/hyperledger/besu/pull/5890)
+- Update Holešky config for re-launch [#5890](https://github.com/sila-chain/sila-besu/pull/5890)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.7.3/besu-23.7.3.tar.gz / sha256: c12ca6a9861557e0bf8f27076f8c8afcce6f1564687e5f02bfdc96c2b18846ff
@@ -155,24 +155,24 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.7.3/besu-23.7.3.z
 ## 23.7.2
 
 ### Additions and Improvements
-- Add new methods to `OperationTracer` to capture contexts enter/exit [#5756](https://github.com/hyperledger/besu/pull/5756)
-- Add Holešky as predefined network name [#5797](https://github.com/hyperledger/besu/pull/5797)
+- Add new methods to `OperationTracer` to capture contexts enter/exit [#5756](https://github.com/sila-chain/sila-besu/pull/5756)
+- Add Holešky as predefined network name [#5797](https://github.com/sila-chain/sila-besu/pull/5797)
 
 ### Breaking Changes
-- Add ABI-decoded revert reason to `sil_call` and `sil_estimateGas` responses [#5705](https://github.com/hyperledger/besu/issues/5705)
+- Add ABI-decoded revert reason to `sil_call` and `sil_estimateGas` responses [#5705](https://github.com/sila-chain/sila-besu/issues/5705)
 
 ### Additions and Improvements
-- Add missing methods to the `Transaction` interface [#5732](https://github.com/hyperledger/besu/pull/5732)
-- Add `benchmark` subcommand to `savmtool` [#5754](https://github.com/hyperledger/besu/issues/5754)
-- JSON output is now compact by default. This can be overridden by the new `--json-pretty-print-enabled` CLI option. [#5766](https://github.com/hyperledger/besu/pull/5766)
-- New `sil_getBlockReceipts` JSON-RPC method to retrieve all transaction receipts for a block in a single call [#5771](https://github.com/hyperledger/besu/pull/5771) 
-- Add new methods to `OperationTracer` to capture contexts enter/exit [#5756](https://github.com/hyperledger/besu/pull/5756)
+- Add missing methods to the `Transaction` interface [#5732](https://github.com/sila-chain/sila-besu/pull/5732)
+- Add `benchmark` subcommand to `evmtool` [#5754](https://github.com/sila-chain/sila-besu/issues/5754)
+- JSON output is now compact by default. This can be overridden by the new `--json-pretty-print-enabled` CLI option. [#5766](https://github.com/sila-chain/sila-besu/pull/5766)
+- New `sil_getBlockReceipts` JSON-RPC method to retrieve all transaction receipts for a block in a single call [#5771](https://github.com/sila-chain/sila-besu/pull/5771) 
+- Add new methods to `OperationTracer` to capture contexts enter/exit [#5756](https://github.com/sila-chain/sila-besu/pull/5756)
 
 ### Bug Fixes
-- Make smart contract permissioning features work with london fork [#5727](https://github.com/hyperledger/besu/pull/5727)
-- Add type to PendingTransactionDetail, fix sil_subscribe [#5729](https://github.com/hyperledger/besu/pull/5729)
-- SavmTool "run" mode did not reflect contracts created within the transaction. [#5755](https://github.com/hyperledger/besu/pull/5755)
-- Fixing snapsync issue with forest during the heal step [#5776](https://github.com/hyperledger/besu/pull/5776)
+- Make smart contract permissioning features work with london fork [#5727](https://github.com/sila-chain/sila-besu/pull/5727)
+- Add type to PendingTransactionDetail, fix sil_subscribe [#5729](https://github.com/sila-chain/sila-besu/pull/5729)
+- SavmTool "run" mode did not reflect contracts created within the transaction. [#5755](https://github.com/sila-chain/sila-besu/pull/5755)
+- Fixing snapsync issue with forest during the heal step [#5776](https://github.com/sila-chain/sila-besu/pull/5776)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.7.2/besu-23.7.2.tar.gz / sha256: f74b32c1a343cbad90a88aa59276b4c5eefea4643ee542aba2bbf898f85ae242
@@ -181,29 +181,29 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.7.2/besu-23.7.2.z
 ## 23.7.1
 
 ### Breaking Changes
-- Removed deprecated GoQuorum permissioning interop [#5607](https://github.com/hyperledger/besu/pull/5607)
-- Removed support for version 0 of the database as it is no longer used by any active node. [#5698](https://github.com/hyperledger/besu/pull/5698)
+- Removed deprecated GoQuorum permissioning interop [#5607](https://github.com/sila-chain/sila-besu/pull/5607)
+- Removed support for version 0 of the database as it is no longer used by any active node. [#5698](https://github.com/sila-chain/sila-besu/pull/5698)
 
 ### Additions and Improvements
-- `savmtool` launcher binaries now ship as part of the standard distribution. [#5701](https://github.com/hyperledger/besu/pull/5701)
-- SavmTool now executes the `execution-spec-tests` via the `t8n` and `b11r`. See the [README](sila/savmtool/README.md) in SavmTool for more instructions.
-- Improve lifecycle management of the transaction pool [#5634](https://github.com/hyperledger/besu/pull/5634)
-- Add extension points in AbstractCreateOperation for SAVM libraries to react to contract creations [#5656](https://github.com/hyperledger/besu/pull/5656)
-- Update to Tuweni 2.4.2. [#5684](https://github.com/hyperledger/besu/pull/5684)
-- Decouple data field from Enum JsonRpcError by creating new enum holder RpcErrorType[#5629](https://github.com/hyperledger/besu/pull/5629)
-- Update to bouncycastle 1.75 [#5675](https://github.com/hyperledger/besu/pull/5675)
-- Extend OperationTracer with new methods [#5662](https://github.com/hyperledger/besu/pull/5662)
-- Sip 6780 selfdestruct [#5430](https://github.com/hyperledger/besu/pull/5430)
-- Add new debug_getRawTransaction to the DEBUG engine [#5635](https://github.com/hyperledger/besu/pull/5635)
+- `evmtool` launcher binaries now ship as part of the standard distribution. [#5701](https://github.com/sila-chain/sila-besu/pull/5701)
+- SavmTool now executes the `execution-spec-tests` via the `t8n` and `b11r`. See the [README](sila/evmtool/README.md) in SavmTool for more instructions.
+- Improve lifecycle management of the transaction pool [#5634](https://github.com/sila-chain/sila-besu/pull/5634)
+- Add extension points in AbstractCreateOperation for SAVM libraries to react to contract creations [#5656](https://github.com/sila-chain/sila-besu/pull/5656)
+- Update to Tuweni 2.4.2. [#5684](https://github.com/sila-chain/sila-besu/pull/5684)
+- Decouple data field from Enum JsonRpcError by creating new enum holder RpcErrorType[#5629](https://github.com/sila-chain/sila-besu/pull/5629)
+- Update to bouncycastle 1.75 [#5675](https://github.com/sila-chain/sila-besu/pull/5675)
+- Extend OperationTracer with new methods [#5662](https://github.com/sila-chain/sila-besu/pull/5662)
+- Eip 6780 selfdestruct [#5430](https://github.com/sila-chain/sila-besu/pull/5430)
+- Add new debug_getRawTransaction to the DEBUG engine [#5635](https://github.com/sila-chain/sila-besu/pull/5635)
 
 ### Bug Fixes
-- Use the node's configuration to determine if DNS enode URLs are allowed in calls to `admin_addPeer` and `admin_removePeer` [#5584](https://github.com/hyperledger/besu/pull/5584)
-- Align the implementation of Sil/68 `NewPooledTransactionHashes` to other clients, using unsigned int for encoding size. [#5640](https://github.com/hyperledger/besu/pull/5640)
-- Failure at startup when enabling layered txpool before initial sync done [#5636](https://github.com/hyperledger/besu/issues/5636)
-- Remove miner-related option warnings if the change isn't using Silash consensus algorithm [#5669](https://github.com/hyperledger/besu/pull/5669)
-- Fix for pending transactions reference leak [#5693](https://github.com/hyperledger/besu/pull/5693)
-- Address a performance regression observed in import testing [#5734](https://github.com/hyperledger/besu/pull/5734)
-- Update native libraries that have JPMS friendly module names [#5749](https://github.com/hyperledger/besu/pull/5749)
+- Use the node's configuration to determine if DNS enode URLs are allowed in calls to `admin_addPeer` and `admin_removePeer` [#5584](https://github.com/sila-chain/sila-besu/pull/5584)
+- Align the implementation of Sil/68 `NewPooledTransactionHashes` to other clients, using unsigned int for encoding size. [#5640](https://github.com/sila-chain/sila-besu/pull/5640)
+- Failure at startup when enabling layered txpool before initial sync done [#5636](https://github.com/sila-chain/sila-besu/issues/5636)
+- Remove miner-related option warnings if the change isn't using Ethash consensus algorithm [#5669](https://github.com/sila-chain/sila-besu/pull/5669)
+- Fix for pending transactions reference leak [#5693](https://github.com/sila-chain/sila-besu/pull/5693)
+- Address a performance regression observed in import testing [#5734](https://github.com/sila-chain/sila-besu/pull/5734)
+- Update native libraries that have JPMS friendly module names [#5749](https://github.com/sila-chain/sila-besu/pull/5749)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.7.1/besu-23.7.1.tar.gz / sha256: 85dce66c2dbd21b4e5d3310770434dd373018a046b78d5037f6d4955256793cd
@@ -218,24 +218,24 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.7.1/besu-23.7.1.z
 ## 23.4.4
 
 ### Breaking Changes
-- Move blockchain related variables in a dedicated storage, to pave the way to future optimizations [#5471](https://github.com/hyperledger/besu/pull/5471). The migration is performed automatically at startup,
+- Move blockchain related variables in a dedicated storage, to pave the way to future optimizations [#5471](https://github.com/sila-chain/sila-besu/pull/5471). The migration is performed automatically at startup,
 and in case a rollback is needed, before installing a previous version, the migration can be reverted, using the subcommand `storage revert-variables` with the same configuration use to run Besu.
-- Remove deprecated Rinkeby named network. [#5540](https://github.com/hyperledger/besu/pull/5540)
+- Remove deprecated Rinkeby named network. [#5540](https://github.com/sila-chain/sila-besu/pull/5540)
 - Use BlobDB for blockchain storage to reduce initial sync time and write amplification (PR #5475). This PR reduces sync time by 14 hours on m6a.xlarge VM (1 day 8 hours 27 minutes instead of 1 day 22 hours 4 minutes).
 ### Additions and Improvements
-- Allow Silstats connection url to specify ws:// or wss:// scheme. [#5494](https://github.com/hyperledger/besu/issues/5494)
-- Add support for SilaShanghai changes to the GraphQL service [#5496](https://github.com/hyperledger/besu/pull/5496)
-- Unite the tx-pool CLI options under the same Tx Pool Options group in UX. [#5466](https://github.com/hyperledger/besu/issues/5466)
-- Tidy DEBUG logs by moving engine API full logging to TRACE [#5529](https://github.com/hyperledger/besu/pull/5529)
-- Remove PoW validation if merge is enabled as it is not needed any more [#5538](https://github.com/hyperledger/besu/pull/5538)
-- Use BlobDB for blockchain storage to reduce initial sync time and write amplification [#5475](https://github.com/hyperledger/besu/pull/5475)
-- Add healing flat db mechanism with early access CLI options `--Xsnapsync-synchronizer-flat-db-healing-enabled=true` [#5319](https://github.com/hyperledger/besu/pull/5319)
-- Add debug_getRawTransaction method to the DEBUG suite [#5635](https://github.com/hyperledger/besu/pull/5635)
+- Allow Ethstats connection url to specify ws:// or wss:// scheme. [#5494](https://github.com/sila-chain/sila-besu/issues/5494)
+- Add support for SilaShanghai changes to the GraphQL service [#5496](https://github.com/sila-chain/sila-besu/pull/5496)
+- Unite the tx-pool CLI options under the same Tx Pool Options group in UX. [#5466](https://github.com/sila-chain/sila-besu/issues/5466)
+- Tidy DEBUG logs by moving engine API full logging to TRACE [#5529](https://github.com/sila-chain/sila-besu/pull/5529)
+- Remove PoW validation if merge is enabled as it is not needed any more [#5538](https://github.com/sila-chain/sila-besu/pull/5538)
+- Use BlobDB for blockchain storage to reduce initial sync time and write amplification [#5475](https://github.com/sila-chain/sila-besu/pull/5475)
+- Add healing flat db mechanism with early access CLI options `--Xsnapsync-synchronizer-flat-db-healing-enabled=true` [#5319](https://github.com/sila-chain/sila-besu/pull/5319)
+- Add debug_getRawTransaction method to the DEBUG suite [#5635](https://github.com/sila-chain/sila-besu/pull/5635)
 
 ### Bug Fixes
-- Fix backwards sync bug where chain is rolled back too far, especially when restarting Nimbus [#5497](https://github.com/hyperledger/besu/pull/5497)
-- Check to ensure storage and transactions are not closed prior to reading/writing [#5527](https://github.com/hyperledger/besu/pull/5527) 
-- Fix the unavailability of account code and storage on GraphQL/Bonsai [#5548](https://github.com/hyperledger/besu/pull/5548)
+- Fix backwards sync bug where chain is rolled back too far, especially when restarting Nimbus [#5497](https://github.com/sila-chain/sila-besu/pull/5497)
+- Check to ensure storage and transactions are not closed prior to reading/writing [#5527](https://github.com/sila-chain/sila-besu/pull/5527) 
+- Fix the unavailability of account code and storage on GraphQL/Bonsai [#5548](https://github.com/sila-chain/sila-besu/pull/5548)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.4.4/besu-23.4.4.tar.gz / sha256: bd476d235b6fe1f236a62bc709f41c87deb68b72c47bb5b58e56b9d9283af2c4
@@ -252,25 +252,25 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/23.4.4/besu-23.4.4.z
 ## 23.4.1
 
 ### Breaking Changes
-- Add request content length limit for the JSON-RPC API (5MB) [#5467](https://github.com/hyperledger/besu/pull/5467)
-- `min-block-occupancy-ratio` options is now ignored on PoS networks [#5491](https://github.com/hyperledger/besu/pull/5491)
+- Add request content length limit for the JSON-RPC API (5MB) [#5467](https://github.com/sila-chain/sila-besu/pull/5467)
+- `min-block-occupancy-ratio` options is now ignored on PoS networks [#5491](https://github.com/sila-chain/sila-besu/pull/5491)
 
 ### Additions and Improvements
-- Set the retention policy for RocksDB log files to maintain only the logs from the last week [#5428](https://github.com/hyperledger/besu/pull/5428)
-- "Big-EOF" (the EOF version initially slotted for SilaShanghai) has been moved from SilaCancun to FutureSIPs [#5429](https://github.com/hyperledger/besu/pull/5429)
-- SIP-4844: Zero blob transactions are invalid [#5425](https://github.com/hyperledger/besu/pull/5425)
-- Transaction pool flag to disable specific behaviors for locally submitted transactions [#5418](https://github.com/hyperledger/besu/pull/5418)
-- Added In-Protocol Deposit prototype (SIP-6110) in the experimental sip. [#5005](https://github.com/hyperledger/besu/pull/5055) [#5295](https://github.com/hyperledger/besu/pull/5295)
-- New optional feature to save the txpool content to file on shutdown and reloading it on startup [#5434](https://github.com/hyperledger/besu/pull/5434)
-- New option to send SNI header in TLS ClientHello message [#5439](https://github.com/hyperledger/besu/pull/5439)
-- Early access - layered transaction pool implementation [#5290](https://github.com/hyperledger/besu/pull/5290)
-- New RPC method `debug_getRawReceipts` [#5476](https://github.com/hyperledger/besu/pull/5476)
-- Add TrieLogFactory plugin support [#5440](https://github.com/hyperledger/besu/pull/5440)
-- Ignore `min-block-occupancy-ratio` option when on PoS networks, since in some cases, it prevents to have full blocks even if enough transactions are present [#5491](https://github.com/hyperledger/besu/pull/5491)
+- Set the retention policy for RocksDB log files to maintain only the logs from the last week [#5428](https://github.com/sila-chain/sila-besu/pull/5428)
+- "Big-EOF" (the EOF version initially slotted for SilaShanghai) has been moved from SilaCancun to FutureEIPs [#5429](https://github.com/sila-chain/sila-besu/pull/5429)
+- SIP-4844: Zero blob transactions are invalid [#5425](https://github.com/sila-chain/sila-besu/pull/5425)
+- Transaction pool flag to disable specific behaviors for locally submitted transactions [#5418](https://github.com/sila-chain/sila-besu/pull/5418)
+- Added In-Protocol Deposit prototype (SIP-6110) in the experimental sip. [#5005](https://github.com/sila-chain/sila-besu/pull/5055) [#5295](https://github.com/sila-chain/sila-besu/pull/5295)
+- New optional feature to save the txpool content to file on shutdown and reloading it on startup [#5434](https://github.com/sila-chain/sila-besu/pull/5434)
+- New option to send SNI header in TLS ClientHello message [#5439](https://github.com/sila-chain/sila-besu/pull/5439)
+- Early access - layered transaction pool implementation [#5290](https://github.com/sila-chain/sila-besu/pull/5290)
+- New RPC method `debug_getRawReceipts` [#5476](https://github.com/sila-chain/sila-besu/pull/5476)
+- Add TrieLogFactory plugin support [#5440](https://github.com/sila-chain/sila-besu/pull/5440)
+- Ignore `min-block-occupancy-ratio` option when on PoS networks, since in some cases, it prevents to have full blocks even if enough transactions are present [#5491](https://github.com/sila-chain/sila-besu/pull/5491)
 
 ### Bug Fixes
-- Fix sil_feeHistory response for the case in which blockCount is higher than highestBlock requested. [#5397](https://github.com/hyperledger/besu/pull/5397)
-- Fix Besu Docker image failing to start due to NoClassDefFoundError with org.xerial.snappy.Snappy library. [#5462](https://github.com/hyperledger/besu/pull/5462)
+- Fix sil_feeHistory response for the case in which blockCount is higher than highestBlock requested. [#5397](https://github.com/sila-chain/sila-besu/pull/5397)
+- Fix Besu Docker image failing to start due to NoClassDefFoundError with org.xerial.snappy.Snappy library. [#5462](https://github.com/sila-chain/sila-besu/pull/5462)
 
 ### Download Links
 
@@ -280,43 +280,43 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.4.1/besu-23.4.1.z
 ## 23.4.0
 
 ### Breaking Changes
-- In `savmtool` (an offline SAVM executor tool principally used for reference tests), the `--prestate` and `--genesis` options no longer parse genesis files containing IBFT, QBFT, and Clique network definitions. The same genesis files will work with those json entries removed. [#5192](https://github.com/hyperledger/besu/pull/5192)
-- In `--silstats`, if the port is not specified in the URI, it will default to 443 and 80 for ssl and non-ssl connections respectively instead of 3000. [#5301](https://github.com/hyperledger/besu/pull/5301)
-- Remove IBFT 1.0 feature [#5302](https://github.com/hyperledger/besu/pull/5302)
-- Remove GoQuorum-compatible privacy feature [#5303](https://github.com/hyperledger/besu/pull/5303)
-- Remove launcher command line utility [#5355](https://github.com/hyperledger/besu/pull/5355)
-- Remove deprecated `tx-pool-future-max-by-account` option, see instead: `tx-pool-limit-by-account-percentage` [#5361](https://github.com/hyperledger/besu/pull/5361)
-- Default configuration for the deprecated ECIP-1049 network has been removed from the CLI network list [#5371](https://github.com/hyperledger/besu/pull/5371)
+- In `evmtool` (an offline SAVM executor tool principally used for reference tests), the `--prestate` and `--genesis` options no longer parse genesis files containing IBFT, QBFT, and Clique network definitions. The same genesis files will work with those json entries removed. [#5192](https://github.com/sila-chain/sila-besu/pull/5192)
+- In `--ethstats`, if the port is not specified in the URI, it will default to 443 and 80 for ssl and non-ssl connections respectively instead of 3000. [#5301](https://github.com/sila-chain/sila-besu/pull/5301)
+- Remove IBFT 1.0 feature [#5302](https://github.com/sila-chain/sila-besu/pull/5302)
+- Remove GoQuorum-compatible privacy feature [#5303](https://github.com/sila-chain/sila-besu/pull/5303)
+- Remove launcher command line utility [#5355](https://github.com/sila-chain/sila-besu/pull/5355)
+- Remove deprecated `tx-pool-future-max-by-account` option, see instead: `tx-pool-limit-by-account-percentage` [#5361](https://github.com/sila-chain/sila-besu/pull/5361)
+- Default configuration for the deprecated ECIP-1049 network has been removed from the CLI network list [#5371](https://github.com/sila-chain/sila-besu/pull/5371)
 - Besu now requires glibc 2.32 or later to run. Ubuntu 20.04 users will need to update to a newer version of Ubuntu, 22.04 or later to run Besu
 
 ### Additions and Improvements
-- An alternate build target for the SAVM using GraalVM AOT compilation was added.  [#5192](https://github.com/hyperledger/besu/pull/5192)
-- To generate the binary install and use GraalVM 23.3.r17 or higher and run `./gradlew nativeCompile`.  The binary will be located in `sila/savmtool/build/native/nativeCompile`
+- An alternate build target for the SAVM using GraalVM AOT compilation was added.  [#5192](https://github.com/sila-chain/sila-besu/pull/5192)
+- To generate the binary install and use GraalVM 23.3.r17 or higher and run `./gradlew nativeCompile`.  The binary will be located in `sila/evmtool/build/native/nativeCompile`
 - Upgrade RocksDB version from 7.7.3 to 8.0.0. Besu Team [contributed](https://github.com/facebook/rocksdb/pull/11099) to this release to make disabling checksum verification work. 
-- Log an error with stacktrace when RPC responds with internal error [#5288](https://github.com/hyperledger/besu/pull/5288)
-- `--silstats-cacert` to specify root CA of silstats server (useful for non-production environments). [#5301](https://github.com/hyperledger/besu/pull/5301)
-- Update most dependencies to latest version [#5269](https://github.com/hyperledger/besu/pull/5269)
-- If jemalloc is used, print its version in the configuration overview [#4738](https://github.com/hyperledger/besu/pull/4738)
-- Add metrics for accounts and storage reads (Flat database vs Merkle Patricia Trie) [#5315](https://github.com/hyperledger/besu/pull/5315)
-- Offload LogBloom cache generation to computation executor, to avoid interfere with other scheduled tasks [#4530](https://github.com/hyperledger/besu/pull/4530)
-- Reference tests are upgraded to use v12.1 of the sila tests [#5343](https://github.com/hyperledger/besu/pull/5343)
-- Add new sepolia bootnodes, which should improve peering in the testnet. [#5352](https://github.com/hyperledger/besu/pull/5352)
-- Renamed --bonsai-maximum-back-layers-to-load option to --bonsai-historical-block-limit for clarity. Removed --Xbonsai-use-snapshots option as it is no longer functional [#5337](https://github.com/hyperledger/besu/pull/5337)
-- Change Forest to use TransactionDB instead of OptimisticTransactionDB [#5328](https://github.com/hyperledger/besu/pull/5328)
-- Performance: Reduced usage of UInt256 in SAVM operations [#5331](https://github.com/hyperledger/besu/pull/5331)
-- Changed wrong error message "Invalid params" when private tx is reverted to "Execution reverted" with correct revert reason in data. [#5369](https://github.com/hyperledger/besu/pull/5369)
-- Changes to the way gas is estimated to provide an exact gas estimate [#5142](https://github.com/hyperledger/besu/pull/5142)
-- Add zero reads to Bonsai TrieLogs [#5317](https://github.com/hyperledger/besu/pull/5317) 
-- Bonsai TrieLog serialization interface and default implementation [#5372](https://github.com/hyperledger/besu/pull/5372) 
+- Log an error with stacktrace when RPC responds with internal error [#5288](https://github.com/sila-chain/sila-besu/pull/5288)
+- `--ethstats-cacert` to specify root CA of ethstats server (useful for non-production environments). [#5301](https://github.com/sila-chain/sila-besu/pull/5301)
+- Update most dependencies to latest version [#5269](https://github.com/sila-chain/sila-besu/pull/5269)
+- If jemalloc is used, print its version in the configuration overview [#4738](https://github.com/sila-chain/sila-besu/pull/4738)
+- Add metrics for accounts and storage reads (Flat database vs Merkle Patricia Trie) [#5315](https://github.com/sila-chain/sila-besu/pull/5315)
+- Offload LogBloom cache generation to computation executor, to avoid interfere with other scheduled tasks [#4530](https://github.com/sila-chain/sila-besu/pull/4530)
+- Reference tests are upgraded to use v12.1 of the sila tests [#5343](https://github.com/sila-chain/sila-besu/pull/5343)
+- Add new sepolia bootnodes, which should improve peering in the testnet. [#5352](https://github.com/sila-chain/sila-besu/pull/5352)
+- Renamed --bonsai-maximum-back-layers-to-load option to --bonsai-historical-block-limit for clarity. Removed --Xbonsai-use-snapshots option as it is no longer functional [#5337](https://github.com/sila-chain/sila-besu/pull/5337)
+- Change Forest to use TransactionDB instead of OptimisticTransactionDB [#5328](https://github.com/sila-chain/sila-besu/pull/5328)
+- Performance: Reduced usage of UInt256 in SAVM operations [#5331](https://github.com/sila-chain/sila-besu/pull/5331)
+- Changed wrong error message "Invalid params" when private tx is reverted to "Execution reverted" with correct revert reason in data. [#5369](https://github.com/sila-chain/sila-besu/pull/5369)
+- Changes to the way gas is estimated to provide an exact gas estimate [#5142](https://github.com/sila-chain/sila-besu/pull/5142)
+- Add zero reads to Bonsai TrieLogs [#5317](https://github.com/sila-chain/sila-besu/pull/5317) 
+- Bonsai TrieLog serialization interface and default implementation [#5372](https://github.com/sila-chain/sila-besu/pull/5372) 
 
 ### Bug Fixes
-- Fix sil_getBlockByNumber cache error for latest block when called during syncing [#5292](https://github.com/hyperledger/besu/pull/5292)
-- Fix QBFT and IBFT unable to propose blocks on London when zeroBaseFee is used [#5276](https://github.com/hyperledger/besu/pull/5276) 
-- Make QBFT validator smart contract mode work with london fork [#5249](https://github.com/hyperledger/besu/issues/5249)
-- Try to connect to SilStats server by default with ssl followed by non-ssl. [#5301](https://github.com/hyperledger/besu/pull/5301)
-- Allow --miner-extra-data to be used in Proof-of-Stake block production [#5291](https://github.com/hyperledger/besu/pull/5291)
-- Add withdrawals to payloadId calculation to avoid collisions [#5321](https://github.com/hyperledger/besu/pull/5321) 
-- Re-implement trace_block, trace_filter and trace_replayBlockTransactions RPC endpoints to fix memory issues and improve performance [#5131](https://github.com/hyperledger/besu/pull/5131)
+- Fix sil_getBlockByNumber cache error for latest block when called during syncing [#5292](https://github.com/sila-chain/sila-besu/pull/5292)
+- Fix QBFT and IBFT unable to propose blocks on London when zeroBaseFee is used [#5276](https://github.com/sila-chain/sila-besu/pull/5276) 
+- Make QBFT validator smart contract mode work with london fork [#5249](https://github.com/sila-chain/sila-besu/issues/5249)
+- Try to connect to SilStats server by default with ssl followed by non-ssl. [#5301](https://github.com/sila-chain/sila-besu/pull/5301)
+- Allow --miner-extra-data to be used in Proof-of-Stake block production [#5291](https://github.com/sila-chain/sila-besu/pull/5291)
+- Add withdrawals to payloadId calculation to avoid collisions [#5321](https://github.com/sila-chain/sila-besu/pull/5321) 
+- Re-implement trace_block, trace_filter and trace_replayBlockTransactions RPC endpoints to fix memory issues and improve performance [#5131](https://github.com/sila-chain/sila-besu/pull/5131)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.4.0/besu-23.4.0.zip / sha256: 023a267ee07ed6e069cb15020c1c0262efc5ea0a3e32adc6596068cff7fd0be5
@@ -332,18 +332,18 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.3/besu-23.1.3.t
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.3/besu-23.1.3.zip / sha256: adb3b17e45217f86a56f07f09faba2e5d8a0eb8a585ad5307696d6cc58ee2f73
 
 ## 23.1.2
-This update is a sila-mainnet-compatible SilaShanghai/Capella upgrade and is recommended for all SilaMainnet users.
+This update is a mainnet-compatible SilaShanghai/Capella upgrade and is recommended for all SilaMainnet users.
 
 ### Breaking Changes
 
 ### Additions and Improvements
-- Schedule SilaShanghai (Shapella) fork for SilaMainnet [#5230](https://github.com/hyperledger/besu/pull/5230)
-- Increase default from 1000 to 5000 for `--rpc-max-logs-range` [#5209](https://github.com/hyperledger/besu/pull/5209)
-- Bonsai-safe refactor [#5123](https://github.com/hyperledger/besu/pull/5123)
-- Safe tracing [#5197](https://github.com/hyperledger/besu/pull/5197)
+- Schedule SilaShanghai (Shapella) fork for SilaMainnet [#5230](https://github.com/sila-chain/sila-besu/pull/5230)
+- Increase default from 1000 to 5000 for `--rpc-max-logs-range` [#5209](https://github.com/sila-chain/sila-besu/pull/5209)
+- Bonsai-safe refactor [#5123](https://github.com/sila-chain/sila-besu/pull/5123)
+- Safe tracing [#5197](https://github.com/sila-chain/sila-besu/pull/5197)
 
 ### Bug Fixes
-- Persist backward sync status to support resuming across restarts [#5182](https://github.com/hyperledger/besu/pull/5182)
+- Persist backward sync status to support resuming across restarts [#5182](https://github.com/sila-chain/sila-besu/pull/5182)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.2/besu-23.1.2.tar.gz / sha256: 3d3a709a3aab993a0801b412a4719d74e319f942ddc13fb0f30b3c4a54d12538
@@ -355,19 +355,19 @@ This update is required for the Goerli SilaShanghai/Capella upgrade and recommen
 ### Breaking Changes
 
 ### Additions and Improvements
-- Add support for SilaShanghai in SilaSepolia https://github.com/hyperledger/besu/pull/5088
-- Add implementation for engine_getPayloadBodiesByRangeV1 and engine_getPayloadBodiesByHashV1 https://github.com/hyperledger/besu/pull/4980
-- If a PoS block creation repetition takes less than a configurable duration, then waits before next repetition https://github.com/hyperledger/besu/pull/5048
-- Allow other users to read the /opt/besu dir when using docker https://github.com/hyperledger/besu/pull/5092
+- Add support for SilaShanghai in SilaSepolia https://github.com/sila-chain/sila-besu/pull/5088
+- Add implementation for engine_getPayloadBodiesByRangeV1 and engine_getPayloadBodiesByHashV1 https://github.com/sila-chain/sila-besu/pull/4980
+- If a PoS block creation repetition takes less than a configurable duration, then waits before next repetition https://github.com/sila-chain/sila-besu/pull/5048
+- Allow other users to read the /opt/besu dir when using docker https://github.com/sila-chain/sila-besu/pull/5092
 - Invalid params - add some error detail #5066
-- Added the option --kzg-trusted-setup to pass a custom setup file for custom networks or to override the default one for named networks [#5084](https://github.com/hyperledger/besu/pull/5084)
-- Gas accounting for SIP-4844 [#4992](https://github.com/hyperledger/besu/pull/4992)
-- Goerli configs for shapella [#5151](https://github.com/hyperledger/besu/pull/5151)
+- Added the option --kzg-trusted-setup to pass a custom setup file for custom networks or to override the default one for named networks [#5084](https://github.com/sila-chain/sila-besu/pull/5084)
+- Gas accounting for SIP-4844 [#4992](https://github.com/sila-chain/sila-besu/pull/4992)
+- Goerli configs for shapella [#5151](https://github.com/sila-chain/sila-besu/pull/5151)
 
 ### Bug Fixes
-- Fix engine_getPayloadV2 block value calculation [#5040](https://github.com/hyperledger/besu/issues/5040)
-- Moves check for init code length before balance check [#5077](https://github.com/hyperledger/besu/pull/5077)
-- Address concurrency problems with sil_call [#5179](https://github.com/hyperledger/besu/pull/5179)
+- Fix engine_getPayloadV2 block value calculation [#5040](https://github.com/sila-chain/sila-besu/issues/5040)
+- Moves check for init code length before balance check [#5077](https://github.com/sila-chain/sila-besu/pull/5077)
+- Address concurrency problems with sil_call [#5179](https://github.com/sila-chain/sila-besu/pull/5179)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.1/besu-23.1.1.tar.gz / sha256: 11c3e5cdbc06df16a690e7ee9f98eefa46848f9fa280824b6e4c896d88f6b975
@@ -376,7 +376,7 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.1/besu-23.1.1.z
 ## 23.1.1-RC1
 ### SilaSepolia SilaShanghai Release aka SilaSepolia Shapella aka Shapolia
 
-This update is **not recommended for sila-mainnet users**.
+This update is **not recommended for mainnet users**.
 
 Besu 23.1.1-RC1 is a **required update for SilaSepolia users**
 
@@ -384,18 +384,18 @@ SilaSepolia SilaShanghai hardfork scheduled for: **Tue Feb 28 2023 04:04:48 UTC*
 
 ---
 
-This release has everything from [23.1.0](https://github.com/hyperledger/besu/releases/tag/23.1.0) and in addition the following:
+This release has everything from [23.1.0](https://github.com/sila-chain/sila-besu/releases/tag/23.1.0) and in addition the following:
 
 ### Additions and Improvements
-- Add support for SilaShanghai in SilaSepolia https://github.com/hyperledger/besu/pull/5088
-- Add implementation for engine_getPayloadBodiesByRangeV1 and engine_getPayloadBodiesByHashV1 https://github.com/hyperledger/besu/pull/4980
-- If a PoS block creation repetition takes less than a configurable duration, then waits before next repetition https://github.com/hyperledger/besu/pull/5048
-- Allow other users to read the /opt/besu dir when using docker https://github.com/hyperledger/besu/pull/5092
-- Invalid params - add some error detail [#5066](https://github.com/hyperledger/besu/pull/5066)
+- Add support for SilaShanghai in SilaSepolia https://github.com/sila-chain/sila-besu/pull/5088
+- Add implementation for engine_getPayloadBodiesByRangeV1 and engine_getPayloadBodiesByHashV1 https://github.com/sila-chain/sila-besu/pull/4980
+- If a PoS block creation repetition takes less than a configurable duration, then waits before next repetition https://github.com/sila-chain/sila-besu/pull/5048
+- Allow other users to read the /opt/besu dir when using docker https://github.com/sila-chain/sila-besu/pull/5092
+- Invalid params - add some error detail [#5066](https://github.com/sila-chain/sila-besu/pull/5066)
 
 ### Bug fixes
-- Fix engine_getPayloadV2 block value calculation https://github.com/hyperledger/besu/issues/5040
-- Moves check for init code length before balance check https://github.com/hyperledger/besu/pull/5077
+- Fix engine_getPayloadV2 block value calculation https://github.com/sila-chain/sila-besu/issues/5040
+- Moves check for init code length before balance check https://github.com/sila-chain/sila-besu/pull/5077
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.1-RC1/besu-23.1.1-RC1.tar.gz / sha256: 82cff41f3eace02006b0e670605848e0e77e045892f8fa9aad66cbd84a88221e
@@ -412,48 +412,48 @@ One final note. 23.1.0 is not a SilaShanghai ready release. If you intend to tes
 
 ### Breaking Changes
 - Change JsonRpc http service to return the error -32602 (Invalid params) with a 200 http status code
-- Besu requires minimum Java 17 and up to build and run [#3320](https://github.com/hyperledger/besu/issues/3320)
+- Besu requires minimum Java 17 and up to build and run [#3320](https://github.com/sila-chain/sila-besu/issues/3320)
 - PKCS11 with nss module (PKCS11 based HSM can be used in DevP2P TLS and QBFT PKI) does not work with RSA keys
   in Java 17. SoftHSM is tested manually and working. (Other PKCS11 HSM are not tested). The relevant unit and acceptance
   tests are updated to use EC private keys instead of RSA keys.
-- Change sil_feeHistory parameter `blockCount` to accept hexadecimal string (was accepting plain integer) [#5047](https://github.com/hyperledger/besu/pull/5047)
-- Default configurations for the deprecated Ropsten, Kiln, Shandong, and Astor networks have been removed from the CLI network list. These networks can currently be accessed but will require a user-provided genesis configuration. [#4869](https://github.com/hyperledger/besu/pull/4869)
+- Change sil_feeHistory parameter `blockCount` to accept hexadecimal string (was accepting plain integer) [#5047](https://github.com/sila-chain/sila-besu/pull/5047)
+- Default configurations for the deprecated Ropsten, Kiln, Shandong, and Astor networks have been removed from the CLI network list. These networks can currently be accessed but will require a user-provided genesis configuration. [#4869](https://github.com/sila-chain/sila-besu/pull/4869)
 - GoQuorum-compatible privacy is deprecated and will be removed in 23.4
 - IBFT 1.0 is deprecated and will be removed in 23.4
-- Optimize SSTORE Operation execution time (memoize current and original value) [#4836](https://github.com/hyperledger/besu/pull/4836)
+- Optimize SSTORE Operation execution time (memoize current and original value) [#4836](https://github.com/sila-chain/sila-besu/pull/4836)
 
 ### Additions and Improvements
-- Default rpc batch request to 1024 [#5104](https://github.com/hyperledger/besu/pull/5104) [#5108](https://github.com/hyperledger/besu/pull/5108)
-- Add a new CLI option to limit the number of requests in a single RPC batch request. [#4965](https://github.com/hyperledger/besu/pull/4965)
-- Support for new DATAHASH opcode as part of SIP-4844 [#4823](https://github.com/hyperledger/besu/issues/4823)
-- Send only hash announcement for blob transaction type [#4940](https://github.com/hyperledger/besu/pull/4940)
-- Add `excess_data_gas` field to block header [#4958](https://github.com/hyperledger/besu/pull/4958)
-- Add `max_fee_per_data_gas` field to transaction [#4970](https://github.com/hyperledger/besu/pull/4970)
-- Added option to savm CLI tool to allow code execution at specific forks [#4913](https://github.com/hyperledger/besu/pull/4913)
-- Improve get account performance by using the world state updater cache [#4897](https://github.com/hyperledger/besu/pull/4897)
-- Add new KZG precompile and option to override the trusted setup being used [#4822](https://github.com/hyperledger/besu/issues/4822)
-- Add implementation for sil_createAccessList RPC method [#4942](https://github.com/hyperledger/besu/pull/4942)
-- Updated reference tests to v11.3 [#4996](https://github.com/hyperledger/besu/pull/4996)
-- Add DebugGetRawBlock and DebugGetRawHeader RPC methods [#5011](https://github.com/hyperledger/besu/pull/5011)
-- Besu requires minimum Java 17 and up to build and run [#3320](https://github.com/hyperledger/besu/issues/3320)
-- Add worldstate auto-heal mechanism [#5059](https://github.com/hyperledger/besu/pull/5059)
+- Default rpc batch request to 1024 [#5104](https://github.com/sila-chain/sila-besu/pull/5104) [#5108](https://github.com/sila-chain/sila-besu/pull/5108)
+- Add a new CLI option to limit the number of requests in a single RPC batch request. [#4965](https://github.com/sila-chain/sila-besu/pull/4965)
+- Support for new DATAHASH opcode as part of SIP-4844 [#4823](https://github.com/sila-chain/sila-besu/issues/4823)
+- Send only hash announcement for blob transaction type [#4940](https://github.com/sila-chain/sila-besu/pull/4940)
+- Add `excess_data_gas` field to block header [#4958](https://github.com/sila-chain/sila-besu/pull/4958)
+- Add `max_fee_per_data_gas` field to transaction [#4970](https://github.com/sila-chain/sila-besu/pull/4970)
+- Added option to savm CLI tool to allow code execution at specific forks [#4913](https://github.com/sila-chain/sila-besu/pull/4913)
+- Improve get account performance by using the world state updater cache [#4897](https://github.com/sila-chain/sila-besu/pull/4897)
+- Add new KZG precompile and option to override the trusted setup being used [#4822](https://github.com/sila-chain/sila-besu/issues/4822)
+- Add implementation for sil_createAccessList RPC method [#4942](https://github.com/sila-chain/sila-besu/pull/4942)
+- Updated reference tests to v11.3 [#4996](https://github.com/sila-chain/sila-besu/pull/4996)
+- Add DebugGetRawBlock and DebugGetRawHeader RPC methods [#5011](https://github.com/sila-chain/sila-besu/pull/5011)
+- Besu requires minimum Java 17 and up to build and run [#3320](https://github.com/sila-chain/sila-besu/issues/3320)
+- Add worldstate auto-heal mechanism [#5059](https://github.com/sila-chain/sila-besu/pull/5059)
 - Support for SIP-4895 - Withdrawals for SilaShanghai fork
-- Improve SLOAD and SSTORE performance by caching empty slots [#4874](https://github.com/hyperledger/besu/pull/4874)
-- RPC methods that lookup block by hash will now return an error response if no block found [#4582](https://github.com/hyperledger/besu/pull/4582)
-- Added support for `safe` and `finalized` strings for the RPC methods using defaultBlock parameter [#4902](https://github.com/hyperledger/besu/pull/4902)
-- Added post-execution state logging option to SAVM Tool [#4709](https://github.com/hyperledger/besu/pull/4709)
-- Add access list to Transaction Call Object [#4802](https://github.com/hyperledger/besu/issues/4801)
-- Add timestamp fork support, including shanghaiTime and cancunTime forks [#4743](https://github.com/hyperledger/besu/pull/4743)
-- Optimization:  Memoize transaction size and hash at the same time [#4812](https://github.com/hyperledger/besu/pull/4812)
-- Add chain data pruning feature with three experimental CLI options: `--Xchain-pruning-enabled`, `--Xchain-pruning-blocks-retained` and `--Xchain-pruning-frequency` [#4686](https://github.com/hyperledger/besu/pull/4686)
+- Improve SLOAD and SSTORE performance by caching empty slots [#4874](https://github.com/sila-chain/sila-besu/pull/4874)
+- RPC methods that lookup block by hash will now return an error response if no block found [#4582](https://github.com/sila-chain/sila-besu/pull/4582)
+- Added support for `safe` and `finalized` strings for the RPC methods using defaultBlock parameter [#4902](https://github.com/sila-chain/sila-besu/pull/4902)
+- Added post-execution state logging option to SAVM Tool [#4709](https://github.com/sila-chain/sila-besu/pull/4709)
+- Add access list to Transaction Call Object [#4802](https://github.com/sila-chain/sila-besu/issues/4801)
+- Add timestamp fork support, including shanghaiTime and cancunTime forks [#4743](https://github.com/sila-chain/sila-besu/pull/4743)
+- Optimization:  Memoize transaction size and hash at the same time [#4812](https://github.com/sila-chain/sila-besu/pull/4812)
+- Add chain data pruning feature with three experimental CLI options: `--Xchain-pruning-enabled`, `--Xchain-pruning-blocks-retained` and `--Xchain-pruning-frequency` [#4686](https://github.com/sila-chain/sila-besu/pull/4686)
   - Note that chain pruning is hidden and disabled by default. Once you choose to enable chain pruning, a new column family will be added to the db and you cannot roll back to a previous versi
     on of Besu.
 
 ### Bug Fixes
-- Mitigation fix for stale bonsai code storage leading to log rolling issues on contract recreates [#4906](https://github.com/hyperledger/besu/pull/4906)
-- Ensure latest cached layered worldstate is subscribed to storage, fix problem with RPC calls using 'latest' [#5076](https://github.com/hyperledger/besu/pull/5076)
-- Fix for segmentation faults on worldstate truncation, snap-sync starts [#4786](https://github.com/hyperledger/besu/pull/4786)
-- Fix for worldstate mismatch on failed forkchoiceUpdate [#4862](https://github.com/hyperledger/besu/pull/4862)
+- Mitigation fix for stale bonsai code storage leading to log rolling issues on contract recreates [#4906](https://github.com/sila-chain/sila-besu/pull/4906)
+- Ensure latest cached layered worldstate is subscribed to storage, fix problem with RPC calls using 'latest' [#5076](https://github.com/sila-chain/sila-besu/pull/5076)
+- Fix for segmentation faults on worldstate truncation, snap-sync starts [#4786](https://github.com/sila-chain/sila-besu/pull/4786)
+- Fix for worldstate mismatch on failed forkchoiceUpdate [#4862](https://github.com/sila-chain/sila-besu/pull/4862)
 
 Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.0/besu-23.1.0.tar.gz / sha256: 9081da04d47c3ff0a6ecc2256d353c7a02212f9b46f2c867a9365e18026c3a6e
@@ -462,13 +462,13 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.0/besu-23.1.0.z
 ## 23.1.0-RC1
 
 ### Breaking Changes
-- Default configurations for the deprecated Ropsten, Kiln, Shandong, and Astor networks have been removed from the CLI network list. These networks can currently be accessed but will require a user-provided genesis configuration. [#4869](https://github.com/hyperledger/besu/pull/4869)
+- Default configurations for the deprecated Ropsten, Kiln, Shandong, and Astor networks have been removed from the CLI network list. These networks can currently be accessed but will require a user-provided genesis configuration. [#4869](https://github.com/sila-chain/sila-besu/pull/4869)
 
 ### Additions and Improvements
 
-- Improve SLOAD and SSTORE performance by caching empty slots [#4874](https://github.com/hyperledger/besu/pull/4874)
-- RPC methods that lookup block by hash will now return an error response if no block found [#4582](https://github.com/hyperledger/besu/pull/4582)
-- Added support for `safe` and `finalized` strings for the RPC methods using defaultBlock parameter [#4902](https://github.com/hyperledger/besu/pull/4902)
+- Improve SLOAD and SSTORE performance by caching empty slots [#4874](https://github.com/sila-chain/sila-besu/pull/4874)
+- RPC methods that lookup block by hash will now return an error response if no block found [#4582](https://github.com/sila-chain/sila-besu/pull/4582)
+- Added support for `safe` and `finalized` strings for the RPC methods using defaultBlock parameter [#4902](https://github.com/sila-chain/sila-besu/pull/4902)
 
 ### Bug Fixes
 
@@ -481,36 +481,36 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/23.1.0-RC1/besu-23.1
 ### Breaking Changes
 - GoQuorum-compatible privacy is deprecated and will be removed in 23.4
 - IBFT 1.0 is deprecated and will be removed in 23.4
-- Optimize SSTORE Operation execution time (memoize current and original value) [#4836](https://github.com/hyperledger/besu/pull/4836)
+- Optimize SSTORE Operation execution time (memoize current and original value) [#4836](https://github.com/sila-chain/sila-besu/pull/4836)
 
 ### Additions and Improvements
-- Added post-execution state logging option to SAVM Tool [#4709](https://github.com/hyperledger/besu/pull/4709)
-- Add access list to Transaction Call Object [#4802](https://github.com/hyperledger/besu/issues/4801)
-- Add timestamp fork support, including shanghaiTime and cancunTime forks [#4743](https://github.com/hyperledger/besu/pull/4743)
-- Optimization:  Memoize transaction size and hash at the same time [#4812](https://github.com/hyperledger/besu/pull/4812)
-- Add chain data pruning feature with three experimental CLI options: `--Xchain-pruning-enabled`, `--Xchain-pruning-blocks-retained` and `--Xchain-pruning-frequency` [#4686](https://github.com/hyperledger/besu/pull/4686)
+- Added post-execution state logging option to SAVM Tool [#4709](https://github.com/sila-chain/sila-besu/pull/4709)
+- Add access list to Transaction Call Object [#4802](https://github.com/sila-chain/sila-besu/issues/4801)
+- Add timestamp fork support, including shanghaiTime and cancunTime forks [#4743](https://github.com/sila-chain/sila-besu/pull/4743)
+- Optimization:  Memoize transaction size and hash at the same time [#4812](https://github.com/sila-chain/sila-besu/pull/4812)
+- Add chain data pruning feature with three experimental CLI options: `--Xchain-pruning-enabled`, `--Xchain-pruning-blocks-retained` and `--Xchain-pruning-frequency` [#4686](https://github.com/sila-chain/sila-besu/pull/4686)
   - Note that chain pruning is hidden and disabled by default. Once you choose to enable chain pruning, a new column family will be added to the db and you cannot roll back to a previous version of Besu.
 
 ### Bug Fixes
-- Fix for segmentation faults on worldstate truncation, snap-sync starts [#4786](https://github.com/hyperledger/besu/pull/4786)
-- Fix for worldstate mismatch on failed forkchoiceUpdate [#4862](https://github.com/hyperledger/besu/pull/4862)
+- Fix for segmentation faults on worldstate truncation, snap-sync starts [#4786](https://github.com/sila-chain/sila-besu/pull/4786)
+- Fix for worldstate mismatch on failed forkchoiceUpdate [#4862](https://github.com/sila-chain/sila-besu/pull/4862)
 
 ### Download Links
 
 ## 22.10.3
 
 ### Breaking Changes
-- Added `--rpc-max-logs-range` CLI option to allow limiting the number of blocks queried by `sil_getLogs` RPC API. Default value: 1000 [#4597](https://github.com/hyperledger/besu/pull/4597)
+- Added `--rpc-max-logs-range` CLI option to allow limiting the number of blocks queried by `sil_getLogs` RPC API. Default value: 1000 [#4597](https://github.com/sila-chain/sila-besu/pull/4597)
 - The `graalvm` docker variant no longer meets the performance requirements for Sila SilaMainnet.  The `openjdk-11` and `openjdk-latest` variants are recommended in its place.
 
 ### Additions and Improvements
-- Implement Sil/68 sub-protocol [#4715](https://github.com/hyperledger/besu/issues/4715)
-- Increase the speed of modexp gas execution and execution. [#4780](https://github.com/hyperledger/besu/pull/4780)
-- Added experimental CLI options `--Xsil-capability-max` and `--Xsil-capability-min` to specify a range of capabilities to be supported by the Sil protocol. [#4752](https://github.com/hyperledger/besu/pull/4752)
-- Set the default curve in the SAVMTool, like is done in production operations [#4790](https://github.com/hyperledger/besu/pull/4790)
+- Implement Sil/68 sub-protocol [#4715](https://github.com/sila-chain/sila-besu/issues/4715)
+- Increase the speed of modexp gas execution and execution. [#4780](https://github.com/sila-chain/sila-besu/pull/4780)
+- Added experimental CLI options `--Xeth-capability-max` and `--Xeth-capability-min` to specify a range of capabilities to be supported by the Sil protocol. [#4752](https://github.com/sila-chain/sila-besu/pull/4752)
+- Set the default curve in the SAVMTool, like is done in production operations [#4790](https://github.com/sila-chain/sila-besu/pull/4790)
 
 ### Bug Fixes
-- Fix storage key format for sil_getProof so that it follows the SIP-1474 spec [#4564](https://github.com/hyperledger/besu/pull/4564)
+- Fix storage key format for sil_getProof so that it follows the SIP-1474 spec [#4564](https://github.com/sila-chain/sila-besu/pull/4564)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.3/besu-22.10.3.tar.gz / sha256: 7213f9445a84a196e94ae1877c6fdb1e51d37bfb19615da02ef5121d4f40e38c
@@ -520,7 +520,7 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.3/besu-22.10.3
 This is a hotfix release to resolve a race condition that results in segfaults, introduced in 22.10.1 release.
 
 ### Bug Fixes
-- bugfix for async operations on Snapshot worldstates [#4767](https://github.com/hyperledger/besu/pull/4767)
+- bugfix for async operations on Snapshot worldstates [#4767](https://github.com/sila-chain/sila-besu/pull/4767)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.2/besu-22.10.2.tar.gz  / sha256: cdb36141e3cba6379d35016e0a2de2edba579d4786124b5f7257b1e4a68867a2
@@ -530,31 +530,31 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.2/besu-22.10.2
 ## 22.10.1
 
 ### Breaking Changes
-- Fields `publicKey` and `raw` removed from RPC API `Transaction` result object [#4575](https://github.com/hyperledger/besu/pull/4575)
+- Fields `publicKey` and `raw` removed from RPC API `Transaction` result object [#4575](https://github.com/sila-chain/sila-besu/pull/4575)
 
 ### Additions and Improvements
-- Explain and improve price validation for London and local transactions during block proposal selection [#4602](https://github.com/hyperledger/besu/pull/4602)
-- Support for ephemeral testnet Shandong, for EOF testing. [#4599](https://github.com/hyperledger/besu/pull/4599)
-- Improve performance of block processing by parallelizing some parts during the "commit" step [#4635](https://github.com/hyperledger/besu/pull/4635)
+- Explain and improve price validation for London and local transactions during block proposal selection [#4602](https://github.com/sila-chain/sila-besu/pull/4602)
+- Support for ephemeral testnet Shandong, for EOF testing. [#4599](https://github.com/sila-chain/sila-besu/pull/4599)
+- Improve performance of block processing by parallelizing some parts during the "commit" step [#4635](https://github.com/sila-chain/sila-besu/pull/4635)
 - Upgrade RocksDB version from 7.6.0 to 7.7.3
-- Added new RPC endpoints `debug_setHead` & `debug_replayBlock  [#4580](https://github.com/hyperledger/besu/pull/4580)
-- Upgrade OpenTelemetry to version 1.19.0 [#3675](https://github.com/hyperledger/besu/pull/3675)
-- Implement Sil/67 sub-protocol [#4596](https://github.com/hyperledger/besu/issues/4596)
-- Backward sync log UX improvements [#4655](https://github.com/hyperledger/besu/pull/4655)
-- Enable RocksDB Bloom filters to improve read performance [#4682](https://github.com/hyperledger/besu/pull/4682)
-- Backward sync: use retry switching peer when fetching data from peers [#4656](https://github.com/hyperledger/besu/pull/4656)
-- SilaShanghai implementation of SIP-3651 Warm coinbase [#4620](https://github.com/hyperledger/besu/pull/4620) 
-- SilaShanghai implementation of SIP-3855 Push0 [#4660](https://github.com/hyperledger/besu/pull/4660)
-- SilaShanghai implementation of SIP-3540 and SIP-3670 Sila Object Format and Code Validation [#4644](https://github.com/hyperledger/besu/pull/4644)
-- Remove some log statements that are keeping some objects live in heap for a long time, to reduce the amount of memory required during initial sync [#4705](https://github.com/hyperledger/besu/pull/4705)
-- Add field `type` to Transaction receipt object (sil_getTransactionReceipt) [#4505](https://github.com/hyperledger/besu/issues/4505)
-- Print an overview of configuration and system information at startup [#4451](https://github.com/hyperledger/besu/pull/4451)
-- Do not send new payloads to backward sync if initial sync is in progress [#4720](https://github.com/hyperledger/besu/issues/4720)
-- Improve the way transaction fee cap validation is done on London fee market to not depend on transient network conditions [#4598](https://github.com/hyperledger/besu/pull/4598) 
-- Preload and cache account and storage data from RocksDB to improve performance  [#4737](https://github.com/hyperledger/besu/issues/4737)
+- Added new RPC endpoints `debug_setHead` & `debug_replayBlock  [#4580](https://github.com/sila-chain/sila-besu/pull/4580)
+- Upgrade OpenTelemetry to version 1.19.0 [#3675](https://github.com/sila-chain/sila-besu/pull/3675)
+- Implement Sil/67 sub-protocol [#4596](https://github.com/sila-chain/sila-besu/issues/4596)
+- Backward sync log UX improvements [#4655](https://github.com/sila-chain/sila-besu/pull/4655)
+- Enable RocksDB Bloom filters to improve read performance [#4682](https://github.com/sila-chain/sila-besu/pull/4682)
+- Backward sync: use retry switching peer when fetching data from peers [#4656](https://github.com/sila-chain/sila-besu/pull/4656)
+- SilaShanghai implementation of SIP-3651 Warm coinbase [#4620](https://github.com/sila-chain/sila-besu/pull/4620) 
+- SilaShanghai implementation of SIP-3855 Push0 [#4660](https://github.com/sila-chain/sila-besu/pull/4660)
+- SilaShanghai implementation of SIP-3540 and SIP-3670 Sila Object Format and Code Validation [#4644](https://github.com/sila-chain/sila-besu/pull/4644)
+- Remove some log statements that are keeping some objects live in heap for a long time, to reduce the amount of memory required during initial sync [#4705](https://github.com/sila-chain/sila-besu/pull/4705)
+- Add field `type` to Transaction receipt object (sil_getTransactionReceipt) [#4505](https://github.com/sila-chain/sila-besu/issues/4505)
+- Print an overview of configuration and system information at startup [#4451](https://github.com/sila-chain/sila-besu/pull/4451)
+- Do not send new payloads to backward sync if initial sync is in progress [#4720](https://github.com/sila-chain/sila-besu/issues/4720)
+- Improve the way transaction fee cap validation is done on London fee market to not depend on transient network conditions [#4598](https://github.com/sila-chain/sila-besu/pull/4598) 
+- Preload and cache account and storage data from RocksDB to improve performance  [#4737](https://github.com/sila-chain/sila-besu/issues/4737)
 
 ### Bug Fixes
-- Restore updating chain head and finalized block during backward sync [#4718](https://github.com/hyperledger/besu/pull/4718)
+- Restore updating chain head and finalized block during backward sync [#4718](https://github.com/sila-chain/sila-besu/pull/4718)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.1/besu-22.10.1.tar.gz  / sha256: b6757b9fc69b782cdabb95b1e784d31b1effcc2e25c6b198b2f9d6b3786c7a8a
@@ -563,48 +563,48 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.1/besu-22.10.1
 ## 22.10.0
 
 ### Breaking Changes
-- Internal and interface APIs relating to storage have migrated from `UInt256` to `Bytes32` [#4562](https://github.com/hyperledger/besu/pull/4562)
-- Flexible Privacy Groups (early access) support to Tessera's EC encryptor (contracts modified) [#4282](https://github.com/hyperledger/besu/pull/4282)
+- Internal and interface APIs relating to storage have migrated from `UInt256` to `Bytes32` [#4562](https://github.com/sila-chain/sila-besu/pull/4562)
+- Flexible Privacy Groups (early access) support to Tessera's EC encryptor (contracts modified) [#4282](https://github.com/sila-chain/sila-besu/pull/4282)
   * Before this change, the `bytes32` type was used for the enclave public keys, just supporting encryptors with public keys of that length (like the default NaCl)
   * For the EC encryptor, the encoded public key length is 91
 - `--tx-pool-hashes-max-size` option removed (deprecated in 22.1.3)
-- `--Xmerge-support` option removed (deprecated in 22.4.2) [#4518](https://github.com/hyperledger/besu/pull/4518)
+- `--Xmerge-support` option removed (deprecated in 22.4.2) [#4518](https://github.com/sila-chain/sila-besu/pull/4518)
 - Breaking API changes in the `OperationTracer` interface to enable performance work.
   * The `traceExecution` method has been replaced with `tracePreExecution` and `tracePostExecution` methods, called just before and just after operation execution.
   * See `DebugOperationTracer` and `StandardJsonTracer` for migration examples.
 
 ### Additions and Improvements
 - Updated jackson-databind library to version 2.13.4.2 addressing [CVE-2022-42003](https://nvd.nist.gov/vuln/detail/CVE-2022-42003)
-- Update snapsync feature to avoid restarting the download of the world state from scratch when restarting Besu [#4381](https://github.com/hyperledger/besu/pull/4381)
-- Added worldstate snapshot isolation to improve the stability of bonsai (`--Xbonsai-use-snapshots=true`) [#4351](https://github.com/hyperledger/besu/pull/4531)
-- Reduce the number of runtime exceptions (SecurityModuleException) and unnecessary executions during ECIES handshake, by trying to decrypt SIP-8 formatted messages first [#4508](https://github.com/hyperledger/besu/pull/4508).
-- Improved RLP processing of zero-length string as 0x80 [#4283](https://github.com/hyperledger/besu/pull/4283) [#4388](https://github.com/hyperledger/besu/issues/4388)
-- Increased level of detail in JSON-RPC parameter error log messages [#4510](https://github.com/hyperledger/besu/pull/4510)
-- New unstable configuration options to set the maximum time, in milliseconds, a PoS block creation jobs is allowed to run [#4519](https://github.com/hyperledger/besu/pull/4519)
-- Tune SilScheduler thread pools to avoid recreating too many threads [#4529](https://github.com/hyperledger/besu/pull/4529)
-- RocksDB snapshot based worldstate and plugin-api addition of Snapshot interfaces [#4409](https://github.com/hyperledger/besu/pull/4409)
-- Continuously try to build better block proposals until timeout or GetPayload is called [#4516](https://github.com/hyperledger/besu/pull/4516)
-- Upgrade RocksDB database version from 6.29.5 to 7.6.0 [#4517](https://github.com/hyperledger/besu/pull/4517)
-- Avoid connecting to self when using static-nodes [#4521](https://github.com/hyperledger/besu/pull/4521)
-- SAVM performance has increased 20%-100% depending on the particulars of the contract. [#4540](https://github.com/hyperledger/besu/pull/4540)
-- Improve calculateRootHash method performance during Block processing [#4568](https://github.com/hyperledger/besu/pull/4568)
-- Bring GraphQL into compliance with execution-api specs [#4112](https://github.com/hyperledger/besu/pull/4112)
-- Refactor unverified forkchoice event [#4487](https://github.com/hyperledger/besu/pull/4487)
-- Improve UX of initial sync logs, pushing not relevant logs to debug level [#4486](https://github.com/hyperledger/besu/pull/4486)
-- Optimize pivot block selector on PoS networks [#4488](https://github.com/hyperledger/besu/pull/4488)
-- Optimize Snap sync on PoS networks [#4462](https://github.com/hyperledger/besu/pull/4462)
+- Update snapsync feature to avoid restarting the download of the world state from scratch when restarting Besu [#4381](https://github.com/sila-chain/sila-besu/pull/4381)
+- Added worldstate snapshot isolation to improve the stability of bonsai (`--Xbonsai-use-snapshots=true`) [#4351](https://github.com/sila-chain/sila-besu/pull/4531)
+- Reduce the number of runtime exceptions (SecurityModuleException) and unnecessary executions during ECIES handshake, by trying to decrypt SIP-8 formatted messages first [#4508](https://github.com/sila-chain/sila-besu/pull/4508).
+- Improved RLP processing of zero-length string as 0x80 [#4283](https://github.com/sila-chain/sila-besu/pull/4283) [#4388](https://github.com/sila-chain/sila-besu/issues/4388)
+- Increased level of detail in JSON-RPC parameter error log messages [#4510](https://github.com/sila-chain/sila-besu/pull/4510)
+- New unstable configuration options to set the maximum time, in milliseconds, a PoS block creation jobs is allowed to run [#4519](https://github.com/sila-chain/sila-besu/pull/4519)
+- Tune SilScheduler thread pools to avoid recreating too many threads [#4529](https://github.com/sila-chain/sila-besu/pull/4529)
+- RocksDB snapshot based worldstate and plugin-api addition of Snapshot interfaces [#4409](https://github.com/sila-chain/sila-besu/pull/4409)
+- Continuously try to build better block proposals until timeout or GetPayload is called [#4516](https://github.com/sila-chain/sila-besu/pull/4516)
+- Upgrade RocksDB database version from 6.29.5 to 7.6.0 [#4517](https://github.com/sila-chain/sila-besu/pull/4517)
+- Avoid connecting to self when using static-nodes [#4521](https://github.com/sila-chain/sila-besu/pull/4521)
+- SAVM performance has increased 20%-100% depending on the particulars of the contract. [#4540](https://github.com/sila-chain/sila-besu/pull/4540)
+- Improve calculateRootHash method performance during Block processing [#4568](https://github.com/sila-chain/sila-besu/pull/4568)
+- Bring GraphQL into compliance with execution-api specs [#4112](https://github.com/sila-chain/sila-besu/pull/4112)
+- Refactor unverified forkchoice event [#4487](https://github.com/sila-chain/sila-besu/pull/4487)
+- Improve UX of initial sync logs, pushing not relevant logs to debug level [#4486](https://github.com/sila-chain/sila-besu/pull/4486)
+- Optimize pivot block selector on PoS networks [#4488](https://github.com/sila-chain/sila-besu/pull/4488)
+- Optimize Snap sync on PoS networks [#4462](https://github.com/sila-chain/sila-besu/pull/4462)
 
 ### Bug Fixes
-- Fixed default fromBlock value and improved parameter interpretation in sil_getLogs RPC handler [#4513](https://github.com/hyperledger/besu/pull/4513)
-- Fix for NoSuchElementException for missing invalid reason when rejecting a local sent transaction [#4569](https://github.com/hyperledger/besu/pull/4569)
-- Corrects treating a block as bad on internal error during either validation or processing [#4512](https://github.com/hyperledger/besu/issues/4512)
-- Corrects emission of blockadded events when rewinding during a re-org. Fix for [#4495](https://github.com/hyperledger/besu/issues/4495)
-- Always return a transaction type for pending transactions [#4364](https://github.com/hyperledger/besu/pull/4364)
-- Avoid a cyclic reference while printing EngineExchangeTransitionConfigurationParameter [#4357](https://github.com/hyperledger/besu/pull/4357)
-- Corrects treating a block as bad on internal error [#4512](https://github.com/hyperledger/besu/issues/4512)
-- In GraphQL update scalar parsing to be variable friendly [#4522](https://github.com/hyperledger/besu/pull/4522)
-- Initiate connection to maintained peers soon after startup. [#4469](https://github.com/hyperledger/besu/pull/4469)
-- Update apache-commons-text to 1.10.0 to address CVE-2022-42889 [#4542](https://github.com/hyperledger/besu/pull/4542)
+- Fixed default fromBlock value and improved parameter interpretation in sil_getLogs RPC handler [#4513](https://github.com/sila-chain/sila-besu/pull/4513)
+- Fix for NoSuchElementException for missing invalid reason when rejecting a local sent transaction [#4569](https://github.com/sila-chain/sila-besu/pull/4569)
+- Corrects treating a block as bad on internal error during either validation or processing [#4512](https://github.com/sila-chain/sila-besu/issues/4512)
+- Corrects emission of blockadded events when rewinding during a re-org. Fix for [#4495](https://github.com/sila-chain/sila-besu/issues/4495)
+- Always return a transaction type for pending transactions [#4364](https://github.com/sila-chain/sila-besu/pull/4364)
+- Avoid a cyclic reference while printing EngineExchangeTransitionConfigurationParameter [#4357](https://github.com/sila-chain/sila-besu/pull/4357)
+- Corrects treating a block as bad on internal error [#4512](https://github.com/sila-chain/sila-besu/issues/4512)
+- In GraphQL update scalar parsing to be variable friendly [#4522](https://github.com/sila-chain/sila-besu/pull/4522)
+- Initiate connection to maintained peers soon after startup. [#4469](https://github.com/sila-chain/sila-besu/pull/4469)
+- Update apache-commons-text to 1.10.0 to address CVE-2022-42889 [#4542](https://github.com/sila-chain/sila-besu/pull/4542)
 
 ### Download Links
 
@@ -614,36 +614,36 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.0/besu-22.10.0
 ## 22.10.0-RC2
 
 ### Breaking Changes
-- Flexible Privacy Groups (early access) support to Tessera's EC encryptor (contracts modified) [#4282](https://github.com/hyperledger/besu/pull/4282)
+- Flexible Privacy Groups (early access) support to Tessera's EC encryptor (contracts modified) [#4282](https://github.com/sila-chain/sila-besu/pull/4282)
   * Before this change, the `bytes32` type was used for the enclave public keys, just supporting encryptors with public keys of that length (like the default NaCl)
   * For the EC encryptor, the encoded public key length is 91
 - `--tx-pool-hashes-max-size` option removed (deprecated in 22.1.3)
-- `--Xmerge-support` option remove (deprecated in 22.4.2) [#4518](https://github.com/hyperledger/besu/pull/4518)
+- `--Xmerge-support` option remove (deprecated in 22.4.2) [#4518](https://github.com/sila-chain/sila-besu/pull/4518)
 - Breaking API changes in the `OperationTracer` interface to enable performance work.
   * The `traceExecution` method has been replaced with `tracePreExecution` and `tracePostExecution` methods, called just before and just after operation execution. 
   * See `DebugOperationTracer` and `StandardJsonTracer` for migration examples.
 
 ### Additions and Improvements
-- Reduce the number of runtime exceptions (SecurityModuleException) and unnecessary executions during ECIES handshake, by trying to decrypt SIP-8 formatted messages first [#4508](https://github.com/hyperledger/besu/pull/4508).
-- Improved RLP processing of zero-length string as 0x80 [#4283](https://github.com/hyperledger/besu/pull/4283) [#4388](https://github.com/hyperledger/besu/issues/4388)
-- Increased level of detail in JSON-RPC parameter error log messages [#4510](https://github.com/hyperledger/besu/pull/4510)
-- New experimental configuration options to set the maximum time, in milliseconds, a PoS block creation jobs is allowed to run [#4519](https://github.com/hyperledger/besu/pull/4519)
-- Tune SilScheduler thread pools to avoid recreating too many threads [#4529](https://github.com/hyperledger/besu/pull/4529)
-- RocksDB snapshot based worldstate and plugin-api addition of Snapshot interfaces [#4409](https://github.com/hyperledger/besu/pull/4409)
-- Continuously try to build better block proposals until timeout or GetPayload is called [#4516](https://github.com/hyperledger/besu/pull/4516)
-- Upgrade RocksDB database version from 6.29.5 to 7.6.0 [#4517](https://github.com/hyperledger/besu/pull/4517)
-- Avoid connecting to self when using static-nodes [#4521](https://github.com/hyperledger/besu/pull/4521)
-- SAVM performance has increased 20%-100% depending on the particulars of the contract. [#4540](https://github.com/hyperledger/besu/pull/4540)
-- Improve calculateRootHash method performance during Block processing [#4568](https://github.com/hyperledger/besu/pull/4568)
+- Reduce the number of runtime exceptions (SecurityModuleException) and unnecessary executions during ECIES handshake, by trying to decrypt SIP-8 formatted messages first [#4508](https://github.com/sila-chain/sila-besu/pull/4508).
+- Improved RLP processing of zero-length string as 0x80 [#4283](https://github.com/sila-chain/sila-besu/pull/4283) [#4388](https://github.com/sila-chain/sila-besu/issues/4388)
+- Increased level of detail in JSON-RPC parameter error log messages [#4510](https://github.com/sila-chain/sila-besu/pull/4510)
+- New experimental configuration options to set the maximum time, in milliseconds, a PoS block creation jobs is allowed to run [#4519](https://github.com/sila-chain/sila-besu/pull/4519)
+- Tune SilScheduler thread pools to avoid recreating too many threads [#4529](https://github.com/sila-chain/sila-besu/pull/4529)
+- RocksDB snapshot based worldstate and plugin-api addition of Snapshot interfaces [#4409](https://github.com/sila-chain/sila-besu/pull/4409)
+- Continuously try to build better block proposals until timeout or GetPayload is called [#4516](https://github.com/sila-chain/sila-besu/pull/4516)
+- Upgrade RocksDB database version from 6.29.5 to 7.6.0 [#4517](https://github.com/sila-chain/sila-besu/pull/4517)
+- Avoid connecting to self when using static-nodes [#4521](https://github.com/sila-chain/sila-besu/pull/4521)
+- SAVM performance has increased 20%-100% depending on the particulars of the contract. [#4540](https://github.com/sila-chain/sila-besu/pull/4540)
+- Improve calculateRootHash method performance during Block processing [#4568](https://github.com/sila-chain/sila-besu/pull/4568)
 
 ### Bug Fixes
-- Corrects emission of blockadded events when rewinding during a re-org. Fix for [#4495](https://github.com/hyperledger/besu/issues/4495)
-- Always return a transaction type for pending transactions [#4364](https://github.com/hyperledger/besu/pull/4364)
-- Avoid a cyclic reference while printing EngineExchangeTransitionConfigurationParameter [#4357](https://github.com/hyperledger/besu/pull/4357)
-- Corrects treating a block as bad on internal error [#4512](https://github.com/hyperledger/besu/issues/4512)
-- In GraphQL update scalar parsing to be variable friendly [#4522](https://github.com/hyperledger/besu/pull/4522)
-- Initiate connection to maintained peers soon after startup. [#4469](https://github.com/hyperledger/besu/pull/4469)
-- Update apache-commons-text to 1.10.0 to address CVE-2022-42889 [#4542](https://github.com/hyperledger/besu/pull/4542)
+- Corrects emission of blockadded events when rewinding during a re-org. Fix for [#4495](https://github.com/sila-chain/sila-besu/issues/4495)
+- Always return a transaction type for pending transactions [#4364](https://github.com/sila-chain/sila-besu/pull/4364)
+- Avoid a cyclic reference while printing EngineExchangeTransitionConfigurationParameter [#4357](https://github.com/sila-chain/sila-besu/pull/4357)
+- Corrects treating a block as bad on internal error [#4512](https://github.com/sila-chain/sila-besu/issues/4512)
+- In GraphQL update scalar parsing to be variable friendly [#4522](https://github.com/sila-chain/sila-besu/pull/4522)
+- Initiate connection to maintained peers soon after startup. [#4469](https://github.com/sila-chain/sila-besu/pull/4469)
+- Update apache-commons-text to 1.10.0 to address CVE-2022-42889 [#4542](https://github.com/sila-chain/sila-besu/pull/4542)
 
 ### Download Links
 
@@ -651,11 +651,11 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.10.0/besu-22.10.0
 ## 22.10.0-RC1
 
 ### Additions and Improvements
-- Bring GraphQL into compliance with execution-api specs [#4112](https://github.com/hyperledger/besu/pull/4112)
-- Refactor unverified forkchoice event [#4487](https://github.com/hyperledger/besu/pull/4487)
-- Improve UX of initial sync logs, pushing not relevant logs to debug level [#4486](https://github.com/hyperledger/besu/pull/4486)
-- Optimize pivot block selector on PoS networks [#4488](https://github.com/hyperledger/besu/pull/4488)
-- Optimize Snap sync on PoS networks [#4462](https://github.com/hyperledger/besu/pull/4462)
+- Bring GraphQL into compliance with execution-api specs [#4112](https://github.com/sila-chain/sila-besu/pull/4112)
+- Refactor unverified forkchoice event [#4487](https://github.com/sila-chain/sila-besu/pull/4487)
+- Improve UX of initial sync logs, pushing not relevant logs to debug level [#4486](https://github.com/sila-chain/sila-besu/pull/4486)
+- Optimize pivot block selector on PoS networks [#4488](https://github.com/sila-chain/sila-besu/pull/4488)
+- Optimize Snap sync on PoS networks [#4462](https://github.com/sila-chain/sila-besu/pull/4462)
 
 ### Bug Fixes
 
@@ -666,27 +666,27 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.10.0-RC1/besu-22.
 ## 22.7.7
 
 ### Additions and Improvements
-- Tune SilScheduler thread pools to avoid recreating too many threads [#4529](https://github.com/hyperledger/besu/issues/4529)
-- Reduce the number of runtime exceptions (SecurityModuleException) and unnecessary executions during ECIES handshake, by trying to decrypt SIP-8 formatted messages first [#4508](https://github.com/hyperledger/besu/pull/4508).
-- The block variable was keeping too much memory while waiting for future to finish [#4489](https://github.com/hyperledger/besu/issues/4489)
+- Tune SilScheduler thread pools to avoid recreating too many threads [#4529](https://github.com/sila-chain/sila-besu/issues/4529)
+- Reduce the number of runtime exceptions (SecurityModuleException) and unnecessary executions during ECIES handshake, by trying to decrypt SIP-8 formatted messages first [#4508](https://github.com/sila-chain/sila-besu/pull/4508).
+- The block variable was keeping too much memory while waiting for future to finish [#4489](https://github.com/sila-chain/sila-besu/issues/4489)
 
 ### Bug Fixes
-- Corrects treating a block as bad on internal error [#4512](https://github.com/hyperledger/besu/issues/4512)
-- update appache-commons-text to 1.10.0 to address CVE-2022-42889 [#4542](https://github.com/hyperledger/besu/pull/4542)
-- In GraphQL update scalar parsing to be variable friendly [#4522](https://github.com/hyperledger/besu/pull/4522)
+- Corrects treating a block as bad on internal error [#4512](https://github.com/sila-chain/sila-besu/issues/4512)
+- update appache-commons-text to 1.10.0 to address CVE-2022-42889 [#4542](https://github.com/sila-chain/sila-besu/pull/4542)
+- In GraphQL update scalar parsing to be variable friendly [#4522](https://github.com/sila-chain/sila-besu/pull/4522)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.7/besu-22.7.7.zip / sha256: 79b2b1518605603d8268f873f2576617ca8340d89c045e0eda6896f40defea0d
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.7/besu-22.7.7.tar.gz / sha256: 161c52ba9be8508767e80dbce796b4ad2cc5b649f7ed15387c6359d1e15753f6
 
 ## 22.7.6
-Hotfix release of the 22.7.x series to address [#4495](https://github.com/hyperledger/besu/issues/4495) which could result in failed block proposals on merge networks.
+Hotfix release of the 22.7.x series to address [#4495](https://github.com/sila-chain/sila-besu/issues/4495) which could result in failed block proposals on merge networks.
 
 ### Additions and Improvements
-- Bring GraphQL into compliance with execution-api specs [#4112](https://github.com/hyperledger/besu/pull/4112)
+- Bring GraphQL into compliance with execution-api specs [#4112](https://github.com/sila-chain/sila-besu/pull/4112)
 
 ### Bug Fixes
-- Corrects emission of blockadded events when rewinding during a re-org. [#4497](https://github.com/hyperledger/besu/issues/4497)
+- Corrects emission of blockadded events when rewinding during a re-org. [#4497](https://github.com/sila-chain/sila-besu/issues/4497)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.6/besu-22.7.6.zip / sha256: ae05040027b96ba458a08cfee8577dafe1d85a3afce793f00f798cedb3ab547d
@@ -695,12 +695,12 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.6/besu-22.7.6.t
 ## 22.7.5
 
 ### Additions and Improvements
-- Avoid sending added block events to transaction pool, and processing incoming transactions during initial sync [#4457](https://github.com/hyperledger/besu/pull/4457)
-- When building a new proposal, keep the best block built until now instead of the last one [#4455](https://github.com/hyperledger/besu/pull/4455)
-- Add SilaMainnet to merged networks [#4463](https://github.com/hyperledger/besu/pull/4463)
+- Avoid sending added block events to transaction pool, and processing incoming transactions during initial sync [#4457](https://github.com/sila-chain/sila-besu/pull/4457)
+- When building a new proposal, keep the best block built until now instead of the last one [#4455](https://github.com/sila-chain/sila-besu/pull/4455)
+- Add SilaMainnet to merged networks [#4463](https://github.com/sila-chain/sila-besu/pull/4463)
 
 ### Bug Fixes
-- Fixed logIndex value returned by sil_getLogs RPC call [#4355](https://github.com/hyperledger/besu/pull/4355)
+- Fixed logIndex value returned by sil_getLogs RPC call [#4355](https://github.com/sila-chain/sila-besu/pull/4355)
 
 ### Download Links
 https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.5/besu-22.7.5.zip / sha256: b5d7b255b249beea0f46ec397122823c75f2373083a71a9f7b4c98b2b0f94997
@@ -710,8 +710,8 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.5/besu-22.7.5.t
 ## 22.7.4
 
 ### Bug Fixes
-- Remove records that track transactions by sender when they are empty to same memory in the transaction pool [#4415](https://github.com/hyperledger/besu/pull/4415)
-- Add Toml configuration file support for _--Xplugin-rocksdb-high-spec-enabled_ flag [#4438](https://github.com/hyperledger/besu/pull/4438)
+- Remove records that track transactions by sender when they are empty to same memory in the transaction pool [#4415](https://github.com/sila-chain/sila-besu/pull/4415)
+- Add Toml configuration file support for _--Xplugin-rocksdb-high-spec-enabled_ flag [#4438](https://github.com/sila-chain/sila-besu/pull/4438)
 
 ### Download Links
 - https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.4/besu-22.7.4.zip / sha256: 4f2a0c20bee7f266ec1dcb45fa90ae1ca42f4b22e9b21a601b7705357259aea9
@@ -720,19 +720,19 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.5/besu-22.7.5.t
 ## 22.7.3
 
 ### Additions and Improvements
-- Allow free gas networks in the London fee market [#4061](https://github.com/hyperledger/besu/issues/4061)
-- Upgrade besu-native to 0.6.0 and use Blake2bf native implementation if available by default [#4264](https://github.com/hyperledger/besu/pull/4264)
-- Resets engine QoS timer with every call to the engine API instead of only when ExchangeTransitionConfiguration is called [#4411](https://github.com/hyperledger/besu/issues/4411)
-- ExchangeTransitionConfiguration mismatch will only submit a debug log not a warning anymore [#4411](https://github.com/hyperledger/besu/issues/4411)
-- Upgrade besu-native to 0.6.1 and include linux arm64 build of bls12-381 [#4416](https://github.com/hyperledger/besu/pull/4416)
+- Allow free gas networks in the London fee market [#4061](https://github.com/sila-chain/sila-besu/issues/4061)
+- Upgrade besu-native to 0.6.0 and use Blake2bf native implementation if available by default [#4264](https://github.com/sila-chain/sila-besu/pull/4264)
+- Resets engine QoS timer with every call to the engine API instead of only when ExchangeTransitionConfiguration is called [#4411](https://github.com/sila-chain/sila-besu/issues/4411)
+- ExchangeTransitionConfiguration mismatch will only submit a debug log not a warning anymore [#4411](https://github.com/sila-chain/sila-besu/issues/4411)
+- Upgrade besu-native to 0.6.1 and include linux arm64 build of bls12-381 [#4416](https://github.com/sila-chain/sila-besu/pull/4416)
 - Create a new flag on RocksDB (_--Xplugin-rocksdb-high-spec-enabled_) for high spec hardware to boost performance
-- Transaction pool improvements to avoid filling the pool with not executable transactions, that could result in empty or semi-empty block proposals [#4425](https://github.com/hyperledger/besu/pull/4425)
-- Limit Transaction pool consumption by sender to a configurable percentage of the pool size [#4417](https://github.com/hyperledger/besu/pull/4417)
+- Transaction pool improvements to avoid filling the pool with not executable transactions, that could result in empty or semi-empty block proposals [#4425](https://github.com/sila-chain/sila-besu/pull/4425)
+- Limit Transaction pool consumption by sender to a configurable percentage of the pool size [#4417](https://github.com/sila-chain/sila-besu/pull/4417)
 
 ### Bug Fixes
-- Retry block creation if there is a transient error and we still have time, to mitigate empty block issue [#4407](https://github.com/hyperledger/besu/pull/4407)
-- Fix StacklessClosedChannelException in Besu and resulted timeout errors in CL clients ([#4398](https://github.com/hyperledger/besu/issues/4398), [#4400](https://github.com/hyperledger/besu/issues/4400))
-- Return JSON-RPC error code instead of INVALID in engine api when certain storage exceptions are encountered ([#4349](https://github.com/hyperledger/besu/issues/4349))
+- Retry block creation if there is a transient error and we still have time, to mitigate empty block issue [#4407](https://github.com/sila-chain/sila-besu/pull/4407)
+- Fix StacklessClosedChannelException in Besu and resulted timeout errors in CL clients ([#4398](https://github.com/sila-chain/sila-besu/issues/4398), [#4400](https://github.com/sila-chain/sila-besu/issues/4400))
+- Return JSON-RPC error code instead of INVALID in engine api when certain storage exceptions are encountered ([#4349](https://github.com/sila-chain/sila-besu/issues/4349))
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.3/besu-22.7.3.tar.gz / sha256: `b0863fe2406cab57caf8a02f2bf02632cc5198622ac48b69bc63c128703bbd79`
@@ -742,20 +742,20 @@ https://hyperledger.jfrog.io/hyperledger/besu-binaries/besu/22.7.5/besu-22.7.5.t
 ### Besu 22.7.2 is a recommended release for the Merge and SilaMainnet users. 22.7.1 remains Merge-ready. This release provides additional robustness before the Merge with some fixes and improvements in sync, peering, and logging.
 
 ### Additions and Improvements
-- Better management of jemalloc presence/absence in startup script [#4237](https://github.com/hyperledger/besu/pull/4237)
-- Retry mechanism when getting a broadcasted block fail on all peers [#4271](https://github.com/hyperledger/besu/pull/4271)
-- Filter out disconnected peers when fetching available peers [#4269](https://github.com/hyperledger/besu/pull/4269)
-- Updated the default value of fast-sync-min-peers post merge [#4298](https://github.com/hyperledger/besu/pull/4298)
-- Log imported block info post merge [#4310](https://github.com/hyperledger/besu/pull/4310)
-- Transaction pool eviction by sender from tail of transaction list [#4327](https://github.com/hyperledger/besu/pull/4327)
-- Transaction pool sender future nonce limits [#4336](https://github.com/hyperledger/besu/pull/4336)
+- Better management of jemalloc presence/absence in startup script [#4237](https://github.com/sila-chain/sila-besu/pull/4237)
+- Retry mechanism when getting a broadcasted block fail on all peers [#4271](https://github.com/sila-chain/sila-besu/pull/4271)
+- Filter out disconnected peers when fetching available peers [#4269](https://github.com/sila-chain/sila-besu/pull/4269)
+- Updated the default value of fast-sync-min-peers post merge [#4298](https://github.com/sila-chain/sila-besu/pull/4298)
+- Log imported block info post merge [#4310](https://github.com/sila-chain/sila-besu/pull/4310)
+- Transaction pool eviction by sender from tail of transaction list [#4327](https://github.com/sila-chain/sila-besu/pull/4327)
+- Transaction pool sender future nonce limits [#4336](https://github.com/sila-chain/sila-besu/pull/4336)
 - Pandas! Pandas now appear in 3 phases: The black bear and polar bear that are preparing? Those will appear when
-your client has TTD configured (which is setup by default for sila-mainnet), is in sync, and processing Proof of Work blocks. In the second phase you will see them powering up when the Terminal Total Difficulty block is added to the blockchain.
+your client has TTD configured (which is setup by default for mainnet), is in sync, and processing Proof of Work blocks. In the second phase you will see them powering up when the Terminal Total Difficulty block is added to the blockchain.
 The final form of the Sila Panda will appear when the first finalized block is received from the Consensus Layer.
 
 ### Bug Fixes
-- Accept wit/80 from Nsilermind [#4279](https://github.com/hyperledger/besu/pull/4279)
-- Properly shutdown the miner executor, to avoid waiting 30 seconds when stopping [#4353](https://github.com/hyperledger/besu/pull/4353)
+- Accept wit/80 from Nethermind [#4279](https://github.com/sila-chain/sila-besu/pull/4279)
+- Properly shutdown the miner executor, to avoid waiting 30 seconds when stopping [#4353](https://github.com/sila-chain/sila-besu/pull/4353)
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.2/besu-22.7.2.tar.gz / sha256: `8030a48f824c7bbc138b38a9e84e5531950bc16f6d21cda8b215232cce334214`
@@ -763,19 +763,19 @@ The final form of the Sila Panda will appear when the first finalized block is r
 
 
 ## 22.7.1
-### Merge Ready Release. Required update for The Merge on sila sila-mainnet!
+### Merge Ready Release. Required update for The Merge on sila mainnet!
 ### Additions and Improvements
-- Introduce a cap to reputation score increase [#4230](https://github.com/hyperledger/besu/pull/4230)
-- Add experimental CLI option for `--Xp2p-peer-lower-bound` [#4200](https://github.com/hyperledger/besu/pull/4200)
-- Improve pending blocks retrieval mechanism [#4227](https://github.com/hyperledger/besu/pull/4227)
-- Set sila-mainnet terminal total difficulty [#4260](https://github.com/hyperledger/besu/pull/4260)
+- Introduce a cap to reputation score increase [#4230](https://github.com/sila-chain/sila-besu/pull/4230)
+- Add experimental CLI option for `--Xp2p-peer-lower-bound` [#4200](https://github.com/sila-chain/sila-besu/pull/4200)
+- Improve pending blocks retrieval mechanism [#4227](https://github.com/sila-chain/sila-besu/pull/4227)
+- Set mainnet terminal total difficulty [#4260](https://github.com/sila-chain/sila-besu/pull/4260)
 
 ### Bug Fixes
-- Fixes off-by-one error for sila-mainnet TTD fallback [#4223](https://github.com/hyperledger/besu/pull/4223)
-- Fix off-by-one error in AbstractRetryingPeerTask [#4254](https://github.com/hyperledger/besu/pull/4254)
-- Refactor and fix retrying get block switching peer [#4256](https://github.com/hyperledger/besu/pull/4256)
-- Fix encoding of key (short hex) in sil_getProof [#4261](https://github.com/hyperledger/besu/pull/4261)
-- Fix for post-merge networks fast-sync [#4224](https://github.com/hyperledger/besu/pull/4224), [#4276](https://github.com/hyperledger/besu/pull/4276)
+- Fixes off-by-one error for mainnet TTD fallback [#4223](https://github.com/sila-chain/sila-besu/pull/4223)
+- Fix off-by-one error in AbstractRetryingPeerTask [#4254](https://github.com/sila-chain/sila-besu/pull/4254)
+- Refactor and fix retrying get block switching peer [#4256](https://github.com/sila-chain/sila-besu/pull/4256)
+- Fix encoding of key (short hex) in sil_getProof [#4261](https://github.com/sila-chain/sila-besu/pull/4261)
+- Fix for post-merge networks fast-sync [#4224](https://github.com/sila-chain/sila-besu/pull/4224), [#4276](https://github.com/sila-chain/sila-besu/pull/4276)
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.1/besu-22.7.1.tar.gz / sha256: `7cca4c11e1d7525c172f2af9fbf456d134ada60e970d8b6abcfcd6c623b5dd36`
@@ -786,14 +786,14 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.7.0
 
 ### Additions and Improvements
-- Deprecation warning for Ropsten, Rinkeby, Kiln [#4173](https://github.com/hyperledger/besu/pull/4173)
+- Deprecation warning for Ropsten, Rinkeby, Kiln [#4173](https://github.com/sila-chain/sila-besu/pull/4173)
 
 ### Bug Fixes
 
-- Fixes previous known issue [#3890](https://github.com/hyperledger/besu/issues/3890)from RC3 requiring a restart post-merge to continue correct transaction handling.
-- Stop producing stack traces when a get headers response only contains the range start header [#4189](https://github.com/hyperledger/besu/pull/4189)
-- Upgrade Spotless to 6.8.0 [#4195](https://github.com/hyperledger/besu/pull/4195)
-- Upgrade Gradle to 7.5 [#4196](https://github.com/hyperledger/besu/pull/4196)
+- Fixes previous known issue [#3890](https://github.com/sila-chain/sila-besu/issues/3890)from RC3 requiring a restart post-merge to continue correct transaction handling.
+- Stop producing stack traces when a get headers response only contains the range start header [#4189](https://github.com/sila-chain/sila-besu/pull/4189)
+- Upgrade Spotless to 6.8.0 [#4195](https://github.com/sila-chain/sila-besu/pull/4195)
+- Upgrade Gradle to 7.5 [#4196](https://github.com/sila-chain/sila-besu/pull/4196)
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.0/besu-22.7.0.tar.gz / sha256: `af21104a880c37706b660aa816e1c38b2b3f603a97420ddcbc889324b71aa50e`
@@ -802,18 +802,18 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.7.0-RC3
 
 ### Known/Outstanding issues:
-- Besu requires a restart post-merge to re-enable remote transaction processing [#3890](https://github.com/hyperledger/besu/issues/3890)
+- Besu requires a restart post-merge to re-enable remote transaction processing [#3890](https://github.com/sila-chain/sila-besu/issues/3890)
 
 ### Additions and Improvements
-- Engine API: Change expiration time for JWT tokens to 60s [#4168](https://github.com/hyperledger/besu/pull/4168)
-- SilaSepolia mergeNetSplit block [#4158](https://github.com/hyperledger/besu/pull/4158)
-- Goerli TTD [#4160](https://github.com/hyperledger/besu/pull/4160)
+- Engine API: Change expiration time for JWT tokens to 60s [#4168](https://github.com/sila-chain/sila-besu/pull/4168)
+- SilaSepolia mergeNetSplit block [#4158](https://github.com/sila-chain/sila-besu/pull/4158)
+- Goerli TTD [#4160](https://github.com/sila-chain/sila-besu/pull/4160)
 - Several logging improvements
 
 ### Bug Fixes
-- Allow to set any value for baseFeePerGas in the genesis file [#4177](https://github.com/hyperledger/besu/pull/4177)
-- Fix for stack overflow when searching for TTD block [#4169](https://github.com/hyperledger/besu/pull/4169)
-- Fix for chain stuck issue [#4175](https://github.com/hyperledger/besu/pull/4175)
+- Allow to set any value for baseFeePerGas in the genesis file [#4177](https://github.com/sila-chain/sila-besu/pull/4177)
+- Fix for stack overflow when searching for TTD block [#4169](https://github.com/sila-chain/sila-besu/pull/4169)
+- Fix for chain stuck issue [#4175](https://github.com/sila-chain/sila-besu/pull/4175)
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.0-RC3/besu-22.7.0-RC3.tar.gz / sha256: `6a1ee89c82db9fa782d34733d8a8c726670378bcb71befe013da48d7928490a6`
@@ -822,29 +822,29 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.7.0-RC2
 
 ### Additions and Improvements
-- Add a block to the bad blocks if it did not descend from the terminal block [#4080](https://github.com/hyperledger/besu/pull/4080)
-- Backward sync exception improvements [#4092](https://github.com/hyperledger/besu/pull/4092)
-- Remove block header checks during backward sync, since they will be always performed during block import phase [#4098](https://github.com/hyperledger/besu/pull/4098)
-- Optimize the backward sync retry strategy [#4095](https://github.com/hyperledger/besu/pull/4095)
-- Add support for jemalloc library to better handle rocksdb memory consumption [#4126](https://github.com/hyperledger/besu/pull/4126)
-- RocksDB configuration changes to improve performance. [#4132](https://github.com/hyperledger/besu/pull/4132)
+- Add a block to the bad blocks if it did not descend from the terminal block [#4080](https://github.com/sila-chain/sila-besu/pull/4080)
+- Backward sync exception improvements [#4092](https://github.com/sila-chain/sila-besu/pull/4092)
+- Remove block header checks during backward sync, since they will be always performed during block import phase [#4098](https://github.com/sila-chain/sila-besu/pull/4098)
+- Optimize the backward sync retry strategy [#4095](https://github.com/sila-chain/sila-besu/pull/4095)
+- Add support for jemalloc library to better handle rocksdb memory consumption [#4126](https://github.com/sila-chain/sila-besu/pull/4126)
+- RocksDB configuration changes to improve performance. [#4132](https://github.com/sila-chain/sila-besu/pull/4132)
 
 ### Bug Fixes
-- Changed max message size in the p2p layer to 16.7MB from 10MB to improve peering performance [#4120](https://github.com/hyperledger/besu/pull/4120)
-- Fixes for parent stateroot mismatch when using Bonsai storage mode (please report if you encounter this bug on this version) [#4094](https://github.com/hyperledger/besu/pull/4094)
-- Above Bonsai related fixes have addressed situations where the event log was not indexed properly [#3921](https://github.com/hyperledger/besu/pull/3921)
-- Fixes related to backward sync and reorgs [#4097](https://github.com/hyperledger/besu/pull/4097)
-- Checkpoint sync with more merge friendly checkpoint blocks [#4085](https://github.com/hyperledger/besu/pull/4085)
-- Fixes around RocksDB performance and memory usage [#4128](https://github.com/hyperledger/besu/pull/4128)
-- Fix for RPC performance parallelization to improve RPC performance under heavy load [#3959](https://github.com/hyperledger/besu/pull/3959)
-- Fix for post-Merge peering after PoW is removed in our logic for weighting peers [#4116](https://github.com/hyperledger/besu/pull/4116)
-- Various logging changes to improve UX- Return the correct latest valid hash in case of bad block when calling engine methods [#4056](https://github.com/hyperledger/besu/pull/4056)
-- Add a PoS block header rule to check that the current block is more recent than its parent [#4066](https://github.com/hyperledger/besu/pull/4066)
-- Fixed a trie log layer issue on bonsai during reorg [#4069](https://github.com/hyperledger/besu/pull/4069)
-- Fix transition protocol schedule to return the pre Merge schedule when reorg pre TTD [#4078](https://github.com/hyperledger/besu/pull/4078)
-- Remove hash to sync from the queue only if the sync step succeeds [#4105](https://github.com/hyperledger/besu/pull/4105)
-- The build process runs successfully even though the system language is not English [#4102](https://github.com/hyperledger/besu/pull/4102)
-- Avoid starting or stopping the BlockPropagationManager more than once [#4122](https://github.com/hyperledger/besu/pull/4122)
+- Changed max message size in the p2p layer to 16.7MB from 10MB to improve peering performance [#4120](https://github.com/sila-chain/sila-besu/pull/4120)
+- Fixes for parent stateroot mismatch when using Bonsai storage mode (please report if you encounter this bug on this version) [#4094](https://github.com/sila-chain/sila-besu/pull/4094)
+- Above Bonsai related fixes have addressed situations where the event log was not indexed properly [#3921](https://github.com/sila-chain/sila-besu/pull/3921)
+- Fixes related to backward sync and reorgs [#4097](https://github.com/sila-chain/sila-besu/pull/4097)
+- Checkpoint sync with more merge friendly checkpoint blocks [#4085](https://github.com/sila-chain/sila-besu/pull/4085)
+- Fixes around RocksDB performance and memory usage [#4128](https://github.com/sila-chain/sila-besu/pull/4128)
+- Fix for RPC performance parallelization to improve RPC performance under heavy load [#3959](https://github.com/sila-chain/sila-besu/pull/3959)
+- Fix for post-Merge peering after PoW is removed in our logic for weighting peers [#4116](https://github.com/sila-chain/sila-besu/pull/4116)
+- Various logging changes to improve UX- Return the correct latest valid hash in case of bad block when calling engine methods [#4056](https://github.com/sila-chain/sila-besu/pull/4056)
+- Add a PoS block header rule to check that the current block is more recent than its parent [#4066](https://github.com/sila-chain/sila-besu/pull/4066)
+- Fixed a trie log layer issue on bonsai during reorg [#4069](https://github.com/sila-chain/sila-besu/pull/4069)
+- Fix transition protocol schedule to return the pre Merge schedule when reorg pre TTD [#4078](https://github.com/sila-chain/sila-besu/pull/4078)
+- Remove hash to sync from the queue only if the sync step succeeds [#4105](https://github.com/sila-chain/sila-besu/pull/4105)
+- The build process runs successfully even though the system language is not English [#4102](https://github.com/sila-chain/sila-besu/pull/4102)
+- Avoid starting or stopping the BlockPropagationManager more than once [#4122](https://github.com/sila-chain/sila-besu/pull/4122)
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.0-RC2/besu-22.7.0-RC2.tar.gz / sha256: `befe15b893820c9c6451a74fd87b41f555ff28561494b3bebadd5da5c7ce25d3`
@@ -853,18 +853,18 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.7.0-RC1
 
 ### Additions and Improvements
-- Do not require a minimum block height when downloading headers or blocks [#3911](https://github.com/hyperledger/besu/pull/3911)
-- When on PoS the head can be only be updated by ForkchoiceUpdate [#3994](https://github.com/hyperledger/besu/pull/3994)
-- Version information available in metrics [#3997](https://github.com/hyperledger/besu/pull/3997)
-- Add TTD and DNS to SilaSepolia config [#4024](https://github.com/hyperledger/besu/pull/4024)
-- Return `type` with value `0x0` when serializing legacy transactions [#4027](https://github.com/hyperledger/besu/pull/4027)
-- Ignore `ForkchoiceUpdate` if `newHead` is an ancestor of the chain head [#4055](https://github.com/hyperledger/besu/pull/4055)
+- Do not require a minimum block height when downloading headers or blocks [#3911](https://github.com/sila-chain/sila-besu/pull/3911)
+- When on PoS the head can be only be updated by ForkchoiceUpdate [#3994](https://github.com/sila-chain/sila-besu/pull/3994)
+- Version information available in metrics [#3997](https://github.com/sila-chain/sila-besu/pull/3997)
+- Add TTD and DNS to SilaSepolia config [#4024](https://github.com/sila-chain/sila-besu/pull/4024)
+- Return `type` with value `0x0` when serializing legacy transactions [#4027](https://github.com/sila-chain/sila-besu/pull/4027)
+- Ignore `ForkchoiceUpdate` if `newHead` is an ancestor of the chain head [#4055](https://github.com/sila-chain/sila-besu/pull/4055)
 
 ### Bug Fixes
-- Fixed a snapsync issue that can sometimes block the healing step [#3920](https://github.com/hyperledger/besu/pull/3920)
-- Support free gas networks in the London fee market [#4003](https://github.com/hyperledger/besu/pull/4003)
-- Limit the size of outgoing sil subprotocol messages.  [#4034](https://github.com/hyperledger/besu/pull/4034)
-- Fixed a state root mismatch issue on bonsai that may appear occasionally [#4041](https://github.com/hyperledger/besu/pull/4041)
+- Fixed a snapsync issue that can sometimes block the healing step [#3920](https://github.com/sila-chain/sila-besu/pull/3920)
+- Support free gas networks in the London fee market [#4003](https://github.com/sila-chain/sila-besu/pull/4003)
+- Limit the size of outgoing sil subprotocol messages.  [#4034](https://github.com/sila-chain/sila-besu/pull/4034)
+- Fixed a state root mismatch issue on bonsai that may appear occasionally [#4041](https://github.com/sila-chain/sila-besu/pull/4041)
 
 ### Download links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.7.0-RC1/besu-22.7.0-RC1.tar.gz / sha256: `60ad8b53402beb62c24ad791799d9cfe444623a58f6f6cf1d0728459cb641e63`
@@ -873,25 +873,25 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.4.3
 
 ### Additions and Improvements
-- \[EXPERIMENTAL\] Add checkpoint sync `--sync-mode="X_CHECKPOINT"` [#3849](https://github.com/hyperledger/besu/pull/3849)
-- Support `finalized` and `safe` as tags for the block parameter in RPC APIs [#3950](https://github.com/hyperledger/besu/pull/3950)
-- Added verification of payload attributes in ForkchoiceUpdated [#3837](https://github.com/hyperledger/besu/pull/3837)
-- Add support for Gray Glacier hardfork [#3961](https://github.com/hyperledger/besu/issues/3961)
+- \[EXPERIMENTAL\] Add checkpoint sync `--sync-mode="X_CHECKPOINT"` [#3849](https://github.com/sila-chain/sila-besu/pull/3849)
+- Support `finalized` and `safe` as tags for the block parameter in RPC APIs [#3950](https://github.com/sila-chain/sila-besu/pull/3950)
+- Added verification of payload attributes in ForkchoiceUpdated [#3837](https://github.com/sila-chain/sila-besu/pull/3837)
+- Add support for Gray Glacier hardfork [#3961](https://github.com/sila-chain/sila-besu/issues/3961)
 
 ### Bug Fixes
-- alias engine-rpc-port parameter with the former rpc param name [#3958](https://github.com/hyperledger/besu/pull/3958)
+- alias engine-rpc-port parameter with the former rpc param name [#3958](https://github.com/sila-chain/sila-besu/pull/3958)
 
 ## 22.4.2
 
 ### Additions and Improvements
-- Engine API Update: Replace deprecated INVALID_TERMINAL_BLOCK with INVALID last valid hash 0x0 [#3882](https://github.com/hyperledger/besu/pull/3882)
-- Deprecate experimental merge flag and engine-rpc-enabled flag [#3875](https://github.com/hyperledger/besu/pull/3875)
+- Engine API Update: Replace deprecated INVALID_TERMINAL_BLOCK with INVALID last valid hash 0x0 [#3882](https://github.com/sila-chain/sila-besu/pull/3882)
+- Deprecate experimental merge flag and engine-rpc-enabled flag [#3875](https://github.com/sila-chain/sila-besu/pull/3875)
 - Update besu-native dependencies to 0.5.0 for linux arm64 support
 - Update ropsten TTD to 100000000000000000000000
 
 ### Bug Fixes
-- Stop backward sync if genesis block has been reached [#3869](https://github.com/hyperledger/besu/pull/3869)
-- Allow to backward sync to request headers back to last finalized block if present or genesis [#3888](https://github.com/hyperledger/besu/pull/3888)
+- Stop backward sync if genesis block has been reached [#3869](https://github.com/sila-chain/sila-besu/pull/3869)
+- Allow to backward sync to request headers back to last finalized block if present or genesis [#3888](https://github.com/sila-chain/sila-besu/pull/3888)
 
 ### Download link
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.4.2/besu-22.4.2.zip / sha256: `e8e9eb7e3f544ecefeec863712fb8d3f6a569c9d70825a4ed2581c596db8fd45`
@@ -900,27 +900,27 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.4.1
 
 ### Additions and Improvements
-- GraphQL - allow null log topics in queries which match any topic [#3662](https://github.com/hyperledger/besu/pull/3662)
-- multi-arch docker builds for amd64 and arm64 [#2954](https://github.com/hyperledger/besu/pull/2954)
-- Filter Netty native lib errors likewise the pure Java implementation [#3807](https://github.com/hyperledger/besu/pull/3807)
-- Add ropsten terminal total difficulty config [#3871](https://github.com/hyperledger/besu/pull/3871)
+- GraphQL - allow null log topics in queries which match any topic [#3662](https://github.com/sila-chain/sila-besu/pull/3662)
+- multi-arch docker builds for amd64 and arm64 [#2954](https://github.com/sila-chain/sila-besu/pull/2954)
+- Filter Netty native lib errors likewise the pure Java implementation [#3807](https://github.com/sila-chain/sila-besu/pull/3807)
+- Add ropsten terminal total difficulty config [#3871](https://github.com/sila-chain/sila-besu/pull/3871)
 
 ### Bug Fixes
-- Stop the BlockPropagationManager when it receives the TTD reached event [#3809](https://github.com/hyperledger/besu/pull/3809)
-- Correct getMixHashOrPrevRandao to return the value present in the block header [#3839](https://github.com/hyperledger/besu/pull/3839)
+- Stop the BlockPropagationManager when it receives the TTD reached event [#3809](https://github.com/sila-chain/sila-besu/pull/3809)
+- Correct getMixHashOrPrevRandao to return the value present in the block header [#3839](https://github.com/sila-chain/sila-besu/pull/3839)
 
 ## 22.4.0
 
 ### Breaking Changes
 - Version 22.4.x will be the last series to support Java 11. Version 22.7.0 will require Java 17 to build and run.
-- In the Besu SAVM Library all references to SHA3 have been renamed to the more accurate name Keccak256, including class names and comment. [#3749](https://github.com/hyperledger/besu/pull/3749)
-- Removed the Gas object and replaced it with a primitive long [#3674](https://github.com/hyperledger/besu/pull/3674)
-- Column family added for backward sync [#3638](https://github.com/hyperledger/besu/pull/3638)
+- In the Besu SAVM Library all references to SHA3 have been renamed to the more accurate name Keccak256, including class names and comment. [#3749](https://github.com/sila-chain/sila-besu/pull/3749)
+- Removed the Gas object and replaced it with a primitive long [#3674](https://github.com/sila-chain/sila-besu/pull/3674)
+- Column family added for backward sync [#3638](https://github.com/sila-chain/sila-besu/pull/3638)
   - Note that this added column family makes this a one-way upgrade. That is, once you upgrade your db to this version, you cannot roll back to a previous version of Besu.
 
 ### Bug Fixes
-- Fix nullpointer on snapsync [#3773](https://github.com/hyperledger/besu/pull/3773)
-- Introduce RocksDbSegmentIdentifier to avoid changing the storage plugin [#3755](https://github.com/hyperledger/besu/pull/3755)
+- Fix nullpointer on snapsync [#3773](https://github.com/sila-chain/sila-besu/pull/3773)
+- Introduce RocksDbSegmentIdentifier to avoid changing the storage plugin [#3755](https://github.com/sila-chain/sila-besu/pull/3755)
 
 ## Download Links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.4.0/besu-22.4.0.zip / SHA256 d89e102a1941e70be31c176a6dd65cd5f3d69c4c
@@ -929,16 +929,16 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.4.0-RC2
 
 ### Breaking Changes
-- In the Besu SAVM Library all references to SHA3 have been renamed to the more accurate name Kecack256, including class names and comment. [#3749](https://github.com/hyperledger/besu/pull/3749)
+- In the Besu SAVM Library all references to SHA3 have been renamed to the more accurate name Kecack256, including class names and comment. [#3749](https://github.com/sila-chain/sila-besu/pull/3749)
 
 ### Additions and Improvements
 - Onchain node permissioning
-  - Log the enodeURL that was previously only throwing an IllegalStateException during the isPermitted check [#3697](https://github.com/hyperledger/besu/pull/3697),
-  - Fail startup if node permissioning smart contract version does not match [#3765](https://github.com/hyperledger/besu/pull/3765)
-- \[EXPERIMENTAL\] Add snapsync `--sync-mode="X_SNAP"` (only as client) [#3710](https://github.com/hyperledger/besu/pull/3710)
-- Adapt Fast sync, and Snap sync, to use finalized block, from consensus layer, as pivot after the Merge [#3506](https://github.com/hyperledger/besu/issues/3506)
-- Add IPC JSON-RPC interface (BSD/MacOS and Linux only) [#3695](https://github.com/hyperledger/besu/pull/3695)
-- Column family added for backward sync [#3638](https://github.com/hyperledger/besu/pull/3638)
+  - Log the enodeURL that was previously only throwing an IllegalStateException during the isPermitted check [#3697](https://github.com/sila-chain/sila-besu/pull/3697),
+  - Fail startup if node permissioning smart contract version does not match [#3765](https://github.com/sila-chain/sila-besu/pull/3765)
+- \[EXPERIMENTAL\] Add snapsync `--sync-mode="X_SNAP"` (only as client) [#3710](https://github.com/sila-chain/sila-besu/pull/3710)
+- Adapt Fast sync, and Snap sync, to use finalized block, from consensus layer, as pivot after the Merge [#3506](https://github.com/sila-chain/sila-besu/issues/3506)
+- Add IPC JSON-RPC interface (BSD/MacOS and Linux only) [#3695](https://github.com/sila-chain/sila-besu/pull/3695)
+- Column family added for backward sync [#3638](https://github.com/sila-chain/sila-besu/pull/3638)
   - Note that this added column family makes this a one-way upgrade. That is, once you upgrade your db to this version, you cannot roll back to a previous version of Besu.
 
 ## Download Links
@@ -948,12 +948,12 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.4.0-RC1
 
 ### Additions and Improvements
-- Unit tests are now executed with JUnit5 [#3620](https://github.com/hyperledger/besu/pull/3620)
+- Unit tests are now executed with JUnit5 [#3620](https://github.com/sila-chain/sila-besu/pull/3620)
 - Removed the Gas object and replaced it with a primitive long [#3674]
 
 ### Bug Fixes
-- Flexible Privacy Precompile handles null payload ID [#3664](https://github.com/hyperledger/besu/pull/3664)
-- Subcommand blocks import throws exception [#3646](https://github.com/hyperledger/besu/pull/3646)
+- Flexible Privacy Precompile handles null payload ID [#3664](https://github.com/sila-chain/sila-besu/pull/3664)
+- Subcommand blocks import throws exception [#3646](https://github.com/sila-chain/sila-besu/pull/3646)
 
 ## Download Links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.4.0-RC1/besu-22.4.0-RC1.zip / SHA256 0779082acc20a98eb810eb08778e0c0e1431046c07bc89019a2761fd1baa4c25
@@ -962,18 +962,18 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.1.3
 
 ### Breaking Changes
-- Remove the experimental flag for bonsai tries CLI options `--data-storage-format` and `--bonsai-maximum-back-layers-to-load` [#3578](https://github.com/hyperledger/besu/pull/3578)
-- Column family added for backward sync [#3532](https://github.com/hyperledger/besu/pull/3532)
+- Remove the experimental flag for bonsai tries CLI options `--data-storage-format` and `--bonsai-maximum-back-layers-to-load` [#3578](https://github.com/sila-chain/sila-besu/pull/3578)
+- Column family added for backward sync [#3532](https://github.com/sila-chain/sila-besu/pull/3532)
   - Note that this added column family makes this a one-way upgrade. That is, once you upgrade your db to this version, you cannot roll back to a previous version of Besu.
 
 ### Deprecations
 - `--tx-pool-hashes-max-size` is now deprecated and has no more effect, and it will be removed in a future release.
 
 ### Additions and Improvements
-- Tune transaction synchronization parameter to adapt to sila-mainnet traffic [#3610](https://github.com/hyperledger/besu/pull/3610)
-- Improve sil/66 support [#3616](https://github.com/hyperledger/besu/pull/3616)
-- Avoid reprocessing remote transactions already seen [#3626](https://github.com/hyperledger/besu/pull/3626)
-- Upgraded jackson-databind dependency version [#3647](https://github.com/hyperledger/besu/pull/3647)
+- Tune transaction synchronization parameter to adapt to mainnet traffic [#3610](https://github.com/sila-chain/sila-besu/pull/3610)
+- Improve sil/66 support [#3616](https://github.com/sila-chain/sila-besu/pull/3616)
+- Avoid reprocessing remote transactions already seen [#3626](https://github.com/sila-chain/sila-besu/pull/3626)
+- Upgraded jackson-databind dependency version [#3647](https://github.com/sila-chain/sila-besu/pull/3647)
 
 ## Download Links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.1.3/besu-22.1.3.zip /  SHA256 9dafb80f2ec9ce8d732fd9e9894ca2455dd02418971c89cd6ccee94c53354d5d
@@ -983,18 +983,18 @@ The final form of the Sila Panda will appear when the first finalized block is r
 
 ### Additions and Improvements
 - Execution layer (The Merge):
-  - Execution specific RPC endpoint [#3378](https://github.com/hyperledger/besu/issues/3378)
+  - Execution specific RPC endpoint [#3378](https://github.com/sila-chain/sila-besu/issues/3378)
   - Adds JWT authentication to Engine APIs
   - Supports kiln V2.1 spec
 - Tracing APIs
   - new API methods: trace_rawTransaction, trace_get, trace_callMany
   - added revertReason to trace APIs including: trace_transaction, trace_get, trace_call, trace_callMany, and trace_rawTransaction
-- Allow mining beneficiary to transition at specific blocks for ibft2 and qbft consensus mechanisms.  [#3115](https://github.com/hyperledger/besu/issues/3115)
-- Return richer information from the PrecompiledContract interface. [\#3546](https://github.com/hyperledger/besu/pull/3546)
+- Allow mining beneficiary to transition at specific blocks for ibft2 and qbft consensus mechanisms.  [#3115](https://github.com/sila-chain/sila-besu/issues/3115)
+- Return richer information from the PrecompiledContract interface. [\#3546](https://github.com/sila-chain/sila-besu/pull/3546)
 
 ### Bug Fixes
-- Reject locally-sourced transactions below the minimum gas price when not mining. [#3397](https://github.com/hyperledger/besu/pull/3397)
-- Fixed bug with contract address supplied to `debug_accountAt` [#3518](https://github.com/hyperledger/besu/pull/3518)
+- Reject locally-sourced transactions below the minimum gas price when not mining. [#3397](https://github.com/sila-chain/sila-besu/pull/3397)
+- Fixed bug with contract address supplied to `debug_accountAt` [#3518](https://github.com/sila-chain/sila-besu/pull/3518)
 
 ## Download Links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.1.2/besu-22.1.2.zip /  SHA256 1b26e3f8982c3a9dbabc72171f83f1cfe89eef84ead45b184ee9101f411c1251
@@ -1003,16 +1003,16 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.1.1
 
 ### Additions and Improvements
-- Allow optional RPC methods that bypass authentication [#3382](https://github.com/hyperledger/besu/pull/3382)
+- Allow optional RPC methods that bypass authentication [#3382](https://github.com/sila-chain/sila-besu/pull/3382)
 - Execution layer (The Merge):
-  - Extend block creation and mining to support The Merge [#3412](https://github.com/hyperledger/besu/pull/3412)
-  - Backward sync [#3410](https://github.com/hyperledger/besu/pull/3410)
-  - Extend validateAndProcessBlock to return an error message in case of failure, so it can be returned to the caller of ExecutePayload API [#3411](https://github.com/hyperledger/besu/pull/3411)
-  - Persist latest finalized block [#2913](https://github.com/hyperledger/besu/issues/2913)
-  - Add PostMergeContext, and stop syncing after the switch to PoS [#3453](https://github.com/hyperledger/besu/pull/3453)
-  - Add header validation rules needed to validate The Merge blocks [#3454](https://github.com/hyperledger/besu/pull/3454)
-  - Add core components: controller builder, protocol scheduler, coordinator, block creator and processor. [#3461](https://github.com/hyperledger/besu/pull/3461)
-  - Execution specific RPC endpoint [#2914](https://github.com/hyperledger/besu/issues/2914), [#3350](https://github.com/hyperledger/besu/pull/3350)
+  - Extend block creation and mining to support The Merge [#3412](https://github.com/sila-chain/sila-besu/pull/3412)
+  - Backward sync [#3410](https://github.com/sila-chain/sila-besu/pull/3410)
+  - Extend validateAndProcessBlock to return an error message in case of failure, so it can be returned to the caller of ExecutePayload API [#3411](https://github.com/sila-chain/sila-besu/pull/3411)
+  - Persist latest finalized block [#2913](https://github.com/sila-chain/sila-besu/issues/2913)
+  - Add PostMergeContext, and stop syncing after the switch to PoS [#3453](https://github.com/sila-chain/sila-besu/pull/3453)
+  - Add header validation rules needed to validate The Merge blocks [#3454](https://github.com/sila-chain/sila-besu/pull/3454)
+  - Add core components: controller builder, protocol scheduler, coordinator, block creator and processor. [#3461](https://github.com/sila-chain/sila-besu/pull/3461)
+  - Execution specific RPC endpoint [#2914](https://github.com/sila-chain/sila-besu/issues/2914), [#3350](https://github.com/sila-chain/sila-besu/pull/3350)
 - QBFT consensus algorithm is production ready
 
 ## Download Links
@@ -1022,38 +1022,38 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 22.1.0
 
 ### Breaking Changes
-- Plugin API: BlockHeader.getBaseFee() method now returns an optional Wei instead of an optional Long [#3065](https://github.com/hyperledger/besu/issues/3065)
-- Removed deprecated hash variable `protected volatile Hash hash;` which was used for private transactions [#3110](https://github.com/hyperledger/besu/pull/3110)
+- Plugin API: BlockHeader.getBaseFee() method now returns an optional Wei instead of an optional Long [#3065](https://github.com/sila-chain/sila-besu/issues/3065)
+- Removed deprecated hash variable `protected volatile Hash hash;` which was used for private transactions [#3110](https://github.com/sila-chain/sila-besu/pull/3110)
 
 ### Additions and Improvements
-- Add support for additional JWT authentication algorithms [#3017](https://github.com/hyperledger/besu/pull/3017)
-- Represent baseFee as Wei instead of long accordingly to the spec [#2785](https://github.com/hyperledger/besu/issues/2785)
-- Implements [SIP-4399](https://sips.sila.org/SIPS/sip-4399) to repurpose DIFFICULTY opcode after the merge as a source of entropy from the Beacon chain. [#3081](https://github.com/hyperledger/besu/issues/3081)
-- Re-order external services (e.g JsonRpcHttpService) to start before blocks start processing [#3118](https://github.com/hyperledger/besu/pull/3118)
-- Stream JSON RPC responses to avoid creating big JSON strings in memory [#3076](https://github.com/hyperledger/besu/pull/3076)
-- Sila Classic Mystique Hard Fork [#3256](https://github.com/hyperledger/besu/pull/3256)
-- Genesis file parameter `blockperiodseconds` is validated as a positive integer on startup to prevent unexpected runtime behaviour [#3186](https://github.com/hyperledger/besu/pull/3186)
-- Add option to require replay protection for locally submitted transactions [\#1975](https://github.com/hyperledger/besu/issues/1975)
-- Update to block header validation for IBFT and QBFT to support London fork SIP-1559 [#3251](https://github.com/hyperledger/besu/pull/3251)
-- Move into SLF4J as logging facade [#3285](https://github.com/hyperledger/besu/pull/3285)
-- Changing the order in which we traverse the word state tree during fast sync. This should improve fast sync during subsequent pivot changes.[#3202](https://github.com/hyperledger/besu/pull/3202)
-- Updated besu-native to version 0.4.3 [#3331](https://github.com/hyperledger/besu/pull/3331)
-- Refactor synchronizer to asynchronously retrieve blocks from peers, and to change peer when retrying to get a block. [#3326](https://github.com/hyperledger/besu/pull/3326)
-- Disable RocksDB TTL compactions [#3356](https://github.com/hyperledger/besu/pull/3356)
-- add a websocket frame size configuration CLI parameter [#3386](https://github.com/hyperledger/besu/pull/3386)
-- Add `--ec-curve` parameter to export/export-address public-key subcommands [#3333](https://github.com/hyperledger/besu/pull/3333)
+- Add support for additional JWT authentication algorithms [#3017](https://github.com/sila-chain/sila-besu/pull/3017)
+- Represent baseFee as Wei instead of long accordingly to the spec [#2785](https://github.com/sila-chain/sila-besu/issues/2785)
+- Implements [SIP-4399](https://sips.sila.org/SIPS/sip-4399) to repurpose DIFFICULTY opcode after the merge as a source of entropy from the Beacon chain. [#3081](https://github.com/sila-chain/sila-besu/issues/3081)
+- Re-order external services (e.g JsonRpcHttpService) to start before blocks start processing [#3118](https://github.com/sila-chain/sila-besu/pull/3118)
+- Stream JSON RPC responses to avoid creating big JSON strings in memory [#3076](https://github.com/sila-chain/sila-besu/pull/3076)
+- Sila Classic Mystique Hard Fork [#3256](https://github.com/sila-chain/sila-besu/pull/3256)
+- Genesis file parameter `blockperiodseconds` is validated as a positive integer on startup to prevent unexpected runtime behaviour [#3186](https://github.com/sila-chain/sila-besu/pull/3186)
+- Add option to require replay protection for locally submitted transactions [\#1975](https://github.com/sila-chain/sila-besu/issues/1975)
+- Update to block header validation for IBFT and QBFT to support London fork SIP-1559 [#3251](https://github.com/sila-chain/sila-besu/pull/3251)
+- Move into SLF4J as logging facade [#3285](https://github.com/sila-chain/sila-besu/pull/3285)
+- Changing the order in which we traverse the word state tree during fast sync. This should improve fast sync during subsequent pivot changes.[#3202](https://github.com/sila-chain/sila-besu/pull/3202)
+- Updated besu-native to version 0.4.3 [#3331](https://github.com/sila-chain/sila-besu/pull/3331)
+- Refactor synchronizer to asynchronously retrieve blocks from peers, and to change peer when retrying to get a block. [#3326](https://github.com/sila-chain/sila-besu/pull/3326)
+- Disable RocksDB TTL compactions [#3356](https://github.com/sila-chain/sila-besu/pull/3356)
+- add a websocket frame size configuration CLI parameter [#3386](https://github.com/sila-chain/sila-besu/pull/3386)
+- Add `--ec-curve` parameter to export/export-address public-key subcommands [#3333](https://github.com/sila-chain/sila-besu/pull/3333)
 
 ### Bug Fixes
-- Change the base docker image from Debian Buster to Ubuntu 20.04 [#3171](https://github.com/hyperledger/besu/issues/3171) fixes [#3045](https://github.com/hyperledger/besu/issues/3045)
-- Make 'to' field optional in sil_call method according to the spec [#3177](https://github.com/hyperledger/besu/pull/3177)
+- Change the base docker image from Debian Buster to Ubuntu 20.04 [#3171](https://github.com/sila-chain/sila-besu/issues/3171) fixes [#3045](https://github.com/sila-chain/sila-besu/issues/3045)
+- Make 'to' field optional in sil_call method according to the spec [#3177](https://github.com/sila-chain/sila-besu/pull/3177)
 - Update to log4j 2.17.1. Resolves potential vulnerability only exploitable when using custom log4j configurations that are writable by untrusted users.
 - Fix regression on cors-origin star value
 - Fix for silFeeHistory accepting hex values for blockCount
-- Fix a sync issue, when the chain downloader incorrectly shutdown when a task in the pipeline is cancelled. [#3319](https://github.com/hyperledger/besu/pull/3319)
-- add a websocket frame size configuration CLI parameter [3368][https://github.com/hyperledger/besu/pull/3379]
-- Prevent node from peering to itself [#3342](https://github.com/hyperledger/besu/pull/3342)
-- Fix an `IndexOutOfBoundsException` exception when getting block from peers. [#3304](https://github.com/hyperledger/besu/issues/3304)
-- Handle legacy sil64 without throwing null pointer exceptions [#3343](https://github.com/hyperledger/besu/pull/3343)
+- Fix a sync issue, when the chain downloader incorrectly shutdown when a task in the pipeline is cancelled. [#3319](https://github.com/sila-chain/sila-besu/pull/3319)
+- add a websocket frame size configuration CLI parameter [3368][https://github.com/sila-chain/sila-besu/pull/3379]
+- Prevent node from peering to itself [#3342](https://github.com/sila-chain/sila-besu/pull/3342)
+- Fix an `IndexOutOfBoundsException` exception when getting block from peers. [#3304](https://github.com/sila-chain/sila-besu/issues/3304)
+- Handle legacy sil64 without throwing null pointer exceptions [#3343](https://github.com/sila-chain/sila-besu/pull/3343)
 
 ### Download Links
 - https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/22.1.0/besu-22.1.0.tar.gz \ SHA256 232bd7f274691ca14c26289fdc289d3fcdf69426dd96e2fa1601f4d079645c2f
@@ -1065,7 +1065,7 @@ The final form of the Sila Panda will appear when the first finalized block is r
 - Fix regression on cors-origin star value
 - Fix for silFeeHistory accepting hex values for blockCount
 
- **Full Changelog**: https://github.com/hyperledger/besu/compare/21.10.8...21.10.9
+ **Full Changelog**: https://github.com/sila-chain/sila-besu/compare/21.10.8...21.10.9
 
 [besu-21.10.9.tar.gz](https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.10.9/besu-21.10.9.tar.gz) a4b85ba72ee73017303e4b2f0fdde84a87d376c2c17fdcebfa4e34680f52fc71
 [besu-21.10.9.zip](https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.10.9/besu-21.10.9.zip) c3ba3f07340fa80064ba7c06f2c0ec081184e000f9a925d132084352d0665ef9
@@ -1073,7 +1073,7 @@ The final form of the Sila Panda will appear when the first finalized block is r
 ## 21.10.8
 
 ### Additions and Improvements
-- Sila Classic Mystique Hard Fork [#3256](https://github.com/hyperledger/besu/pull/3256)
+- Sila Classic Mystique Hard Fork [#3256](https://github.com/sila-chain/sila-besu/pull/3256)
 
 ### Download Links
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.10.8/besu-21.10.8.tar.gz \ SHA256 d325e2e36bc38a707a9eebf92068f5021606a8c6b6464bb4b4d59008ef8014fc
@@ -1085,7 +1085,7 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.10.8/besu-21.10.8
 - Update dependencies (including vert.x, kubernetes client-java, okhttp, commons-codec)
 
 ### Additions and Improvements
-- Add support for additional JWT authentication algorithms [#3017](https://github.com/hyperledger/besu/pull/3017)
+- Add support for additional JWT authentication algorithms [#3017](https://github.com/sila-chain/sila-besu/pull/3017)
 - Remove Orion ATs
 
 ### Download Links
@@ -1114,7 +1114,7 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.10.5/besu-21.10.5
 
 ### Bug Fixes
 - Update log4j to 2.16.0.
-- Change the base docker image from Debian Buster to Ubuntu 20.04 [#3171](https://github.com/hyperledger/besu/issues/3171) fixes [#3045](https://github.com/hyperledger/besu/issues/3045)
+- Change the base docker image from Debian Buster to Ubuntu 20.04 [#3171](https://github.com/sila-chain/sila-besu/issues/3171) fixes [#3045](https://github.com/sila-chain/sila-besu/issues/3045)
 
 ### Download links
 This release is not recommended for production use.
@@ -1123,15 +1123,15 @@ This release is not recommended for production use.
 
 ### Additions and Improvements
 - Updated log4j to 2.15.0 and disabled JNDI message format lookups to improve security.
-- Represent baseFee as Wei instead of long accordingly to the spec [#2785](https://github.com/hyperledger/besu/issues/2785)
-- Adding support of the NO_COLOR environment variable as described in the [NO_COLOR](https://no-color.org/) standard [#3085](https://github.com/hyperledger/besu/pull/3085)
-- Add `privx_findFlexiblePrivacyGroup` RPC Method, `privx_findOnchainPrivacyGroup` will be removed in a future release [#3075](https://github.com/hyperledger/besu/pull/3075)
+- Represent baseFee as Wei instead of long accordingly to the spec [#2785](https://github.com/sila-chain/sila-besu/issues/2785)
+- Adding support of the NO_COLOR environment variable as described in the [NO_COLOR](https://no-color.org/) standard [#3085](https://github.com/sila-chain/sila-besu/pull/3085)
+- Add `privx_findFlexiblePrivacyGroup` RPC Method, `privx_findOnchainPrivacyGroup` will be removed in a future release [#3075](https://github.com/sila-chain/sila-besu/pull/3075)
 - The invalid value is now shown when `--bootnodes` cannot parse an item to make it easier to identify which option is invalid.
-- Adding two new options to be able to specify desired TLS protocol version and Java cipher suites [#3105](https://github.com/hyperledger/besu/pull/3105)
-- Implements [SIP-4399](https://sips.sila.org/SIPS/sip-4399) to repurpose DIFFICULTY opcode after the merge as a source of entropy from the Beacon chain. [#3081](https://github.com/hyperledger/besu/issues/3081)
+- Adding two new options to be able to specify desired TLS protocol version and Java cipher suites [#3105](https://github.com/sila-chain/sila-besu/pull/3105)
+- Implements [SIP-4399](https://sips.sila.org/SIPS/sip-4399) to repurpose DIFFICULTY opcode after the merge as a source of entropy from the Beacon chain. [#3081](https://github.com/sila-chain/sila-besu/issues/3081)
 
 ### Bug Fixes
-- Change the base docker image from Debian Buster to Ubuntu 20.04 [#3171](https://github.com/hyperledger/besu/issues/3171) fixes [#3045](https://github.com/hyperledger/besu/issues/3045)
+- Change the base docker image from Debian Buster to Ubuntu 20.04 [#3171](https://github.com/sila-chain/sila-besu/issues/3171) fixes [#3045](https://github.com/sila-chain/sila-besu/issues/3045)
 
 ### Download Link
 This release is not recommended for production use.
@@ -1139,13 +1139,13 @@ This release is not recommended for production use.
 ## 21.10.2
 
 ### Additions and Improvements
-- Add discovery options to genesis file [#2944](https://github.com/hyperledger/besu/pull/2944)
-- Add validate-config subcommand to perform basic syntax validation of TOML config [#2994](https://github.com/hyperledger/besu/pull/2994)
-- Updated SilaSepolia Nodes [#3034](https://github.com/hyperledger/besu/pull/3034) [#3035](https://github.com/hyperledger/besu/pull/3035)
+- Add discovery options to genesis file [#2944](https://github.com/sila-chain/sila-besu/pull/2944)
+- Add validate-config subcommand to perform basic syntax validation of TOML config [#2994](https://github.com/sila-chain/sila-besu/pull/2994)
+- Updated SilaSepolia Nodes [#3034](https://github.com/sila-chain/sila-besu/pull/3034) [#3035](https://github.com/sila-chain/sila-besu/pull/3035)
 
 ### Bug Fixes
-- Reduce shift calculations to shifts that may have an actual result. [#3039](https://github.com/hyperledger/besu/pull/3039)
-- DNS Discovery daemon wasn't started [#3033](https://github.com/hyperledger/besu/pull/3033)
+- Reduce shift calculations to shifts that may have an actual result. [#3039](https://github.com/sila-chain/sila-besu/pull/3039)
+- DNS Discovery daemon wasn't started [#3033](https://github.com/sila-chain/sila-besu/pull/3033)
 
 ### Download Link
 This release is not recommended for production use.
@@ -1153,22 +1153,22 @@ This release is not recommended for production use.
 ## 21.10.1
 
 ### Additions and Improvements
-- Add CLI autocomplete scripts. [#2854](https://github.com/hyperledger/besu/pull/2854)
-- Add support for PKCS11 keystore on PKI Block Creation. [#2865](https://github.com/hyperledger/besu/pull/2865)
-- Optimize SAVM Memory for MLOAD Operations [#2917](https://github.com/hyperledger/besu/pull/2917)
-- Upgrade CircleCI OpenJDK docker image to version 11.0.12. [#2928](https://github.com/hyperledger/besu/pull/2928)
-- Update JDK 11 to latest version in Besu Docker images. [#2925](https://github.com/hyperledger/besu/pull/2925)
-- Add SilaSepolia proof-of-work testnet configurations [#2920](https://github.com/hyperledger/besu/pull/2920)
-- Allow block period to be configured for IBFT2 and QBFT using transitions [#2902](https://github.com/hyperledger/besu/pull/2902)
-- Add support for binary messages (0x02) for websocket. [#2980](https://github.com/hyperledger/besu/pull/2980)
+- Add CLI autocomplete scripts. [#2854](https://github.com/sila-chain/sila-besu/pull/2854)
+- Add support for PKCS11 keystore on PKI Block Creation. [#2865](https://github.com/sila-chain/sila-besu/pull/2865)
+- Optimize SAVM Memory for MLOAD Operations [#2917](https://github.com/sila-chain/sila-besu/pull/2917)
+- Upgrade CircleCI OpenJDK docker image to version 11.0.12. [#2928](https://github.com/sila-chain/sila-besu/pull/2928)
+- Update JDK 11 to latest version in Besu Docker images. [#2925](https://github.com/sila-chain/sila-besu/pull/2925)
+- Add SilaSepolia proof-of-work testnet configurations [#2920](https://github.com/sila-chain/sila-besu/pull/2920)
+- Allow block period to be configured for IBFT2 and QBFT using transitions [#2902](https://github.com/sila-chain/sila-besu/pull/2902)
+- Add support for binary messages (0x02) for websocket. [#2980](https://github.com/sila-chain/sila-besu/pull/2980)
 
 ### Bug Fixes
-- Do not change the sender balance, but set gas fee to zero, when simulating a transaction without enforcing balance checks. [#2454](https://github.com/hyperledger/besu/pull/2454)
-- Ensure genesis block has the default base fee if london is at block 0 [#2920](https://github.com/hyperledger/besu/pull/2920)
-- Fixes the exit condition for loading a BonsaiPersistedWorldState for a sibling block of the last one persisted [#2967](https://github.com/hyperledger/besu/pull/2967)
+- Do not change the sender balance, but set gas fee to zero, when simulating a transaction without enforcing balance checks. [#2454](https://github.com/sila-chain/sila-besu/pull/2454)
+- Ensure genesis block has the default base fee if london is at block 0 [#2920](https://github.com/sila-chain/sila-besu/pull/2920)
+- Fixes the exit condition for loading a BonsaiPersistedWorldState for a sibling block of the last one persisted [#2967](https://github.com/sila-chain/sila-besu/pull/2967)
 
 ### Early Access Features
-- Enable plugins to expose custom JSON-RPC / WebSocket methods [#1317](https://github.com/hyperledger/besu/issues/1317)
+- Enable plugins to expose custom JSON-RPC / WebSocket methods [#1317](https://github.com/sila-chain/sila-besu/issues/1317)
 
 ### Download Link
 This release is not recommended for production use.
@@ -1176,25 +1176,25 @@ This release is not recommended for production use.
 ## 21.10.0
 
 ### Additions and Improvements
-- The SAVM has been factored out into a standalone module, suitable for inclusion as a library. [#2790](https://github.com/hyperledger/besu/pull/2790)
-- Low level performance improvements changes to cut worst-case SAVM performance in half. [#2796](https://github.com/hyperledger/besu/pull/2796)
-- Migrate `ExceptionalHaltReason` from an enum to an interface to allow downstream users of the SAVM to add new exceptional halt reasons. [#2810](https://github.com/hyperledger/besu/pull/2810)
-- reduces need for JUMPDEST analysis via caching [#2607](https://github.com/hyperledger/besu/pull/2821)
-- Add support for custom private key file for public-key export and public-key export-address commands [#2801](https://github.com/hyperledger/besu/pull/2801)
-- Add CLI autocomplete scripts. [#2854](https://github.com/hyperledger/besu/pull/2854)
-- Added support for PKCS11 keystore on PKI Block Creation. [#2865](https://github.com/hyperledger/besu/pull/2865)
-- add support for ArrowGlacier hardfork [#2943](https://github.com/hyperledger/besu/issues/2943)
+- The SAVM has been factored out into a standalone module, suitable for inclusion as a library. [#2790](https://github.com/sila-chain/sila-besu/pull/2790)
+- Low level performance improvements changes to cut worst-case SAVM performance in half. [#2796](https://github.com/sila-chain/sila-besu/pull/2796)
+- Migrate `ExceptionalHaltReason` from an enum to an interface to allow downstream users of the SAVM to add new exceptional halt reasons. [#2810](https://github.com/sila-chain/sila-besu/pull/2810)
+- reduces need for JUMPDEST analysis via caching [#2607](https://github.com/sila-chain/sila-besu/pull/2821)
+- Add support for custom private key file for public-key export and public-key export-address commands [#2801](https://github.com/sila-chain/sila-besu/pull/2801)
+- Add CLI autocomplete scripts. [#2854](https://github.com/sila-chain/sila-besu/pull/2854)
+- Added support for PKCS11 keystore on PKI Block Creation. [#2865](https://github.com/sila-chain/sila-besu/pull/2865)
+- add support for ArrowGlacier hardfork [#2943](https://github.com/sila-chain/sila-besu/issues/2943)
 
 ### Bug Fixes
-- Allow BESU_CONFIG_FILE environment to specify TOML file [#2455](https://github.com/hyperledger/besu/issues/2455)
-- Fix bug with private contracts not able to call public contracts that call public contracts [#2816](https://github.com/hyperledger/besu/pull/2816)
-- Fixes the exit condition for loading a BonsaiPersistedWorldState for a sibling block of the last one persisted [#2967](https://github.com/hyperledger/besu/pull/2967)
-- Fixes bonsai getMutable regression affecting fast-sync [#2934](https://github.com/hyperledger/besu/pull/2934)
-- Regression in RC1 involving LogOperation and frame memory overwrites [#2908](https://github.com/hyperledger/besu/pull/2908)
-- Allow `sil_call` and `sil_estimateGas` to accept contract address as sender. [#2891](https://github.com/hyperledger/besu/pull/2891)
+- Allow BESU_CONFIG_FILE environment to specify TOML file [#2455](https://github.com/sila-chain/sila-besu/issues/2455)
+- Fix bug with private contracts not able to call public contracts that call public contracts [#2816](https://github.com/sila-chain/sila-besu/pull/2816)
+- Fixes the exit condition for loading a BonsaiPersistedWorldState for a sibling block of the last one persisted [#2967](https://github.com/sila-chain/sila-besu/pull/2967)
+- Fixes bonsai getMutable regression affecting fast-sync [#2934](https://github.com/sila-chain/sila-besu/pull/2934)
+- Regression in RC1 involving LogOperation and frame memory overwrites [#2908](https://github.com/sila-chain/sila-besu/pull/2908)
+- Allow `sil_call` and `sil_estimateGas` to accept contract address as sender. [#2891](https://github.com/sila-chain/sila-besu/pull/2891)
 
 ### Early Access Features
-- Enable plugins to expose custom JSON-RPC / WebSocket methods [#1317](https://github.com/hyperledger/besu/issues/1317)
+- Enable plugins to expose custom JSON-RPC / WebSocket methods [#1317](https://github.com/sila-chain/sila-besu/issues/1317)
 
 ### Download Link
 This release is not recommended for production use. \
@@ -1205,8 +1205,8 @@ SHA256: 71374454753c2ee595f4f34dc6913f731818d50150accbc98088aace313c6935
 ### Additions and Improvements
 
 ### Bug Fixes
-- Fixes the exit condition for loading a BonsaiPersistedWorldState for a sibling block of the last one persisted [#2967](https://github.com/hyperledger/besu/pull/2967)
-- Fixes bonsai getMutable regression affecting fast-sync [#2934](https://github.com/hyperledger/besu/pull/2934)
+- Fixes the exit condition for loading a BonsaiPersistedWorldState for a sibling block of the last one persisted [#2967](https://github.com/sila-chain/sila-besu/pull/2967)
+- Fixes bonsai getMutable regression affecting fast-sync [#2934](https://github.com/sila-chain/sila-besu/pull/2934)
 
 ### Early Access Features
 ### Download Link
@@ -1216,9 +1216,9 @@ SHA256: b16e15764b8bc06c5c3f9f19bc8b99fa48e7894aa5a6ccdad65da49bbf564793
 ## 21.10.0-RC3
 
 ### Bug Fixes
-- Regression in RC1 involving LogOperation and frame memory overwrites [#2908](https://github.com/hyperledger/besu/pull/2908)
-- Allow `sil_call` and `sil_estimateGas` to accept contract address as sender. [#2891](https://github.com/hyperledger/besu/pull/2891)
-- Fix Concurrency issues in Silpeers. [#2896](https://github.com/hyperledger/besu/pull/2896)
+- Regression in RC1 involving LogOperation and frame memory overwrites [#2908](https://github.com/sila-chain/sila-besu/pull/2908)
+- Allow `sil_call` and `sil_estimateGas` to accept contract address as sender. [#2891](https://github.com/sila-chain/sila-besu/pull/2891)
+- Fix Concurrency issues in Ethpeers. [#2896](https://github.com/sila-chain/sila-besu/pull/2896)
 
 ### Download
 This release is not recommended for production use. \
@@ -1226,15 +1226,15 @@ SHA256: 3d4857589336717bf5e4e5ef711b9a7f3bc46b49e1cf5b3b6574a00ccc6eda94
 
 ## 21.10.0-RC1/RC2
 ### Additions and Improvements
-- The SAVM has been factored out into a standalone module, suitable for inclusion as a library. [#2790](https://github.com/hyperledger/besu/pull/2790)
-- Low level performance improvements changes to cut worst-case SAVM performance in half. [#2796](https://github.com/hyperledger/besu/pull/2796)
-- Migrate `ExceptionalHaltReason` from an enum to an interface to allow downstream users of the SAVM to add new exceptional halt reasons. [#2810](https://github.com/hyperledger/besu/pull/2810)
-- reduces need for JUMPDEST analysis via caching [#2607](https://github.com/hyperledger/besu/pull/2821)
-- Add support for custom private key file for public-key export and public-key export-address commands [#2801](https://github.com/hyperledger/besu/pull/2801)
+- The SAVM has been factored out into a standalone module, suitable for inclusion as a library. [#2790](https://github.com/sila-chain/sila-besu/pull/2790)
+- Low level performance improvements changes to cut worst-case SAVM performance in half. [#2796](https://github.com/sila-chain/sila-besu/pull/2796)
+- Migrate `ExceptionalHaltReason` from an enum to an interface to allow downstream users of the SAVM to add new exceptional halt reasons. [#2810](https://github.com/sila-chain/sila-besu/pull/2810)
+- reduces need for JUMPDEST analysis via caching [#2607](https://github.com/sila-chain/sila-besu/pull/2821)
+- Add support for custom private key file for public-key export and public-key export-address commands [#2801](https://github.com/sila-chain/sila-besu/pull/2801)
 
 ### Bug Fixes
-- Allow BESU_CONFIG_FILE environment to specify TOML file [#2455](https://github.com/hyperledger/besu/issues/2455)
-- Fix bug with private contracts not able to call public contracts that call public contracts [#2816](https://github.com/hyperledger/besu/pull/2816)
+- Allow BESU_CONFIG_FILE environment to specify TOML file [#2455](https://github.com/sila-chain/sila-besu/issues/2455)
+- Fix bug with private contracts not able to call public contracts that call public contracts [#2816](https://github.com/sila-chain/sila-besu/pull/2816)
 
 ### Early Access Features
 
@@ -1245,16 +1245,16 @@ SHA256: 536612e5e4d7a5e7a582f729f01ba591ba68cc389e8379fea3571ed85322ff51
 
 ## 21.7.4
 ### Additions and Improvements
-- Upgrade Gradle to 7.2, which supports building with Java 17 [#2761](https://github.com/hyperledger/besu/pull/2376)
+- Upgrade Gradle to 7.2, which supports building with Java 17 [#2761](https://github.com/sila-chain/sila-besu/pull/2376)
 
 ### Bug Fixes
-- Set an idle timeout for metrics connections, to clean up ports when no longer used [\#2748](https://github.com/hyperledger/besu/pull/2748)
-- Onchain privacy groups can be unlocked after being locked without having to add a participant [\#2693](https://github.com/hyperledger/besu/pull/2693)
-- Update Gas Schedule for Sila Classic [#2746](https://github.com/hyperledger/besu/pull/2746)
+- Set an idle timeout for metrics connections, to clean up ports when no longer used [\#2748](https://github.com/sila-chain/sila-besu/pull/2748)
+- Onchain privacy groups can be unlocked after being locked without having to add a participant [\#2693](https://github.com/sila-chain/sila-besu/pull/2693)
+- Update Gas Schedule for Sila Classic [#2746](https://github.com/sila-chain/sila-besu/pull/2746)
 
 ### Early Access Features
-- \[EXPERIMENTAL\] Added support for QBFT with PKI-backed Block Creation. [#2647](https://github.com/hyperledger/besu/issues/2647)
-- \[EXPERIMENTAL\] Added support for QBFT to use retrieve validators from a smart contract [#2574](https://github.com/hyperledger/besu/pull/2574)
+- \[EXPERIMENTAL\] Added support for QBFT with PKI-backed Block Creation. [#2647](https://github.com/sila-chain/sila-besu/issues/2647)
+- \[EXPERIMENTAL\] Added support for QBFT to use retrieve validators from a smart contract [#2574](https://github.com/sila-chain/sila-besu/pull/2574)
 
 ### Download Link
 https://hyperledger.jfrog.io/native/besu-binaries/besu/21.7.4/besu-21.7.4.zip \
@@ -1262,26 +1262,26 @@ SHA256: 778d3c42851db11fec9171f77b22662f2baeb9b2ce913d7cfaaf1042ec19b7f9
 
 ## 21.7.3
 ### Additions and Improvements
-- Migration to Apache Tuweni 2.0 [\#2376](https://github.com/hyperledger/besu/pull/2376)
-- \[EXPERIMENTAL\] Added support for DevP2P-over-TLS [#2536](https://github.com/hyperledger/besu/pull/2536)
-- `sil_getWork`, `sil_submitWork` support over the Stratum port [#2581](https://github.com/hyperledger/besu/pull/2581)
-- Stratum metrics [#2583](https://github.com/hyperledger/besu/pull/2583)
-- Support for mining ommers [#2576](https://github.com/hyperledger/besu/pull/2576)
-- Updated onchain permissioning to validate permissions on transaction submission [\#2595](https://github.com/hyperledger/besu/pull/2595)
-- Removed deprecated CLI option `--privacy-precompiled-address` [#2605](https://github.com/hyperledger/besu/pull/2605)
-- Removed code supporting SIP-1702. [#2657](https://github.com/hyperledger/besu/pull/2657)
-- A native library was added for the alternative signature algorithm secp256r1, which will be used by default [#2630](https://github.com/hyperledger/besu/pull/2630)
-- The command line option --Xsecp-native-enabled was added as an alias for --Xsecp256k1-native-enabled [#2630](https://github.com/hyperledger/besu/pull/2630)
-- Added Labelled gauges for metrics [#2646](https://github.com/hyperledger/besu/pull/2646)
-- support for `sil/66` networking protocol [#2365](https://github.com/hyperledger/besu/pull/2365)
-- update RPC methods for post london 1559 transaction [#2535](https://github.com/hyperledger/besu/pull/2535)
-- \[EXPERIMENTAL\] Added support for using DNS host name in place of IP address in onchain node permissioning rules [#2667](https://github.com/hyperledger/besu/pull/2667)
-- Implement SIP-3607 Reject transactions from senders with deployed code. [#2676](https://github.com/hyperledger/besu/pull/2676)
-- Ignore all unknown fields when supplied to sil_estimateGas or sil_call. [\#2690](https://github.com/hyperledger/besu/pull/2690)
+- Migration to Apache Tuweni 2.0 [\#2376](https://github.com/sila-chain/sila-besu/pull/2376)
+- \[EXPERIMENTAL\] Added support for DevP2P-over-TLS [#2536](https://github.com/sila-chain/sila-besu/pull/2536)
+- `sil_getWork`, `sil_submitWork` support over the Stratum port [#2581](https://github.com/sila-chain/sila-besu/pull/2581)
+- Stratum metrics [#2583](https://github.com/sila-chain/sila-besu/pull/2583)
+- Support for mining ommers [#2576](https://github.com/sila-chain/sila-besu/pull/2576)
+- Updated onchain permissioning to validate permissions on transaction submission [\#2595](https://github.com/sila-chain/sila-besu/pull/2595)
+- Removed deprecated CLI option `--privacy-precompiled-address` [#2605](https://github.com/sila-chain/sila-besu/pull/2605)
+- Removed code supporting SIP-1702. [#2657](https://github.com/sila-chain/sila-besu/pull/2657)
+- A native library was added for the alternative signature algorithm secp256r1, which will be used by default [#2630](https://github.com/sila-chain/sila-besu/pull/2630)
+- The command line option --Xsecp-native-enabled was added as an alias for --Xsecp256k1-native-enabled [#2630](https://github.com/sila-chain/sila-besu/pull/2630)
+- Added Labelled gauges for metrics [#2646](https://github.com/sila-chain/sila-besu/pull/2646)
+- support for `sil/66` networking protocol [#2365](https://github.com/sila-chain/sila-besu/pull/2365)
+- update RPC methods for post london 1559 transaction [#2535](https://github.com/sila-chain/sila-besu/pull/2535)
+- \[EXPERIMENTAL\] Added support for using DNS host name in place of IP address in onchain node permissioning rules [#2667](https://github.com/sila-chain/sila-besu/pull/2667)
+- Implement SIP-3607 Reject transactions from senders with deployed code. [#2676](https://github.com/sila-chain/sila-besu/pull/2676)
+- Ignore all unknown fields when supplied to sil_estimateGas or sil_call. [\#2690](https://github.com/sila-chain/sila-besu/pull/2690)
 
 ### Bug Fixes
-- Consider effective price and effective priority fee in transaction replacement rules [\#2529](https://github.com/hyperledger/besu/issues/2529)
-- GetTransactionCount should return the latest transaction count if it is greater than the transaction pool [\#2633](https://github.com/hyperledger/besu/pull/2633)
+- Consider effective price and effective priority fee in transaction replacement rules [\#2529](https://github.com/sila-chain/sila-besu/issues/2529)
+- GetTransactionCount should return the latest transaction count if it is greater than the transaction pool [\#2633](https://github.com/sila-chain/sila-besu/pull/2633)
 
 ### Early Access Features
 
@@ -1291,7 +1291,7 @@ SHA256: 778d3c42851db11fec9171f77b22662f2baeb9b2ce913d7cfaaf1042ec19b7f9
 This release contains improvements and bugfixes for optimum compatibility with other London client versions.
 
 ## Bug Fixes
-- hotfix for private transaction identification for sila-mainnet transactions [#2609](https://github.com/hyperledger/besu/pull/2609)
+- hotfix for private transaction identification for mainnet transactions [#2609](https://github.com/sila-chain/sila-besu/pull/2609)
 
 ## Download Link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.7.2/besu-21.7.2.zip \
@@ -1301,8 +1301,8 @@ db47fd9ba33b36436ed6798d2474f7621c733353fd04f49d6defffd12e3b6e14
 ## 21.7.1
 
 ### Additions and Improvements
-- `priv_call` now uses NO_TRACING OperationTracer implementation which improves memory usage [\#2482](https://github.com/hyperledger/besu/pull/2482)
-- Ping and Pong messages now support ENR encoding as scalars or bytes [\#2512](https://github.com/hyperledger/besu/pull/2512)
+- `priv_call` now uses NO_TRACING OperationTracer implementation which improves memory usage [\#2482](https://github.com/sila-chain/sila-besu/pull/2482)
+- Ping and Pong messages now support ENR encoding as scalars or bytes [\#2512](https://github.com/sila-chain/sila-besu/pull/2512)
 
 ### Download Link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.7.1/besu-21.7.1.zip \
@@ -1316,16 +1316,16 @@ This release contains the activation blocks for London across all supported test
   * Goerli 5_062_605 (30 Jun 2021)
   * Rinkeby 8_897_988 (7 Jul 2021)
   * SilaMainnet 12_965_000 (4 Aug 2021)
-- sip-1559 changes: accept transactions which have maxFeePerGas below current baseFee [\#2374](https://github.com/hyperledger/besu/pull/2374)
-- Introduced transitions for IBFT2 block rewards [\#1977](https://github.com/hyperledger/besu/pull/1977)
-- Change Silstats's status from experimental feature to stable. [\#2405](https://github.com/hyperledger/besu/pull/2405)
-- Fixed disabling of native libraries for secp256k1 and altBn128. [\#2163](https://github.com/hyperledger/besu/pull/2163)
-- sil_feeHistory API for wallet providers [\#2466](https://github.com/hyperledger/besu/pull/2466)
+- sip-1559 changes: accept transactions which have maxFeePerGas below current baseFee [\#2374](https://github.com/sila-chain/sila-besu/pull/2374)
+- Introduced transitions for IBFT2 block rewards [\#1977](https://github.com/sila-chain/sila-besu/pull/1977)
+- Change Ethstats's status from experimental feature to stable. [\#2405](https://github.com/sila-chain/sila-besu/pull/2405)
+- Fixed disabling of native libraries for secp256k1 and altBn128. [\#2163](https://github.com/sila-chain/sila-besu/pull/2163)
+- sil_feeHistory API for wallet providers [\#2466](https://github.com/sila-chain/sila-besu/pull/2466)
 
 ### Bug Fixes
-- Ibft2 could create invalid RoundChange messages in some circumstances containing duplicate prepares [\#2449](https://github.com/hyperledger/besu/pull/2449)
-- Updated `sil_sendRawTransaction` to return an error when maxPriorityFeePerGas exceeds maxFeePerGas [\#2424](https://github.com/hyperledger/besu/pull/2424)
-- Fixed NoSuchElementException with SIP1559 transaction receipts when using sil_getTransactionReceipt [\#2477](https://github.com/hyperledger/besu/pull/2477)
+- Ibft2 could create invalid RoundChange messages in some circumstances containing duplicate prepares [\#2449](https://github.com/sila-chain/sila-besu/pull/2449)
+- Updated `sil_sendRawTransaction` to return an error when maxPriorityFeePerGas exceeds maxFeePerGas [\#2424](https://github.com/sila-chain/sila-besu/pull/2424)
+- Fixed NoSuchElementException with SIP1559 transaction receipts when using sil_getTransactionReceipt [\#2477](https://github.com/sila-chain/sila-besu/pull/2477)
 
 ### Early Access Features
 - QBFT is a Byzantine Fault Tolerant consensus algorithm, building on the capabilities of IBFT and IBFT 2.0. It aims to provide performance improvements in cases of excess round change, and provides interoperability with other EEA compliant clients, such as GoQuorum.
@@ -1341,9 +1341,9 @@ sha256sum 389465fdcc2cc5e5007a02dc2b8a2c43d577198867316bc5cc4392803ed71034
 ## 21.7.0-RC2
 
 ### Additions and Improvements
-- sil_feeHistory API for wallet providers [\#2466](https://github.com/hyperledger/besu/pull/2466)
+- sil_feeHistory API for wallet providers [\#2466](https://github.com/sila-chain/sila-besu/pull/2466)
 ### Bug Fixes
-- Ibft2 could create invalid RoundChange messages in some circumstances containing duplicate prepares [\#2449](https://github.com/hyperledger/besu/pull/2449)
+- Ibft2 could create invalid RoundChange messages in some circumstances containing duplicate prepares [\#2449](https://github.com/sila-chain/sila-besu/pull/2449)
 
 ## Download Link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.7.0-RC2/besu-21.7.0-RC2.zip
@@ -1353,15 +1353,15 @@ sha256sum 7bc97c359386cad84d449f786dc0a8ed8728616b6704ce473c63f1d94af3a9ef
 ## 21.7.0-RC1
 
 ### Additions and Improvements
-- sip-1559 changes: accept transactions which have maxFeePerGas below current baseFee [\#2374](https://github.com/hyperledger/besu/pull/2374)
-- Introduced transitions for IBFT2 block rewards [\#1977](https://github.com/hyperledger/besu/pull/1977)
-- Change Silstats's status from experimental feature to stable. [\#2405](https://github.com/hyperledger/besu/pull/2405)
-- Fixed disabling of native libraries for secp256k1 and altBn128. [\#2163](https://github.com/hyperledger/besu/pull/2163)
+- sip-1559 changes: accept transactions which have maxFeePerGas below current baseFee [\#2374](https://github.com/sila-chain/sila-besu/pull/2374)
+- Introduced transitions for IBFT2 block rewards [\#1977](https://github.com/sila-chain/sila-besu/pull/1977)
+- Change Ethstats's status from experimental feature to stable. [\#2405](https://github.com/sila-chain/sila-besu/pull/2405)
+- Fixed disabling of native libraries for secp256k1 and altBn128. [\#2163](https://github.com/sila-chain/sila-besu/pull/2163)
 
 
 ### Bug Fixes
 
-- Updated `sil_sendRawTransaction` to return an error when maxPriorityFeePerGas exceeds maxFeePerGas [\#2424](https://github.com/hyperledger/besu/pull/2424)
+- Updated `sil_sendRawTransaction` to return an error when maxPriorityFeePerGas exceeds maxFeePerGas [\#2424](https://github.com/sila-chain/sila-besu/pull/2424)
 
 ### Early Access Features
 This release contains the activation blocks for London across all supported testnets. They are:
@@ -1388,22 +1388,22 @@ concerns, please reach out to the ConsenSys protocol engineering team in the
 
 
 ### Additions and Improvements
-* Upgrade OpenTelemetry to 1.2.0. [\#2313](https://github.com/hyperledger/besu/pull/2313)
+* Upgrade OpenTelemetry to 1.2.0. [\#2313](https://github.com/sila-chain/sila-besu/pull/2313)
 
-* Sila Classic Magneto Hard Fork [\#2315](https://github.com/hyperledger/besu/pull/2315)
+* Sila Classic Magneto Hard Fork [\#2315](https://github.com/sila-chain/sila-besu/pull/2315)
 
-* Added support for the upcoming CALAVERAS ephemeral testnet and removed the configuration for the deprecated BAIKAL ephemeral testnet. [\#2343](https://github.com/hyperledger/besu/pull/2343)
+* Added support for the upcoming CALAVERAS ephemeral testnet and removed the configuration for the deprecated BAIKAL ephemeral testnet. [\#2343](https://github.com/sila-chain/sila-besu/pull/2343)
 
 ### Bug Fixes
-* Fix invalid transfer values with the tracing API specifically for CALL operation [\#2319](https://github.com/hyperledger/besu/pull/2319)
+* Fix invalid transfer values with the tracing API specifically for CALL operation [\#2319](https://github.com/sila-chain/sila-besu/pull/2319)
 
 ### Early Access Features
 
 #### Previously identified known issues
 
-- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/hyperledger/besu/pull/2075)
-- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/hyperledger/besu/pull/2120)
-- Fixed invalid error code in several JSON RPC methods when the requested block is not in the range. [\#2138](https://github.com/hyperledger/besu/pull/2138)
+- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/sila-chain/sila-besu/pull/2075)
+- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/sila-chain/sila-besu/pull/2120)
+- Fixed invalid error code in several JSON RPC methods when the requested block is not in the range. [\#2138](https://github.com/sila-chain/sila-besu/pull/2138)
 
 ## Download Link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.7/besu-21.1.7.zip
@@ -1415,25 +1415,25 @@ sha256: f415c9b67d26819caeb9940324b2b1b9ce6e872c9181052739438545e84e2531
 
 ### Additions and Improvements
 
-* Added support for the upcoming BAIKAL ephemeral testnet and removed the configuration for the deprecated YOLOv3 ephemeral testnet. [\#2237](https://github.com/hyperledger/besu/pull/2237)
-* Implemented [SIP-3541](https://sips.sila.org/SIPS/sip-3541): Reject new contracts starting with the 0xEF byte [\#2243](https://github.com/hyperledger/besu/pull/2243)
-* Implemented [SIP-3529](https://sips.sila.org/SIPS/sip-3529): Reduction in refunds [\#2238](https://github.com/hyperledger/besu/pull/2238)
-* Implemented [SIP-3554](https://sips.sila.org/SIPS/sip-3554): Difficulty Bomb Delay [\#2289](https://github.com/hyperledger/besu/pull/2289)
-* \[EXPERIMENTAL\] Added support for secp256r1 keys. [#2008](https://github.com/hyperledger/besu/pull/2008)
+* Added support for the upcoming BAIKAL ephemeral testnet and removed the configuration for the deprecated YOLOv3 ephemeral testnet. [\#2237](https://github.com/sila-chain/sila-besu/pull/2237)
+* Implemented [SIP-3541](https://sips.sila.org/SIPS/sip-3541): Reject new contracts starting with the 0xEF byte [\#2243](https://github.com/sila-chain/sila-besu/pull/2243)
+* Implemented [SIP-3529](https://sips.sila.org/SIPS/sip-3529): Reduction in refunds [\#2238](https://github.com/sila-chain/sila-besu/pull/2238)
+* Implemented [SIP-3554](https://sips.sila.org/SIPS/sip-3554): Difficulty Bomb Delay [\#2289](https://github.com/sila-chain/sila-besu/pull/2289)
+* \[EXPERIMENTAL\] Added support for secp256r1 keys. [#2008](https://github.com/sila-chain/sila-besu/pull/2008)
 
 ### Bug Fixes
 
-- Added ACCESS_LIST transactions to the list of transactions using legacy gas pricing for 1559 [\#2239](https://github.com/hyperledger/besu/pull/2239)
-- Reduced logging level of public key decoding failure of malformed packets. [\#2143](https://github.com/hyperledger/besu/pull/2143)
-- Add 1559 parameters to json-rpc responses.  [\#2222](https://github.com/hyperledger/besu/pull/2222)
+- Added ACCESS_LIST transactions to the list of transactions using legacy gas pricing for 1559 [\#2239](https://github.com/sila-chain/sila-besu/pull/2239)
+- Reduced logging level of public key decoding failure of malformed packets. [\#2143](https://github.com/sila-chain/sila-besu/pull/2143)
+- Add 1559 parameters to json-rpc responses.  [\#2222](https://github.com/sila-chain/sila-besu/pull/2222)
 
 ### Early Access Features
 
 #### Previously identified known issues
 
-- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/hyperledger/besu/pull/2075)
-- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/hyperledger/besu/pull/2120)
-- Fixed invalid error code in several JSON RPC methods when the requested block is not in the range. [\#2138](https://github.com/hyperledger/besu/pull/2138)
+- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/sila-chain/sila-besu/pull/2075)
+- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/sila-chain/sila-besu/pull/2120)
+- Fixed invalid error code in several JSON RPC methods when the requested block is not in the range. [\#2138](https://github.com/sila-chain/sila-besu/pull/2138)
 
 ## Download Link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.6/besu-21.1.6.zip
@@ -1444,19 +1444,19 @@ sha256: 3952c69a32bb390ec84ccf4c2c3eb600ea3696af9a05914985d10e1632ef8488
 
 ### Additions and Improvements
 
-- Ignore `nonce` when supplied to sil_estimateGas or sil_call. [\#2133](https://github.com/hyperledger/besu/pull/2133)
-- Ignore `privateFor` for tx estimation. [\#2160](https://github.com/hyperledger/besu/pull/2160)
+- Ignore `nonce` when supplied to sil_estimateGas or sil_call. [\#2133](https://github.com/sila-chain/sila-besu/pull/2133)
+- Ignore `privateFor` for tx estimation. [\#2160](https://github.com/sila-chain/sila-besu/pull/2160)
 
 ### Bug Fixes
 
-- Fixed `NullPointerException` when crossing network upgrade blocks when peer discovery is disabled. [\#2140](https://github.com/hyperledger/besu/pull/2140)
+- Fixed `NullPointerException` when crossing network upgrade blocks when peer discovery is disabled. [\#2140](https://github.com/sila-chain/sila-besu/pull/2140)
 
 ### Early Access Features
 
 #### Previously identified known issues
 
-- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/hyperledger/besu/pull/2075)
-- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/hyperledger/besu/pull/2120)
+- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/sila-chain/sila-besu/pull/2075)
+- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/sila-chain/sila-besu/pull/2120)
 
 ## Download Link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.5/besu-21.1.5.zip
@@ -1467,12 +1467,12 @@ sha256: edd78fcc772cfa97d11d8ee7b5766e6fac4b31b582f940838a292f2aeb204777
 
 ### Additions and Improvements
 
-- Adds `--discovery-dns-url` CLI command [\#2088](https://github.com/hyperledger/besu/pull/2088)
+- Adds `--discovery-dns-url` CLI command [\#2088](https://github.com/sila-chain/sila-besu/pull/2088)
 
 ### Bug Fixes
 
-- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/hyperledger/besu/pull/2075)
-- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/hyperledger/besu/pull/2120)
+- Fixed issue in discv5 where nonce was incorrectly reused. [\#2075](https://github.com/sila-chain/sila-besu/pull/2075)
+- Fixed issues in debug_standardTraceBadBlockToFile and debug_standardTraceBlockToFile. [\#2120](https://github.com/sila-chain/sila-besu/pull/2120)
 
 ### Early Access Features
 
@@ -1488,10 +1488,10 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.4/besu-21.1.4.z
 ## 21.1.3
 
 ### Additions and Improvements
-* Increase node diversity when downloading blocks [\#2033](https://github.com/hyperledger/besu/pull/2033)
+* Increase node diversity when downloading blocks [\#2033](https://github.com/sila-chain/sila-besu/pull/2033)
 
 ### Bug Fixes
-* Sila Node Records are now dynamically recalculated when we pass network upgrade blocks. This allows for better peering through transitions without needing to restart the node. [\#1998](https://github.com/hyperledger/besu/pull/1998)
+* Sila Node Records are now dynamically recalculated when we pass network upgrade blocks. This allows for better peering through transitions without needing to restart the node. [\#1998](https://github.com/sila-chain/sila-besu/pull/1998)
 
 
 ### Early Access Features
@@ -1511,7 +1511,7 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.3/besu-21.1.3.z
 
 ### Important note: the 21.1.1 release contains an outdated version of the Berlin network upgrade. If you are using Besu on public Sila networks, you must upgrade to 21.1.2.
 
-This release contains the activation blocks for Berlin across all supported testnets and the Sila sila-mainnet. They are:
+This release contains the activation blocks for Berlin across all supported testnets and the Sila mainnet. They are:
   * Ropsten 9_812_189 (10 Mar 2021)
   * Goerli 4_460_644 (17 Mar 2021)
   * Rinkeby 8_290_928 (24 Mar 2021)
@@ -1520,11 +1520,11 @@ This release contains the activation blocks for Berlin across all supported test
 
 ### Additions and Improvements
 - Added option to set a limit for JSON-RPC connections
-  * HTTP connections `--rpc-http-max-active-connections` [\#1996](https://github.com/hyperledger/besu/pull/1996)
-  * WS connections `--rpc-ws-max-active-connections` [\#2006](https://github.com/hyperledger/besu/pull/2006)
-- Added ASTOR testnet ETC support [\#2017](https://github.com/hyperledger/besu/pull/2017)
+  * HTTP connections `--rpc-http-max-active-connections` [\#1996](https://github.com/sila-chain/sila-besu/pull/1996)
+  * WS connections `--rpc-ws-max-active-connections` [\#2006](https://github.com/sila-chain/sila-besu/pull/2006)
+- Added ASTOR testnet ETC support [\#2017](https://github.com/sila-chain/sila-besu/pull/2017)
 ### Bug Fixes
-* Don't Register BLS12 precompiles for Berlin [\#2015](https://github.com/hyperledger/besu/pull/2015)
+* Don't Register BLS12 precompiles for Berlin [\#2015](https://github.com/sila-chain/sila-besu/pull/2015)
 
 #### Previously identified known issues
 
@@ -1541,21 +1541,21 @@ https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/21.1.2/besu-21.1.2.z
 
 ### Important note: this release contains an outdated version of the Berlin network upgrade. If you are using Besu on public Sila networks, you must upgrade to 21.1.2.
 
-This release contains the activation blocks for Berlin across all supported testnets and the Sila sila-mainnet. They are:
+This release contains the activation blocks for Berlin across all supported testnets and the Sila mainnet. They are:
   * Ropsten 9_812_189 (10 Mar 2021)
   * Goerli 4_460_644 (17 Mar 2021)
   * Rinkeby 8_290_928 (24 Mar 2021)
   * Sila 12_244_000 (14 Apr 2021)
 
 ### Additions and Improvements
-* Removed SIP-2315 from the Berlin network upgrade [\#1983](https://github.com/hyperledger/besu/pull/1983)
-* Added `besu_transaction_pool_transactions` to the reported metrics, counting the mempool size [\#1869](https://github.com/hyperledger/besu/pull/1869)
-* Distributions and maven artifacts have been moved off of bintray [\#1886](https://github.com/hyperledger/besu/pull/1886)
+* Removed SIP-2315 from the Berlin network upgrade [\#1983](https://github.com/sila-chain/sila-besu/pull/1983)
+* Added `besu_transaction_pool_transactions` to the reported metrics, counting the mempool size [\#1869](https://github.com/sila-chain/sila-besu/pull/1869)
+* Distributions and maven artifacts have been moved off of bintray [\#1886](https://github.com/sila-chain/sila-besu/pull/1886)
 * admin_peers json RPC response now includes the remote nodes enode URL
-* add support for keccak mining and a ecip1049_dev network [\#1882](https://github.com/hyperledger/besu/pull/1882)
+* add support for keccak mining and a ecip1049_dev network [\#1882](https://github.com/sila-chain/sila-besu/pull/1882)
 ### Bug Fixes
 * Fixed incorrect `groupId` in published maven pom files.
-* Fixed GraphQL response for missing account, return empty account instead [\#1946](https://github.com/hyperledger/besu/issues/1946)
+* Fixed GraphQL response for missing account, return empty account instead [\#1946](https://github.com/sila-chain/sila-besu/issues/1946)
 
 ### Early Access Features
 
@@ -1570,17 +1570,17 @@ sha256: `c22a80a54e9fed864734b9fbd69a0a46840fd27ca5211648a3eaf8a955417218 `
 
 ## 21.1.0
 
-### Important note: this release contains an outdated version of the Berlin network upgrade, which was changed on March 5, 2021 ([link](https://github.com/sila-chain/pm/issues/263#issuecomment-791473406)). If you are using Besu on public Sila networks, you must upgrade to 21.1.2.
+### Important note: this release contains an outdated version of the Berlin network upgrade, which was changed on March 5, 2021 ([link](https://github.com/sila/pm/issues/263#issuecomment-791473406)). If you are using Besu on public Sila networks, you must upgrade to 21.1.2.
 
 ## 21.1.0 Features
 
 Features added between 20.10.0 to 21.1.0 include:
-* Berlin Network Upgrade: this release contains the activation blocks for Berlin across all supported testnets and the Sila sila-mainnet. They are:
+* Berlin Network Upgrade: this release contains the activation blocks for Berlin across all supported testnets and the Sila mainnet. They are:
   * Ropsten 9_812_189 (10 Mar 2021)
   * Goerli 4_460_644 (17 Mar 2021)
   * Rinkeby 8_290_928 (24 Mar 2021)
   * Sila 12_244_000 (14 Apr 2021)
-* Besu Launcher: Besu now has support for the [Quorum SilaMainnet Launcher](https://github.com/ConsenSys/quorum-sila-mainnet-launcher) which makes it easy for users to configure and launch Besu on the Sila sila-mainnet.
+* Besu Launcher: Besu now has support for the [Quorum SilaMainnet Launcher](https://github.com/ConsenSys/quorum-mainnet-launcher) which makes it easy for users to configure and launch Besu on the Sila mainnet.
 * Bonsai Tries: A new database format which reduces storage requirements and improves performance for access to recent state. _Note: only full sync is currently supported._
 * Miner Data JSON-RPC: The `sil_getMinerDataByBlockHash` and `sil_getMinerDataByBlockNumber` endpoints return miner rewards and coinbase address for a given block.
 * SIP-1898 support: [The SIP](https://sips.sila.org/SIPS/sip-1898) adds `blockHash` to JSON-RPC methods which accept a default block parameter.
@@ -1595,8 +1595,8 @@ Features added between 20.10.0 to 21.1.0 include:
 * `sil_call` will not fail for account balance issues by default. An parameter `"strict": true` can be added to the call parameters (with `to` and `from`) to enforce balance checks.
 
 ### Additions and Improvements
-* Added `besu_transaction_pool_transactions` to the reported metrics, counting the mempool size [\#1869](https://github.com/hyperledger/besu/pull/1869)
-* Added activation blocks for Berlin Network Upgrade [\#1929](https://github.com/hyperledger/besu/pull/1929)
+* Added `besu_transaction_pool_transactions` to the reported metrics, counting the mempool size [\#1869](https://github.com/sila-chain/sila-besu/pull/1869)
+* Added activation blocks for Berlin Network Upgrade [\#1929](https://github.com/sila-chain/sila-besu/pull/1929)
 
 ### Bug Fixes
 * Fixed representation of access list for access list transactions in JSON-RPC results.
@@ -1611,7 +1611,7 @@ sha256: `e4c8fe4007e3e5f7f2528cbf1eeb5457caf06536c974a6ff4305035ff5724476`
 
 ## 21.1.0-RC2
 ### Additions and Improvements
-* Support for the Berlin Network Upgrade, although the block number must be set manually with `--override-genesis-config=berlinBlock=<blocknumber>`. This is because the block numbers haven't been determined yet. The next release will include the number in the genesis file so it will support Berlin with no intervention. [\#1898](https://github.com/hyperledger/besu/pull/1898)
+* Support for the Berlin Network Upgrade, although the block number must be set manually with `--override-genesis-config=berlinBlock=<blocknumber>`. This is because the block numbers haven't been determined yet. The next release will include the number in the genesis file so it will support Berlin with no intervention. [\#1898](https://github.com/sila-chain/sila-besu/pull/1898)
 
 ## 21.1.0-RC1
 
@@ -1621,15 +1621,15 @@ sha256: `e4c8fe4007e3e5f7f2528cbf1eeb5457caf06536c974a6ff4305035ff5724476`
 * `sil_call` will not fail for account balance issues by default. An parameter `"strict": true` can be added to the call parameters (with `to` and `from`) to enforce balance checks.
 
 ### Additions and Improvements
-* Removed unused flags in default genesis configs [\#1812](https://github.com/hyperledger/besu/pull/1812)
-* `--skip-pow-validation-enabled` is now an error with `block import --format JSON`. This is because the JSON format doesn't include the nonce so the proof of work must be calculated. [\#1815](https://github.com/hyperledger/besu/pull/1815)
-* Added a new CLI option `--Xlauncher` to start a sila-mainnet launcher. It will help to configure Besu easily.
-* Return the revert reason from `sil_call` JSON-RPC api calls when the contract causes a revert. [\#1829](https://github.com/hyperledger/besu/pull/1829)
-* Added `chainId`, `publicKey`, and `raw` to JSON-RPC api calls returning detailed transaction results. [\#1835](https://github.com/hyperledger/besu/pull/1835)
+* Removed unused flags in default genesis configs [\#1812](https://github.com/sila-chain/sila-besu/pull/1812)
+* `--skip-pow-validation-enabled` is now an error with `block import --format JSON`. This is because the JSON format doesn't include the nonce so the proof of work must be calculated. [\#1815](https://github.com/sila-chain/sila-besu/pull/1815)
+* Added a new CLI option `--Xlauncher` to start a mainnet launcher. It will help to configure Besu easily.
+* Return the revert reason from `sil_call` JSON-RPC api calls when the contract causes a revert. [\#1829](https://github.com/sila-chain/sila-besu/pull/1829)
+* Added `chainId`, `publicKey`, and `raw` to JSON-RPC api calls returning detailed transaction results. [\#1835](https://github.com/sila-chain/sila-besu/pull/1835)
 
 ### Bug Fixes
-* Sila classic heights will no longer be reported in sila-mainnet metrics. Issue [\#1751](https://github.com/hyperledger/besu/pull/1751) Fix [\#1820](https://github.com/hyperledger/besu/pull/1820)
-* Don't enforce balance checks in `sil_call` unless explicitly requested. Issue [\#502](https://github.com/hyperledger/besu/pull/502) Fix [\#1834](https://github.com/hyperledger/besu/pull/1834)
+* Sila classic heights will no longer be reported in mainnet metrics. Issue [\#1751](https://github.com/sila-chain/sila-besu/pull/1751) Fix [\#1820](https://github.com/sila-chain/sila-besu/pull/1820)
+* Don't enforce balance checks in `sil_call` unless explicitly requested. Issue [\#502](https://github.com/sila-chain/sila-besu/pull/502) Fix [\#1834](https://github.com/sila-chain/sila-besu/pull/1834)
 
 ### Early Access Features
 
@@ -1641,21 +1641,21 @@ sha256: `e4c8fe4007e3e5f7f2528cbf1eeb5457caf06536c974a6ff4305035ff5724476`
 
 ### Download link
 
-Link removed because this release contains an outdated version of the Berlin network upgrade, which was changed on March 5, 2021 ([link](https://github.com/sila-chain/pm/issues/263#issuecomment-791473406)). If you are using Besu on public Sila networks, you must upgrade to 21.1.1. sha256 hash left for reference.
+Link removed because this release contains an outdated version of the Berlin network upgrade, which was changed on March 5, 2021 ([link](https://github.com/sila/pm/issues/263#issuecomment-791473406)). If you are using Besu on public Sila networks, you must upgrade to 21.1.1. sha256 hash left for reference.
 
 sha256: `b0fe3942052b8fd43fc3025a298a6c701f9edae2e100f0c563a1c5a4ceef71f1`
 
 ## 20.10.4
 
 ### Additions and Improvements
-* Implemented [SIP-778](https://sips.sila.org/SIPS/sip-778): Sila Node Records (ENR) [\#1680](https://github.com/hyperledger/besu/pull/1680)
-* Implemented [SIP-868](https://sips.sila.org/SIPS/sip-868): Node Discovery v4 ENR Extension [\#1721](https://github.com/hyperledger/besu/pull/1721)
-* Added revert reason to sil_estimateGas RPC call. [\#1730](https://github.com/hyperledger/besu/pull/1730)
-* Added command line option --static-nodes-file. [#1644](https://github.com/hyperledger/besu/pull/1644)
-* Implemented [SIP-1898](https://sips.sila.org/SIPS/sip-1898): Add `blockHash` to JSON-RPC methods which accept a default block parameter [\#1757](https://github.com/hyperledger/besu/pull/1757)
+* Implemented [SIP-778](https://sips.sila.org/SIPS/sip-778): Sila Node Records (ENR) [\#1680](https://github.com/sila-chain/sila-besu/pull/1680)
+* Implemented [SIP-868](https://sips.sila.org/SIPS/sip-868): Node Discovery v4 ENR Extension [\#1721](https://github.com/sila-chain/sila-besu/pull/1721)
+* Added revert reason to sil_estimateGas RPC call. [\#1730](https://github.com/sila-chain/sila-besu/pull/1730)
+* Added command line option --static-nodes-file. [#1644](https://github.com/sila-chain/sila-besu/pull/1644)
+* Implemented [SIP-1898](https://sips.sila.org/SIPS/sip-1898): Add `blockHash` to JSON-RPC methods which accept a default block parameter [\#1757](https://github.com/sila-chain/sila-besu/pull/1757)
 
 ### Bug Fixes
-* Accept locally-sourced transactions below the minimum gas price. [#1480](https://github.com/hyperledger/besu/issues/1480) [#1743](https://github.com/hyperledger/besu/pull/1743)
+* Accept locally-sourced transactions below the minimum gas price. [#1480](https://github.com/sila-chain/sila-besu/issues/1480) [#1743](https://github.com/sila-chain/sila-besu/pull/1743)
 
 #### Previously identified known issues
 
@@ -1669,15 +1669,15 @@ sha256: f15cd5243b809659bba1706c1745aecafc012d3fc44a91419522da925493537c
 ## 20.10.3
 
 ### Additions and Improvements
-* Added `memory` as an option to `--key-value-storage`.  This ephemeral storage is intended for sync testing and debugging.  [\#1617](https://github.com/hyperledger/besu/pull/1617)
-* Fixed gasPrice parameter not always respected when passed to `sil_estimateGas` endpoint [\#1636](https://github.com/hyperledger/besu/pull/1636)
-* Enabled sil65 by default [\#1682](https://github.com/hyperledger/besu/pull/1682)
-* Warn that bootnodes will be ignored if specified with discovery disabled [\#1717](https://github.com/hyperledger/besu/pull/1717)
+* Added `memory` as an option to `--key-value-storage`.  This ephemeral storage is intended for sync testing and debugging.  [\#1617](https://github.com/sila-chain/sila-besu/pull/1617)
+* Fixed gasPrice parameter not always respected when passed to `sil_estimateGas` endpoint [\#1636](https://github.com/sila-chain/sila-besu/pull/1636)
+* Enabled sil65 by default [\#1682](https://github.com/sila-chain/sila-besu/pull/1682)
+* Warn that bootnodes will be ignored if specified with discovery disabled [\#1717](https://github.com/sila-chain/sila-besu/pull/1717)
 
 ### Bug Fixes
-* Accept to use default port values if not in use. [#1673](https://github.com/hyperledger/besu/pull/1673)
-* Block Validation Errors should be at least INFO level not DEBUG or TRACE.  Bug [\#1568](https://github.com/hyperledger/besu/pull/1568) PR [\#1706](https://github.com/hyperledger/besu/pull/1706)
-* Fixed invalid and wrong trace data, especially when calling a precompiled contract [#1710](https://github.com/hyperledger/besu/pull/1710)
+* Accept to use default port values if not in use. [#1673](https://github.com/sila-chain/sila-besu/pull/1673)
+* Block Validation Errors should be at least INFO level not DEBUG or TRACE.  Bug [\#1568](https://github.com/sila-chain/sila-besu/pull/1568) PR [\#1706](https://github.com/sila-chain/sila-besu/pull/1706)
+* Fixed invalid and wrong trace data, especially when calling a precompiled contract [#1710](https://github.com/sila-chain/sila-besu/pull/1710)
 
 #### Previously identified known issues
 
@@ -1691,16 +1691,16 @@ sha256: `b5f46d945754dedcbbb1e5dd96bf2bfd13272ff09c6a66c0150b979a578f4389`
 ## 20.10.2
 
 ### Additions and Improvements
-* Added support for batched requests in WebSockets. [#1583](https://github.com/hyperledger/besu/pull/1583)
-* Added protocols section to `admin_peers` to provide info about peer health. [\#1582](https://github.com/hyperledger/besu/pull/1582)
-* Added CLI option `--goquorum-compatibility-enabled` to enable GoQuorum compatibility mode. [#1598](https://github.com/hyperledger/besu/pull/1598). Note that this mode is incompatible with SilaMainnet.
+* Added support for batched requests in WebSockets. [#1583](https://github.com/sila-chain/sila-besu/pull/1583)
+* Added protocols section to `admin_peers` to provide info about peer health. [\#1582](https://github.com/sila-chain/sila-besu/pull/1582)
+* Added CLI option `--goquorum-compatibility-enabled` to enable GoQuorum compatibility mode. [#1598](https://github.com/sila-chain/sila-besu/pull/1598). Note that this mode is incompatible with SilaMainnet.
 
 ### Bug Fixes
 
-* Ibft2 will discard any received messages targeting a chain height <= current head - this resolves some corner cases in system correctness directly following block import. [#1575](https://github.com/hyperledger/besu/pull/1575)
-* SavmTool now throws `UnsupportedForkException` when there is an unknown fork and is YOLOv2 compatible [\#1584](https://github.com/hyperledger/besu/pull/1584)
-* `sil_newFilter` now supports `blockHash` parameter as per the spec [\#1548](https://github.com/hyperledger/besu/issues/1540). (`blockhash` is also still supported.)
-* Fixed an issue that caused loss of peers and desynchronization when sil65 was enabled [\#1601](https://github.com/hyperledger/besu/pull/1601)
+* Ibft2 will discard any received messages targeting a chain height <= current head - this resolves some corner cases in system correctness directly following block import. [#1575](https://github.com/sila-chain/sila-besu/pull/1575)
+* SavmTool now throws `UnsupportedForkException` when there is an unknown fork and is YOLOv2 compatible [\#1584](https://github.com/sila-chain/sila-besu/pull/1584)
+* `sil_newFilter` now supports `blockHash` parameter as per the spec [\#1548](https://github.com/sila-chain/sila-besu/issues/1540). (`blockhash` is also still supported.)
+* Fixed an issue that caused loss of peers and desynchronization when sil65 was enabled [\#1601](https://github.com/sila-chain/sila-besu/pull/1601)
 
 #### Previously identified known issues
 
@@ -1715,36 +1715,36 @@ sha256: `710aed228dcbe9b8103aef39e4431b0c63e73c3a708ce88bcd1ecfa1722ad307`
 ## 20.10.1
 
 ### Additions and Improvements
-* `--random-peer-priority-enabled` flag added. Allows for incoming connections to be prioritized randomly. This will prevent (typically small, stable) networks from forming impenetrable peer cliques. [#1440](https://github.com/hyperledger/besu/pull/1440)
+* `--random-peer-priority-enabled` flag added. Allows for incoming connections to be prioritized randomly. This will prevent (typically small, stable) networks from forming impenetrable peer cliques. [#1440](https://github.com/sila-chain/sila-besu/pull/1440)
 * `miner_changeTargetGasLimit` RPC added. If a target gas limit is set, allows the node operator to change it at runtime.
-* Hide deprecated `--host-whitelist` option. [\#1444](https://github.com/hyperledger/besu/pull/1444)
-* Prioritize high gas prices during mining. Previously we ordered only by the order in which the transactions were received. This will increase expected profit when mining. [\#1449](https://github.com/hyperledger/besu/pull/1449)
-* Added support for the updated smart contract-based [node permissioning EEA interface](https://entsilalliance.github.io/client-spec/spec.html#dfn-connectionallowed). [\#1435](https://github.com/hyperledger/besu/pull/1435) and [\#1496](https://github.com/hyperledger/besu/pull/1496)
-* Added SavmTool binary to the distribution.  SavmTool is a CLI that can execute SAVM bytecode and execute sila state tests. [\#1465](https://github.com/hyperledger/besu/pull/1465)
-* Updated the libraries for secp256k1 and AltBN series precompiles. These updates provide significant performance improvements to those areas. [\#1499](https://github.com/hyperledger/besu/pull/1499)
-* Provide MegaGas/second measurements in the log when doing a full block import, such as the catch up phase of a fast sync. [\#1512](https://github.com/hyperledger/besu/pull/1512)
-* Added new endpoints to get miner data, `sil_getMinerDataByBlockHash` and `sil_getMinerDataByBlockNumber`. [\#1538](https://github.com/hyperledger/besu/pull/1538)
-* Added direct support for OpenTelemetry metrics [\#1492](https://github.com/hyperledger/besu/pull/1492)
-* Added support for `qip714block` config parameter in genesis file, paving the way towards permissioning interoperability between Besu and GoQuorum. [\#1545](https://github.com/hyperledger/besu/pull/1545)
-* Added new CLI option `--compatibility-sil64-forkid-enabled`. [\#1542](https://github.com/hyperledger/besu/pull/1542)
+* Hide deprecated `--host-whitelist` option. [\#1444](https://github.com/sila-chain/sila-besu/pull/1444)
+* Prioritize high gas prices during mining. Previously we ordered only by the order in which the transactions were received. This will increase expected profit when mining. [\#1449](https://github.com/sila-chain/sila-besu/pull/1449)
+* Added support for the updated smart contract-based [node permissioning EEA interface](https://entethalliance.github.io/client-spec/spec.html#dfn-connectionallowed). [\#1435](https://github.com/sila-chain/sila-besu/pull/1435) and [\#1496](https://github.com/sila-chain/sila-besu/pull/1496)
+* Added SavmTool binary to the distribution.  SavmTool is a CLI that can execute SAVM bytecode and execute sila state tests. [\#1465](https://github.com/sila-chain/sila-besu/pull/1465)
+* Updated the libraries for secp256k1 and AltBN series precompiles. These updates provide significant performance improvements to those areas. [\#1499](https://github.com/sila-chain/sila-besu/pull/1499)
+* Provide MegaGas/second measurements in the log when doing a full block import, such as the catch up phase of a fast sync. [\#1512](https://github.com/sila-chain/sila-besu/pull/1512)
+* Added new endpoints to get miner data, `sil_getMinerDataByBlockHash` and `sil_getMinerDataByBlockNumber`. [\#1538](https://github.com/sila-chain/sila-besu/pull/1538)
+* Added direct support for OpenTelemetry metrics [\#1492](https://github.com/sila-chain/sila-besu/pull/1492)
+* Added support for `qip714block` config parameter in genesis file, paving the way towards permissioning interoperability between Besu and GoQuorum. [\#1545](https://github.com/sila-chain/sila-besu/pull/1545)
+* Added new CLI option `--compatibility-sil64-forkid-enabled`. [\#1542](https://github.com/sila-chain/sila-besu/pull/1542)
 
 ### Bug Fixes
 
-* Fix a bug on `sil_estimateGas` which returned `Internal error` instead of `Execution reverted` in case of reverted transaction. [\#1478](https://github.com/hyperledger/besu/pull/1478)
-* Fixed a bug where Local Account Permissioning was being incorrectly enforced on block import/validation. [\#1510](https://github.com/hyperledger/besu/pull/1510)
-* Fixed invalid enode URL when discovery is disabled  [\#1521](https://github.com/hyperledger/besu/pull/1521)
-* Removed duplicate files from zip and tar.gz distributions. [\#1566](https://github.com/hyperledger/besu/pull/1566)
-* Add a more rational value to sil_gasPrice, based on a configurable percentile of prior block's transactions (default: median of last 100 blocks).  [\#1563](https://github.com/hyperledger/besu/pull/1563)
+* Fix a bug on `sil_estimateGas` which returned `Internal error` instead of `Execution reverted` in case of reverted transaction. [\#1478](https://github.com/sila-chain/sila-besu/pull/1478)
+* Fixed a bug where Local Account Permissioning was being incorrectly enforced on block import/validation. [\#1510](https://github.com/sila-chain/sila-besu/pull/1510)
+* Fixed invalid enode URL when discovery is disabled  [\#1521](https://github.com/sila-chain/sila-besu/pull/1521)
+* Removed duplicate files from zip and tar.gz distributions. [\#1566](https://github.com/sila-chain/sila-besu/pull/1566)
+* Add a more rational value to sil_gasPrice, based on a configurable percentile of prior block's transactions (default: median of last 100 blocks).  [\#1563](https://github.com/sila-chain/sila-besu/pull/1563)
 
 ## Deprecated
 
 ### --privacy-precompiled-address (Scheduled for removal in _Next_ Release)
 Deprecated in 1.5.1
-- CLI option `--privacy-precompiled-address` option removed. This address is now derived, based	on `--privacy-onchain-groups-enabled`. [\#1222](https://github.com/hyperledger/besu/pull/1222)
+- CLI option `--privacy-precompiled-address` option removed. This address is now derived, based	on `--privacy-onchain-groups-enabled`. [\#1222](https://github.com/sila-chain/sila-besu/pull/1222)
 
 ### Besu Sample Network repository
 
-The [Besu Sample Networks repository](https://github.com/ConsenSys/besu-sample-networks) has been replaced by the [Quorum Developer Quickstart](https://besu.hyperledger.org/en/latest/Tutorials/Developer-Quickstart).
+The [Besu Sample Networks repository](https://github.com/sila-chain/sila-besu-sample-networks) has been replaced by the [Quorum Developer Quickstart](https://besu.hyperledger.org/en/latest/Tutorials/Developer-Quickstart).
 
 #### Previously identified known issues
 
@@ -1767,7 +1767,7 @@ Hyperledger Besu is moving its versioning scheme to [CalVer](https://calver.org/
 
 When upgrading to 20.10, ensure you've taken into account the following breaking changes.
 
-### JSON-RPC HTTP Error Codes For Valid Calls ([\#1426](https://github.com/hyperledger/besu/pull/1426))
+### JSON-RPC HTTP Error Codes For Valid Calls ([\#1426](https://github.com/sila-chain/sila-besu/pull/1426))
 
 Prior versions of Besu would set the HTTP Status 400 Bad Request for JSON-RPC requests that completed in an error, regardless of the kind of error.  These responses could include a complete JSON-RPC response with an error field.
 
@@ -1777,21 +1777,21 @@ Users of Web3J should note that many calls will now return a result with the err
 
 ## 20.10.0 Additions and Improvements
 
-* Added support for ECIP-1099 / Classic Thanos Fork: Calibrate Epoch Duration. [\#1421](https://github.com/hyperledger/besu/pull/1421) [\#1441](https://github.com/hyperledger/besu/pull/1441) [\#1462](https://github.com/hyperledger/besu/pull/1462)
+* Added support for ECIP-1099 / Classic Thanos Fork: Calibrate Epoch Duration. [\#1421](https://github.com/sila-chain/sila-besu/pull/1421) [\#1441](https://github.com/sila-chain/sila-besu/pull/1441) [\#1462](https://github.com/sila-chain/sila-besu/pull/1462)
 * Added the Open Telemetry Java agent to report traces to a remote backend. Added an example to showcase the trace reporting capabilities.
-* Added SavmTool binary to the distribution.  SavmTool is a CLI that can execute SAVM bytecode and execute sila state tests. Documentation for it is available [here](https://besu.hyperledger.org/en/stable/HowTo/Troubleshoot/Use-SAVM-Tool/). [\#1465](https://github.com/hyperledger/besu/pull/1465)
-* Added support for the upcoming YOLOv2 ephemeral testnet and removed the flag for the deprecated YOLOv1 ephemeral testnet. [#1386](https://github.com/hyperledger/besu/pull/1386)
-* Added `debug_standardTraceBlockToFile` JSON-RPC API. This API accepts a block hash and will replay the block. It returns a list of files containing the result of the trace (one file per transaction). [\#1392](https://github.com/hyperledger/besu/pull/1392)
-* Added `debug_standardTraceBadBlockToFile` JSON-RPC API. This API is similar to `debug_standardTraceBlockToFile`, but can be used to obtain info about a block which has been rejected as invalid. [\#1403](https://github.com/hyperledger/besu/pull/1403)
-* Added support for SIP-2929 to YOLOv2. [#1387](https://github.com/hyperledger/besu/pull/1387)
-* Added `--start-block` and `--end-block` to the `blocks import` subcommand [\#1399](https://github.com/hyperledger/besu/pull/1399)
+* Added SavmTool binary to the distribution.  SavmTool is a CLI that can execute SAVM bytecode and execute sila state tests. Documentation for it is available [here](https://besu.hyperledger.org/en/stable/HowTo/Troubleshoot/Use-SAVM-Tool/). [\#1465](https://github.com/sila-chain/sila-besu/pull/1465)
+* Added support for the upcoming YOLOv2 ephemeral testnet and removed the flag for the deprecated YOLOv1 ephemeral testnet. [#1386](https://github.com/sila-chain/sila-besu/pull/1386)
+* Added `debug_standardTraceBlockToFile` JSON-RPC API. This API accepts a block hash and will replay the block. It returns a list of files containing the result of the trace (one file per transaction). [\#1392](https://github.com/sila-chain/sila-besu/pull/1392)
+* Added `debug_standardTraceBadBlockToFile` JSON-RPC API. This API is similar to `debug_standardTraceBlockToFile`, but can be used to obtain info about a block which has been rejected as invalid. [\#1403](https://github.com/sila-chain/sila-besu/pull/1403)
+* Added support for SIP-2929 to YOLOv2. [#1387](https://github.com/sila-chain/sila-besu/pull/1387)
+* Added `--start-block` and `--end-block` to the `blocks import` subcommand [\#1399](https://github.com/sila-chain/sila-besu/pull/1399)
 * Added support for multi-tenancy when using the early access feature of [onchain privacy group management](https://besu.hyperledger.org/en/stable/Concepts/Privacy/Onchain-PrivacyGroups/)
-* \[Reverted\] Fixed memory leak in sil/65 subprotocol behavior. It is now enabled by default. [\#1420](https://github.com/hyperledger/besu/pull/1420), [#1348](https://github.com/hyperledger/besu/pull/1348), [#1321](https://github.com/hyperledger/besu/pull/1321)
+* \[Reverted\] Fixed memory leak in sil/65 subprotocol behavior. It is now enabled by default. [\#1420](https://github.com/sila-chain/sila-besu/pull/1420), [#1348](https://github.com/sila-chain/sila-besu/pull/1348), [#1321](https://github.com/sila-chain/sila-besu/pull/1321)
 
 ### Bug Fixes
 
-* Log block import rejection reasons at "INFO" level.  Bug [#1412](https://github.com/hyperledger/besu/issues/1412)
-* Fixed NPE when executing `sil_estimateGas` with privacy enabled.  Bug [#1404](https://github.com/hyperledger/besu/issues/1404)
+* Log block import rejection reasons at "INFO" level.  Bug [#1412](https://github.com/sila-chain/sila-besu/issues/1412)
+* Fixed NPE when executing `sil_estimateGas` with privacy enabled.  Bug [#1404](https://github.com/sila-chain/sila-besu/issues/1404)
 
 #### Previously identified known issues
 
@@ -1804,7 +1804,7 @@ Users of Web3J should note that many calls will now return a result with the err
 ### --privacy-precompiled-address
 Deprecated in 1.5.1
 - CLI option `--privacy-precompiled-address` option removed. This address is now derived, based
-on `--privacy-onchain-groups-enabled`. [\#1222](https://github.com/hyperledger/besu/pull/1222)
+on `--privacy-onchain-groups-enabled`. [\#1222](https://github.com/sila-chain/sila-besu/pull/1222)
 
 ### Download link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/20.10.0/besu-20.10.0.zip
@@ -1817,8 +1817,8 @@ sha256sum: `2b50a375aae64b838a2cd9d43747006492cae573f1be11745b7f643646fd5a01`
 * The new version of the [web3js-eea library (v0.10)](https://github.com/PegaSysEng/web3js-eea) supports the onchain privacy group management changes made in Besu v1.5.3.
 
 ### Bug Fixes
-* Added `debug_getBadBlocks` JSON-RPC API to analyze and detect consensus flaws. Even if a block is rejected it will be returned by this method [\#1378](https://github.com/hyperledger/besu/pull/1378)
-* Fix logs queries missing results against chain head [\#1351](https://github.com/hyperledger/besu/pull/1351) and [\#1381](https://github.com/hyperledger/besu/pull/1381)
+* Added `debug_getBadBlocks` JSON-RPC API to analyze and detect consensus flaws. Even if a block is rejected it will be returned by this method [\#1378](https://github.com/sila-chain/sila-besu/pull/1378)
+* Fix logs queries missing results against chain head [\#1351](https://github.com/sila-chain/sila-besu/pull/1351) and [\#1381](https://github.com/sila-chain/sila-besu/pull/1381)
 
 #### Previously identified known issues
 
@@ -1838,14 +1838,14 @@ sha256sum: `e67b0a899dc4421054eaa9a8112cb89e1e5f6a56f0d8aa1b0c5111c53dfad2ad`
 
 ### Additions and Improvements
 
-* Added `priv_debugGetStateRoot` JSON-RPC API to retrieve the state root of a specified privacy group. [\#1326](https://github.com/hyperledger/besu/pull/1326)
+* Added `priv_debugGetStateRoot` JSON-RPC API to retrieve the state root of a specified privacy group. [\#1326](https://github.com/sila-chain/sila-besu/pull/1326)
 * Added reorg logging and `--reorg-logging-threshold` to configure the same. Besu now logs any reorgs where the old or new chain head is more than the threshold away from their common ancestors. The default is 6.
-* Added `debug_batchSendRawTransaction` JSON-RPC API to submit multiple signed transactions with a single call. [\#1350](https://github.com/hyperledger/besu/pull/1350)
+* Added `debug_batchSendRawTransaction` JSON-RPC API to submit multiple signed transactions with a single call. [\#1350](https://github.com/sila-chain/sila-besu/pull/1350)
 
 ### Bug Fixes
 
-* The metrics HTTP server no longer rejects requests containing `Accept` header that doesn't precisely match the promsileus text format [\#1345](https://github.com/hyperledger/besu/pull/1345)
-* JSON-RPC method `net_version` should return network ID instead of chain ID [\#1355](https://github.com/hyperledger/besu/pull/1355)
+* The metrics HTTP server no longer rejects requests containing `Accept` header that doesn't precisely match the prometheus text format [\#1345](https://github.com/sila-chain/sila-besu/pull/1345)
+* JSON-RPC method `net_version` should return network ID instead of chain ID [\#1355](https://github.com/sila-chain/sila-besu/pull/1355)
 
 #### Previously identified known issues
 
@@ -1864,13 +1864,13 @@ sha256sum: `1f4df8e1c5e3b5b3abf6289ccfe70f302aa7c29a652b2eb713ffbdc507670420`
 
 ### Additions and Improvements
 
-* The SavmTool now processes State Tests from the Sila Reference Tests. [\#1311](https://github.com/hyperledger/besu/pull/1311)
-* Early access DNS support added via the `--Xdns-enabled` and `--Xdns-update-enabled` CLI options. [\#1247](https://github.com/hyperledger/besu/pull/1247)
-* Add genesis config option `ecip1017EraRounds` for Sila Classic chains. [\#1329](https://github.com/hyperledger/besu/pull/1329)
+* The SavmTool now processes State Tests from the Sila Reference Tests. [\#1311](https://github.com/sila-chain/sila-besu/pull/1311)
+* Early access DNS support added via the `--Xdns-enabled` and `--Xdns-update-enabled` CLI options. [\#1247](https://github.com/sila-chain/sila-besu/pull/1247)
+* Add genesis config option `ecip1017EraRounds` for Sila Classic chains. [\#1329](https://github.com/sila-chain/sila-besu/pull/1329)
 
 ### Bug Fixes
 
-* K8S Permissioning to use of Service IP's rather than pod IP's which can fail [\#1190](https://github.com/hyperledger/besu/issues/1190)
+* K8S Permissioning to use of Service IP's rather than pod IP's which can fail [\#1190](https://github.com/sila-chain/sila-besu/issues/1190)
 
 #### Previously identified known issues
 
@@ -1902,11 +1902,11 @@ sha256sum: `735cd511e1dae1590f2829d9535cb383aa8c526f059b3451859e5fcfccc48985`
 
 ### Additions and Improvements
 
-* Experimental offline backup and restore has been added via the `operator x-backup-state` and `operator x-restore-state` CLI commands.  Data formats will be fluid for as long as the `x-` prefix is present in the CLI so it is advised not to rely on these backups for disaster recovery. [\#1235](https://github.com/hyperledger/besu/pull/1235)
-* Experimental silstats support added via the `Xsilstats` and `Xsilstats-contact` CLI commands. [\#1239](https://github.com/hyperledger/besu/pull/1239)
-* Peers added via the JSON-RPC `admin_addPeer` and `admin_removePeer` will be shared or no longer shared via discovery respectively.  Previously they were not shared. [\#1177](https://github.com/hyperledger/besu/pull/1177) contributed by [br0tchain](https://github.com/br0tchain).
-* New Docker Images (see below). [\#1277](https://github.com/hyperledger/besu/pull/1277)
-* Reworked static peer discovery handling. [\#1292](https://github.com/hyperledger/besu/pull/1292)
+* Experimental offline backup and restore has been added via the `operator x-backup-state` and `operator x-restore-state` CLI commands.  Data formats will be fluid for as long as the `x-` prefix is present in the CLI so it is advised not to rely on these backups for disaster recovery. [\#1235](https://github.com/sila-chain/sila-besu/pull/1235)
+* Experimental ethstats support added via the `Xethstats` and `Xethstats-contact` CLI commands. [\#1239](https://github.com/sila-chain/sila-besu/pull/1239)
+* Peers added via the JSON-RPC `admin_addPeer` and `admin_removePeer` will be shared or no longer shared via discovery respectively.  Previously they were not shared. [\#1177](https://github.com/sila-chain/sila-besu/pull/1177) contributed by [br0tchain](https://github.com/br0tchain).
+* New Docker Images (see below). [\#1277](https://github.com/sila-chain/sila-besu/pull/1277)
+* Reworked static peer discovery handling. [\#1292](https://github.com/sila-chain/sila-besu/pull/1292)
 
 ### New Java VMs in Docker Image
 
@@ -1917,9 +1917,9 @@ sha256sum: `735cd511e1dae1590f2829d9535cb383aa8c526f059b3451859e5fcfccc48985`
 The intent is that the major Java VM version or Java VM type shipped with the default docker images (`latest`, `1.5.x`, etc.) may be changed during future quarterly releases but will remain consistent within quarterly releases.
 
 ### Bug Fixes
-- Offchain permissioning - fixed bug where sync status check prevented peering if static nodes configured. [\#1252](https://github.com/hyperledger/besu/issues/1252)
+- Offchain permissioning - fixed bug where sync status check prevented peering if static nodes configured. [\#1252](https://github.com/sila-chain/sila-besu/issues/1252)
 
-- GraphQL queries of `miner` in IBFT networks will no longer return an error.  PR [\#1282](https://github.com/hyperledger/besu/pull/1282) issue [\#1272](https://github.com/hyperledger/besu/issues/1272).
+- GraphQL queries of `miner` in IBFT networks will no longer return an error.  PR [\#1282](https://github.com/sila-chain/sila-besu/pull/1282) issue [\#1272](https://github.com/sila-chain/sila-besu/issues/1272).
 
 #### Previously identified known issues
 
@@ -1932,8 +1932,8 @@ The intent is that the major Java VM version or Java VM type shipped with the de
 
 ### New and Old Maintainer
 
-- [David Mechler](https://github.com/hyperledger/besu/commits?author=davemec) has been added as a [new maintainer](https://github.com/hyperledger/besu/pull/1267).
-- [Edward Evans](https://github.com/hyperledger/besu/commits?author=EdJoJob) voluntarily moved to [emeritus status](https://github.com/hyperledger/besu/pull/1270).
+- [David Mechler](https://github.com/sila-chain/sila-besu/commits?author=davemec) has been added as a [new maintainer](https://github.com/sila-chain/sila-besu/pull/1267).
+- [Edward Evans](https://github.com/sila-chain/sila-besu/commits?author=EdJoJob) voluntarily moved to [emeritus status](https://github.com/sila-chain/sila-besu/pull/1270).
 
 ### Download link
 https://hyperledger.jfrog.io/artifactory/besu-binaries/besu/1.5.2/besu-1.5.2.zip
@@ -1944,24 +1944,24 @@ sha256sum: `629f44e230a635b09f8d82f2196d70d31193233718118a46412f11c50772dc85`
 
 ### Deprecated
 - CLI option `--privacy-precompiled-address` option is deprecated. This address is now derived, based
-on `--privacy-onchain-groups-enabled`. [\#1222](https://github.com/hyperledger/besu/pull/1222)
+on `--privacy-onchain-groups-enabled`. [\#1222](https://github.com/sila-chain/sila-besu/pull/1222)
 
 ### Additions and Improvements
 
-* In an IBFT2 network, a fixed block reward value and recipient address can be defined in genesis file [\#1132](https://github.com/hyperledger/besu/pull/1132)
-* JSON-RPC HTTP API Authorization: exit early when checking user permissions. [\#1144](https://github.com/hyperledger/besu/pull/1144)
-* HTTP/2 is enabled for JSON-RPC HTTP API over TLS. [\#1145](https://github.com/hyperledger/besu/pull/1145)
-* Color output in consoles. It can be disabled with `--color-enabled=false` [\#1257](https://github.com/hyperledger/besu/pull/1257)
-* Add compatibility with ClusterIP services for the Kubernetes Nat Manager  [\#1156](https://github.com/hyperledger/besu/pull/1156)
-* In an IBFT2 network; a fixed block reward value and recipient address can be defined in genesis file [\#1132](https://github.com/hyperledger/besu/pull/1132)
-* Add fee cap for transactions submitted via RPC. [\#1137](https://github.com/hyperledger/besu/pull/1137)
+* In an IBFT2 network, a fixed block reward value and recipient address can be defined in genesis file [\#1132](https://github.com/sila-chain/sila-besu/pull/1132)
+* JSON-RPC HTTP API Authorization: exit early when checking user permissions. [\#1144](https://github.com/sila-chain/sila-besu/pull/1144)
+* HTTP/2 is enabled for JSON-RPC HTTP API over TLS. [\#1145](https://github.com/sila-chain/sila-besu/pull/1145)
+* Color output in consoles. It can be disabled with `--color-enabled=false` [\#1257](https://github.com/sila-chain/sila-besu/pull/1257)
+* Add compatibility with ClusterIP services for the Kubernetes Nat Manager  [\#1156](https://github.com/sila-chain/sila-besu/pull/1156)
+* In an IBFT2 network; a fixed block reward value and recipient address can be defined in genesis file [\#1132](https://github.com/sila-chain/sila-besu/pull/1132)
+* Add fee cap for transactions submitted via RPC. [\#1137](https://github.com/sila-chain/sila-besu/pull/1137)
 
 ### Bug fixes
 
-* When the default sync mode was changed to fast sync for named networks, there was one caveat we didn't address. The `dev` network should've been full sync by default. This has now been fixed. [\#1257](https://github.com/hyperledger/besu/pull/1257)
-* Fix synchronization timeout issue when the blocks were too large [\#1149](https://github.com/hyperledger/besu/pull/1149)
-* Fix missing results from sil_getLogs request. [\#1154](https://github.com/hyperledger/besu/pull/1154)
-* Fix issue allowing Besu to be used for DDoS amplification. [\#1146](https://github.com/hyperledger/besu/pull/1146)
+* When the default sync mode was changed to fast sync for named networks, there was one caveat we didn't address. The `dev` network should've been full sync by default. This has now been fixed. [\#1257](https://github.com/sila-chain/sila-besu/pull/1257)
+* Fix synchronization timeout issue when the blocks were too large [\#1149](https://github.com/sila-chain/sila-besu/pull/1149)
+* Fix missing results from sil_getLogs request. [\#1154](https://github.com/sila-chain/sila-besu/pull/1154)
+* Fix issue allowing Besu to be used for DDoS amplification. [\#1146](https://github.com/sila-chain/sila-besu/pull/1146)
 
 ### Known Issues
 
@@ -2035,17 +2035,17 @@ Features added between from 1.4 to 1.5 include:
 
 ## 1.5 Additions and Improvements
 
-* Public Networks Default to Fast Sync: The default sync mode for named permissionless networks, such as the Sila sila-mainnet and testnets, is now `FAST`.
+* Public Networks Default to Fast Sync: The default sync mode for named permissionless networks, such as the Sila mainnet and testnets, is now `FAST`.
   * The default is unchanged for private networks. That is, the sync mode defaults to `FULL` for private networks.
-  * Use the [`--sync-mode` command line option](https://besu.hyperledger.org/Reference/CLI/CLI-Syntax/#sync-mode) to change the sync mode. [\#384](https://github.com/hyperledger/besu/pull/384)
-* Proper Mining Support: Added full support for `sil_hashrate` and `sil_submitHashrate`. It is now possible to have the hashrate when we mine with a GPU mining worker [\#1063](https://github.com/hyperledger/besu/pull/1063)
-* Performance Improvements: The addition of native libraries ([\#775](https://github.com/hyperledger/besu/pull/775)) and changes to data structures in the SAVM ([\#1089](https://github.com/hyperledger/besu/pull/1089)) have improved Besu sync and SAVM execution times.
+  * Use the [`--sync-mode` command line option](https://besu.hyperledger.org/Reference/CLI/CLI-Syntax/#sync-mode) to change the sync mode. [\#384](https://github.com/sila-chain/sila-besu/pull/384)
+* Proper Mining Support: Added full support for `sil_hashrate` and `sil_submitHashrate`. It is now possible to have the hashrate when we mine with a GPU mining worker [\#1063](https://github.com/sila-chain/sila-besu/pull/1063)
+* Performance Improvements: The addition of native libraries ([\#775](https://github.com/sila-chain/sila-besu/pull/775)) and changes to data structures in the SAVM ([\#1089](https://github.com/sila-chain/sila-besu/pull/1089)) have improved Besu sync and SAVM execution times.
 * Tracing API Improvements: The [Tracing API](https://besu.hyperledger.org/en/latest/Reference/API-Methods/#trace-methods) is no longer an Early Access feature and now has full support for `trace_replayBlockTransactions`, `trace_Block` and `trace_transaction`.
-* New Plugin API Block Events: `BlockAdded` and `BlockReorg` are now exposed via the Plugin API [\#637](https://github.com/hyperledger/besu/pull/637).
-* Added experimental CLI option `--Xnat-kube-pod-name` to specify the name of the loadbalancer used by the Kubernetes nat manager [\#1078](https://github.com/hyperledger/besu/pull/1078)
+* New Plugin API Block Events: `BlockAdded` and `BlockReorg` are now exposed via the Plugin API [\#637](https://github.com/sila-chain/sila-besu/pull/637).
+* Added experimental CLI option `--Xnat-kube-pod-name` to specify the name of the loadbalancer used by the Kubernetes nat manager [\#1078](https://github.com/sila-chain/sila-besu/pull/1078)
 - Local permissioning TOML config now supports additional keys (`nodes-allowlist` and `accounts-allowlist`).
 Support for `nodes-whitelist` and `accounts-whitelist` will be removed in a future release.
-- Add missing `mixHash` field for `sil_getBlockBy*` JSON RPC endpoints. [\#1098](https://github.com/hyperledger/besu/pull/1098)
+- Add missing `mixHash` field for `sil_getBlockBy*` JSON RPC endpoints. [\#1098](https://github.com/sila-chain/sila-besu/pull/1098)
 * Besu now has a strict check on private transactions to ensure the privateFrom in the transaction
 matches the sender Orion key that has distributed the payload. Besu 1.5+ requires Orion 1.6+ to work.
 [#357](https://github.com/PegaSysEng/orion/issues/357)
@@ -2060,10 +2060,10 @@ Known issues are open issues categorized as [Very High or High impact](https://w
 
 #### New known issues
 
-- K8S permissioning uses of Service IPs rather than pod IPs which can fail. [\#1190](https://github.com/hyperledger/besu/pull/1190)
+- K8S permissioning uses of Service IPs rather than pod IPs which can fail. [\#1190](https://github.com/sila-chain/sila-besu/pull/1190)
 Workaround - Do not use permissioning on K8S.
 
-- Restart caused by insufficient memory can cause inconsistent private state. [\#1110](https://github.com/hyperledger/besu/pull/1110)
+- Restart caused by insufficient memory can cause inconsistent private state. [\#1110](https://github.com/sila-chain/sila-besu/pull/1110)
 Workaround - Ensure you allocate enough memory for the Java Runtime Environment that the node does not run out of memory.
 
 #### Previously identified known issues
@@ -2084,14 +2084,14 @@ sha256sum: `56929d6a71cc681688351041c919e9630ab6df7de37dd0c4ae9e19a4f44460b2`
 
 ### Additions and Improvements
 
-- Print node address on startup. [\#938](https://github.com/hyperledger/besu/pull/938)
-- Transaction pool: price bump replacement mechanism configurable through CLI. [\#928](https://github.com/hyperledger/besu/pull/928) [\#930](https://github.com/hyperledger/besu/pull/930)
+- Print node address on startup. [\#938](https://github.com/sila-chain/sila-besu/pull/938)
+- Transaction pool: price bump replacement mechanism configurable through CLI. [\#928](https://github.com/sila-chain/sila-besu/pull/928) [\#930](https://github.com/sila-chain/sila-besu/pull/930)
 
 ### Bug Fixes
 
-- Added timeout to queries. [\#986](https://github.com/hyperledger/besu/pull/986)
-- Fixed issue where networks using onchain permissioning could stall when the bootnodes were not validators. [\#969](https://github.com/hyperledger/besu/pull/969)
-- Update getForks method to ignore ClassicForkBlock chain parameter to fix issue with ETC syncing. [\#1014](https://github.com/hyperledger/besu/pull/1014)
+- Added timeout to queries. [\#986](https://github.com/sila-chain/sila-besu/pull/986)
+- Fixed issue where networks using onchain permissioning could stall when the bootnodes were not validators. [\#969](https://github.com/sila-chain/sila-besu/pull/969)
+- Update getForks method to ignore ClassicForkBlock chain parameter to fix issue with ETC syncing. [\#1014](https://github.com/sila-chain/sila-besu/pull/1014)
 
 ### Known Issues
 
@@ -2108,22 +2108,22 @@ Known issues are open issues categorized as [Very High or High impact](https://w
 
 ### Additions and Improvements
 
-- Implemented WebSocket logs subscription for private contracts (`priv_subscribe`/`priv_unsubscribe`) [\#762](https://github.com/hyperledger/besu/pull/762)
+- Implemented WebSocket logs subscription for private contracts (`priv_subscribe`/`priv_unsubscribe`) [\#762](https://github.com/sila-chain/sila-besu/pull/762)
 - Introduced SecurityModule plugin API. This allows use of a different security module as a plugin to
   provide cryptographic function that can be used by NodeKey (such as sign, ECDHKeyAgreement etc.). KeyPairSecurityModule
   is registered and used by default. The CLI option `--security-module=<name> (defaults to localfile)` can be used
-  to identify the security module plugin name to use instead. [\#713](https://github.com/hyperledger/besu/pull/713)
-- Several testing related changes to improve compatibility with [Hive](https://hivetests.sildevops.io/) and Retestsil.
-  [\#806](https://github.com/hyperledger/besu/pull/806) and [#845](https://github.com/hyperledger/besu/pull/845)
+  to identify the security module plugin name to use instead. [\#713](https://github.com/sila-chain/sila-besu/pull/713)
+- Several testing related changes to improve compatibility with [Hive](https://hivetests.ethdevops.io/) and Retesteth.
+  [\#806](https://github.com/sila-chain/sila-besu/pull/806) and [#845](https://github.com/sila-chain/sila-besu/pull/845)
 - Native libraries for secp256k1 and Altbn128 encryption are enabled by default.  To disable these libraries use
-  `--Xsecp256k1-native-enabled=false` and `--Xaltbn128-native-enabled=false`. [\#775](https://github.com/hyperledger/besu/pull/775)
+  `--Xsecp256k1-native-enabled=false` and `--Xaltbn128-native-enabled=false`. [\#775](https://github.com/sila-chain/sila-besu/pull/775)
 
 ### Bug Fixes
 
-- Fixed `sil_estimateGas` JSON RPC so it no longer returns gas estimates that are too low. [\#842](https://github.com/hyperledger/besu/pull/842)
-- Full help not displayed unless explicitly requested. [\#437](https://github.com/hyperledger/besu/pull/437)
-- Compatibility with undocumented Gsil `sil_subscribe` fields. [\#654](https://github.com/hyperledger/besu/pull/654)
-- Current block number included as part of `sil_getWork` response. [\#849](https://github.com/hyperledger/besu/pull/849)
+- Fixed `sil_estimateGas` JSON RPC so it no longer returns gas estimates that are too low. [\#842](https://github.com/sila-chain/sila-besu/pull/842)
+- Full help not displayed unless explicitly requested. [\#437](https://github.com/sila-chain/sila-besu/pull/437)
+- Compatibility with undocumented Geth `sil_subscribe` fields. [\#654](https://github.com/sila-chain/sila-besu/pull/654)
+- Current block number included as part of `sil_getWork` response. [\#849](https://github.com/sila-chain/sila-besu/pull/849)
 
 ### Known Issues
 
@@ -2131,7 +2131,7 @@ Known issues are open issues categorized as [Very High or High impact](https://w
 
 #### New known issues
 
-* Scope of logs query causing Besu to crash. [\#944](https://github.com/hyperledger/besu/pull/944)
+* Scope of logs query causing Besu to crash. [\#944](https://github.com/sila-chain/sila-besu/pull/944)
 
 Workaround - Limit the number of blocks queried by each `sil_getLogs` call.
 
@@ -2148,20 +2148,20 @@ Workaround - Limit the number of blocks queried by each `sil_getLogs` call.
 
 ### Additions and Improvements
 
-- Implemented [`priv_getLogs`](https://besu.hyperledger.org/en/latest/Reference/API-Methods/#priv_getlogs). [\#686](https://github.com/hyperledger/besu/pull/686)
-- Implemented private contract log filters including JSON-RPC methods to interact with private filters. [\#735](https://github.com/hyperledger/besu/pull/735)
-- Implemented SIP-2315: Simple Subroutines for the SAVM [\#717](https://github.com/hyperledger/besu/pull/717)
-- Implemented Splunk logging. [\#725](https://github.com/hyperledger/besu/pull/725)
-- Implemented optional native library encryption. [\#675](https://github.com/hyperledger/besu/pull/675).  To enable add `--Xsecp256k1-native-enabled` (for transaction signatures) and/or `--Xaltbn128-native-enabled` (for altbn128 precomiled contracts) as command line options.
+- Implemented [`priv_getLogs`](https://besu.hyperledger.org/en/latest/Reference/API-Methods/#priv_getlogs). [\#686](https://github.com/sila-chain/sila-besu/pull/686)
+- Implemented private contract log filters including JSON-RPC methods to interact with private filters. [\#735](https://github.com/sila-chain/sila-besu/pull/735)
+- Implemented SIP-2315: Simple Subroutines for the SAVM [\#717](https://github.com/sila-chain/sila-besu/pull/717)
+- Implemented Splunk logging. [\#725](https://github.com/sila-chain/sila-besu/pull/725)
+- Implemented optional native library encryption. [\#675](https://github.com/sila-chain/sila-besu/pull/675).  To enable add `--Xsecp256k1-native-enabled` (for transaction signatures) and/or `--Xaltbn128-native-enabled` (for altbn128 precomiled contracts) as command line options.
 
 ### Bug Fixes
 
 - Flag added to toggle `sil/65` off by default. `sil/65` will remain toggled off by default until
-a fix is completed for the [sil/65 known issue](KNOWN_ISSUES.md). [\#741](https://github.com/hyperledger/besu/pull/741)
-- Resolve crashing NAT detectors on GKE. [\#731](https://github.com/hyperledger/besu/pull/731) fixes [\#507](https://github.com/hyperledger/besu/issues/507).
+a fix is completed for the [sil/65 known issue](KNOWN_ISSUES.md). [\#741](https://github.com/sila-chain/sila-besu/pull/741)
+- Resolve crashing NAT detectors on GKE. [\#731](https://github.com/sila-chain/sila-besu/pull/731) fixes [\#507](https://github.com/sila-chain/sila-besu/issues/507).
 [Besu-Kubernetes Readme](https://github.com/PegaSysEng/besu-kubernetes/blob/master/README.md#network-topology-and-high-availability-requirements)
 updated to reflect changes.
-- Deal with quick service start failures [\#714](https://github.com/hyperledger/besu/pull/714) fixes [\#662](https://github.com/hyperledger/besu/issues/662)
+- Deal with quick service start failures [\#714](https://github.com/sila-chain/sila-besu/pull/714) fixes [\#662](https://github.com/sila-chain/sila-besu/issues/662)
 
 ### Known Issues
 
@@ -2169,7 +2169,7 @@ Known issues are open issues categorized as [Very High or High impact](https://w
 
 #### New known issues
 
-- `Intrinsic gas exceeds gas limit` returned when calling `delete mapping[addr]` or `mapping[addr] = 0` [\#696](https://github.com/hyperledger/besu/issues/696)
+- `Intrinsic gas exceeds gas limit` returned when calling `delete mapping[addr]` or `mapping[addr] = 0` [\#696](https://github.com/sila-chain/sila-besu/issues/696)
 
 Calling delete and set to 0 Solidity mapping in Solidity fail.
 
@@ -2185,15 +2185,15 @@ Calling delete and set to 0 Solidity mapping in Solidity fail.
 
 ### Issues identified with 1.4.3 release
 
-The `sil/65` change is not [backwards compatible](https://github.com/hyperledger/besu/issues/723).
+The `sil/65` change is not [backwards compatible](https://github.com/sila-chain/sila-besu/issues/723).
 This has the following impact:
 * In a private network, nodes using the 1.4.3 client cannot interact with nodes using 1.4.2 or earlier
 clients.
-* On sila-mainnet, synchronizing eventually stalls.
+* On mainnet, synchronizing eventually stalls.
 
 Workaround -> revert to v1.4.2.
 
-A [fix](https://github.com/hyperledger/besu/pull/732) is currently [being tested](https://github.com/hyperledger/besu/pull/733).
+A [fix](https://github.com/sila-chain/sila-besu/pull/732) is currently [being tested](https://github.com/sila-chain/sila-besu/pull/733).
 
 ### Critical Issue for Privacy Users
 
@@ -2204,13 +2204,13 @@ https://wiki.hyperledger.org/display/BESU/Critical+Issue+for+Privacy+Users
 
 ### Additions and Improvements
 
-- Added `sil/65` support. [\#608](https://github.com/hyperledger/besu/pull/608)
-- Added block added and block reorg events. Added revert reason to block added transactions. [\#637](https://github.com/hyperledger/besu/pull/637)
+- Added `sil/65` support. [\#608](https://github.com/sila-chain/sila-besu/pull/608)
+- Added block added and block reorg events. Added revert reason to block added transactions. [\#637](https://github.com/sila-chain/sila-besu/pull/637)
 
 ### Deprecated
 
 - Private Transaction `hash` field and `getHash()` method have been deprecated. They will be removed
-in 1.5.0 release. [\#639](https://github.com/hyperledger/besu/pull/639)
+in 1.5.0 release. [\#639](https://github.com/sila-chain/sila-besu/pull/639)
 
 ### Known Issues
 
@@ -2231,11 +2231,11 @@ This behaviour has been seen on AWS and Digital Ocean.
 Workaround -> On AWS, a full restart of the AWS VM is required to restart the fast sync.
 
 Fast sync is not currently supported on Digital Ocean. We are investigating options to
-[add support for fast sync on Digital Ocean](https://github.com/hyperledger/besu/issues/591).
+[add support for fast sync on Digital Ocean](https://github.com/sila-chain/sila-besu/issues/591).
 
 #### Error full syncing with pruning
 
-- Error syncing with sila-mainnet on Besu 1.3.7 node - MerkleTrieException [\#580](https://github.com/hyperledger/besu/issues/580)
+- Error syncing with mainnet on Besu 1.3.7 node - MerkleTrieException [\#580](https://github.com/sila-chain/sila-besu/issues/580)
 The associated error is `Unable to load trie node value for hash` and is caused by the combination of
 full sync and pruning.
 
@@ -2248,14 +2248,14 @@ A fix for this issue is being actively worked on.
 #### Fast sync reverting to full sync
 
 In some cases of FastSyncException, fast sync reverts back to a full sync before having reached the
-pivot block. [\#683](https://github.com/hyperledger/besu/issues/683)
+pivot block. [\#683](https://github.com/sila-chain/sila-besu/issues/683)
 
 Workaround -> To re-attempt fast syncing rather than continue full syncing, stop Besu, delete your
 database, and start again.
 
 #### Bootnodes must be validators when using onchain permissioning
 
-- Onchain permissioning nodes can't peer when using a non-validator bootnode [\#528](https://github.com/hyperledger/besu/issues/528)
+- Onchain permissioning nodes can't peer when using a non-validator bootnode [\#528](https://github.com/sila-chain/sila-besu/issues/528)
 
 Workaround -> When using onchain permissioning, ensure bootnodes are also validators.
 
@@ -2264,19 +2264,19 @@ Workaround -> When using onchain permissioning, ensure bootnodes are also valida
 
 ### Additions and Improvements
 
-- Added `trace_block` JSON RPC API [\#449](https://github.com/hyperledger/besu/pull/449)
-- Added `pulledStates` and `knownStates` to the SilQL `syncing` query and `sil_syncing` JSON-RPC api [\#565](https://github.com/hyperledger/besu/pull/565)
+- Added `trace_block` JSON RPC API [\#449](https://github.com/sila-chain/sila-besu/pull/449)
+- Added `pulledStates` and `knownStates` to the SilQL `syncing` query and `sil_syncing` JSON-RPC api [\#565](https://github.com/sila-chain/sila-besu/pull/565)
 
 ### Bug Fixes
 
-- Fixed file parsing behaviour for privacy enclave keystore password file [\#554](https://github.com/hyperledger/besu/pull/554) (thanks to [magooster](https://github.com/magooster))
-- Fixed known issue with being unable to re-add members to onchain privacy groups [\#471](https://github.com/hyperledger/besu/pull/471)
+- Fixed file parsing behaviour for privacy enclave keystore password file [\#554](https://github.com/sila-chain/sila-besu/pull/554) (thanks to [magooster](https://github.com/magooster))
+- Fixed known issue with being unable to re-add members to onchain privacy groups [\#471](https://github.com/sila-chain/sila-besu/pull/471)
 
 ### Updated Early Access Features
 
 * [Onchain privacy groups](https://besu.hyperledger.org/en/latest/Concepts/Privacy/Onchain-PrivacyGroups/) with add and remove members. Known issue resolved (see above).
 * [TRACE API](https://besu.hyperledger.org/en/latest/Reference/API-Methods/#trace-methods) now includes `trace_block`, `trace_replayBlockTransactions`, and `trace_transaction`.
-Fixed some issues on the trace replay block transactions API [\#522](https://github.com/hyperledger/besu/pull/522).
+Fixed some issues on the trace replay block transactions API [\#522](https://github.com/sila-chain/sila-besu/pull/522).
 
 ### Known Issues
 
@@ -2290,12 +2290,12 @@ and start again.
 2. When fast syncing, explicitly disable pruning using `--pruning-enabled=false` to reduce the likelihood
 of encountering the pruning bug.
 
-A fix to remove the default to full sync is [in progress](https://github.com/hyperledger/besu/pull/427)
+A fix to remove the default to full sync is [in progress](https://github.com/sila-chain/sila-besu/pull/427)
 is being actively worked on.
 
 #### Error full syncing with pruning
 
-- Error syncing with sila-mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
+- Error syncing with mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
 The associated error is `Unable to load trie node value for hash` and is caused by the combination of
 full sync and pruning.
 
@@ -2315,18 +2315,18 @@ Workaround -> When using onchain permissioning, ensure bootnodes are also valida
 
 ### Additions and Improvements
 
-- Added priv_getCode [\#250](https://github.com/hyperledger/besu/pull/408). Gets the bytecode associated with a private address.
-- Added `trace_transaction` JSON RPC API [\#441](https://github.com/hyperledger/besu/pull/441)
-- Removed -X unstable prefix for pruning options (`--pruning-blocks-retained`, `--pruning-block-confirmations`) [\#440](https://github.com/hyperledger/besu/pull/440)
-- Implemented [ECIP-1088](https://ecips.silaclassic.org/ECIPs/ecip-1088): Phoenix SAVM and Protocol upgrades. [\#434](https://github.com/hyperledger/besu/pull/434)
+- Added priv_getCode [\#250](https://github.com/sila-chain/sila-besu/pull/408). Gets the bytecode associated with a private address.
+- Added `trace_transaction` JSON RPC API [\#441](https://github.com/sila-chain/sila-besu/pull/441)
+- Removed -X unstable prefix for pruning options (`--pruning-blocks-retained`, `--pruning-block-confirmations`) [\#440](https://github.com/sila-chain/sila-besu/pull/440)
+- Implemented [ECIP-1088](https://ecips.ethereumclassic.org/ECIPs/ecip-1088): Phoenix SAVM and Protocol upgrades. [\#434](https://github.com/sila-chain/sila-besu/pull/434)
 
 ### Bug Fixes
 
-- [BESU-25](https://jira.hyperledger.org/browse/BESU-25) Use v5 Devp2p when pinging [\#392](https://github.com/hyperledger/besu/pull/392)
-- Fixed a bug to manage concurrent access to cache files [\#438](https://github.com/hyperledger/besu/pull/438)
-- Fixed configuration file bug: `pruning-blocks-retained` now accepts an integer in the config [\#440](https://github.com/hyperledger/besu/pull/440)
-- Specifying RPC credentials file should not force RPC Authentication to be enabled [\#454](https://github.com/hyperledger/besu/pull/454)
-- Enhanced estimateGas messages [\#436](https://github.com/hyperledger/besu/pull/436). When a estimateGas request fails a validation check, an improved error message is returned in the response.
+- [BESU-25](https://jira.hyperledger.org/browse/BESU-25) Use v5 Devp2p when pinging [\#392](https://github.com/sila-chain/sila-besu/pull/392)
+- Fixed a bug to manage concurrent access to cache files [\#438](https://github.com/sila-chain/sila-besu/pull/438)
+- Fixed configuration file bug: `pruning-blocks-retained` now accepts an integer in the config [\#440](https://github.com/sila-chain/sila-besu/pull/440)
+- Specifying RPC credentials file should not force RPC Authentication to be enabled [\#454](https://github.com/sila-chain/sila-besu/pull/454)
+- Enhanced estimateGas messages [\#436](https://github.com/sila-chain/sila-besu/pull/436). When a estimateGas request fails a validation check, an improved error message is returned in the response.
 
 ### Early Access Features
 
@@ -2334,7 +2334,7 @@ Early access features are available features that are not recommended for produc
 have unstable interfaces.
 
 * [Onchain privacy groups](https://besu.hyperledger.org/en/latest/Concepts/Privacy/Onchain-PrivacyGroups/) with add and remove members.
-  Not being able to re-add a member to an onchain privacy group is a [known issue](https://github.com/hyperledger/besu/issues/455)
+  Not being able to re-add a member to an onchain privacy group is a [known issue](https://github.com/sila-chain/sila-besu/issues/455)
   with the add and remove functionality.
 
 ### Known Issues
@@ -2349,12 +2349,12 @@ and start again.
 2. When fast syncing, explicitly disable pruning using `--pruning-enabled=false` to reduce the likelihood
 of encountering the pruning bug.
 
-A fix to remove the default to full sync is [in progress](https://github.com/hyperledger/besu/pull/427)
+A fix to remove the default to full sync is [in progress](https://github.com/sila-chain/sila-besu/pull/427)
 and is planned for inclusion in v1.4.1.
 
 #### Error full syncing with pruning
 
-- Error syncing with sila-mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
+- Error syncing with mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
 The associated error is `Unable to load trie node value for hash` and is caused by the combination of
 full sync and pruning.
 
@@ -2394,7 +2394,7 @@ If you have existing private transactions, see [migration details](docs/Private-
 a private contract function locally and does not change the private state.
 
 * Besu has moved from an internal Bytes library to the [Apache Tuweni](https://tuweni.apache.org/) Bytes library.
-This includes using the library in the Plugins API interfaces. [#295](https://github.com/hyperledger/besu/pull/295) and [#215](https://github.com/hyperledger/besu/pull/215)
+This includes using the library in the Plugins API interfaces. [#295](https://github.com/sila-chain/sila-besu/pull/295) and [#215](https://github.com/sila-chain/sila-besu/pull/215)
 
 ### Early Access Features
 
@@ -2422,12 +2422,12 @@ and start again.
 2. When fast syncing, explicitly disable pruning using `--pruning-enabled=false` to reduce the likelihood
 of encountering the pruning bug.
 
-A fix to remove the default to full sync is [in progress](https://github.com/hyperledger/besu/pull/427)
+A fix to remove the default to full sync is [in progress](https://github.com/sila-chain/sila-besu/pull/427)
 and is planned for inclusion in v1.4.1.
 
 #### Error full syncing with pruning
 
-- Error syncing with sila-mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
+- Error syncing with mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
 The associated error is `Unable to load trie node value for hash` and is caused by the combination of
 full sync and pruning.
 
@@ -2470,13 +2470,13 @@ The default NAT method (AUTO) can detect this so no user intervention is require
 
 ### Bug Fixes
 
-- Private transactions are now validated before sent to the enclave [\#356](https://github.com/hyperledger/besu/pull/356)
+- Private transactions are now validated before sent to the enclave [\#356](https://github.com/sila-chain/sila-besu/pull/356)
 
 ### Known Bugs
 
-- Error syncing with sila-mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
+- Error syncing with mainnet on Besu 1.3.7 node - MerkleTrieException [\#BESU-160](https://jira.hyperledger.org/browse/BESU-160)
 
-Workaround -> Don't enable pruning when syncing to sila-mainnet.
+Workaround -> Don't enable pruning when syncing to mainnet.
 
 - Onchain permissioning nodes can't peer when using a non-validator bootnode [\#BESU-181](https://jira.hyperledger.org/browse/BESU-181)
 
@@ -2486,7 +2486,7 @@ Workaround -> When using onchain permissioning, ensure bootnodes are also valida
 
 ### Additions and Improvements
 
-- CLI option to enable TLS client auth for JSON-RPC HTTP [\#340](https://github.com/hyperledger/besu/pull/340)
+- CLI option to enable TLS client auth for JSON-RPC HTTP [\#340](https://github.com/sila-chain/sila-besu/pull/340)
 
 Added CLI options to enable TLS client authentication and trusting client certificates:
 ~~~
@@ -2497,13 +2497,13 @@ Added CLI options to enable TLS client authentication and trusting client certif
 If client-auth is enabled, user must either enable CA signed clients OR provide a known-clients file. An error is reported
 if both CA signed clients is disabled and known-clients file is not specified.
 
-- Stable Plugins APIs [\#346](https://github.com/hyperledger/besu/pull/346)
+- Stable Plugins APIs [\#346](https://github.com/sila-chain/sila-besu/pull/346)
 
 The `BesuEvents` service and related `data` package have been marked as a stable plugin API.
 
 ### Bug Fixes
 
-- Return missing signers from getSignerMetrics [\#343](https://github.com/hyperledger/besu/pull/)
+- Return missing signers from getSignerMetrics [\#343](https://github.com/sila-chain/sila-besu/pull/)
 
 ### Experimental Features
 
@@ -2520,7 +2520,7 @@ correct gas calculated for consensus.
 
 ### Additions and Improvements
 
-- Enable TLS for JSON-RPC HTTP Service [\#253](https://github.com/hyperledger/besu/pull/253)
+- Enable TLS for JSON-RPC HTTP Service [\#253](https://github.com/sila-chain/sila-besu/pull/253)
 
 Exposes new command line parameters to enable TLS on Sila JSON-RPC HTTP interface to allow clients like SilSigner to connect via TLS:
 `--rpc-http-tls-enabled=true`
@@ -2540,23 +2540,23 @@ The format of the file is (as an example):
 
 ### Bug Fixes
 
-- TotalDifficulty is a BigInteger [\#253](https://github.com/hyperledger/besu/pull/253).
+- TotalDifficulty is a BigInteger [\#253](https://github.com/sila-chain/sila-besu/pull/253).
   Don't try and cast total difficulty down to a long because it will overflow long in a reasonable timeframe.
 
 ## 1.4 Beta 1
 
 ### Additions and Improvements
 
-- Besu has moved from an internal Bytes library to the [Apache Tuweni](https://tuweni.apache.org/) Bytes library.  This includes using the library in the Plugins API interfaces. [#295](https://github.com/hyperledger/besu/pull/295) and [#215](https://github.com/hyperledger/besu/pull/215)
-- Besu stops processing blocks if Orion is unavailable [\#253](https://github.com/hyperledger/besu/pull/253)
-- Added priv_call [\#250](https://github.com/hyperledger/besu/pull/250).  Invokes a private contract function locally and does not change the private state.
-- Support for [SIP-2124](https://github.com/sila-chain/SIPs/blob/master/SIPS/sip-2124.md), which results in faster peer discovery [\#156](https://github.com/hyperledger/besu/pull/156)
+- Besu has moved from an internal Bytes library to the [Apache Tuweni](https://tuweni.apache.org/) Bytes library.  This includes using the library in the Plugins API interfaces. [#295](https://github.com/sila-chain/sila-besu/pull/295) and [#215](https://github.com/sila-chain/sila-besu/pull/215)
+- Besu stops processing blocks if Orion is unavailable [\#253](https://github.com/sila-chain/sila-besu/pull/253)
+- Added priv_call [\#250](https://github.com/sila-chain/sila-besu/pull/250).  Invokes a private contract function locally and does not change the private state.
+- Support for [SIP-2124](https://github.com/sila/SIPs/blob/master/SIPS/sip-2124.md), which results in faster peer discovery [\#156](https://github.com/sila-chain/sila-besu/pull/156)
 
 ## 1.3.8
 
 ### Additions and Improvements
 
-- `admin_generateLogBloomCache` JSON-RPC API to generate a cache of the block bloombits that improves performance for log queries [\#262](https://github.com/hyperledger/besu/pull/262)
+- `admin_generateLogBloomCache` JSON-RPC API to generate a cache of the block bloombits that improves performance for log queries [\#262](https://github.com/sila-chain/sila-besu/pull/262)
 
 ## Critical Fix in 1.3.7
 
@@ -2577,186 +2577,186 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 
 ### Additions and Improvements
 
-- Hard Fork Support: Configures the Agharta activation block for the ETC MainNet configuration [\#251](https://github.com/hyperledger/besu/pull/251) (thanks to [soc1c](https://github.com/soc1c))
-- `operator generate-log-bloom-cache` command line option to generate a cache of the block bloombits that improves performance for log queries  [\#245](https://github.com/hyperledger/besu/pull/245)
+- Hard Fork Support: Configures the Agharta activation block for the ETC MainNet configuration [\#251](https://github.com/sila-chain/sila-besu/pull/251) (thanks to [soc1c](https://github.com/soc1c))
+- `operator generate-log-bloom-cache` command line option to generate a cache of the block bloombits that improves performance for log queries  [\#245](https://github.com/sila-chain/sila-besu/pull/245)
 
 ### Bug Fixes
 
-- Resolves a SilaMainnet consensus issue [\#254](https://github.com/hyperledger/besu/pull/254)
+- Resolves a SilaMainnet consensus issue [\#254](https://github.com/sila-chain/sila-besu/pull/254)
 
 ### New Maintainer
 
-[Edward Mack](https://github.com/hyperledger/besu/commits?author=edwardmack) added as a [new maintainer](https://github.com/hyperledger/besu/pull/219).
+[Edward Mack](https://github.com/sila-chain/sila-besu/commits?author=edwardmack) added as a [new maintainer](https://github.com/sila-chain/sila-besu/pull/219).
 
 ### 1.3.6
 
 ### Additions and Improvements
 
 - Performance improvements:
-  * Multithread Websockets to increase throughput [\#231](https://github.com/hyperledger/besu/pull/231)
-  * NewBlockHeaders performance improvement [\#230](https://github.com/hyperledger/besu/pull/230)
-- SIP2384 - Ice Age Adjustment around Istanbul [\#211](https://github.com/hyperledger/besu/pull/211)
+  * Multithread Websockets to increase throughput [\#231](https://github.com/sila-chain/sila-besu/pull/231)
+  * NewBlockHeaders performance improvement [\#230](https://github.com/sila-chain/sila-besu/pull/230)
+- SIP2384 - Ice Age Adjustment around Istanbul [\#211](https://github.com/sila-chain/sila-besu/pull/211)
 - Hard Fork Support:
    * MuirGlacier for Sila SilaMainnet and Ropsten Testnet
    * Agharta for Kotti and Mordor Testnets
 
 ### Bug Fixes
 
-- [\#210](https://github.com/hyperledger/besu/pull/210) fixes WebSocket frames handling
+- [\#210](https://github.com/sila-chain/sila-besu/pull/210) fixes WebSocket frames handling
   User impact: PING/PONG frames handling in Websocket services was not implemented
 
 ### 1.3.5
 
 ### Additions and Improvements
 
-- Log Event Streaming for Plugin API [\#186](https://github.com/hyperledger/besu/pull/186)
-- Allow use a external JWT public key in authenticated APIs [\#183](https://github.com/hyperledger/besu/pull/183)
-- ETC Configuration, classic fork peer validator [\#176](https://github.com/hyperledger/besu/pull/176) (thanks to [edwardmack](https://github.com/edwardmack))
-- Allow IBFT validators to be changed at a given block [\#173](https://github.com/hyperledger/besu/pull/173)
-- Support external mining using Stratum [\#140](https://github.com/hyperledger/besu/pull/140) (thanks to [atoulme](https://github.com/atoulme))
-- Add more fields to private transaction receipt [\#85](https://github.com/hyperledger/besu/pull/85) (thanks to [josh-richardson](https://github.com/josh-richardson))
+- Log Event Streaming for Plugin API [\#186](https://github.com/sila-chain/sila-besu/pull/186)
+- Allow use a external JWT public key in authenticated APIs [\#183](https://github.com/sila-chain/sila-besu/pull/183)
+- ETC Configuration, classic fork peer validator [\#176](https://github.com/sila-chain/sila-besu/pull/176) (thanks to [edwardmack](https://github.com/edwardmack))
+- Allow IBFT validators to be changed at a given block [\#173](https://github.com/sila-chain/sila-besu/pull/173)
+- Support external mining using Stratum [\#140](https://github.com/sila-chain/sila-besu/pull/140) (thanks to [atoulme](https://github.com/atoulme))
+- Add more fields to private transaction receipt [\#85](https://github.com/sila-chain/sila-besu/pull/85) (thanks to [josh-richardson](https://github.com/josh-richardson))
 - [Pruning documentation](https://besu.hyperledger.org/en/latest/Concepts/Pruning/)
 
 ### Technical Improvements
 
-- ETC - Cleanup [\#201](https://github.com/hyperledger/besu/pull/201) (thanks to [GregTheGreek](https://github.com/GregTheGreek))
-- User specific enclave public key configuration in auth file [\#196](https://github.com/hyperledger/besu/pull/196)
-- Change CustomForks -\> Transitions [\#193](https://github.com/hyperledger/besu/pull/193)
-- Pass identity information into RpcMethod from Http Service [\#189](https://github.com/hyperledger/besu/pull/189)
-- Remove the use of JsonRpcParameters from RpcMethods [\#188](https://github.com/hyperledger/besu/pull/188)
-- Repaired Metrics name collision between Privacy and RocksDB [\#187](https://github.com/hyperledger/besu/pull/187)
-- Multi-Tenancy: Do not specify a public key anymore when requesting a … [\#185](https://github.com/hyperledger/besu/pull/185)
-- Updates to circle building acceptance tests [\#184](https://github.com/hyperledger/besu/pull/184)
-- Move Apache Tuweni dependency to official release [\#181](https://github.com/hyperledger/besu/pull/181) (thanks to [atoulme](https://github.com/atoulme))
-- Update Gradle to 6.0, support Java 13 [\#180](https://github.com/hyperledger/besu/pull/180)
-- ETC Atlantis fork [\#179](https://github.com/hyperledger/besu/pull/179) (thanks to [edwardmack](https://github.com/edwardmack))
-- ETC Gotham Fork [\#178](https://github.com/hyperledger/besu/pull/178) (thanks to [edwardmack](https://github.com/edwardmack))
-- ETC DieHard fork support [\#177](https://github.com/hyperledger/besu/pull/177) (thanks to [edwardmack](https://github.com/edwardmack))
-- Remove 'parentHash', 'number' and 'gasUsed' fields from the genesis d… [\#175](https://github.com/hyperledger/besu/pull/175) (thanks to [SweeXordious](https://github.com/SweeXordious))
-- Enable pruning by default for fast sync and validate conflicts with privacy [\#172](https://github.com/hyperledger/besu/pull/172)
-- Update RocksDB [\#170](https://github.com/hyperledger/besu/pull/170)
-- Vpdate ver to 1.3.5-snapshot [\#169](https://github.com/hyperledger/besu/pull/169)
-- Added PoaQueryService method that returns local node signer… [\#163](https://github.com/hyperledger/besu/pull/163)
-- Add versioning to privacy storage [\#149](https://github.com/hyperledger/besu/pull/149)
-- Update reference tests [\#139](https://github.com/hyperledger/besu/pull/139)
+- ETC - Cleanup [\#201](https://github.com/sila-chain/sila-besu/pull/201) (thanks to [GregTheGreek](https://github.com/GregTheGreek))
+- User specific enclave public key configuration in auth file [\#196](https://github.com/sila-chain/sila-besu/pull/196)
+- Change CustomForks -\> Transitions [\#193](https://github.com/sila-chain/sila-besu/pull/193)
+- Pass identity information into RpcMethod from Http Service [\#189](https://github.com/sila-chain/sila-besu/pull/189)
+- Remove the use of JsonRpcParameters from RpcMethods [\#188](https://github.com/sila-chain/sila-besu/pull/188)
+- Repaired Metrics name collision between Privacy and RocksDB [\#187](https://github.com/sila-chain/sila-besu/pull/187)
+- Multi-Tenancy: Do not specify a public key anymore when requesting a … [\#185](https://github.com/sila-chain/sila-besu/pull/185)
+- Updates to circle building acceptance tests [\#184](https://github.com/sila-chain/sila-besu/pull/184)
+- Move Apache Tuweni dependency to official release [\#181](https://github.com/sila-chain/sila-besu/pull/181) (thanks to [atoulme](https://github.com/atoulme))
+- Update Gradle to 6.0, support Java 13 [\#180](https://github.com/sila-chain/sila-besu/pull/180)
+- ETC Atlantis fork [\#179](https://github.com/sila-chain/sila-besu/pull/179) (thanks to [edwardmack](https://github.com/edwardmack))
+- ETC Gotham Fork [\#178](https://github.com/sila-chain/sila-besu/pull/178) (thanks to [edwardmack](https://github.com/edwardmack))
+- ETC DieHard fork support [\#177](https://github.com/sila-chain/sila-besu/pull/177) (thanks to [edwardmack](https://github.com/edwardmack))
+- Remove 'parentHash', 'number' and 'gasUsed' fields from the genesis d… [\#175](https://github.com/sila-chain/sila-besu/pull/175) (thanks to [SweeXordious](https://github.com/SweeXordious))
+- Enable pruning by default for fast sync and validate conflicts with privacy [\#172](https://github.com/sila-chain/sila-besu/pull/172)
+- Update RocksDB [\#170](https://github.com/sila-chain/sila-besu/pull/170)
+- Vpdate ver to 1.3.5-snapshot [\#169](https://github.com/sila-chain/sila-besu/pull/169)
+- Added PoaQueryService method that returns local node signer… [\#163](https://github.com/sila-chain/sila-besu/pull/163)
+- Add versioning to privacy storage [\#149](https://github.com/sila-chain/sila-besu/pull/149)
+- Update reference tests [\#139](https://github.com/sila-chain/sila-besu/pull/139)
 
 ### 1.3.4
 
-- Reverted _Enable pruning by default for fast sync (#135)_ [\#164](https://github.com/hyperledger/besu/pull/164)
+- Reverted _Enable pruning by default for fast sync (#135)_ [\#164](https://github.com/sila-chain/sila-besu/pull/164)
 
 ### 1.3.3
 
 ### Technical Improvements
 
-- Add --identity flag for client identification in node browsers [\#150](https://github.com/hyperledger/besu/pull/150)
-- Istanbul SilaMainnet Block [\#145](https://github.com/hyperledger/besu/pull/150)
-- Add priv\_getEeaTransactionCount [\#110](https://github.com/hyperledger/besu/pull/110)
+- Add --identity flag for client identification in node browsers [\#150](https://github.com/sila-chain/sila-besu/pull/150)
+- Istanbul SilaMainnet Block [\#145](https://github.com/sila-chain/sila-besu/pull/150)
+- Add priv\_getEeaTransactionCount [\#110](https://github.com/sila-chain/sila-besu/pull/110)
 
 ### Additions and Improvements
 
-- Redesign of how JsonRpcMethods are created [\#159](https://github.com/hyperledger/besu/pull/159)
-- Moving JsonRpcMethods classes into the same package, prior to refactor [\#154](https://github.com/hyperledger/besu/pull/154)
-- Reflect default logging in CLI help [\#148](https://github.com/hyperledger/besu/pull/148)
-- Handle zero port better in NAT [\#147](https://github.com/hyperledger/besu/pull/147)
-- Rework how filter and log query parameters are created/used [\#146](https://github.com/hyperledger/besu/pull/146)
-- Don't generate shutdown tasks in controller [\#141](https://github.com/hyperledger/besu/pull/141)
-- Ibft queries [\#138](https://github.com/hyperledger/besu/pull/138)
-- Enable pruning by default for fast sync [\#135](https://github.com/hyperledger/besu/pull/135)
-- Ensure spotless runs in CI [\#132](https://github.com/hyperledger/besu/pull/132)
-- Add more logging around peer disconnects [\#131](https://github.com/hyperledger/besu/pull/131)
-- Repair SilGetLogs returning incorrect results [\#128](https://github.com/hyperledger/besu/pull/128)
-- Use Bloombits for Logs queries [\#127](https://github.com/hyperledger/besu/pull/127)
-- Improve message when extraData missing [\#121](https://github.com/hyperledger/besu/pull/121)
-- Fix miner startup logic [\#104](https://github.com/hyperledger/besu/pull/104)
-- Support log reordring from reorgs in `LogSubscriptionService` [\#86](https://github.com/hyperledger/besu/pull/86)
+- Redesign of how JsonRpcMethods are created [\#159](https://github.com/sila-chain/sila-besu/pull/159)
+- Moving JsonRpcMethods classes into the same package, prior to refactor [\#154](https://github.com/sila-chain/sila-besu/pull/154)
+- Reflect default logging in CLI help [\#148](https://github.com/sila-chain/sila-besu/pull/148)
+- Handle zero port better in NAT [\#147](https://github.com/sila-chain/sila-besu/pull/147)
+- Rework how filter and log query parameters are created/used [\#146](https://github.com/sila-chain/sila-besu/pull/146)
+- Don't generate shutdown tasks in controller [\#141](https://github.com/sila-chain/sila-besu/pull/141)
+- Ibft queries [\#138](https://github.com/sila-chain/sila-besu/pull/138)
+- Enable pruning by default for fast sync [\#135](https://github.com/sila-chain/sila-besu/pull/135)
+- Ensure spotless runs in CI [\#132](https://github.com/sila-chain/sila-besu/pull/132)
+- Add more logging around peer disconnects [\#131](https://github.com/sila-chain/sila-besu/pull/131)
+- Repair SilGetLogs returning incorrect results [\#128](https://github.com/sila-chain/sila-besu/pull/128)
+- Use Bloombits for Logs queries [\#127](https://github.com/sila-chain/sila-besu/pull/127)
+- Improve message when extraData missing [\#121](https://github.com/sila-chain/sila-besu/pull/121)
+- Fix miner startup logic [\#104](https://github.com/sila-chain/sila-besu/pull/104)
+- Support log reordring from reorgs in `LogSubscriptionService` [\#86](https://github.com/sila-chain/sila-besu/pull/86)
 
 ### 1.3.2
 
 ### Additions and Improvements
 
-- besu -v to print plugin versions[\#123](https://github.com/hyperledger/besu/pull/123)
+- besu -v to print plugin versions[\#123](https://github.com/sila-chain/sila-besu/pull/123)
 
 ### Technical Improvements
 
-- Update Governance and Code of Conduct verbiage [\#120](https://github.com/hyperledger/besu/pull/120)
-- Fix private transaction root mismatch [\#118](https://github.com/hyperledger/besu/pull/118)
-- Programmatically enforce plugin CLI variable names [\#117](https://github.com/hyperledger/besu/pull/117)
-- Additional unit test for selecting replaced pending transactions [\#116](https://github.com/hyperledger/besu/pull/116)
-- Only set sync targets that have an estimated height value [\#115](https://github.com/hyperledger/besu/pull/115)
-- Fix rlpx startup [\#114](https://github.com/hyperledger/besu/pull/114)
-- Expose getPayload in Transaction plugin-api interface. [\#113](https://github.com/hyperledger/besu/pull/113)
-- Dependency Version Upgrades [\#112](https://github.com/hyperledger/besu/pull/112)
-- Add hash field in Transaction plugin interface. [\#111](https://github.com/hyperledger/besu/pull/111)
-- Rework sync status events [\#106](https://github.com/hyperledger/besu/pull/106)
+- Update Governance and Code of Conduct verbiage [\#120](https://github.com/sila-chain/sila-besu/pull/120)
+- Fix private transaction root mismatch [\#118](https://github.com/sila-chain/sila-besu/pull/118)
+- Programmatically enforce plugin CLI variable names [\#117](https://github.com/sila-chain/sila-besu/pull/117)
+- Additional unit test for selecting replaced pending transactions [\#116](https://github.com/sila-chain/sila-besu/pull/116)
+- Only set sync targets that have an estimated height value [\#115](https://github.com/sila-chain/sila-besu/pull/115)
+- Fix rlpx startup [\#114](https://github.com/sila-chain/sila-besu/pull/114)
+- Expose getPayload in Transaction plugin-api interface. [\#113](https://github.com/sila-chain/sila-besu/pull/113)
+- Dependency Version Upgrades [\#112](https://github.com/sila-chain/sila-besu/pull/112)
+- Add hash field in Transaction plugin interface. [\#111](https://github.com/sila-chain/sila-besu/pull/111)
+- Rework sync status events [\#106](https://github.com/sila-chain/sila-besu/pull/106)
 
 ### 1.3.1
 
 ### Additions and Improvements
 
-- Added GraphQL query/logs support [\#94](https://github.com/hyperledger/besu/pull/94)
+- Added GraphQL query/logs support [\#94](https://github.com/sila-chain/sila-besu/pull/94)
 
 ### Technical Improvements
 
-- Add totalDiffculty to BlockPropagated events. [\#97](https://github.com/hyperledger/besu/pull/97)
-- Merge BlockchainQueries classes [\#101](https://github.com/hyperledger/besu/pull/101)
-- Fixed casing of dynamic MetricCategorys [\#99](https://github.com/hyperledger/besu/pull/99)
-- Fix private transactions breaking savm [\#96](https://github.com/hyperledger/besu/pull/96)
-- Make SyncState variables thread-safe [\#95](https://github.com/hyperledger/besu/pull/95)
-- Fix transaction tracking by sender [\#93](https://github.com/hyperledger/besu/pull/93)
-- Make logic in PersistBlockTask more explicit to fix a LGTM warning [\#92](https://github.com/hyperledger/besu/pull/92)
-- Removed Unused methods in the transaction simulator. [\#91](https://github.com/hyperledger/besu/pull/91)
-- Fix ThreadBesuNodeRunner BesuConfiguration setup [\#90](https://github.com/hyperledger/besu/pull/90)
-- JsonRpc method disabled error condition rewrite and unit test [\#80](https://github.com/hyperledger/besu/pull/80)
-- Round trip testing of state trie account values [\#31](https://github.com/hyperledger/besu/pull/31)
+- Add totalDiffculty to BlockPropagated events. [\#97](https://github.com/sila-chain/sila-besu/pull/97)
+- Merge BlockchainQueries classes [\#101](https://github.com/sila-chain/sila-besu/pull/101)
+- Fixed casing of dynamic MetricCategorys [\#99](https://github.com/sila-chain/sila-besu/pull/99)
+- Fix private transactions breaking savm [\#96](https://github.com/sila-chain/sila-besu/pull/96)
+- Make SyncState variables thread-safe [\#95](https://github.com/sila-chain/sila-besu/pull/95)
+- Fix transaction tracking by sender [\#93](https://github.com/sila-chain/sila-besu/pull/93)
+- Make logic in PersistBlockTask more explicit to fix a LGTM warning [\#92](https://github.com/sila-chain/sila-besu/pull/92)
+- Removed Unused methods in the transaction simulator. [\#91](https://github.com/sila-chain/sila-besu/pull/91)
+- Fix ThreadBesuNodeRunner BesuConfiguration setup [\#90](https://github.com/sila-chain/sila-besu/pull/90)
+- JsonRpc method disabled error condition rewrite and unit test [\#80](https://github.com/sila-chain/sila-besu/pull/80)
+- Round trip testing of state trie account values [\#31](https://github.com/sila-chain/sila-besu/pull/31)
 
 ### 1.3
 
 ### Breaking Change
 
-- Disallow comments in Genesis JSON file. [\#49](https://github.com/hyperledger/besu/pull/49)
+- Disallow comments in Genesis JSON file. [\#49](https://github.com/sila-chain/sila-besu/pull/49)
 
 ### Additions and Improvements
 
-- Add `--required-block` command line option to deal with chain splits [\#79](https://github.com/hyperledger/besu/pull/79)
-- Store db metadata file in the root data directory. [\#46](https://github.com/hyperledger/besu/pull/46)
-- Add `--target-gas-limit` command line option. [\#24](https://github.com/hyperledger/besu/pull/24)(thanks to new contributor [cfelde](https://github.com/cfelde))
-- Allow private contracts to access public state. [\#9](https://github.com/hyperledger/besu/pull/9)
+- Add `--required-block` command line option to deal with chain splits [\#79](https://github.com/sila-chain/sila-besu/pull/79)
+- Store db metadata file in the root data directory. [\#46](https://github.com/sila-chain/sila-besu/pull/46)
+- Add `--target-gas-limit` command line option. [\#24](https://github.com/sila-chain/sila-besu/pull/24)(thanks to new contributor [cfelde](https://github.com/cfelde))
+- Allow private contracts to access public state. [\#9](https://github.com/sila-chain/sila-besu/pull/9)
 
 ### Technical Improvements
 
-- Less verbose syncing subscriptions [\#59](https://github.com/hyperledger/besu/pull/59)
-- Return enclave key instead of private transaction hash [\#53](https://github.com/hyperledger/besu/pull/53)
-- Fix mark sweep pruner bugs where nodes that should be kept were being swept  [\#50](https://github.com/hyperledger/besu/pull/50)
-- Clean up BesuConfiguration construction [\#51](https://github.com/hyperledger/besu/pull/51)
-- Private tx nonce errors return same msg as any tx [\#48](https://github.com/hyperledger/besu/pull/48)
-- Fix default logging [\#47](https://github.com/hyperledger/besu/pull/47)
-- Introduce virtual operation. [\#45](https://github.com/hyperledger/besu/pull/45)
-- Downgrade RocksDBPlugin Logging Levels [\#44](https://github.com/hyperledger/besu/pull/44)
-- Infrastructure for exposing PoA metrics for plugins. [\#37](https://github.com/hyperledger/besu/pull/37)
-- Refactor privacy storage. [\#7](https://github.com/hyperledger/besu/pull/7)
+- Less verbose syncing subscriptions [\#59](https://github.com/sila-chain/sila-besu/pull/59)
+- Return enclave key instead of private transaction hash [\#53](https://github.com/sila-chain/sila-besu/pull/53)
+- Fix mark sweep pruner bugs where nodes that should be kept were being swept  [\#50](https://github.com/sila-chain/sila-besu/pull/50)
+- Clean up BesuConfiguration construction [\#51](https://github.com/sila-chain/sila-besu/pull/51)
+- Private tx nonce errors return same msg as any tx [\#48](https://github.com/sila-chain/sila-besu/pull/48)
+- Fix default logging [\#47](https://github.com/sila-chain/sila-besu/pull/47)
+- Introduce virtual operation. [\#45](https://github.com/sila-chain/sila-besu/pull/45)
+- Downgrade RocksDBPlugin Logging Levels [\#44](https://github.com/sila-chain/sila-besu/pull/44)
+- Infrastructure for exposing PoA metrics for plugins. [\#37](https://github.com/sila-chain/sila-besu/pull/37)
+- Refactor privacy storage. [\#7](https://github.com/sila-chain/sila-besu/pull/7)
 
 ## 1.2.4
 
 ### Additions and Improvements
 
-- Add Istanbul block (5435345) for Rinkeby [\#35](https://github.com/hyperledger/besu/pull/35)
-- Add Istanbul block (1561651) for Goerli [\#27](https://github.com/hyperledger/besu/pull/27)
-- Add Istanbul block (6485846) for Ropsten [\#26](https://github.com/hyperledger/besu/pull/26)
-- Add privDistributeRawTransaction endpoint [\#23](https://github.com/hyperledger/besu/pull/23) (thanks to [josh-richardson](https://github.com/josh-richardson))
+- Add Istanbul block (5435345) for Rinkeby [\#35](https://github.com/sila-chain/sila-besu/pull/35)
+- Add Istanbul block (1561651) for Goerli [\#27](https://github.com/sila-chain/sila-besu/pull/27)
+- Add Istanbul block (6485846) for Ropsten [\#26](https://github.com/sila-chain/sila-besu/pull/26)
+- Add privDistributeRawTransaction endpoint [\#23](https://github.com/sila-chain/sila-besu/pull/23) (thanks to [josh-richardson](https://github.com/josh-richardson))
 
 ### Technical Improvements
 
-- Refactors pantheon private key to signing private key [\#34](https://github.com/hyperledger/besu/pull/34) (thanks to [josh-richardson](https://github.com/josh-richardson))
-- Support both BESU\_ and PANTHEON\_ env var prefixes [\#32](https://github.com/hyperledger/besu/pull/32)
-- Use only fully validated peers for fast sync pivot selection [\#21](https://github.com/hyperledger/besu/pull/21)
-- Support Version Rollbacks for RocksDB \(\#6\) [\#19](https://github.com/hyperledger/besu/pull/19)
-- Update Cava library to Tuweni Library [\#18](https://github.com/hyperledger/besu/pull/18)
-- StateTrieAccountValue:Version should be written as an int, not a long [\#17](https://github.com/hyperledger/besu/pull/17)
-- Handle discovery peers with updated endpoints [\#12](https://github.com/hyperledger/besu/pull/12)
-- Change retestsil port [\#11](https://github.com/hyperledger/besu/pull/11)
-- Renames eea\_getTransactionReceipt to priv\_getTransactionReceipt [\#10](https://github.com/hyperledger/besu/pull/10) (thanks to [josh-richardson](https://github.com/josh-richardson))
-- Support Version Rollbacks for RocksDB [\#6](https://github.com/hyperledger/besu/pull/6)
-- Moving AT DSL into its own module [\#3](https://github.com/hyperledger/besu/pull/3)
+- Refactors pantheon private key to signing private key [\#34](https://github.com/sila-chain/sila-besu/pull/34) (thanks to [josh-richardson](https://github.com/josh-richardson))
+- Support both BESU\_ and PANTHEON\_ env var prefixes [\#32](https://github.com/sila-chain/sila-besu/pull/32)
+- Use only fully validated peers for fast sync pivot selection [\#21](https://github.com/sila-chain/sila-besu/pull/21)
+- Support Version Rollbacks for RocksDB \(\#6\) [\#19](https://github.com/sila-chain/sila-besu/pull/19)
+- Update Cava library to Tuweni Library [\#18](https://github.com/sila-chain/sila-besu/pull/18)
+- StateTrieAccountValue:Version should be written as an int, not a long [\#17](https://github.com/sila-chain/sila-besu/pull/17)
+- Handle discovery peers with updated endpoints [\#12](https://github.com/sila-chain/sila-besu/pull/12)
+- Change retesteth port [\#11](https://github.com/sila-chain/sila-besu/pull/11)
+- Renames eea\_getTransactionReceipt to priv\_getTransactionReceipt [\#10](https://github.com/sila-chain/sila-besu/pull/10) (thanks to [josh-richardson](https://github.com/josh-richardson))
+- Support Version Rollbacks for RocksDB [\#6](https://github.com/sila-chain/sila-besu/pull/6)
+- Moving AT DSL into its own module [\#3](https://github.com/sila-chain/sila-besu/pull/3)
 
 ## 1.2.3
 
@@ -2777,7 +2777,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Stop autogenerating BesuInfo.java [\#1899](https://github.com/PegaSysEng/pantheon/pull/1899)
 - Extracted Metrics interfaces to plugins-api. [\#1898](https://github.com/PegaSysEng/pantheon/pull/1898)
 - Fix key value storage clear so it removes all values [\#1894](https://github.com/PegaSysEng/pantheon/pull/1894)
-- Silsigner test [\#1892](https://github.com/PegaSysEng/pantheon/pull/1892) (thanks to [iikirilov](https://github.com/iikirilov))
+- Ethsigner test [\#1892](https://github.com/PegaSysEng/pantheon/pull/1892) (thanks to [iikirilov](https://github.com/iikirilov))
 - Return null private transaction receipt instead of error [\#1872](https://github.com/PegaSysEng/pantheon/pull/1872) (thanks to [iikirilov](https://github.com/iikirilov))
 - Implement trace replay block transactions trace option [\#1886](https://github.com/PegaSysEng/pantheon/pull/1886)
 - Use object parameter instead of list of parameters for priv\_createPrivacyGroup [\#1868](https://github.com/PegaSysEng/pantheon/pull/1868) (thanks to [iikirilov](https://github.com/iikirilov))
@@ -2842,12 +2842,12 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Refactored normalizeKeys method [#1826](https://github.com/PegaSysEng/pantheon/pull/1826)
 - Removed dead parameters [#1825](https://github.com/PegaSysEng/pantheon/pull/1825)
 - Added a nicer name for Corretto [#1819](https://github.com/PegaSysEng/pantheon/pull/1819)
-- Changed core JSON-RPC method to support ReTestSil
+- Changed core JSON-RPC method to support ReTestEth
 [#1815](https://github.com/PegaSysEng/pantheon/pull/1815)
 [#1818](https://github.com/PegaSysEng/pantheon/pull/1818)
 - Added rewind to block functionality [#1814](https://github.com/PegaSysEng/pantheon/pull/1814)
 - Added support for NoReward and NoProof seal engines [#1813](https://github.com/PegaSysEng/pantheon/pull/1813)
-- Added strict short hex strings for retestsil [#1812](https://github.com/PegaSysEng/pantheon/pull/1812)
+- Added strict short hex strings for retesteth [#1812](https://github.com/PegaSysEng/pantheon/pull/1812)
 - Cleaned up genesis parsing [#1809](https://github.com/PegaSysEng/pantheon/pull/1809)
 - Updating Orion to v1.3.2 [#1805](https://github.com/PegaSysEng/pantheon/pull/1805)
 - Updaated newHeads subscription to emit events only for canonical blocks [#1798](https://github.com/PegaSysEng/pantheon/pull/1798)
@@ -2950,7 +2950,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - New release docker image [\#1664](https://github.com/PegaSysEng/pantheon/pull/1664)
 - Support changing log level at runtime [\#1656](https://github.com/PegaSysEng/pantheon/pull/1656) (thanks to [matkt](https://github.com/matkt))
 - Implement dump command to dump a specific block from storage [\#1641](https://github.com/PegaSysEng/pantheon/pull/1641) (thanks to [matkt](https://github.com/matkt))
-- Add eea\_findPrivacyGroup endpoint to Besu [\#1635](https://github.com/PegaSysEng/pantheon/pull/1635) (thanks to [Punesila17](https://github.com/Punesila17))
+- Add eea\_findPrivacyGroup endpoint to Besu [\#1635](https://github.com/PegaSysEng/pantheon/pull/1635) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Updated eea send raw transaction with privacy group ID [\#1611](https://github.com/PegaSysEng/pantheon/pull/1611) (thanks to [iikirilov](https://github.com/iikirilov))
 - Added Revert Reason [\#1603](https://github.com/PegaSysEng/pantheon/pull/1603)
 
@@ -2996,14 +2996,14 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Onchain permissioning startup check [\#1669](https://github.com/PegaSysEng/pantheon/pull/1669)
 - Update BesuCommand to accept minTransactionGasPriceWei as an integer [\#1668](https://github.com/PegaSysEng/pantheon/pull/1668) (thanks to [matkt](https://github.com/matkt))
 - Privacy group id consistent [\#1667](https://github.com/PegaSysEng/pantheon/pull/1667) (thanks to [iikirilov](https://github.com/iikirilov))
-- Change eea\_getPrivateTransaction endpoint to accept hex [\#1666](https://github.com/PegaSysEng/pantheon/pull/1666) (thanks to [Punesila17](https://github.com/Punesila17))
+- Change eea\_getPrivateTransaction endpoint to accept hex [\#1666](https://github.com/PegaSysEng/pantheon/pull/1666) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Factorise metrics code for KeyValueStorage database [\#1663](https://github.com/PegaSysEng/pantheon/pull/1663))
 - Create a metric tracking DB size [\#1662](https://github.com/PegaSysEng/pantheon/pull/1662)
 - AT- Removing unused methods on KeyValueStorage [\#1661](https://github.com/PegaSysEng/pantheon/pull/1661)
 - Add Prerequisites and Quick-Start [\#1660](https://github.com/PegaSysEng/pantheon/pull/1660) (thanks to [lazaridiscom](https://github.com/lazaridiscom))
 - Java 11 updates [\#1658](https://github.com/PegaSysEng/pantheon/pull/1658)
 - Make test generated keys deterministic w/in block generator [\#1657](https://github.com/PegaSysEng/pantheon/pull/1657)
-- Rename privacyGroupId to createPrivacyGroupId [\#1654](https://github.com/PegaSysEng/pantheon/pull/1654) (thanks to [Punesila17](https://github.com/Punesila17))
+- Rename privacyGroupId to createPrivacyGroupId [\#1654](https://github.com/PegaSysEng/pantheon/pull/1654) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Intermittent Test Failures in TransactionsMessageSenderTest [\#1653](https://github.com/PegaSysEng/pantheon/pull/1653)
 - Sanity check the generated distribution files before upload [\#1648](https://github.com/PegaSysEng/pantheon/pull/1648)
 - Use JDK 11 for release builds [\#1647](https://github.com/PegaSysEng/pantheon/pull/1647)
@@ -3019,7 +3019,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 
 - \[PAN-2832\] Support setting config options via environment variables [\#1597](https://github.com/PegaSysEng/pantheon/pull/1597)
 - Print Besu version when starting [\#1593](https://github.com/PegaSysEng/pantheon/pull/1593)
-- \[PAN-2746\] Add eea\_createPrivacyGroup & eea\_deletePrivacyGroup endpoint [\#1560](https://github.com/PegaSysEng/pantheon/pull/1560) (thanks to [Punesila17](https://github.com/Punesila17))
+- \[PAN-2746\] Add eea\_createPrivacyGroup & eea\_deletePrivacyGroup endpoint [\#1560](https://github.com/PegaSysEng/pantheon/pull/1560) (thanks to [Puneetha17](https://github.com/Puneetha17))
 
 ### Technical Improvements
 
@@ -3042,7 +3042,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - \[PAN-2850\] Create a transaction pool configuration object [\#1615](https://github.com/PegaSysEng/pantheon/pull/1615)
 - Add TransactionValidationParam to TxProcessor [\#1613](https://github.com/PegaSysEng/pantheon/pull/1613)
 - Expose a CLI option to configure the life time of transaction messages. [\#1610](https://github.com/PegaSysEng/pantheon/pull/1610)
-- Implement Promsileus metric counter for skipped expired transaction messages. [\#1609](https://github.com/PegaSysEng/pantheon/pull/1609)
+- Implement Prometheus metric counter for skipped expired transaction messages. [\#1609](https://github.com/PegaSysEng/pantheon/pull/1609)
 - Upload jars to bintray as part of releases [\#1608](https://github.com/PegaSysEng/pantheon/pull/1608)
 - Avoid publishing docker-pantheon directory to bintray during a release [\#1606](https://github.com/PegaSysEng/pantheon/pull/1606)
 - \[PAN-2756\] Istanbul scaffolding [\#1605](https://github.com/PegaSysEng/pantheon/pull/1605)
@@ -3064,7 +3064,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - \[PAN-2811\] Be more lenient with discovery message deserialization. Completes our support for SIP-8 and enables Besu to work on Rinkeby again. [\#1580](https://github.com/PegaSysEng/pantheon/pull/1580)
 - Added liveness and readiness probe stub endpoints [\#1553](https://github.com/PegaSysEng/pantheon/pull/1553)
 - Implemented operator tool. \(blockchain network configuration for permissioned networks\) [\#1511](https://github.com/PegaSysEng/pantheon/pull/1511)
-- \[PAN-2754\] Added eea\_getPrivacyPrecompileAddress [\#1579](https://github.com/PegaSysEng/pantheon/pull/1579) (thanks to [Punesila17](https://github.com/Punesila17))
+- \[PAN-2754\] Added eea\_getPrivacyPrecompileAddress [\#1579](https://github.com/PegaSysEng/pantheon/pull/1579) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Publish the chain head gas used, gas limit, transaction count and ommer metrics [\#1551](https://github.com/PegaSysEng/pantheon/pull/1551)
 - Add subscribe and unsubscribe count metrics [\#1541](https://github.com/PegaSysEng/pantheon/pull/1541)
 - Add pivot block metrics [\#1537](https://github.com/PegaSysEng/pantheon/pull/1537)
@@ -3098,7 +3098,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - \[PAN-2731\] Extract connection management from P2PNetwork [\#1538](https://github.com/PegaSysEng/pantheon/pull/1538)
 - \[PAN-2010\] format filter id as quantity [\#1534](https://github.com/PegaSysEng/pantheon/pull/1534)
 - PAN-2445: Onchain account permissioning [\#1507](https://github.com/PegaSysEng/pantheon/pull/1507)
-- \[PAN-2672\] Return specific and useful error for enclave issues [\#1455](https://github.com/PegaSysEng/pantheon/pull/1455) (thanks to [Punesila17](https://github.com/Punesila17))
+- \[PAN-2672\] Return specific and useful error for enclave issues [\#1455](https://github.com/PegaSysEng/pantheon/pull/1455) (thanks to [Puneetha17](https://github.com/Puneetha17))
 
 ## 1.1.2
 
@@ -3285,7 +3285,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Simplify enode construction [\#1283](https://github.com/PegaSysEng/pantheon/pull/1283)
 - Cleanup PeerConnection interface [\#1282](https://github.com/PegaSysEng/pantheon/pull/1282)
 - Undo changes to PendingTransactions method visibility [\#1281](https://github.com/PegaSysEng/pantheon/pull/1281)
-- Use default enclave public key to generate eea_getTransactionReceipt [\#1280](https://github.com/PegaSysEng/pantheon/pull/1280) (thanks to [Punesila17](https://github.com/Punesila17))
+- Use default enclave public key to generate eea_getTransactionReceipt [\#1280](https://github.com/PegaSysEng/pantheon/pull/1280) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Rollback to rocksdb 5.15.10 [\#1279](https://github.com/PegaSysEng/pantheon/pull/1279)
 - Log error when a JSON decode problem is encountered [\#1278](https://github.com/PegaSysEng/pantheon/pull/1278)
 - Create EnodeURL builder [\#1275](https://github.com/PegaSysEng/pantheon/pull/1275)
@@ -3299,9 +3299,9 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Ignore extra json rpc params [\#1261](https://github.com/PegaSysEng/pantheon/pull/1261)
 - Fetch local transactions in isolation [\#1259](https://github.com/PegaSysEng/pantheon/pull/1259)
 - Update to debug trace transaction [\#1258](https://github.com/PegaSysEng/pantheon/pull/1258)
-- Use labelled timer to differentiate between rocks db metrics [\#1254](https://github.com/PegaSysEng/pantheon/pull/1254) (thanks to [Punesila17](https://github.com/Punesila17))
+- Use labelled timer to differentiate between rocks db metrics [\#1254](https://github.com/PegaSysEng/pantheon/pull/1254) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Migrate TransactionPool (& affiliated test) from 'core' to 'sil' [\#1251](https://github.com/PegaSysEng/pantheon/pull/1251)
-- Use single instance of Rocksdb for privacy [\#1247](https://github.com/PegaSysEng/pantheon/pull/1247) (thanks to [Punesila17](https://github.com/Punesila17))
+- Use single instance of Rocksdb for privacy [\#1247](https://github.com/PegaSysEng/pantheon/pull/1247) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Subscribing to sync events should receive false when in sync [\#1240](https://github.com/PegaSysEng/pantheon/pull/1240)
 - Ignore transactions from the network while behind chain head [\#1228](https://github.com/PegaSysEng/pantheon/pull/1228)
 - RocksDB Statistics in Metrics [\#1169](https://github.com/PegaSysEng/pantheon/pull/1169)
@@ -3319,7 +3319,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - CLI ewp options [\#1246](https://github.com/PegaSysEng/pantheon/pull/1246)
 - Update BesuCommand.java [\#1245](https://github.com/PegaSysEng/pantheon/pull/1245)
 - Reduce memory usage in import [\#1239](https://github.com/PegaSysEng/pantheon/pull/1239)
-- Improve eea_sendRawTransaction error messages [\#1238](https://github.com/PegaSysEng/pantheon/pull/1238) (thanks to [Punesila17](https://github.com/Punesila17))
+- Improve eea_sendRawTransaction error messages [\#1238](https://github.com/PegaSysEng/pantheon/pull/1238) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Single topic filter [\#1235](https://github.com/PegaSysEng/pantheon/pull/1235)
 - Enable pipeline chain downloader for fast sync [\#1232](https://github.com/PegaSysEng/pantheon/pull/1232)
 - Make contract size limit configurable [\#1227](https://github.com/PegaSysEng/pantheon/pull/1227)
@@ -3330,7 +3330,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Replace filtering headers after the fact with calculating number to request up-front [\#1216](https://github.com/PegaSysEng/pantheon/pull/1216)
 - Support async processing while maintaining output order [\#1215](https://github.com/PegaSysEng/pantheon/pull/1215)
 - Add Unstable Options to the CLI [\#1213](https://github.com/PegaSysEng/pantheon/pull/1213)
-- Add private cluster acceptance tests [\#1211](https://github.com/PegaSysEng/pantheon/pull/1211) (thanks to [Punesila17](https://github.com/Punesila17))
+- Add private cluster acceptance tests [\#1211](https://github.com/PegaSysEng/pantheon/pull/1211) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Re-aligned smart contract interface to EEA client spec 477 [\#1209](https://github.com/PegaSysEng/pantheon/pull/1209)
 - Count the number of items discarded when a pipe is aborted [\#1208](https://github.com/PegaSysEng/pantheon/pull/1208)
 - Pipeline chain download - fetch and import data [\#1207](https://github.com/PegaSysEng/pantheon/pull/1207)
@@ -3342,8 +3342,8 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Doc CI pipeline for build and tests [\#1199](https://github.com/PegaSysEng/pantheon/pull/1199)
 - Replace the use of a disconnect listener with SilPeer.isDisconnected [\#1197](https://github.com/PegaSysEng/pantheon/pull/1197)
 - Prep chain downloader for branch by abstraction [\#1194](https://github.com/PegaSysEng/pantheon/pull/1194)
-- Maintain the state of MessageFrame in private Tx [\#1193](https://github.com/PegaSysEng/pantheon/pull/1193) (thanks to [Punesila17](https://github.com/Punesila17))
-- Persist private world state only if we are mining [\#1191](https://github.com/PegaSysEng/pantheon/pull/1191) (thanks to [Punesila17](https://github.com/Punesila17))
+- Maintain the state of MessageFrame in private Tx [\#1193](https://github.com/PegaSysEng/pantheon/pull/1193) (thanks to [Puneetha17](https://github.com/Puneetha17))
+- Persist private world state only if we are mining [\#1191](https://github.com/PegaSysEng/pantheon/pull/1191) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Remove SyncState from SyncTargetManager [\#1188](https://github.com/PegaSysEng/pantheon/pull/1188)
 - Acceptance tests base for smart contract node permissioning [\#1186](https://github.com/PegaSysEng/pantheon/pull/1186)
 - Fix metrics breakages [\#1185](https://github.com/PegaSysEng/pantheon/pull/1185)
@@ -3392,7 +3392,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Disconnect peers before the pivot block while fast syncing [\#1139](https://github.com/PegaSysEng/pantheon/pull/1139)
 - Reduce the default transaction pool size from 30,000 to 4096 [\#1136](https://github.com/PegaSysEng/pantheon/pull/1136)
 - Fail at load if static nodes not whitelisted [\#1135](https://github.com/PegaSysEng/pantheon/pull/1135)
-- Fix private transaction acceptance test [\#1134](https://github.com/PegaSysEng/pantheon/pull/1134) (thanks to [Punesila17](https://github.com/Punesila17))
+- Fix private transaction acceptance test [\#1134](https://github.com/PegaSysEng/pantheon/pull/1134) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Quieter exceptions when network is unreachable [\#1133](https://github.com/PegaSysEng/pantheon/pull/1133)
 - nodepermissioningcontroller used for devp2p connection filtering [\#1132](https://github.com/PegaSysEng/pantheon/pull/1132)
 - Remove duplicates from apis specified via CLI [\#1131](https://github.com/PegaSysEng/pantheon/pull/1131)
@@ -3412,8 +3412,8 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Don't allow creation of multiple gauges with the same name [\#1107](https://github.com/PegaSysEng/pantheon/pull/1107)
 - Update Peer Discovery to use NodePermissioningController [\#1105](https://github.com/PegaSysEng/pantheon/pull/1105)
 - Move starting world state download process inside WorldDownloadState [\#1104](https://github.com/PegaSysEng/pantheon/pull/1104)
-- Enable private Tx capability to Clique [\#1102](https://github.com/PegaSysEng/pantheon/pull/1102) (thanks to [Punesila17](https://github.com/Punesila17))
-- Enable private Tx capability to IBFT [\#1101](https://github.com/PegaSysEng/pantheon/pull/1101) (thanks to [Punesila17](https://github.com/Punesila17))
+- Enable private Tx capability to Clique [\#1102](https://github.com/PegaSysEng/pantheon/pull/1102) (thanks to [Puneetha17](https://github.com/Puneetha17))
+- Enable private Tx capability to IBFT [\#1101](https://github.com/PegaSysEng/pantheon/pull/1101) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Version Upgrades [\#1100](https://github.com/PegaSysEng/pantheon/pull/1100)
 - Don't delete completed tasks from RocksDbTaskQueue [\#1099](https://github.com/PegaSysEng/pantheon/pull/1099)
 - Support flat mapping with multiple threads [\#1098](https://github.com/PegaSysEng/pantheon/pull/1098)
@@ -3433,7 +3433,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Fix exceptions fetching metrics after world state download completes [\#1066](https://github.com/PegaSysEng/pantheon/pull/1066)
 - Accept transactions in the pool with nonce above account sender nonce [\#1065](https://github.com/PegaSysEng/pantheon/pull/1065)
 - Repair Istanbul to handle Sil/62 & Sil/63 [\#1063](https://github.com/PegaSysEng/pantheon/pull/1063)
-- Close Private Storage Provider [\#1059](https://github.com/PegaSysEng/pantheon/pull/1059) (thanks to [Punesila17](https://github.com/Punesila17))
+- Close Private Storage Provider [\#1059](https://github.com/PegaSysEng/pantheon/pull/1059) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Add labels to Pipelined tasks metrics [\#1057](https://github.com/PegaSysEng/pantheon/pull/1057)
 - Re-enable Quorum Synchronisation [\#1056](https://github.com/PegaSysEng/pantheon/pull/1056)
 - Don't log expected failures as errors [\#1054](https://github.com/PegaSysEng/pantheon/pull/1054)
@@ -3455,7 +3455,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Avoid port conflicts in acceptance tests [\#1025](https://github.com/PegaSysEng/pantheon/pull/1025)
 - Include reference tests in jacoco [\#1024](https://github.com/PegaSysEng/pantheon/pull/1024)
 - Acceptance test - configurable gas price [\#1023](https://github.com/PegaSysEng/pantheon/pull/1023)
-- Get Internal logs and output [\#1022](https://github.com/PegaSysEng/pantheon/pull/1022) (thanks to [Punesila17](https://github.com/Punesila17))
+- Get Internal logs and output [\#1022](https://github.com/PegaSysEng/pantheon/pull/1022) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Fix race condition in WebSocketService [\#1021](https://github.com/PegaSysEng/pantheon/pull/1021)
 - Ensure devp2p ports are written to ports file correctly [\#1020](https://github.com/PegaSysEng/pantheon/pull/1020)
 - Report the correct tcp port in PING packets when it differs from the UDP port [\#1019](https://github.com/PegaSysEng/pantheon/pull/1019)
@@ -3481,7 +3481,7 @@ For compatibility with ETC Agharta upgrade, use 1.3.7 or later.
 - Add metrics to Parallel Download pipeline [\#985](https://github.com/PegaSysEng/pantheon/pull/985)
 - Change ExpectBlockNumber to require at least the specified block number [\#981](https://github.com/PegaSysEng/pantheon/pull/981)
 - Fix benchmark compilation [\#980](https://github.com/PegaSysEng/pantheon/pull/980)
-- RPC tests can use 127.0.0.1 loopback rather than localhost [\#974](https://github.com/PegaSysEng/pantheon/pull/974) thanks to [glsiluillier](https://github.com/glsiluillier) for raising)
+- RPC tests can use 127.0.0.1 loopback rather than localhost [\#974](https://github.com/PegaSysEng/pantheon/pull/974) thanks to [glethuillier](https://github.com/glethuillier) for raising)
 - Disable picocli ansi when testing [\#973](https://github.com/PegaSysEng/pantheon/pull/973)
 - Add a jmh benchmark for WorldStateDownloader [\#972](https://github.com/PegaSysEng/pantheon/pull/972)
 - Gradle dependency for JMH annotation, for IDEs that aren't IntelliJ \(… [\#971](https://github.com/PegaSysEng/pantheon/pull/971)
@@ -3592,7 +3592,7 @@ Public key address export subcommand was missing in 1.0 release.
 - RPC authentication configuration validation + tests. [\#846](https://github.com/PegaSysEng/pantheon/pull/846)
 - Tidy-up FastSyncState persistence [\#845](https://github.com/PegaSysEng/pantheon/pull/845)
 - Do parallel extract signatures in the parallel block importer. [\#844](https://github.com/PegaSysEng/pantheon/pull/844)
-- Fix 'the Input Is Too Long' Error on Windows [\#843](https://github.com/PegaSysEng/pantheon/pull/843) (thanks to [glsiluillier](https://github.com/glsiluillier)).
+- Fix 'the Input Is Too Long' Error on Windows [\#843](https://github.com/PegaSysEng/pantheon/pull/843) (thanks to [glethuillier](https://github.com/glethuillier)).
 - Remove unnecessary sleep [\#842](https://github.com/PegaSysEng/pantheon/pull/842)
 - Shutdown improvements [\#841](https://github.com/PegaSysEng/pantheon/pull/841)
 - Speed up shutdown time [\#838](https://github.com/PegaSysEng/pantheon/pull/838)
@@ -3608,7 +3608,7 @@ Public key address export subcommand was missing in 1.0 release.
 - Refactored json rpc authentication to be provided as a service [\#825](https://github.com/PegaSysEng/pantheon/pull/825)
 - Handle unavailable world states [\#824](https://github.com/PegaSysEng/pantheon/pull/824)
 - Password in JWT payload [\#823](https://github.com/PegaSysEng/pantheon/pull/823)
-- Homogenize error messages when required parameters are set [\#822](https://github.com/PegaSysEng/pantheon/pull/822) ([glsiluillier](https://github.com/glsiluillier)).
+- Homogenize error messages when required parameters are set [\#822](https://github.com/PegaSysEng/pantheon/pull/822) ([glethuillier](https://github.com/glethuillier)).
 - Set remote peer chain head to parent of block received in NEW\_BLOCK\_MESSAGE [\#819](https://github.com/PegaSysEng/pantheon/pull/819)
 - Peer disconnects should not result in stack traces [\#818](https://github.com/PegaSysEng/pantheon/pull/818)
 - Abort previous builds [\#817](https://github.com/PegaSysEng/pantheon/pull/817)
@@ -3622,8 +3622,8 @@ Public key address export subcommand was missing in 1.0 release.
 - Improve block propagation time [\#808](https://github.com/PegaSysEng/pantheon/pull/808)
 - JSON-RPC authentication cli options & acceptance tests [\#807](https://github.com/PegaSysEng/pantheon/pull/807)
 - Remove privacy not supported warning [\#806](https://github.com/PegaSysEng/pantheon/pull/806) (thanks to [vinistevam](https://github.com/vinistevam))
-- Wire up Private Transaction Processor [\#805](https://github.com/PegaSysEng/pantheon/pull/805) (thanks to [Punesila17](https://github.com/Punesila17))
-- Apply a limit to the number of responses in RespondingSilPeer.respondWhile [\#803](https://github.com/PegaSysEng/pantheon/pull/803)
+- Wire up Private Transaction Processor [\#805](https://github.com/PegaSysEng/pantheon/pull/805) (thanks to [Puneetha17](https://github.com/Puneetha17))
+- Apply a limit to the number of responses in RespondingEthPeer.respondWhile [\#803](https://github.com/PegaSysEng/pantheon/pull/803)
 - Avoid requesting empty block bodies from the network. [\#802](https://github.com/PegaSysEng/pantheon/pull/802)
 - Handle partial responses to get receipts requests [\#801](https://github.com/PegaSysEng/pantheon/pull/801)
 - Rename functions in Ibft MessageValidator [\#800](https://github.com/PegaSysEng/pantheon/pull/800)
@@ -3673,7 +3673,7 @@ Public key address export subcommand was missing in 1.0 release.
 - Ibft to uniquely ID messages by their hash [\#730](https://github.com/PegaSysEng/pantheon/pull/730)
 - Rename ibftrevised to ibft2 [\#722](https://github.com/PegaSysEng/pantheon/pull/722)
 - Limit ibft msg queues [\#704](https://github.com/PegaSysEng/pantheon/pull/704)
-- Implement privacy precompiled contract [\#696](https://github.com/PegaSysEng/pantheon/pull/696) (thanks to [Punesila17](https://github.com/Punesila17))
+- Implement privacy precompiled contract [\#696](https://github.com/PegaSysEng/pantheon/pull/696) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - Integration of RecursivePeerRefreshState and PeerDiscoveryController [\#420](https://github.com/PegaSysEng/pantheon/pull/420)
 
 ## 0.9.1
@@ -3732,7 +3732,7 @@ has been updated to use the moved quickstart.
 - Metrics Push Gateway Options [\#678](https://github.com/PegaSysEng/pantheon/pull/678)
 - Additional logging details for IBFT 2.0 [\#650](https://github.com/PegaSysEng/pantheon/pull/650)
 - Permissioning config TOML file [\#643](https://github.com/PegaSysEng/pantheon/pull/643)
-- Added metrics Promsileus Push Gateway Support [\#638](https://github.com/PegaSysEng/pantheon/pull/638)
+- Added metrics Prometheus Push Gateway Support [\#638](https://github.com/PegaSysEng/pantheon/pull/638)
 - Clique and IBFT not enabled by default in RPC APIs [\#635](https://github.com/PegaSysEng/pantheon/pull/635)
 - Added `admin_addPeer` JSON-RPC API method [\#622](https://github.com/PegaSysEng/pantheon/pull/622)
 - Implemented `--p2p-enabled` configuration item [\#619](https://github.com/PegaSysEng/pantheon/pull/619)
@@ -3740,7 +3740,7 @@ has been updated to use the moved quickstart.
 - Added IBFT get pending votes [\#603](https://github.com/PegaSysEng/pantheon/pull/603)
 - Implement Petersburg hardfork [\#601](https://github.com/PegaSysEng/pantheon/pull/601)
 - Added private transaction abstraction [\#592](https://github.com/PegaSysEng/pantheon/pull/592) (thanks to [iikirilov](https://github.com/iikirilov))
-- Added privacy command line commands [\#584](https://github.com/PegaSysEng/pantheon/pull/584) (thanks to [Punesila17](https://github.com/Punesila17))
+- Added privacy command line commands [\#584](https://github.com/PegaSysEng/pantheon/pull/584) (thanks to [Puneetha17](https://github.com/Puneetha17))
 
 ### Technical Improvements
 
@@ -3763,13 +3763,13 @@ has been updated to use the moved quickstart.
 - Start world downloader [\#658](https://github.com/PegaSysEng/pantheon/pull/658)
 - Create a simple `WorldStateDownloader` [\#657](https://github.com/PegaSysEng/pantheon/pull/657)
 - Added handling for when p2p is disabled [\#655](https://github.com/PegaSysEng/pantheon/pull/655)
-- Enabled command line configuration for privacy precompiled contract address [\#653](https://github.com/PegaSysEng/pantheon/pull/653) (thanks to [Punesila17](https://github.com/Punesila17))
+- Enabled command line configuration for privacy precompiled contract address [\#653](https://github.com/PegaSysEng/pantheon/pull/653) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - IBFT transmitted packets are logged by gossiper [\#652](https://github.com/PegaSysEng/pantheon/pull/652)
 - `admin_addPeer` acceptance test [\#651](https://github.com/PegaSysEng/pantheon/pull/651)
 - Added `p2pEnabled` configuration to `ProcessBesuNodeRunner` [\#649](https://github.com/PegaSysEng/pantheon/pull/649)
 - Added description to automatic benchmarks [\#646](https://github.com/PegaSysEng/pantheon/pull/646)
 - Added `network` option [\#645](https://github.com/PegaSysEng/pantheon/pull/645)
-- Remove OrionConfiguration [\#644](https://github.com/PegaSysEng/pantheon/pull/644) (thanks to [Punesila17](https://github.com/Punesila17))
+- Remove OrionConfiguration [\#644](https://github.com/PegaSysEng/pantheon/pull/644) (thanks to [Puneetha17](https://github.com/Puneetha17))
 - IBFT Json Acceptance tests [\#634](https://github.com/PegaSysEng/pantheon/pull/634)
 - Upgraded build image to one that contains libsodium [\#632](https://github.com/PegaSysEng/pantheon/pull/632)
 - Command line fixes [\#630](https://github.com/PegaSysEng/pantheon/pull/630)
@@ -3853,7 +3853,7 @@ When restarting your node with the v0.8.4 Docker image:
 ## Additions and Improvements
 - RocksDB Metrics [\#531](https://github.com/PegaSysEng/pantheon/pull/531)
 - Added `ibft_getValidatorsByBlockHash` JSON RPC [\#519](https://github.com/PegaSysEng/pantheon/pull/519)
-- Expose metrics to Promsileus [\#506](https://github.com/PegaSysEng/pantheon/pull/506)
+- Expose metrics to Prometheus [\#506](https://github.com/PegaSysEng/pantheon/pull/506)
 - Added `ibft_getValidatorsByBlockNumber` [\#499](https://github.com/PegaSysEng/pantheon/pull/499)
 - Added `Roadmap.md` file. [\#494](https://github.com/PegaSysEng/pantheon/pull/494)
 - Added JSON RPC `sil hashrate` method. [\#488](https://github.com/PegaSysEng/pantheon/pull/488)
@@ -3879,7 +3879,7 @@ When restarting your node with the v0.8.4 Docker image:
 - Remove non-transactional mutation from KeyValueStore [\#500](https://github.com/PegaSysEng/pantheon/pull/500)
 - Ensured that the blockchain queries class handles optionals better. [\#486](https://github.com/PegaSysEng/pantheon/pull/486)
 - IBFT mining acceptance test [\#483](https://github.com/PegaSysEng/pantheon/pull/483)
-- Set base directory name to be lowsrcase in building.md [\#474](https://github.com/PegaSysEng/pantheon/pull/474) (Thanks to [Matthalp](https://github.com/Matthalp))
+- Set base directory name to be lowercase in building.md [\#474](https://github.com/PegaSysEng/pantheon/pull/474) (Thanks to [Matthalp](https://github.com/Matthalp))
 - Moved admin\_peers to Admin API group [\#473](https://github.com/PegaSysEng/pantheon/pull/473)
 - Nodes whitelist acceptance test [\#472](https://github.com/PegaSysEng/pantheon/pull/472)
 - Rework RoundChangeManagerTest to not reuse validators [\#469](https://github.com/PegaSysEng/pantheon/pull/469)
@@ -4016,7 +4016,7 @@ Specify `*` or `all` for `--host-whitelist` to effectively disable host protecti
  - Enabled constantinople in `--dev-mode` (PR [#256](https://github.com/PegaSysEng/pantheon/pull/256))
  - Supported Constantinople with Clique thanks to [@5chdn](https://github.com/5chdn) for reporting) (PR [#250](https://github.com/PegaSysEng/pantheon/pull/250), PR [#247](https://github.com/PegaSysEng/pantheon/pull/247))
  - Implemented `sil_chainId` JSON-RPC method (PR [#219](https://github.com/PegaSysEng/pantheon/pull/219))
- - Updated client version to be silstats friendly (PR [#258](https://github.com/PegaSysEng/pantheon/pull/258))
+ - Updated client version to be ethstats friendly (PR [#258](https://github.com/PegaSysEng/pantheon/pull/258))
  - Added `--node-private-key` option to allow nodekey file to be specified separately to data directory thanks to [@peterbroadhurst](https://github.com/peterbroadhurst) for requesting)  (PR [#234](https://github.com/PegaSysEng/pantheon/pull/234))
  - Added `--banned-nodeids` option to prevent connection to specific nodes (PR [#254](https://github.com/PegaSysEng/pantheon/pull/254))
  - Send client quitting disconnect message to peers on shutdown (PR [#253](https://github.com/PegaSysEng/pantheon/pull/253))

@@ -51,14 +51,14 @@ public class BftBlockRewardPaymentAcceptanceTest extends ParameterizedBftTestBas
     cluster.start(validator, nonValidator);
     final Account validator1Account = Account.create(silTransactions, validator.getAddress());
 
-    final int blockRewardSil = 5;
+    final int blockRewardEth = 5;
     final int blockToCheck = 2;
 
     cluster.verify(blockchain.minimumHeight(blockToCheck));
-    cluster.verify(validator1Account.balanceAtBlockEquals(Amount.siler(0), BigInteger.ZERO));
+    cluster.verify(validator1Account.balanceAtBlockEquals(Amount.sila(0), BigInteger.ZERO));
     cluster.verify(
         validator1Account.balanceAtBlockEquals(
-            Amount.siler(blockRewardSil * blockToCheck), BigInteger.valueOf(blockToCheck)));
+            Amount.sila(blockRewardEth * blockToCheck), BigInteger.valueOf(blockToCheck)));
   }
 
   @ParameterizedTest(name = "{0} bft node factory type")
@@ -84,14 +84,14 @@ public class BftBlockRewardPaymentAcceptanceTest extends ParameterizedBftTestBas
     validator1.setGenesisConfig(configWithMiningBeneficiary);
 
     cluster.start(validator1);
-    final int blockRewardSil = 5;
+    final int blockRewardEth = 5;
     final int blockToCheck = 2;
 
     cluster.verify(blockchain.minimumHeight(blockToCheck));
-    cluster.verify(miningBeneficiaryAccount.balanceAtBlockEquals(Amount.siler(0), BigInteger.ZERO));
+    cluster.verify(miningBeneficiaryAccount.balanceAtBlockEquals(Amount.sila(0), BigInteger.ZERO));
     cluster.verify(
         miningBeneficiaryAccount.balanceAtBlockEquals(
-            Amount.siler(blockRewardSil * blockToCheck), BigInteger.valueOf(blockToCheck)));
+            Amount.sila(blockRewardEth * blockToCheck), BigInteger.valueOf(blockToCheck)));
   }
 
   @ParameterizedTest(name = "{0} bft node factory type")

@@ -128,7 +128,7 @@ public class LondonFeeMarketBlockTransactionSelectorTest
 
     // tx is willing to pay max 7 wei for gas, but current network condition (baseFee == 1)
     // result in it paying 2 wei, that is below the minimum accepted by the node, so it is skipped
-    final Transaction tx = createSIP1559Transaction(1, Wei.of(7L), Wei.ONE, 100_000);
+    final Transaction tx = createEIP1559Transaction(1, Wei.of(7L), Wei.ONE, 100_000);
     final var addResults = transactionPool.addRemoteTransactions(List.of(tx));
     assertThat(addResults).extractingByKey(tx.getHash()).isEqualTo(ValidationResult.valid());
 
@@ -157,7 +157,7 @@ public class LondonFeeMarketBlockTransactionSelectorTest
 
     // tx is willing to pay max 7 wei for gas, and current network condition (baseFee == 5)
     // result in it paying the max, that is >= the minimum accepted by the node, so it is selected
-    final Transaction tx = createSIP1559Transaction(1, Wei.of(7), Wei.ONE, 100_000);
+    final Transaction tx = createEIP1559Transaction(1, Wei.of(7), Wei.ONE, 100_000);
     transactionPool.addRemoteTransactions(List.of(tx));
 
     ensureTransactionIsValid(tx);
@@ -186,7 +186,7 @@ public class LondonFeeMarketBlockTransactionSelectorTest
     // tx is willing to pay max 7 wei for gas, but current network condition (baseFee == 1)
     // result in it paying 2 wei, that is below the minimum accepted by the node, but since it is
     // a local sender it is accepted anyway
-    final Transaction tx = createSIP1559Transaction(1, Wei.of(7L), Wei.ONE, 100_000);
+    final Transaction tx = createEIP1559Transaction(1, Wei.of(7L), Wei.ONE, 100_000);
     final var addResult = transactionPool.addTransactionViaApi(tx);
     assertThat(addResult.isValid()).isTrue();
 
@@ -203,9 +203,9 @@ public class LondonFeeMarketBlockTransactionSelectorTest
     final ProcessableBlockHeader blockHeader = createBlock(5_000_000);
 
     final Transaction txFrontier1 = createTransaction(0, Wei.of(7L), 100_000);
-    final Transaction txLondon1 = createSIP1559Transaction(1, Wei.ONE, Wei.ONE, 100_000);
+    final Transaction txLondon1 = createEIP1559Transaction(1, Wei.ONE, Wei.ONE, 100_000);
     final Transaction txFrontier2 = createTransaction(2, Wei.of(7L), 100_000);
-    final Transaction txLondon2 = createSIP1559Transaction(3, Wei.ONE, Wei.ONE, 100_000);
+    final Transaction txLondon2 = createEIP1559Transaction(3, Wei.ONE, Wei.ONE, 100_000);
 
     ensureTransactionIsValid(txFrontier1);
     ensureTransactionIsValid(txLondon1);
@@ -240,22 +240,22 @@ public class LondonFeeMarketBlockTransactionSelectorTest
     miningConfiguration.setMinPriorityFeePerGas(Wei.of(7));
 
     final Transaction txSelected1 =
-        createSIP1559Transaction(0, Wei.of(8), Wei.of(8), 100_000, SENDER1);
+        createEIP1559Transaction(0, Wei.of(8), Wei.of(8), 100_000, SENDER1);
     ensureTransactionIsValid(txSelected1);
 
     // transaction txNotSelected1 should not be selected
     final Transaction txNotSelected1 =
-        createSIP1559Transaction(1, Wei.of(7), Wei.of(7), 100_000, SENDER1);
+        createEIP1559Transaction(1, Wei.of(7), Wei.of(7), 100_000, SENDER1);
     ensureTransactionIsValid(txNotSelected1);
 
     // transaction txSelected2 should be selected
     final Transaction txSelected2 =
-        createSIP1559Transaction(0, Wei.of(8), Wei.of(8), 100_000, SENDER2);
+        createEIP1559Transaction(0, Wei.of(8), Wei.of(8), 100_000, SENDER2);
     ensureTransactionIsValid(txSelected2);
 
     // transaction txNotSelected2 should not be selected
     final Transaction txNotSelected2 =
-        createSIP1559Transaction(1, Wei.of(8), Wei.of(6), 100_000, SENDER2);
+        createEIP1559Transaction(1, Wei.of(8), Wei.of(6), 100_000, SENDER2);
     ensureTransactionIsValid(txNotSelected2);
 
     final BlockTransactionSelector selector =

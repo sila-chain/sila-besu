@@ -32,9 +32,9 @@ import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.math.BigInteger;
@@ -54,7 +54,7 @@ public class SilProtocolManagerTestBuilder {
   private BigInteger networkId;
   private WorldStateArchive worldStateArchive;
   private TransactionPool transactionPool;
-  private SilProtocolConfiguration silaWireProtocolConfiguration;
+  private SilProtocolConfiguration ethereumWireProtocolConfiguration;
   private ForkIdManager forkIdManager;
   private SilPeers silPeers;
   private SilMessages silMessages;
@@ -107,9 +107,9 @@ public class SilProtocolManagerTestBuilder {
     return this;
   }
 
-  public SilProtocolManagerTestBuilder setSilaWireProtocolConfiguration(
-      final SilProtocolConfiguration silaWireProtocolConfiguration) {
-    this.silaWireProtocolConfiguration = silaWireProtocolConfiguration;
+  public SilProtocolManagerTestBuilder setEthereumWireProtocolConfiguration(
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration) {
+    this.ethereumWireProtocolConfiguration = ethereumWireProtocolConfiguration;
     return this;
   }
 
@@ -118,12 +118,12 @@ public class SilProtocolManagerTestBuilder {
     return this;
   }
 
-  public SilProtocolManagerTestBuilder setSilPeers(final SilPeers silPeers) {
+  public SilProtocolManagerTestBuilder setEthPeers(final SilPeers silPeers) {
     this.silPeers = silPeers;
     return this;
   }
 
-  public SilProtocolManagerTestBuilder setSilMessages(final SilMessages silMessages) {
+  public SilProtocolManagerTestBuilder setEthMessages(final SilMessages silMessages) {
     this.silMessages = silMessages;
     return this;
   }
@@ -133,7 +133,7 @@ public class SilProtocolManagerTestBuilder {
     return this;
   }
 
-  public SilProtocolManagerTestBuilder setSilContext(final SilContext silContext) {
+  public SilProtocolManagerTestBuilder setEthContext(final SilContext silContext) {
     this.silContext = silContext;
     return this;
   }
@@ -155,7 +155,7 @@ public class SilProtocolManagerTestBuilder {
     return this;
   }
 
-  public SilProtocolManagerTestBuilder setSilScheduler(final SilScheduler silScheduler) {
+  public SilProtocolManagerTestBuilder setEthScheduler(final SilScheduler silScheduler) {
     this.silScheduler = silScheduler;
     return this;
   }
@@ -172,11 +172,11 @@ public class SilProtocolManagerTestBuilder {
     }
     if (blockchain == null) {
       if (genesisConfig == null) {
-        genesisConfig = GenesisConfig.sila - mainnet();
+        genesisConfig = GenesisConfig.silaMainnet();
       }
       if (genesisState == null) {
         genesisState =
-            GenesisState.fromConfig(genesisConfig, protocolSchedule, new PathBasedCodeCache());
+            GenesisState.fromConfig(genesisConfig, protocolSchedule, new BonsaiCodeCache());
       }
       blockchain = createInMemoryBlockchain(genesisState.getBlock());
     }
@@ -190,8 +190,8 @@ public class SilProtocolManagerTestBuilder {
     if (transactionPool == null) {
       transactionPool = mock(TransactionPool.class);
     }
-    if (silaWireProtocolConfiguration == null) {
-      silaWireProtocolConfiguration = SilProtocolConfiguration.DEFAULT;
+    if (ethereumWireProtocolConfiguration == null) {
+      ethereumWireProtocolConfiguration = SilProtocolConfiguration.DEFAULT;
     }
     if (forkIdManager == null) {
       forkIdManager =
@@ -221,7 +221,7 @@ public class SilProtocolManagerTestBuilder {
     }
     if (silScheduler == null) {
       silScheduler =
-          new DeterministicSilScheduler(DeterministicSilScheduler.TimeoutPolicy.NEVER_TIMEOUT);
+          new DeterministicEthScheduler(DeterministicEthScheduler.TimeoutPolicy.NEVER_TIMEOUT);
     }
     if (peerTaskExecutor == null) {
       peerTaskExecutor = mock(PeerTaskExecutor.class);
@@ -244,7 +244,7 @@ public class SilProtocolManagerTestBuilder {
         networkId,
         worldStateArchive,
         transactionPool,
-        silaWireProtocolConfiguration,
+        ethereumWireProtocolConfiguration,
         silPeers,
         silMessages,
         silContext,

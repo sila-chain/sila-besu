@@ -16,11 +16,11 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.archive;
 
 import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig;
 
 /**
  * Bonsai world state used to serve archive historical queries. It behaves like {@link
@@ -36,7 +36,7 @@ public class BonsaiArchiveWorldState extends BonsaiWorldState {
       final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage,
       final SavmConfiguration savmConfiguration,
       final WorldStateConfig worldStateConfig,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     super(archive, worldStateKeyValueStorage, savmConfiguration, worldStateConfig, codeCache);
   }
 

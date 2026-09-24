@@ -96,13 +96,13 @@ public enum SavmSpecVersion {
       Limits.MAX_CODE_SIZE_AMSTERDAM,
       Limits.MAX_INITCODE_SIZE_AMSTERDAM),
   /** Development fork for unscheduled SIPs */
-  FUTURE_SIPS(
-      SilaMainnetHardforkId.FUTURE_SIPS,
+  FUTURE_EIPS(
+      SilaMainnetHardforkId.FUTURE_EIPS,
       Limits.MAX_CODE_SIZE_AMSTERDAM,
       Limits.MAX_INITCODE_SIZE_AMSTERDAM),
   /** Development fork for SIPs that are not yet accepted to SilaMainnet */
-  EXPERIMENTAL_SIPS(
-      SilaMainnetHardforkId.EXPERIMENTAL_SIPS,
+  EXPERIMENTAL_EIPS(
+      SilaMainnetHardforkId.EXPERIMENTAL_EIPS,
       Limits.MAX_CODE_SIZE_AMSTERDAM,
       Limits.MAX_INITCODE_SIZE_AMSTERDAM);
 
@@ -144,9 +144,9 @@ public enum SavmSpecVersion {
 
   /**
    * What is the "default" version of SAVM that should be made. Newer versions of Besu will adjust
-   * this to reflect sila-mainnet fork development.
+   * this to reflect mainnet fork development.
    *
-   * @return the current sila-mainnet for as of the release of this version of Besu
+   * @return the current mainnet for as of the release of this version of Besu
    */
   public static SavmSpecVersion defaultVersion() {
     SavmSpecVersion answer = null;
@@ -226,9 +226,9 @@ public enum SavmSpecVersion {
 
   /**
    * The most recent deployed savm supported by the library. This will change across versions and
-   * will be updated after sila-mainnet activations.
+   * will be updated after mainnet activations.
    *
-   * @return the most recently activated sila-mainnet spec.
+   * @return the most recently activated mainnet spec.
    */
   public static SavmSpecVersion mostRecent() {
     return Stream.of(SavmSpecVersion.values())

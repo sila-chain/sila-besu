@@ -33,7 +33,7 @@ public class BlockSizeTest {
 
   @BeforeAll
   public static void before() {
-    BlockchainSetupUtil.forSilaMainnet()
+    BlockchainSetupUtil.forMainnet()
         .getBlocks()
         .forEach(
             b -> {

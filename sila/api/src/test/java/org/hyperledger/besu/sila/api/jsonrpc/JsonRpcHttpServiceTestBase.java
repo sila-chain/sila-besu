@@ -20,7 +20,7 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
@@ -49,7 +49,7 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -158,7 +158,7 @@ public class JsonRpcHttpServiceTestBase {
                 mock(ApiConfiguration.class),
                 Optional.empty(),
                 mock(TransactionSimulator.class),
-                new DeterministicSilScheduler());
+                new DeterministicEthScheduler());
     disabledRpcMethods = new HashMap<>();
     addedRpcMethods = new HashSet<>();
 

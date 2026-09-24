@@ -42,8 +42,8 @@ public final class BlockTestUtil {
       Suppliers.memoize(BlockTestUtil::supplyHiveTestChainResources);
   private static final Supplier<ChainResources> testChainLondonSupplier =
       Suppliers.memoize(BlockTestUtil::supplyTestChainLondonResources);
-  private static final Supplier<ChainResources> silaMainnetChainSupplier =
-      Suppliers.memoize(BlockTestUtil::supplySilaMainnetChainResources);
+  private static final Supplier<ChainResources> mainnetChainSupplier =
+      Suppliers.memoize(BlockTestUtil::supplyMainnetChainResources);
   private static final Supplier<ChainResources> badPowChainSupplier =
       Suppliers.memoize(BlockTestUtil::supplyBadPowChainResources);
   private static final Supplier<ChainResources> forkOutdatedSupplier =
@@ -119,12 +119,12 @@ public final class BlockTestUtil {
   }
 
   /**
-   * Gets sila-mainnet resources.
+   * Gets mainnet resources.
    *
-   * @return the sila-mainnet resources
+   * @return the mainnet resources
    */
-  public static ChainResources getSilaMainnetResources() {
-    return silaMainnetChainSupplier.get();
+  public static ChainResources getMainnetResources() {
+    return mainnetChainSupplier.get();
   }
 
   private static ChainResources getBadPowResources() {
@@ -154,7 +154,7 @@ public final class BlockTestUtil {
    *
    * @return the Sil Ref Test resources.
    */
-  public static ChainResources getSilRefTestResources() {
+  public static ChainResources getEthRefTestResources() {
     return testRpcCompactChainSupplier.get();
   }
 
@@ -207,27 +207,22 @@ public final class BlockTestUtil {
     return new ChainResources(genesisURL, blocksURL);
   }
 
-  private static ChainResources supplySilaMainnetChainResources() {
+  private static ChainResources supplyMainnetChainResources() {
     final URL genesisURL =
         ensureFileUrl(
-            BlockTestUtil.class
-                .getClassLoader()
-                .getResource("sila-mainnet-data/sila-mainnet.json"));
+            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/mainnet.json"));
     final URL blocksURL =
-        ensureFileUrl(
-            BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/1000.blocks"));
+        ensureFileUrl(BlockTestUtil.class.getClassLoader().getResource("mainnet-data/1000.blocks"));
     return new ChainResources(genesisURL, blocksURL);
   }
 
   private static ChainResources supplyBadPowChainResources() {
     final URL genesisURL =
         ensureFileUrl(
-            BlockTestUtil.class
-                .getClassLoader()
-                .getResource("sila-mainnet-data/sila-mainnet.json"));
+            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/mainnet.json"));
     final URL blocksURL =
         ensureFileUrl(
-            BlockTestUtil.class.getClassLoader().getResource("sila-mainnet-data/badpow.blocks"));
+            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/badpow.blocks"));
     return new ChainResources(genesisURL, blocksURL);
   }
 
@@ -300,7 +295,7 @@ public final class BlockTestUtil {
     try {
       Files.write(
           target,
-          Resources.toByteArray(getSilaMainnetResources().getBlocksURL()),
+          Resources.toByteArray(getMainnetResources().getBlocksURL()),
           StandardOpenOption.CREATE,
           StandardOpenOption.TRUNCATE_EXISTING);
     } catch (final IOException ex) {

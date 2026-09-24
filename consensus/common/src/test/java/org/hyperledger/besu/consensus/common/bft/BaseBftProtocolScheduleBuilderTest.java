@@ -284,7 +284,7 @@ public class BaseBftProtocolScheduleBuilderTest {
 
     // All forks after block 100 should be time based forks and retrieval from the fork
     // schedule should be based on block timestamp not block number
-    when(genesisConfig.getSilaShanghaiTime()).thenReturn(OptionalLong.of(100));
+    when(genesisConfig.getShanghaiTime()).thenReturn(OptionalLong.of(100));
     TransitionsConfigOptions transitions = TransitionsConfigOptions.DEFAULT;
     when(genesisConfig.getTransitions()).thenReturn(transitions);
 

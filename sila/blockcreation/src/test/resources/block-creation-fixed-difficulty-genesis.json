@@ -2,7 +2,7 @@
   "config": {
     "chainId": 42,
     "frontierBlock": 0,
-      "silash": {
+      "ethash": {
         "fixeddifficulty":10
     }
   },

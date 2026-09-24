@@ -21,6 +21,7 @@ import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MAX_
 import static org.hyperledger.besu.sila.sil.transactions.layered.LayeredRemovalReason.PoolRemovalReason.INVALIDATED;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.reset;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Address;
@@ -28,7 +29,9 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.metrics.StubMetricsSystem;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Transaction;
@@ -45,7 +48,8 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPoolReplacementHand
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
 import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.io.BufferedReader;
 import java.io.IOException;
@@ -76,12 +80,11 @@ public class ReplayTest {
   private final StubMetricsSystem metricsSystem = new StubMetricsSystem();
   private final TransactionPoolMetrics txPoolMetrics = new TransactionPoolMetrics(metricsSystem);
   private final MiningConfiguration miningConfiguration = MiningConfiguration.newDefault();
-  private final SilScheduler silScheduler = new DeterministicSilScheduler();
+  private final SilScheduler silScheduler = new DeterministicEthScheduler();
   private final SenderBalanceChecker senderBalanceChecker = mock(SenderBalanceChecker.class);
   private final Map<Address, Wei> recordedSenderBalances = new HashMap<>();
   private final Address senderToLog =
       Address.fromHexString("0xf7445f4b8a07921bf882175470dc8f7221c53996");
-
   private BlockHeader currBlockHeader;
 
   /**
@@ -152,8 +155,15 @@ public class ReplayTest {
 
           final AbstractPrioritizedTransactions prioritizedTransactions =
               createLayers(poolConfig, txPoolMetrics, baseFeeMarket);
+
+          final WorldStateArchive worldStateArchive = mock(WorldStateArchive.class);
+
+          final ProtocolContext protocolContext = mock(ProtocolContext.class);
+          when(protocolContext.getWorldStateArchive()).thenReturn(worldStateArchive);
+
           final LayeredPendingTransactions pendingTransactions =
-              new LayeredPendingTransactions(poolConfig, prioritizedTransactions, silScheduler);
+              new LayeredPendingTransactions(
+                  protocolContext, poolConfig, prioritizedTransactions, silScheduler);
 
           String line;
           while ((line = br.readLine()) != null) {
@@ -175,7 +185,8 @@ public class ReplayTest {
                   }
                   case "B" -> {
                     System.out.println("B:" + commaSplit[1]);
-                    processBlock(commaSplit, prioritizedTransactions, baseFeeMarket);
+                    processBlock(
+                        commaSplit, prioritizedTransactions, baseFeeMarket, worldStateArchive);
                     recordedSenderBalances.clear();
                   }
                   case "S" -> {
@@ -306,7 +317,8 @@ public class ReplayTest {
   private void processBlock(
       final String[] commaSplit,
       final AbstractPrioritizedTransactions prioritizedTransactions,
-      final FeeMarket feeMarket) {
+      final FeeMarket feeMarket,
+      final WorldStateArchive worldStateArchive) {
     final Bytes bytes = Bytes.fromHexString(commaSplit[commaSplit.length - 1]);
     final RLPInput rlpInput = new BytesValueRLPInput(bytes, false);
     final BlockHeader blockHeader =
@@ -344,6 +356,20 @@ public class ReplayTest {
           nonceRangeBySender.get(senderToLog),
           prioritizedTransactions.logSender(senderToLog));
     }
+
+    final MutableWorldState worldState = mock(MutableWorldState.class);
+    when(worldState.get(any(Address.class)))
+        .thenAnswer(
+            invocation -> {
+              final Account account = mock(Account.class);
+              final Address address = invocation.getArgument(0, Address.class);
+              final long confirmedNonce = maxNonceBySender.getOrDefault(address, -1L);
+              when(account.getNonce()).thenReturn(confirmedNonce + 1);
+              return account;
+            });
+    reset(worldStateArchive);
+    when(worldStateArchive.getWorldState()).thenReturn(worldState);
+
     prioritizedTransactions.blockAdded(feeMarket, blockHeader, maxNonceBySender);
     if (maxNonceBySender.containsKey(senderToLog) || nonceRangeBySender.containsKey(senderToLog)) {
       LOG.warn("After {}", prioritizedTransactions.logSender(senderToLog));

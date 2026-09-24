@@ -32,6 +32,7 @@ import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.ForestStateRootCommitter;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
@@ -175,13 +176,22 @@ public class ForestMutableWorldState implements MutableWorldState {
   }
 
   @Override
-  public void persist(final BlockHeader blockHeader, final StateRootCommitter committer) {
-    final ForestWorldStateKeyValueStorage.Updater stateUpdater =
-        worldStateKeyValueStorage.updater();
-    committer.computeRoot(() -> applyAndComputeRoot(stateUpdater), this, stateUpdater, blockHeader);
+  public void persist(final BlockHeader blockHeader) {
+    persist(blockHeader, ForestStateRootCommitter.INSTANCE);
   }
 
-  private Hash applyAndComputeRoot(final ForestWorldStateKeyValueStorage.Updater forestUpdater) {
+  /**
+   * Forest committers ({@link ForestStateRootCommitter}) read accumulated changes from this world
+   * state directly and do not use a {@link WorldUpdater}; {@code null} is intentional here.
+   */
+  @Override
+  public void persist(final BlockHeader blockHeader, final StateRootCommitter committer) {
+    committer.compute(this, blockHeader, null);
+  }
+
+  public Hash applyAndComputeRoot() {
+    final ForestWorldStateKeyValueStorage.Updater forestUpdater =
+        worldStateKeyValueStorage.updater();
     for (final Bytes code : updatedAccountCode.values()) {
       forestUpdater.putCode(code);
     }
@@ -326,18 +336,6 @@ public class ForestMutableWorldState implements MutableWorldState {
                 storageEntries.put(key, entry);
               });
       return storageEntries;
-    }
-
-    /**
-     * Does this account have any storage slots that are set to non-zero values?
-     *
-     * @return true if the account has no storage values set to non-zero values. False if any
-     *     storage is set.
-     */
-    @Override
-    public boolean isStorageEmpty() {
-      return Hash.EMPTY_TRIE_HASH.equals(
-          storageTrie == null ? getStorageRoot() : storageTrie.getRootHash());
     }
 
     @Override

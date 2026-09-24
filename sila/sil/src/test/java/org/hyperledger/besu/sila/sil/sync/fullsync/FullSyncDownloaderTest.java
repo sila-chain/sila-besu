@@ -24,7 +24,7 @@ import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
@@ -74,13 +74,13 @@ public class FullSyncDownloaderTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(localBlockchainSetup.getWorldArchive())
             .setTransactionPool(localBlockchainSetup.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build();
     silContext = silProtocolManager.silContext();
-    syncState = new SyncState(protocolContext.getBlockchain(), silContext.getSilPeers());
+    syncState = new SyncState(protocolContext.getBlockchain(), silContext.getEthPeers());
   }
 
   @AfterEach
@@ -112,9 +112,9 @@ public class FullSyncDownloaderTest {
     final FullSyncDownloader synchronizer =
         downloader(SynchronizerConfiguration.builder().maxTrailingPeers(maxTailingPeers).build());
 
-    final RespondingSilPeer bestPeer =
+    final RespondingEthPeer bestPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 100);
-    syncState.setSyncTarget(bestPeer.getSilPeer(), localBlockchain.getChainHeadHeader());
+    syncState.setSyncTarget(bestPeer.getEthPeer(), localBlockchain.getChainHeadHeader());
 
     final TrailingPeerRequirements expected =
         new TrailingPeerRequirements(localBlockchain.getChainHeadBlockNumber(), maxTailingPeers);
@@ -130,8 +130,8 @@ public class FullSyncDownloaderTest {
     final FullSyncDownloader synchronizer =
         downloader(SynchronizerConfiguration.builder().maxTrailingPeers(maxTailingPeers).build());
 
-    final RespondingSilPeer bestPeer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 2);
-    syncState.setSyncTarget(bestPeer.getSilPeer(), localBlockchain.getChainHeadHeader());
+    final RespondingEthPeer bestPeer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 2);
+    syncState.setSyncTarget(bestPeer.getEthPeer(), localBlockchain.getChainHeadHeader());
 
     assertThat(synchronizer.calculateTrailingPeerRequirements())
         .isEqualTo(TrailingPeerRequirements.UNRESTRICTED);

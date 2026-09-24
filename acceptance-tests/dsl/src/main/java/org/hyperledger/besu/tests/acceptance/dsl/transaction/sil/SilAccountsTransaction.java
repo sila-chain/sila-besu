@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.util.List;
 
-import org.web3j.protocol.core.methods.response.SilAccounts;
+import org.web3j.protocol.core.methods.response.EthAccounts;
 
 public class SilAccountsTransaction implements Transaction<List<String>> {
 
@@ -31,7 +31,7 @@ public class SilAccountsTransaction implements Transaction<List<String>> {
   @Override
   public List<String> execute(final NodeRequests node) {
     try {
-      final SilAccounts result = node.sil().silAccounts().send();
+      final EthAccounts result = node.sil().ethAccounts().send();
       assertThat(result).isNotNull();
       if (result.hasError()) {
         throw new RuntimeException(result.getError().getMessage());

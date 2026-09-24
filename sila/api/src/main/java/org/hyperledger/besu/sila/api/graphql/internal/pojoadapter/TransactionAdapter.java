@@ -510,8 +510,8 @@ public class TransactionAdapter extends AdapterBase {
     BigInteger v = transactionWithMetadata.getTransaction().getV();
     return Optional.ofNullable(
         v == null
-                && (transactionWithMetadata.getTransaction().getType().getSilSerializedType()
-                    < TransactionType.BLOB.getSilSerializedType())
+                && (transactionWithMetadata.getTransaction().getType().getEthSerializedType()
+                    < TransactionType.BLOB.getEthSerializedType())
             ? transactionWithMetadata.getTransaction().getYParity()
             : v);
   }

@@ -31,7 +31,7 @@ public class Era1FileSourceTest {
         Path.of(
                 Era1FileSourceTest.class
                     .getClassLoader()
-                    .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+                    .getResource("mainnet-00000-5ec1ffb8.era1")
                     .toURI())
             .getParent()
             .toUri();
@@ -49,7 +49,7 @@ public class Era1FileSourceTest {
     URI expectedResult =
         Era1FileSourceTest.class
             .getClassLoader()
-            .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+            .getResource("mainnet-00000-5ec1ffb8.era1")
             .toURI();
     Assertions.assertEquals(expectedResult, era1FileSource.next());
   }

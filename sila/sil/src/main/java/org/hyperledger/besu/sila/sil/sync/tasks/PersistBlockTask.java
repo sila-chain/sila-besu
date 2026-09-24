@@ -21,7 +21,7 @@ import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockImporter;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
-import org.hyperledger.besu.sila.sil.manager.task.AbstractSilTask;
+import org.hyperledger.besu.sila.sil.manager.task.AbstractEthTask;
 import org.hyperledger.besu.sila.sil.sync.tasks.exceptions.InvalidBlockException;
 import org.hyperledger.besu.sila.silaMainnet.BlockImportResult;
 import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
@@ -37,7 +37,7 @@ import java.util.function.Supplier;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class PersistBlockTask extends AbstractSilTask<Block> {
+public class PersistBlockTask extends AbstractEthTask<Block> {
 
   private static final Logger LOG = LoggerFactory.getLogger(PersistBlockTask.class);
 
@@ -227,7 +227,7 @@ public class PersistBlockTask extends AbstractSilTask<Block> {
                 (block.getHeader().getGasUsed() * 100.0) / block.getHeader().getGasLimit(),
                 block.getHash().getBytes().toHexString(),
                 timeInS,
-                silContext.getSilPeers().peerCount()));
+                silContext.getEthPeers().peerCount()));
         break;
       case ALREADY_IMPORTED:
         LOG.info("Block {} is already imported", block.toLogString());

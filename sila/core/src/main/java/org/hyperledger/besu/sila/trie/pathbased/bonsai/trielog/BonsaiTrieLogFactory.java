@@ -27,8 +27,7 @@ import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 import org.hyperledger.besu.sila.rlp.RLPOutput;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogLayer;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedValue;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiValue;
 
 import java.util.Map;
 import java.util.Optional;
@@ -128,7 +127,7 @@ public class BonsaiTrieLogFactory implements TrieLogFactory {
         for (final Map.Entry<StorageSlotKey, TrieLog.LogTuple<UInt256>> storageChangeEntry :
             storageChanges.entrySet()) {
           output.startList();
-          // do not write slotKey, it is not used in sila-mainnet bonsai trielogs
+          // do not write slotKey, it is not used in mainnet bonsai trielogs
           output.writeBytes(storageChangeEntry.getKey().getSlotHash().getBytes());
           writeInnerRlp(storageChangeEntry.getValue(), output, RLPOutput::writeUInt256Scalar);
           output.endList();
@@ -166,9 +165,7 @@ public class BonsaiTrieLogFactory implements TrieLogFactory {
             nullOrValue(input, PmtStateTrieAccountValue::readFrom);
         final boolean isCleared = getOptionalIsCleared(input);
         input.leaveList();
-        newLayer
-            .getAccountChanges()
-            .put(address, new PathBasedValue<>(oldValue, newValue, isCleared));
+        newLayer.getAccountChanges().put(address, new BonsaiValue<>(oldValue, newValue, isCleared));
       }
 
       if (input.nextIsNull()) {
@@ -179,13 +176,13 @@ public class BonsaiTrieLogFactory implements TrieLogFactory {
         final Bytes newCode = nullOrValue(input, RLPInput::readBytes);
         final boolean isCleared = getOptionalIsCleared(input);
         input.leaveList();
-        newLayer.getCodeChanges().put(address, new PathBasedValue<>(oldCode, newCode, isCleared));
+        newLayer.getCodeChanges().put(address, new BonsaiValue<>(oldCode, newCode, isCleared));
       }
 
       if (input.nextIsNull()) {
         input.skipNext();
       } else {
-        final Map<StorageSlotKey, PathBasedValue<UInt256>> storageChanges = new TreeMap<>();
+        final Map<StorageSlotKey, BonsaiValue<UInt256>> storageChanges = new TreeMap<>();
         input.enterList();
         while (!input.isEndOfCurrentList()) {
           input.enterList();
@@ -194,7 +191,7 @@ public class BonsaiTrieLogFactory implements TrieLogFactory {
           final UInt256 oldValue = nullOrValue(input, RLPInput::readUInt256Scalar);
           final UInt256 newValue = nullOrValue(input, RLPInput::readUInt256Scalar);
           final boolean isCleared = getOptionalIsCleared(input);
-          storageChanges.put(storageSlotKey, new PathBasedValue<>(oldValue, newValue, isCleared));
+          storageChanges.put(storageSlotKey, new BonsaiValue<>(oldValue, newValue, isCleared));
           input.leaveList();
         }
         input.leaveList();

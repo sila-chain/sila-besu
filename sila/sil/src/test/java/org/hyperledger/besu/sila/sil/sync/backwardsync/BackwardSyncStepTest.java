@@ -34,7 +34,7 @@ import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
@@ -48,7 +48,7 @@ import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collections;
@@ -88,11 +88,11 @@ public class BackwardSyncStepTest {
           BalConfiguration.DEFAULT,
           new NoOpMetricsSystem());
 
-  private final DeterministicSilScheduler silScheduler = new DeterministicSilScheduler();
+  private final DeterministicEthScheduler silScheduler = new DeterministicEthScheduler();
 
   private MutableBlockchain localBlockchain;
   private MutableBlockchain remoteBlockchain;
-  private RespondingSilPeer peer;
+  private RespondingEthPeer peer;
   @Mock private PeerTaskExecutor peerTaskExecutor;
   GenericKeyValueStorageFacade<Hash, BlockHeader> headersStorage;
   GenericKeyValueStorageFacade<Hash, Block> blocksStorage;
@@ -146,20 +146,20 @@ public class BackwardSyncStepTest {
 
     SilProtocolManager silProtocolManager =
         SilProtocolManagerTestBuilder.builder()
-            .setSilScheduler(silScheduler)
+            .setEthScheduler(silScheduler)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
 
     peer =
-        RespondingSilPeer.builder()
+        RespondingEthPeer.builder()
             .silProtocolManager(silProtocolManager)
             .estimatedHeight(REMOTE_HEIGHT)
             .build();
     SilContext silContext = silProtocolManager.silContext();
-    when(context.getSilContext()).thenReturn(silContext);
+    when(context.getEthContext()).thenReturn(silContext);
 
     Answer<PeerTaskExecutorResult<List<BlockHeader>>> getHeadersAnswer =
-        new GetHeadersFromPeerTaskExecutorAnswer(remoteBlockchain, silContext.getSilPeers());
+        new GetHeadersFromPeerTaskExecutorAnswer(remoteBlockchain, silContext.getEthPeers());
     when(peerTaskExecutor.execute(any(GetHeadersFromPeerTask.class))).thenAnswer(getHeadersAnswer);
     when(peerTaskExecutor.executeAgainstPeer(any(GetHeadersFromPeerTask.class), any(SilPeer.class)))
         .thenAnswer(getHeadersAnswer);
@@ -171,8 +171,8 @@ public class BackwardSyncStepTest {
     when(context.getBatchSize()).thenReturn(5);
     BackwardSyncStep step = spy(new BackwardSyncStep(context, backwardChain));
 
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(remoteBlockchain);
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(remoteBlockchain);
 
     final CompletableFuture<Void> future =
         step.executeAsync(backwardChain.getFirstAncestorHeader().orElseThrow());
@@ -220,8 +220,8 @@ public class BackwardSyncStepTest {
     BackwardSyncStep step = new BackwardSyncStep(context, createBackwardChain(REMOTE_HEIGHT - 1));
     final Block lookingForBlock = getBlockByNumber(REMOTE_HEIGHT - 2);
 
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(remoteBlockchain);
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(remoteBlockchain);
 
     final CompletableFuture<List<BlockHeader>> future =
         step.requestHeaders(lookingForBlock.getHeader().getHash());
@@ -240,7 +240,7 @@ public class BackwardSyncStepTest {
         step.requestHeaders(lookingForBlock.getHeader().getHash());
 
     verify(localBlockchain).getBlockHeader(lookingForBlock.getHash());
-    verify(context, never()).getSilContext();
+    verify(context, never()).getEthContext();
     final BlockHeader blockHeader = future.get().get(0);
     assertThat(blockHeader).isEqualTo(lookingForBlock.getHeader());
   }
@@ -252,8 +252,8 @@ public class BackwardSyncStepTest {
     BackwardSyncStep step = new BackwardSyncStep(context, createBackwardChain(REMOTE_HEIGHT - 1));
     final Block lookingForBlock = getBlockByNumber(REMOTE_HEIGHT - 2);
 
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(remoteBlockchain);
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(remoteBlockchain);
 
     final CompletableFuture<List<BlockHeader>> future =
         step.requestHeaders(lookingForBlock.getHeader().getHash());
@@ -277,7 +277,7 @@ public class BackwardSyncStepTest {
     BackwardSyncStep step = new BackwardSyncStep(context, createBackwardChain(REMOTE_HEIGHT - 1));
     final Block lookingForBlock = getBlockByNumber(REMOTE_HEIGHT - 2);
 
-    final RespondingSilPeer.Responder responder = RespondingSilPeer.emptyResponder();
+    final RespondingEthPeer.Responder responder = RespondingEthPeer.emptyResponder();
 
     final CompletableFuture<List<BlockHeader>> future =
         step.requestHeaders(lookingForBlock.getHeader().getHash());

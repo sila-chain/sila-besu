@@ -23,7 +23,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilFilterChange
 
 import java.util.List;
 
-import org.web3j.protocol.core.methods.response.SilLog;
+import org.web3j.protocol.core.methods.response.EthLog;
 
 public class NewPendingTransactionFilterChangesCondition implements Condition {
 
@@ -41,7 +41,7 @@ public class NewPendingTransactionFilterChangesCondition implements Condition {
   public void verify(final Node node) {
     WaitUtils.waitFor(
         () -> {
-          final SilLog response = node.execute(filterChanges);
+          final EthLog response = node.execute(filterChanges);
           assertThat(response).isNotNull();
           assertThat(response.getResult().size()).isEqualTo(transactionHashes.size());
           for (int i = 0; i < transactionHashes.size(); ++i) {

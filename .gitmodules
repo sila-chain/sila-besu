@@ -1,4 +1,4 @@
 [submodule "sil-ref-tests"]
 	path = sila/referencetests/src/reference-test/external-resources
-	url = https://github.com/sila-chain/tests.git
+	url = https://github.com/sila/tests.git
 	ignore = all

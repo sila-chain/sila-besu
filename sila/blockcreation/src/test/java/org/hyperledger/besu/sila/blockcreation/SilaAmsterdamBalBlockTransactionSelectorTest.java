@@ -42,9 +42,9 @@ import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
 import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.services.TransactionSelectionServiceImpl;
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.blockcreation.pluginadapter.TransactionSelectionServiceImpl;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockTransactionSelector;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionSelectionResults;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
@@ -85,8 +85,8 @@ import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.PartialBlockAccessView;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStoragePrefixedKeyBlockchainStorage;
 import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.number.Fraction;
 import org.hyperledger.besu.util.number.PositiveNumber;
@@ -166,8 +166,7 @@ class SilaAmsterdamBalBlockTransactionSelectorTest {
             transactionSelectionService, Wei.ZERO, DEFAULT_POS_BLOCK_TXS_SELECTION_MAX_TIME);
 
     final Block genesisBlock =
-        GenesisState.fromConfig(genesisConfig, protocolSchedule, new PathBasedCodeCache())
-            .getBlock();
+        GenesisState.fromConfig(genesisConfig, protocolSchedule, new BonsaiCodeCache()).getBlock();
 
     blockchain =
         DefaultBlockchain.createMutable(
@@ -191,7 +190,7 @@ class SilaAmsterdamBalBlockTransactionSelectorTest {
 
     when(protocolContext.getWorldStateArchive().getWorldState(any(WorldStateQueryParams.class)))
         .thenReturn(Optional.of(worldState));
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
     when(silScheduler.scheduleBlockCreationTask(anyLong(), any(Runnable.class)))
         .thenAnswer(invocation -> CompletableFuture.runAsync(invocation.getArgument(1)));
     when(silScheduler.scheduleFutureTask(any(Runnable.class), any(Duration.class)))
@@ -340,7 +339,7 @@ class SilaAmsterdamBalBlockTransactionSelectorTest {
                   50_000L,
                   50_000L,
                   Bytes.EMPTY,
-                  Optional.of(balPartialAddingTwoSip7928Items(txIndex)),
+                  Optional.of(balPartialAddingTwoEip7928Items(txIndex)),
                   ValidationResult.valid());
             });
 
@@ -361,7 +360,7 @@ class SilaAmsterdamBalBlockTransactionSelectorTest {
         .doesNotContain(tx2PartialAccount);
 
     final BlockAccessList.BlockAccessListBuilder expectedBuilder = BlockAccessList.builder();
-    expectedBuilder.apply(balPartialAddingTwoSip7928Items(0));
+    expectedBuilder.apply(balPartialAddingTwoEip7928Items(0));
     final BlockAccessList expectedBalOnlyTx1 = expectedBuilder.build();
     assertThat(BodyValidation.balHash(committedBal))
         .isEqualTo(BodyValidation.balHash(expectedBalOnlyTx1));
@@ -405,7 +404,7 @@ class SilaAmsterdamBalBlockTransactionSelectorTest {
                   50_000L,
                   50_000L,
                   Bytes.EMPTY,
-                  Optional.of(balPartialAddingTwoSip7928Items(txIndex)),
+                  Optional.of(balPartialAddingTwoEip7928Items(txIndex)),
                   ValidationResult.valid());
             });
 
@@ -420,20 +419,20 @@ class SilaAmsterdamBalBlockTransactionSelectorTest {
     assertThat(committedBal.sip7928ItemCount()).isEqualTo(4L);
 
     final BlockAccessList.BlockAccessListBuilder expectedBuilder = BlockAccessList.builder();
-    expectedBuilder.apply(balPartialAddingTwoSip7928Items(0));
-    expectedBuilder.apply(balPartialAddingTwoSip7928Items(1));
+    expectedBuilder.apply(balPartialAddingTwoEip7928Items(0));
+    expectedBuilder.apply(balPartialAddingTwoEip7928Items(1));
     final BlockAccessList expectedBalBothTxs = expectedBuilder.build();
     assertThat(BodyValidation.balHash(committedBal))
         .isEqualTo(BodyValidation.balHash(expectedBalBothTxs));
   }
 
-  private static PartialBlockAccessView balPartialAddingTwoSip7928Items(final int txIndex) {
+  private static PartialBlockAccessView balPartialAddingTwoEip7928Items(final int txIndex) {
     final Address addr = Address.fromHexString(String.format("0x%040x", txIndex + 100L));
     final PartialBlockAccessView.PartialBlockAccessViewBuilder builder =
         new PartialBlockAccessView.PartialBlockAccessViewBuilder().withTxIndex(txIndex);
     builder
         .getOrCreateAccountBuilder(addr)
-        .addStorageChange(new StorageSlotKey(UInt256.ONE), UInt256.ZERO);
+        .addStorageChange(new StorageSlotKey(UInt256.ONE), null, UInt256.ZERO);
     return builder.build();
   }
 }

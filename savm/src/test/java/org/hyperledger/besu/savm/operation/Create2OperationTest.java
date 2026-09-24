@@ -15,7 +15,7 @@
 package org.hyperledger.besu.savm.operation;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.savm.SilaMainnetSAVMs.DEV_NET_CHAIN_ID;
+import static org.hyperledger.besu.savm.SilaMainnetEVMs.DEV_NET_CHAIN_ID;
 import static org.hyperledger.besu.savm.frame.ExceptionalHaltReason.CODE_TOO_LARGE;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.mock;
@@ -27,7 +27,7 @@ import org.hyperledger.besu.datatypes.Log;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.frame.BlockValues;
 import org.hyperledger.besu.savm.frame.MessageFrame;
@@ -53,7 +53,7 @@ public class Create2OperationTest {
   private MessageFrame messageFrame;
   private final WorldUpdater worldUpdater = mock(WorldUpdater.class);
   private final MutableAccount account = mock(MutableAccount.class);
-  private final SAVM savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+  private final SAVM savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
   private final MutableAccount newAccount = mock(MutableAccount.class);
 
   private final Create2Operation operation =
@@ -207,10 +207,9 @@ public class Create2OperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
-    final SAVM savm = SilaMainnetSAVMs.shanghai(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.shanghai(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
     var result = operation.execute(messageFrame, savm);
     final MessageFrame createFrame = messageFrame.getMessageFrameStack().peek();
     final ContractCreationProcessor ccp = new ContractCreationProcessor(savm, false, List.of(), 0);
@@ -235,10 +234,9 @@ public class Create2OperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
-    final SAVM savm = SilaMainnetSAVMs.shanghai(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.shanghai(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
     var result = operation.execute(messageFrame, savm);
     assertThat(result.getHaltReason()).isEqualTo(CODE_TOO_LARGE);
   }
@@ -257,10 +255,9 @@ public class Create2OperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
-    final SAVM savm = SilaMainnetSAVMs.amsterdam(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.amsterdam(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
     var result = operation.execute(messageFrame, savm);
     assertThat(result.getHaltReason()).isNull();
   }
@@ -279,10 +276,9 @@ public class Create2OperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
-    final SAVM savm = SilaMainnetSAVMs.amsterdam(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.amsterdam(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
     var result = operation.execute(messageFrame, savm);
     assertThat(result.getHaltReason()).isEqualTo(CODE_TOO_LARGE);
   }
@@ -300,10 +296,9 @@ public class Create2OperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
-    final SAVM savm = SilaMainnetSAVMs.amsterdam(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.amsterdam(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
     var result = operation.execute(messageFrame, savm);
     assertThat(result.getHaltReason()).isNull();
   }
@@ -341,7 +336,7 @@ public class Create2OperationTest {
     messageFrame.pushStackItem(memoryOffset);
     messageFrame.pushStackItem(UInt256.ZERO);
 
-    final SAVM savm = SilaMainnetSAVMs.shanghai(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.shanghai(DEV_NET_CHAIN_ID, SavmConfiguration.DEFAULT);
     var result = operation.execute(messageFrame, savm);
 
     assertThat(result.getHaltReason()).isEqualTo(CODE_TOO_LARGE);

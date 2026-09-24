@@ -40,6 +40,7 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.StorageRangeDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.AccountFlatDatabaseHealingRangeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.StorageFlatDatabaseHealingRangeRequest;
+import org.hyperledger.besu.sila.sil.sync.worldstate.StalledDownloadException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldDownloadState;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
@@ -159,7 +160,12 @@ public class SnapWorldDownloadState extends WorldDownloadState<SnapDataRequest>
 
   @Override
   protected synchronized void markAsStalled(final int maxNodeRequestRetries) {
-    // TODO retry when mark as stalled
+    final String message =
+        "Snap sync world state download stalled — peers stopped serving data after "
+            + maxNodeRequestRetries
+            + " requests without progress.";
+    LOG.warn(message);
+    internalFuture.completeExceptionally(new StalledDownloadException(message));
   }
 
   @Override
@@ -472,6 +478,7 @@ public class SnapWorldDownloadState extends WorldDownloadState<SnapDataRequest>
                   pivotBlockSelector.check(
                       (____, isNewPivotBlock) -> {
                         if (isNewPivotBlock) {
+                          resetProgressTracking();
                           foundNewPivotBlock.set(true);
                         }
                       });

@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.hyperledger.besu.config.NetworkDefinition.SILA_MAINNET;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.HOODI_BOOTSTRAP_NODES;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.HOODI_DISCOVERY_URL;
+import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.MAINNET_BOOTSTRAP_NODES;
+import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.MAINNET_DISCOVERY_URL;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SEPOLIA_BOOTSTRAP_NODES;
 import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SEPOLIA_DISCOVERY_URL;
-import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_BOOTSTRAP_NODES;
-import static org.hyperledger.besu.sila.p2p.config.DefaultDiscoveryConfiguration.SILA_MAINNET_DISCOVERY_URL;
 
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.NetworkDefinition;
@@ -36,16 +36,16 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public class SilNetworkConfigTest {
 
   @Test
-  public void testDefaultSilaMainnetConfig() {
+  public void testDefaultMainnetConfig() {
     SilNetworkConfig config = SilNetworkConfig.getNetworkConfig(NetworkDefinition.SILA_MAINNET);
-    assertThat(config.dnsDiscoveryUrl()).isEqualTo(SILA_MAINNET_DISCOVERY_URL);
-    assertThat(config.enodeBootNodes()).isEqualTo(SILA_MAINNET_BOOTSTRAP_NODES);
+    assertThat(config.dnsDiscoveryUrl()).isEqualTo(MAINNET_DISCOVERY_URL);
+    assertThat(config.enodeBootNodes()).isEqualTo(MAINNET_BOOTSTRAP_NODES);
     assertThat(config.enrBootNodes()).isNotEmpty();
     assertThat(config.networkId()).isEqualTo(BigInteger.ONE);
   }
 
   @Test
-  public void testDefaultSilaSepoliaConfig() {
+  public void testDefaultSepoliaConfig() {
     SilNetworkConfig config = SilNetworkConfig.getNetworkConfig(NetworkDefinition.SEPOLIA);
     assertThat(config.dnsDiscoveryUrl()).isEqualTo(SEPOLIA_DISCOVERY_URL);
     assertThat(config.enodeBootNodes()).isEqualTo(SEPOLIA_BOOTSTRAP_NODES);
@@ -71,7 +71,7 @@ public class SilNetworkConfigTest {
 
   @Test
   public void testDefaultFutureConfig() {
-    SilNetworkConfig config = SilNetworkConfig.getNetworkConfig(NetworkDefinition.FUTURE_SIPS);
+    SilNetworkConfig config = SilNetworkConfig.getNetworkConfig(NetworkDefinition.FUTURE_EIPS);
     assertThat(config.dnsDiscoveryUrl()).isNull();
     assertThat(config.enodeBootNodes()).isEmpty();
     assertThat(config.networkId()).isEqualTo(BigInteger.valueOf(2022));
@@ -80,7 +80,7 @@ public class SilNetworkConfigTest {
   @Test
   public void testDefaultExperimentalConfig() {
     SilNetworkConfig config =
-        SilNetworkConfig.getNetworkConfig(NetworkDefinition.EXPERIMENTAL_SIPS);
+        SilNetworkConfig.getNetworkConfig(NetworkDefinition.EXPERIMENTAL_EIPS);
     assertThat(config.dnsDiscoveryUrl()).isNull();
     assertThat(config.enodeBootNodes()).isEmpty();
     assertThat(config.networkId()).isEqualTo(BigInteger.valueOf(2023));

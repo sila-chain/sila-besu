@@ -14,13 +14,12 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 
-import java.util.Collections;
 import java.util.Map;
 
 import com.fasterxml.jackson.annotation.JsonValue;
 
 /**
- * Represents the result format for Sila's 4byteTracer as specified in the Gsil documentation.
+ * Represents the result format for Sila's 4byteTracer as specified in the Geth documentation.
  *
  * <p>The 4byteTracer collects function selectors (the first 4 bytes of call data) from all calls
  * made during transaction execution, along with the size of the supplied call data. This is useful
@@ -38,36 +37,12 @@ import com.fasterxml.jackson.annotation.JsonValue;
  * }
  * }</pre>
  *
- * @see <a href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#4byte-tracer">
- *     Gsil 4byteTracer Documentation</a>
+ * @param selectorCounts map of selector-size keys to occurrence counts
+ * @see <a href="https://geth.sila.org/docs/developers/savm-tracing/built-in-tracers#4byte-tracer">
+ *     Geth 4byteTracer Documentation</a>
  */
-public class FourByteTracerResult {
-
-  /**
-   * Map of function selector + call data size to occurrence count. Key format:
-   * "0x[4-byte-selector]-[calldata-size]"
-   */
-  private final Map<String, Integer> selectorCounts;
-
-  /**
-   * Constructs a FourByteTracerResult with the given selector counts.
-   *
-   * @param selectorCounts map of selector-size keys to occurrence counts
-   */
+public record FourByteTracerResult(@JsonValue Map<String, Integer> selectorCounts) {
   public FourByteTracerResult(final Map<String, Integer> selectorCounts) {
-    this.selectorCounts = selectorCounts != null ? selectorCounts : Collections.emptyMap();
-  }
-
-  /**
-   * Gets the map of function selectors and their occurrence counts.
-   *
-   * <p>The {@link JsonValue} annotation causes Jackson to serialize this object directly as the
-   * map, without wrapping it in an object. This matches Gsil's output format.
-   *
-   * @return the map of selector-size keys to occurrence counts
-   */
-  @JsonValue
-  public Map<String, Integer> getSelectorCounts() {
-    return selectorCounts;
+    this.selectorCounts = selectorCounts == null ? Map.of() : selectorCounts;
   }
 }

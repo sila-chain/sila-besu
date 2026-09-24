@@ -44,7 +44,7 @@ public class SnapServerChecker {
   public static void createAndSetSnapServerChecker(
       final SilContext silContext, final MetricsSystem metricsSystem) {
     final SnapServerChecker checker = new SnapServerChecker(silContext, metricsSystem);
-    silContext.getSilPeers().setSnapServerChecker(checker);
+    silContext.getEthPeers().setSnapServerChecker(checker);
   }
 
   public CompletableFuture<Boolean> check(final SilPeer peer, final BlockHeader peersHeadHeader) {

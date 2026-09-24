@@ -49,9 +49,9 @@ import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStoragePrefixedKeyBloc
 import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.CodeHashCodeStorageStrategy;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogLayer;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.code.CodeHashCodeStorageStrategy;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogLayer;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogManager;
 
 import java.util.ArrayList;
 import java.util.List;

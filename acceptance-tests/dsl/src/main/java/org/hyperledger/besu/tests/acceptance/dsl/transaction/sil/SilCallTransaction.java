@@ -25,9 +25,9 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.methods.response.SilCall;
+import org.web3j.protocol.core.methods.response.EthCall;
 
-public class SilCallTransaction implements Transaction<SilCall> {
+public class SilCallTransaction implements Transaction<EthCall> {
   private final String contractAddress;
   private final String functionCall;
   private BigInteger gasLimit = GAS_LIMIT;
@@ -47,12 +47,12 @@ public class SilCallTransaction implements Transaction<SilCall> {
   }
 
   @Override
-  public SilCall execute(final NodeRequests node) {
+  public EthCall execute(final NodeRequests node) {
     try {
 
       var transactionCount =
           node.sil()
-              .silGetTransactionCount(benefactorOneAddress, LATEST)
+              .ethGetTransactionCount(benefactorOneAddress, LATEST)
               .send()
               .getTransactionCount();
 
@@ -66,7 +66,7 @@ public class SilCallTransaction implements Transaction<SilCall> {
               BigInteger.ZERO,
               functionCall);
 
-      return node.sil().silCall(transaction, LATEST).send();
+      return node.sil().ethCall(transaction, LATEST).send();
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }

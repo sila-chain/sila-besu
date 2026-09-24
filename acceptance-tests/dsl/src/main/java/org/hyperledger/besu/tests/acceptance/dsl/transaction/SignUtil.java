@@ -86,7 +86,7 @@ public class SignUtil {
       final Sign.SignatureData signature,
       final SECPSignature secpSignature) {
     final List<RlpType> values = TransactionEncoder.asRlpValues(transaction, signature);
-    if (!transaction.getType().equals(TransactionType.SIP1559)) {
+    if (!transaction.getType().equals(TransactionType.EIP1559)) {
       return values;
     }
 

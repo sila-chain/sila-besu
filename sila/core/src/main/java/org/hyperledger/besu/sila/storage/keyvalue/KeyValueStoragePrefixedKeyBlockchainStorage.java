@@ -315,7 +315,7 @@ public class KeyValueStoragePrefixedKeyBlockchainStorage implements BlockchainSt
     LOG.error(
         "Inconsistency found when migrating {} to variables storage,"
             + " probably this is due to a downgrade done without running the `storage revert-variables`"
-            + " subcommand first, see https://github.com/hyperledger/besu/pull/5471",
+            + " subcommand first, see https://github.com/sila-chain/sila-besu/pull/5471",
         key);
     throw new IllegalStateException(
         key + " mismatch: blockchain storage value=" + bch + ", variables storage value=" + vch);

@@ -39,7 +39,7 @@ import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseSipSpec;
+import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseEipSpec;
 import org.hyperledger.besu.sila.referencetests.GeneralStateTestCaseSpec;
 import org.hyperledger.besu.sila.referencetests.ReferenceTestBlockchain;
 import org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules;
@@ -77,21 +77,21 @@ public class GeneralStateReferenceTestTools {
   }
 
   private static final JsonTestParameters<?, ?> params =
-      JsonTestParameters.create(GeneralStateTestCaseSpec.class, GeneralStateTestCaseSipSpec.class)
+      JsonTestParameters.create(GeneralStateTestCaseSpec.class, GeneralStateTestCaseEipSpec.class)
           .generator(
               (testName, fullPath, stateSpec, collector) -> {
                 final String prefix = testName + "-";
-                for (final Map.Entry<String, List<GeneralStateTestCaseSipSpec>> entry :
+                for (final Map.Entry<String, List<GeneralStateTestCaseEipSpec>> entry :
                     stateSpec.finalStateSpecs().entrySet()) {
                   final String sip = entry.getKey();
                   final boolean runTest = SIPS_TO_RUN.contains(sip);
-                  final List<GeneralStateTestCaseSipSpec> sipSpecs = entry.getValue();
-                  if (sipSpecs.size() == 1) {
-                    collector.add(prefix + sip, fullPath, sipSpecs.get(0), runTest);
+                  final List<GeneralStateTestCaseEipSpec> eipSpecs = entry.getValue();
+                  if (eipSpecs.size() == 1) {
+                    collector.add(prefix + sip, fullPath, eipSpecs.get(0), runTest);
                   } else {
-                    for (int i = 0; i < sipSpecs.size(); i++) {
+                    for (int i = 0; i < eipSpecs.size(); i++) {
                       collector.add(
-                          prefix + sip + '[' + i + ']', fullPath, sipSpecs.get(i), runTest);
+                          prefix + sip + '[' + i + ']', fullPath, eipSpecs.get(i), runTest);
                     }
                   }
                 }
@@ -110,8 +110,18 @@ public class GeneralStateReferenceTestTools {
     params.ignore("CALLBlake2f_MaxRounds.*");
     params.ignore("loopMul-.*");
 
-    // These are for the older reference tests but SIP-2537 is covered by sip2537_bls_12_381_precompiles in the execution-spec-tests
-    params.ignore("/stSIP2537/");
+    // These are for the older reference tests but SIP-2537 is covered by eip2537_bls_12_381_precompiles in the execution-spec-tests
+    params.ignore("/stEIP2537/");
+
+    // SIP-7610 (revert creation when the destination address has non-empty storage) was never part
+    // of the spec and has been dropped retroactively for every fork, see
+    // https://github.com/sila/execution-specs/pull/3417. Upstream has deleted these tests from
+    // sila/tests, but the submodule is still pinned to a revision that contains them.
+    params.ignore("create2collisionStorageParis");
+    params.ignore("dynamicAccountOverwriteEmpty_Paris");
+    params.ignore("InitCollisionParis");
+    params.ignore("RevertInCreateInInitCreate2Paris");
+    params.ignore("RevertInCreateInInit_Paris");
   }
 
   private GeneralStateReferenceTestTools() {
@@ -123,13 +133,13 @@ public class GeneralStateReferenceTestTools {
   }
 
   @SuppressWarnings("java:S5960") // this is actually test support code, not production code
-  public static void executeTest(final GeneralStateTestCaseSipSpec spec) {
+  public static void executeTest(final GeneralStateTestCaseEipSpec spec) {
     final BlockHeader blockHeader = spec.getBlockHeader();
     final ReferenceTestWorldState initialWorldState = spec.getInitialWorldState();
     final Transaction transaction = spec.getTransaction(0);
     ProtocolSpec protocolSpec = protocolSpec(spec.getFork());
 
-    BlockchainReferenceTestTools.verifyJournaledSAVMAccountCompatability(initialWorldState, protocolSpec);
+    BlockchainReferenceTestTools.verifyJournaledEVMAccountCompatability(initialWorldState, protocolSpec);
 
     // Sometimes the tests ask us assemble an invalid transaction.  If we have
     // no valid transaction then there is no test.  GeneralBlockChain tests

@@ -180,8 +180,8 @@ public class SnapSyncMetricsManager {
     if (now - lastNotifyTimestamp >= PRINT_DELAY) {
       lastNotifyTimestamp = now;
       int peerCount = -1; // silContext is not available in tests
-      if (silContext != null && silContext.getSilPeers().peerCount() >= 0) {
-        peerCount = silContext.getSilPeers().peerCount();
+      if (silContext != null && silContext.getEthPeers().peerCount() >= 0) {
+        peerCount = silContext.getEthPeers().peerCount();
       }
       switch (step) {
         case DOWNLOAD -> {

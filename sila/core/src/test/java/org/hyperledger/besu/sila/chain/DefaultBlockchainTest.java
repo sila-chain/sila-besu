@@ -22,7 +22,7 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.metrics.MetricsSystemFactory;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.core.Block;
@@ -107,7 +107,7 @@ public class DefaultBlockchainTest {
         .hasMessageContaining(
             "Supplied genesis block does not match chain data stored in /test/path\n"
                 + "Please specify a different data directory with --data-path, specify the original genesis file with "
-                + "--genesis-file or supply a testnet/sila-mainnet option with --network.");
+                + "--genesis-file or supply a testnet/mainnet option with --network.");
   }
 
   @Test

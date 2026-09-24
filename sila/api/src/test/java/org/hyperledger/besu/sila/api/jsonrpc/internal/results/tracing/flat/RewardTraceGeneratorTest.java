@@ -79,7 +79,7 @@ public class RewardTraceGeneratorTest {
   }
 
   @Test
-  public void assertThatTraceGeneratorReturnValidRewardsForSilaMainnetBlockProcessor() {
+  public void assertThatTraceGeneratorReturnValidRewardsForMainnetBlockProcessor() {
     final AbstractBlockProcessor.TransactionReceiptFactory transactionReceiptFactory =
         mock(AbstractBlockProcessor.TransactionReceiptFactory.class);
     final SilaMainnetBlockProcessor blockProcessor =

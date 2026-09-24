@@ -15,12 +15,12 @@
 package org.hyperledger.besu.metrics;
 
 import static org.hyperledger.besu.metrics.MetricsProtocol.OPENTELEMETRY;
-import static org.hyperledger.besu.metrics.MetricsProtocol.PROMSILEUS;
+import static org.hyperledger.besu.metrics.MetricsProtocol.PROMETHEUS;
 
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.metrics.opentelemetry.OpenTelemetrySystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.metrics.promsileus.PromsileusMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.PrometheusMetricsSystem;
 
 import java.util.concurrent.atomic.AtomicBoolean;
 
@@ -55,9 +55,9 @@ public class MetricsSystemFactory {
       disableGlobalOpenTelemetry();
       return new NoOpMetricsSystem();
     }
-    if (PROMSILEUS.equals(metricsConfiguration.getProtocol())) {
-      final PromsileusMetricsSystem metricsSystem =
-          new PromsileusMetricsSystem(
+    if (PROMETHEUS.equals(metricsConfiguration.getProtocol())) {
+      final PrometheusMetricsSystem metricsSystem =
+          new PrometheusMetricsSystem(
               metricsConfiguration.getMetricCategories(), metricsConfiguration.isTimersEnabled());
       metricsSystem.init();
       disableGlobalOpenTelemetry();
@@ -67,7 +67,7 @@ public class MetricsSystemFactory {
           new OpenTelemetrySystem(
               metricsConfiguration.getMetricCategories(),
               metricsConfiguration.isTimersEnabled(),
-              metricsConfiguration.getPromsileusJob(),
+              metricsConfiguration.getPrometheusJob(),
               true);
       metricsSystem.initDefaults();
       return metricsSystem;

@@ -21,10 +21,10 @@ import java.util.List;
 import org.web3j.protocol.Web3jService;
 import org.web3j.protocol.core.Request;
 import org.web3j.protocol.core.Response;
-import org.web3j.protocol.core.methods.response.SilBlock;
+import org.web3j.protocol.core.methods.response.EthBlock;
 
 public class DebugRequestFactory {
-  public record BadBlock(SilBlock.Block block, String hash, String rlp) {}
+  public record BadBlock(EthBlock.Block block, String hash, String rlp) {}
 
   public static class GetBadBlocksResponse extends Response<List<BadBlock>> {}
 

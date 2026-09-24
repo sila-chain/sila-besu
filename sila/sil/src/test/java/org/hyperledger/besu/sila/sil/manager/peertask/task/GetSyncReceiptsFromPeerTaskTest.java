@@ -83,7 +83,7 @@ import org.junit.jupiter.params.provider.ValueSource;
 import org.mockito.Mockito;
 
 public class GetSyncReceiptsFromPeerTaskTest {
-  private static final Set<Capability> AGREED_CAPABILITIES_SIL69 = Set.of(SilProtocol.SIL69);
+  private static final Set<Capability> AGREED_CAPABILITIES_ETH69 = Set.of(SilProtocol.SIL69);
   private static final Set<Capability> AGREED_CAPABILITIES_LATEST = Set.of(SilProtocol.LATEST);
   private static ProtocolSchedule protocolSchedule;
 
@@ -107,7 +107,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
   }
 
   @Test
-  public void testGetRequestMessageSIL69() {
+  public void testGetRequestMessageETH69() {
     final List<MockedBlock> mockedBlocks =
         List.of(mockBlock(1, 2), mockBlock(2, 1), mockBlock(3, 1));
 
@@ -116,7 +116,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
             new Request(mockedBlocks.stream().map(MockedBlock::block).toList(), List.of()),
             protocolSchedule);
 
-    final MessageData messageData = task.getRequestMessage(AGREED_CAPABILITIES_SIL69);
+    final MessageData messageData = task.getRequestMessage(AGREED_CAPABILITIES_ETH69);
     final GetReceiptsMessage getReceiptsMessage = GetReceiptsMessage.readFrom(messageData);
 
     assertEquals(SilProtocolMessages.GET_RECEIPTS, getReceiptsMessage.getCode());
@@ -190,7 +190,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
     final MessageData rawMsg =
         new RawMessage(SilProtocolMessages.RECEIPTS, receiptsMessage.getData());
 
-    final Response response = task.processResponse(rawMsg, AGREED_CAPABILITIES_SIL69);
+    final Response response = task.processResponse(rawMsg, AGREED_CAPABILITIES_ETH69);
 
     assertThat(response.completeReceiptsByBlock().values())
         .usingElementComparator(this::receiptsComparator)
@@ -202,7 +202,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
   }
 
   /** Builds a MessageData in sil/70 wire format: {@code <scalar(flag)> <list of receipt-lists>} */
-  private MessageData buildSil70ReceiptsMessage(
+  private MessageData buildEth70ReceiptsMessage(
       final List<List<TransactionReceipt>> receiptsByBlock, final boolean lastBlockIncomplete) {
     final BytesValueRLPOutput rlp = new BytesValueRLPOutput();
     rlp.writeLongScalar(lastBlockIncomplete ? 1 : 0);
@@ -214,7 +214,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
   }
 
   @Test
-  public void testParseResponseWithSil70PaginatedLastBlockIncomplete()
+  public void testParseResponseWithEth70PaginatedLastBlockIncomplete()
       throws InvalidPeerTaskResponseException, MalformedRlpFromPeerException {
     // Block 1 has 2 receipts (complete), block 2 has 3 receipts but only 1 is returned (partial)
     final MockedBlock block1 = mockBlock(1, 2);
@@ -225,7 +225,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
 
     // Server returns block1 fully and 1 receipt from block2 (lastBlockIncomplete=true)
     final MessageData receiptsMessage =
-        buildSil70ReceiptsMessage(
+        buildEth70ReceiptsMessage(
             List.of(block1.receipts, List.of(block2.receipts.getFirst())), true);
 
     final Response response = task.processResponse(receiptsMessage, AGREED_CAPABILITIES_LATEST);
@@ -241,7 +241,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
   }
 
   @Test
-  public void testParseResponseWithSil70AllReceiptsCompleteLastBlockIncompleteFalse()
+  public void testParseResponseWithEth70AllReceiptsCompleteLastBlockIncompleteFalse()
       throws InvalidPeerTaskResponseException, MalformedRlpFromPeerException {
     final MockedBlock block1 = mockBlock(1, 1);
     final MockedBlock block2 = mockBlock(2, 2);
@@ -251,7 +251,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
 
     // Server returns both blocks fully (lastBlockIncomplete=false)
     final MessageData receiptsMessage =
-        buildSil70ReceiptsMessage(List.of(block1.receipts, block2.receipts), false);
+        buildEth70ReceiptsMessage(List.of(block1.receipts, block2.receipts), false);
 
     final Response response = task.processResponse(receiptsMessage, AGREED_CAPABILITIES_LATEST);
 
@@ -273,7 +273,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
 
     // Server returns receipts[1..2] (sil/70 format, lastBlockIncomplete=false)
     final MessageData receiptsMessage =
-        buildSil70ReceiptsMessage(List.of(block.receipts.subList(1, 3)), false);
+        buildEth70ReceiptsMessage(List.of(block.receipts.subList(1, 3)), false);
 
     final Response response = task.processResponse(receiptsMessage, AGREED_CAPABILITIES_LATEST);
 
@@ -284,14 +284,14 @@ public class GetSyncReceiptsFromPeerTaskTest {
   }
 
   @Test
-  public void testParseResponseWithSil70LastBlockIncompleteTrueAndEmptyListThrows() {
+  public void testParseResponseWithEth70LastBlockIncompleteTrueAndEmptyListThrows() {
     final MockedBlock block = mockBlock(1, 2);
 
     final GetSyncReceiptsFromPeerTask task =
         createTask(new Request(List.of(block.block), List.of()), protocolSchedule);
 
     // Malicious server sends lastBlockIncomplete=1 but empty receipt list
-    final MessageData receiptsMessage = buildSil70ReceiptsMessage(List.of(), true);
+    final MessageData receiptsMessage = buildEth70ReceiptsMessage(List.of(), true);
 
     assertThatThrownBy(() -> task.processResponse(receiptsMessage, AGREED_CAPABILITIES_LATEST))
         .isInstanceOf(InvalidPeerTaskResponseException.class);
@@ -319,7 +319,7 @@ public class GetSyncReceiptsFromPeerTaskTest {
     final MessageData rawMsg =
         new RawMessage(SilProtocolMessages.RECEIPTS, receiptsMessage.getData());
 
-    assertThatThrownBy(() -> task.processResponse(rawMsg, AGREED_CAPABILITIES_SIL69))
+    assertThatThrownBy(() -> task.processResponse(rawMsg, AGREED_CAPABILITIES_ETH69))
         .isInstanceOf(InvalidPeerTaskResponseException.class)
         .hasMessageContaining("Too many result returned");
   }

@@ -35,8 +35,8 @@ public class FlexStack<T> {
   /**
    * Formula `x = round( y / ( (1 + 0,5)^n ) ) + 1`, computes the initial stack size, `x` that one
    * has to start with to reach a maximum stack size, `y`, in `n` number of array resizes at a
-   * growth rate of 50%. Currently, for sila-mainnet y=1024 and, if considering n=6 in the worst
-   * case, the start size is 91 which is reasonable for sila-mainnet.
+   * growth rate of 50%. Currently, for mainnet y=1024 and, if considering n=6 in the worst case,
+   * the start size is 91 which is reasonable for mainnet.
    */
   private static final int INITIAL_SIZE =
       (int) Math.round(MessageFrame.DEFAULT_MAX_STACK_SIZE / Math.pow(1.5D, 6D)) + 1;

@@ -56,9 +56,9 @@ import org.hyperledger.besu.plugin.services.txselection.TransactionEvaluationCon
 import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.services.TransactionSelectionServiceImpl;
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.blockcreation.pluginadapter.TransactionSelectionServiceImpl;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockTransactionSelector;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionSelectionResults;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
@@ -92,8 +92,8 @@ import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStoragePrefixedKeyBlockchainStorage;
 import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 import org.hyperledger.besu.util.number.PositiveNumber;
 
 import java.math.BigInteger;
@@ -165,8 +165,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
             transactionSelectionService, Wei.ZERO, DEFAULT_POS_BLOCK_TXS_SELECTION_MAX_TIME);
 
     final Block genesisBlock =
-        GenesisState.fromConfig(genesisConfig, protocolSchedule, new PathBasedCodeCache())
-            .getBlock();
+        GenesisState.fromConfig(genesisConfig, protocolSchedule, new BonsaiCodeCache()).getBlock();
 
     blockchain =
         DefaultBlockchain.createMutable(
@@ -190,7 +189,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
 
     when(protocolContext.getWorldStateArchive().getWorldState(any(WorldStateQueryParams.class)))
         .thenReturn(Optional.of(worldState));
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
     when(silScheduler.scheduleBlockCreationTask(anyLong(), any(Runnable.class)))
         .thenAnswer(invocation -> CompletableFuture.runAsync(invocation.getArgument(1)));
     when(silScheduler.scheduleFutureTask(any(Runnable.class), any(Duration.class)))
@@ -236,7 +235,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
             false,
             BalConfiguration.DEFAULT,
             new NoOpMetricsSystem());
-    final SilaMainnetTransactionProcessor silaMainnetTransactionProcessor =
+    final SilaMainnetTransactionProcessor mainnetTransactionProcessor =
         protocolSchedule.getByBlockHeader(blockHeader(0)).getTransactionProcessor();
 
     // The block should fit 5 transactions only
@@ -247,7 +246,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
     final BlockTransactionSelector selector =
         createBlockSelectorAndSetupTxPool(
             defaultTestMiningConfiguration,
-            sila - mainnetTransactionProcessor,
+            mainnetTransactionProcessor,
             blockHeader,
             miningBeneficiary,
             Wei.ZERO,
@@ -258,7 +257,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
     assertThat(results.getSelectedTransactions()).isEmpty();
     assertThat(results.getNotSelectedTransactions()).isEmpty();
     assertThat(results.getReceipts()).isEmpty();
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(0);
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(0);
   }
 
   @Test
@@ -284,7 +283,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
     assertThat(results.getSelectedTransactions()).containsExactly(transaction);
     assertThat(results.getNotSelectedTransactions()).isEmpty();
     assertThat(results.getReceipts().size()).isEqualTo(1);
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(99995L);
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(99995L);
   }
 
   @Test
@@ -312,7 +311,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
     assertThat(results.getNotSelectedTransactions())
         .containsOnly(entry(transaction, TransactionSelectionResult.SELECTION_CANCELLED));
     assertThat(results.getReceipts().size()).isEqualTo(0);
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(0L);
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(0L);
   }
 
   @Test
@@ -353,7 +352,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
     assertThat(results.getSelectedTransactions().size()).isEqualTo(4);
     assertThat(results.getSelectedTransactions().contains(invalidTx)).isFalse();
     assertThat(results.getReceipts().size()).isEqualTo(4);
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(400_000);
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(400_000);
   }
 
   @Test
@@ -386,7 +385,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
     assertThat(results.getNotSelectedTransactions())
         .containsOnly(entry(transactionsToInject.get(3), TransactionSelectionResult.BLOCK_FULL));
     assertThat(results.getReceipts().size()).isEqualTo(3);
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(300_000);
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(300_000);
 
     // Ensure receipts have the correct cumulative gas
     assertThat(results.getReceipts().get(0).getCumulativeGasUsed()).isEqualTo(100_000);
@@ -521,7 +520,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
                 transactionsToInject.get(1),
                 TransactionSelectionResult.TX_TOO_LARGE_FOR_REMAINING_GAS),
             entry(transactionsToInject.get(4), TransactionSelectionResult.BLOCK_FULL));
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(blockHeader.getGasLimit());
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(blockHeader.getGasLimit());
   }
 
   @Test
@@ -574,7 +573,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
                 transactionsToInject.get(1),
                 TransactionSelectionResult.TX_TOO_LARGE_FOR_REMAINING_GAS),
             entry(transactionsToInject.get(3), TransactionSelectionResult.BLOCK_FULL));
-    assertThat(blockHeader.getGasLimit() - results.getCumulativeRegularGasUsed())
+    assertThat(blockHeader.getGasLimit() - results.getCumulativeExecutionGasUsed())
         .isLessThan(minTxGasCost);
   }
 
@@ -1473,7 +1472,7 @@ public abstract class AbstractBlockTransactionSelectorTest {
         .isTrue();
 
     assertThat(results.getReceipts().size()).isEqualTo(2);
-    assertThat(results.getCumulativeRegularGasUsed()).isEqualTo(200_000);
+    assertThat(results.getCumulativeExecutionGasUsed()).isEqualTo(200_000);
 
     // Ensure receipts have the correct cumulative gas
     assertThat(results.getReceipts().get(0).getCumulativeGasUsed()).isEqualTo(100_000);
@@ -1750,15 +1749,15 @@ public abstract class AbstractBlockTransactionSelectorTest {
         .signAndBuild(sender.keyPair());
   }
 
-  protected Transaction createSIP1559Transaction(
+  protected Transaction createEIP1559Transaction(
       final int nonce,
       final Wei maxFeePerGas,
       final Wei maxPriorityFeePerGas,
       final long gasLimit) {
-    return createSIP1559Transaction(nonce, maxFeePerGas, maxPriorityFeePerGas, gasLimit, SENDER1);
+    return createEIP1559Transaction(nonce, maxFeePerGas, maxPriorityFeePerGas, gasLimit, SENDER1);
   }
 
-  protected Transaction createSIP1559Transaction(
+  protected Transaction createEIP1559Transaction(
       final int nonce,
       final Wei maxFeePerGas,
       final Wei maxPriorityFeePerGas,

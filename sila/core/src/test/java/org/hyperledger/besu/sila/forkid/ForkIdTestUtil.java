@@ -85,10 +85,10 @@ public class ForkIdTestUtil {
 
     public static final List<Long> PRIVATE = Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
 
-    public static final List<Long> SILA_MAINNET_WITH_SHANGHAI_BLOCKS =
+    public static final List<Long> MAINNET_WITH_SHANGHAI_BLOCKS =
         Streams.concat(SILA_MAINNET.stream(), Stream.of(18000000L)).collect(Collectors.toList());
 
-    public static final List<Long> SILA_MAINNET_WITH_SHANGHAI_TIMESTAMPS = List.of(1668000000L);
+    public static final List<Long> MAINNET_WITH_SHANGHAI_TIMESTAMPS = List.of(1668000000L);
   }
 
   public static class ForkIds {
@@ -149,11 +149,11 @@ public class ForkIdTestUtil {
         network(GenesisHash.HOODI, Forks.HOODI_BLOCKNUMBERS, Forks.HOODI_TIMESTAMPS);
     public static final Network PRIVATE = network(GenesisHash.PRIVATE, Forks.PRIVATE, emptyList());
 
-    public static final Network SILA_MAINNET_WITH_SHANGHAI =
+    public static final Network MAINNET_WITH_SHANGHAI =
         network(
             GenesisHash.SILA_MAINNET,
-            Forks.SILA_MAINNET_WITH_SHANGHAI_BLOCKS,
-            Forks.SILA_MAINNET_WITH_SHANGHAI_TIMESTAMPS);
+            Forks.MAINNET_WITH_SHANGHAI_BLOCKS,
+            Forks.MAINNET_WITH_SHANGHAI_TIMESTAMPS);
 
     public final String hash;
     public final List<Long> blockForks;

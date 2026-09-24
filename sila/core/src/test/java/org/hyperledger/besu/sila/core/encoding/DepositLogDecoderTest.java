@@ -52,7 +52,7 @@ class DepositLogDecoderTest {
   }
 
   @Test
-  void shouldDecodeSilaSepoliaDepositFromLog() {
+  void shouldDecodeSepoliaDepositFromLog() {
     final List<LogTopic> topics = List.of(LOG_TOPIC);
     final Bytes data =
         Bytes.fromHexString(

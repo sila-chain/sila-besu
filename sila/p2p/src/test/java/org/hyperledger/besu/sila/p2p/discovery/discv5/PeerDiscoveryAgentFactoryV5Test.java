@@ -31,7 +31,7 @@ import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
-import org.hyperledger.besu.sila.p2p.discovery.dns.SilaNodeRecord;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionSubnet;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
@@ -44,15 +44,15 @@ import java.util.Optional;
 import inet.ipaddr.IPAddress;
 import inet.ipaddr.IPAddressString;
 import org.apache.tuweni.bytes.Bytes;
+import org.ethereum.beacon.discovery.AddressAccessPolicy;
+import org.ethereum.beacon.discovery.schema.EnrField;
+import org.ethereum.beacon.discovery.schema.NodeRecord;
+import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
-import org.sila.beacon.discovery.AddressAccessPolicy;
-import org.sila.beacon.discovery.schema.EnrField;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
 
 @ExtendWith(MockitoExtension.class)
 class PeerDiscoveryAgentFactoryV5Test {
@@ -181,7 +181,7 @@ class PeerDiscoveryAgentFactoryV5Test {
     final Bytes compressedKey = (Bytes) testNodeRecord.get(EnrField.PKEY_SECP256K1);
     final PeerPermissionsDenylist denylist = PeerPermissionsDenylist.create();
     // The denylist stores the 64-byte uncompressed key; extract it the same way the allow path does
-    denylist.add(SilaNodeRecord.uncompressedPublicKey(testNodeRecord));
+    denylist.add(EthereumNodeRecord.uncompressedPublicKey(testNodeRecord));
     final AddressAccessPolicy policy = createFactory(denylist).createAddressAccessPolicy();
 
     assertThat(policy.allow(noAddressRecordWithKeyFrom(compressedKey))).isFalse();

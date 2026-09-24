@@ -74,14 +74,14 @@ public class CapabilityMultiplexerTest {
     assertThat(multiplexedData).isEqualTo(silData);
 
     // Demultiplex and check value
-    final MessageData multiplexedSilMessage = new RawMessage(silCode + expectedOffset, silData);
-    ProtocolMessage demultiplexed = multiplexerA.demultiplex(multiplexedSilMessage);
+    final MessageData multiplexedEthMessage = new RawMessage(silCode + expectedOffset, silData);
+    ProtocolMessage demultiplexed = multiplexerA.demultiplex(multiplexedEthMessage);
     final Bytes demultiplexedData = silMessage.getData();
     // Check returned result
     assertThat(demultiplexed.getMessage().getCode()).isEqualTo(silCode);
     assertThat(demultiplexed.getCapability()).isEqualTo(sil67);
     assertThat(demultiplexedData).isEqualTo(silData);
-    demultiplexed = multiplexerB.demultiplex(multiplexedSilMessage);
+    demultiplexed = multiplexerB.demultiplex(multiplexedEthMessage);
     assertThat(demultiplexed.getMessage().getCode()).isEqualTo(silCode);
     assertThat(demultiplexed.getCapability()).isEqualTo(sil67);
     assertThat(demultiplexedData).isEqualTo(silData);

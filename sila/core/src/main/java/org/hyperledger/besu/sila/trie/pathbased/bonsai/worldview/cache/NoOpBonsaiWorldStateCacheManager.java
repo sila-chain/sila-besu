@@ -17,10 +17,10 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.PathBasedWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -30,7 +30,7 @@ public class NoOpBonsaiWorldStateCacheManager extends BonsaiWorldStateCacheManag
   public NoOpBonsaiWorldStateCacheManager(
       final BonsaiWorldStateKeyValueStorage bonsaiWorldStateKeyValueStorage,
       final SavmConfiguration savmConfiguration,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     super(
         null,
         bonsaiWorldStateKeyValueStorage,

@@ -76,12 +76,12 @@ class FullSyncTargetManager extends AbstractSyncTargetManager {
 
   @Override
   protected CompletableFuture<Optional<SilPeer>> selectBestAvailableSyncTarget() {
-    final Optional<SilPeer> maybeBestPeer = silContext.getSilPeers().bestPeerWithHeightEstimate();
+    final Optional<SilPeer> maybeBestPeer = silContext.getEthPeers().bestPeerWithHeightEstimate();
     if (!maybeBestPeer.isPresent()) {
       LOG.info(
           "Unable to find sync target. Waiting for {} peers minimum. Currently checking {} peers for usefulness",
           config.getSyncMinimumPeerCount(),
-          silContext.getSilPeers().peerCount());
+          silContext.getEthPeers().peerCount());
       return completedFuture(Optional.empty());
     } else {
       final SilPeer bestPeer = maybeBestPeer.get();
@@ -91,14 +91,14 @@ class FullSyncTargetManager extends AbstractSyncTargetManager {
             "Caught up to best peer: {}, chain state: {}. Current peers: {}",
             bestPeer,
             bestPeer.chainState(),
-            silContext.getSilPeers().peerCount());
+            silContext.getEthPeers().peerCount());
         return completedFuture(Optional.empty());
       }
       LOG.debug(
           "Best peer: {}, chain state: {}. Current peers: {}",
           bestPeer,
           bestPeer.chainState(),
-          silContext.getSilPeers().peerCount());
+          silContext.getEthPeers().peerCount());
       return completedFuture(maybeBestPeer);
     }
   }

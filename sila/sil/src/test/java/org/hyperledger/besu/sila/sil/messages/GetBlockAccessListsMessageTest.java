@@ -53,7 +53,7 @@ public class GetBlockAccessListsMessageTest {
   }
 
   @Test
-  public void wrapsWithSil71WireShape() {
+  public void wrapsWithEth71WireShape() {
     // [request-id, [hashes]]
     final BlockDataGenerator generator = new BlockDataGenerator(1);
     final Hash blockHash = generator.hash();

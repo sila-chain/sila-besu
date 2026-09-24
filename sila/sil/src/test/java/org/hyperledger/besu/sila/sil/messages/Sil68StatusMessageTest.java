@@ -88,7 +88,7 @@ public class Sil68StatusMessageTest {
   }
 
   @Test
-  public void shouldNotHaveBlockRangeWhenSil68() {
+  public void shouldNotHaveBlockRangeWhenEth68() {
     Exception exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -102,7 +102,7 @@ public class Sil68StatusMessageTest {
   }
 
   @Test
-  public void shouldHaveBlockRangeWhenSil69() {
+  public void shouldHaveBlockRangeWhenEth69() {
     Exception exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -112,7 +112,7 @@ public class Sil68StatusMessageTest {
   }
 
   @Test
-  public void shouldHaveTotalDifficultWhenSil68() {
+  public void shouldHaveTotalDifficultWhenEth68() {
     Exception exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -122,7 +122,7 @@ public class Sil68StatusMessageTest {
   }
 
   @Test
-  public void shouldNotHaveTotalDifficultWhenSil69() {
+  public void shouldNotHaveTotalDifficultWhenEth69() {
     Exception exception =
         assertThrows(
             IllegalArgumentException.class,
@@ -161,7 +161,7 @@ public class Sil68StatusMessageTest {
   }
 
   @Test
-  public void shouldRejectSil69LayoutWithSil68Version() {
+  public void shouldRejectEth69LayoutWithEth68Version() {
     // Symmetric check: sil/69+ layout (no TD, with blockRange) but version=68 must be rejected.
     final BytesValueRLPOutput out = new BytesValueRLPOutput();
     out.startList();

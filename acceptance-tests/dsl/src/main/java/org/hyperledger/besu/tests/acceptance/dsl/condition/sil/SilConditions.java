@@ -29,38 +29,38 @@ public class SilConditions {
   }
 
   public Condition accountsExceptional(final String expectedMessage) {
-    return new ExpectSilAccountsException(transactions.accounts(), expectedMessage);
+    return new ExpectEthAccountsException(transactions.accounts(), expectedMessage);
   }
 
   public Condition expectSuccessfulTransactionReceipt(final String transactionHash) {
-    return new ExpectSuccessfulSilGetTransactionReceipt(
+    return new ExpectSuccessfulEthGetTransactionReceipt(
         transactions.getTransactionReceipt(transactionHash));
   }
 
   public Condition expectNoTransactionReceipt(final String transactionHash) {
-    return new ExpectSilGetTransactionReceiptIsAbsent(
+    return new ExpectEthGetTransactionReceiptIsAbsent(
         transactions.getTransactionReceipt(transactionHash));
   }
 
-  public Condition expectSilSendRawTransactionException(
+  public Condition expectEthSendRawTransactionException(
       final String transactionData, final String expectedMessage) {
-    return new ExpectSilSendRawTransactionException(
+    return new ExpectEthSendRawTransactionException(
         transactions.sendRawTransaction(transactionData), expectedMessage);
   }
 
-  public Condition expectSuccessfulSilRawTransaction(final String transactionData) {
-    return new ExpectSuccessfulSilSendRawTransaction(
+  public Condition expectSuccessfulEthRawTransaction(final String transactionData) {
+    return new ExpectSuccessfulEthSendRawTransaction(
         transactions.sendRawTransaction(transactionData));
   }
 
   public Condition expectSuccessfulTransactionReceiptWithReason(
       final String transactionHash, final String revertReason) {
-    return new ExpectSuccessfulSilGetTransactionReceiptWithReason(
+    return new ExpectSuccessfulEthGetTransactionReceiptWithReason(
         transactions.getTransactionReceiptWithRevertReason(transactionHash), revertReason);
   }
 
   public Condition expectSuccessfulTransactionReceiptWithoutReason(final String transactionHash) {
-    return new ExpectSuccessfulSilGetTransactionReceiptWithoutReason(
+    return new ExpectSuccessfulEthGetTransactionReceiptWithoutReason(
         transactions.getTransactionReceiptWithRevertReason(transactionHash));
   }
 

@@ -32,7 +32,7 @@ class BlockchainReferenceTestCaseSpecTest {
                   "_info" : {
                       "comment" : "",
                       "filling-rpc-server" : "savm version 1.13.5-unstable-cd295356-20231019",
-                      "filling-tool-version" : "retestsil-0.3.1-cancun+commit.1e18e0b3.Linux.g++",
+                      "filling-tool-version" : "retesteth-0.3.1-cancun+commit.1e18e0b3.Linux.g++",
                       "generatedTestHash" : "faf65f5956de8021ec3bddb63cb503e48fb2c89c8596bbc2ad793e6f3b39e1dc",
                       "lllcversion" : "Version: 0.5.14-develop.2023.7.11+commit.c58ab2c6.mod.Linux.g++",
                       "solidity" : "Version: 0.8.21+commit.d9974bed.Linux.g++",
@@ -161,11 +161,11 @@ class BlockchainReferenceTestCaseSpecTest {
 
   String jsonInvalid =
       """
-        { "ValueOverflow_d0g0v0_SIP150" : {
+        { "ValueOverflow_d0g0v0_EIP150" : {
                     "_info" : {
                         "comment" : "",
                         "filling-rpc-server" : "savm version 1.13.5-unstable-cd295356-20231019",
-                        "filling-tool-version" : "retestsil-0.3.1-cancun+commit.1e18e0b3.Linux.g++",
+                        "filling-tool-version" : "retesteth-0.3.1-cancun+commit.1e18e0b3.Linux.g++",
                         "generatedTestHash" : "3e97036f37b30c4b22f7816fb9f8321623ec4dd8646b0ab9c76fcf87371a36e3",
                         "lllcversion" : "Version: 0.5.14-develop.2023.7.11+commit.c58ab2c6.mod.Linux.g++",
                         "solidity" : "Version: 0.8.21+commit.d9974bed.Linux.g++",
@@ -296,14 +296,14 @@ class BlockchainReferenceTestCaseSpecTest {
         1,
         blockchainReferenceTestCaseSpec
             .testCaseSpecs
-            .get("ValueOverflow_d0g0v0_SIP150")
+            .get("ValueOverflow_d0g0v0_EIP150")
             .getCandidateBlocks()
             .length);
     Assertions.assertEquals(
         false,
         blockchainReferenceTestCaseSpec
             .testCaseSpecs
-            .get("ValueOverflow_d0g0v0_SIP150")
+            .get("ValueOverflow_d0g0v0_EIP150")
             .getCandidateBlocks()[0]
             .areAllTransactionsValid());
   }

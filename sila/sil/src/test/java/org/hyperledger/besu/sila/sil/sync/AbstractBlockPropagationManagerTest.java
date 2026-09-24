@@ -47,8 +47,9 @@ import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer.Responder;
+import org.hyperledger.besu.sila.sil.manager.PeerReputation;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer.Responder;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
@@ -90,7 +91,13 @@ import org.mockito.stubbing.Answer;
 
 public abstract class AbstractBlockPropagationManagerTest {
 
-  private static final Bytes NODE_ID_1 = Bytes.fromHexString("0x00");
+  private static final SilPeer PEER_1 = peerWithNodeId(Bytes.fromHexString("0x00"));
+
+  private static SilPeer peerWithNodeId(final Bytes nodeId) {
+    final SilPeer peer = mock(SilPeer.class);
+    when(peer.nodeId()).thenReturn(nodeId);
+    return peer;
+  }
 
   protected BlockchainSetupUtil blockchainUtil;
   protected ProtocolSchedule protocolSchedule;
@@ -130,11 +137,11 @@ public abstract class AbstractBlockPropagationManagerTest {
             .setBlockchain(blockchain)
             .setWorldStateArchive(blockchainUtil.getWorldArchive())
             .setTransactionPool(blockchainUtil.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     syncConfig = SynchronizerConfiguration.builder().blockPropagationRange(-3, 5).build();
-    syncState = new SyncState(blockchain, silProtocolManager.silContext().getSilPeers());
+    syncState = new SyncState(blockchain, silProtocolManager.silContext().getEthPeers());
     blockBroadcaster = mock(BlockBroadcaster.class);
     blockPropagationManager =
         new BlockPropagationManager(
@@ -153,21 +160,21 @@ public abstract class AbstractBlockPropagationManagerTest {
                 Mockito.any(GetHeadersFromPeerTask.class), Mockito.any(SilPeer.class)))
         .thenAnswer(
             new GetHeadersFromPeerTaskExecutorAnswer(
-                getFullBlockchain(), silProtocolManager.silContext().getSilPeers()));
+                getFullBlockchain(), silProtocolManager.silContext().getEthPeers()));
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetHeadersFromPeerTask.class)))
         .thenAnswer(
             new GetHeadersFromPeerTaskExecutorAnswer(
-                getFullBlockchain(), silProtocolManager.silContext().getSilPeers()));
+                getFullBlockchain(), silProtocolManager.silContext().getEthPeers()));
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetBodiesFromPeerTask.class), Mockito.any(SilPeer.class)))
         .thenAnswer(
             new GetBodiesFromPeerTaskExecutorAnswer(
-                getFullBlockchain(), silProtocolManager.silContext().getSilPeers()));
+                getFullBlockchain(), silProtocolManager.silContext().getEthPeers()));
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetBodiesFromPeerTask.class)))
         .thenAnswer(
             new GetBodiesFromPeerTaskExecutorAnswer(
-                getFullBlockchain(), silProtocolManager.silContext().getSilPeers()));
+                getFullBlockchain(), silProtocolManager.silContext().getEthPeers()));
   }
 
   @Test
@@ -185,18 +192,18 @@ public abstract class AbstractBlockPropagationManagerTest {
     // Setup additional peer for best peers list
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage nextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
     final NewBlockHashesMessage nextNextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextNextBlock.getHash(), nextNextBlock.getHeader().getNumber())));
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // Broadcast first message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextAnnouncement);
@@ -222,18 +229,18 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage nextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
     final NewBlockHashesMessage nextNextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextNextBlock.getHash(), nextNextBlock.getHeader().getNumber())));
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // Broadcast second message first
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextNextAnnouncement);
@@ -259,7 +266,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage nextAnnouncement =
         NewBlockMessage.create(
             nextBlock,
@@ -270,7 +277,7 @@ public abstract class AbstractBlockPropagationManagerTest {
             nextNextBlock,
             getFullBlockchain().getTotalDifficultyByHash(nextNextBlock.getHash()).get(),
             maxMessageSize);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // Broadcast first message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextAnnouncement);
@@ -296,7 +303,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage nextAnnouncement =
         NewBlockMessage.create(
             nextBlock,
@@ -307,7 +314,7 @@ public abstract class AbstractBlockPropagationManagerTest {
             nextNextBlock,
             getFullBlockchain().getTotalDifficultyByHash(nextNextBlock.getHash()).get(),
             maxMessageSize);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // Broadcast second message first
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextNextAnnouncement);
@@ -337,11 +344,11 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage block1Msg =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     block1.getHash(), block1.getHeader().getNumber())));
     final NewBlockMessage block2Msg =
         NewBlockMessage.create(
@@ -351,14 +358,14 @@ public abstract class AbstractBlockPropagationManagerTest {
     final NewBlockHashesMessage block3Msg =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     block3.getHash(), block3.getHeader().getNumber())));
     final NewBlockMessage block4Msg =
         NewBlockMessage.create(
             block4,
             getFullBlockchain().getTotalDifficultyByHash(block4.getHash()).get(),
             maxMessageSize);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // Broadcast older blocks
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, block3Msg);
@@ -404,18 +411,18 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage newBlockHash =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
     final NewBlockMessage newBlock =
         NewBlockMessage.create(
             nextBlock,
             getFullBlockchain().getTotalDifficultyByHash(nextBlock.getHash()).get(),
             maxMessageSize);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // Broadcast first message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, newBlock);
@@ -429,6 +436,122 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     assertThat(blockchain.contains(nextBlock.getHash())).isTrue();
     verify(stubBlockImporter, times(1)).importBlock(eq(protocolContext), eq(nextBlock), any());
+  }
+
+  @Test
+  public void dedupesDifferentHashesForTheSameNumberInSingleMessage() {
+    final ProtocolSchedule stubProtocolSchedule = spy(protocolSchedule);
+    final ProtocolSpec stubProtocolSpec = spy(protocolSchedule.getByBlockHeader(blockHeader(2)));
+    final BlockImporter stubBlockImporter = spy(stubProtocolSpec.getBlockImporter());
+    doReturn(stubProtocolSpec).when(stubProtocolSchedule).getByBlockHeader(any());
+    doReturn(stubBlockImporter).when(stubProtocolSpec).getBlockImporter();
+    final BlockPropagationManager blockPropagationManager =
+        new BlockPropagationManager(
+            syncConfig,
+            stubProtocolSchedule,
+            protocolContext,
+            silProtocolManager.silContext(),
+            syncState,
+            pendingBlocksManager,
+            metricsSystem,
+            blockBroadcaster);
+
+    blockchainUtil.importFirstBlocks(2);
+    final Block nextBlock = blockchainUtil.getBlock(2);
+    assertThat(blockchain.contains(nextBlock.getHash())).isFalse();
+
+    blockPropagationManager.start();
+
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    // One message announcing the real block plus a bogus, different hash at the SAME number. The
+    // real announcement is first, so only it is requested; the second is deduped by block number.
+    final NewBlockHashesMessage message =
+        NewBlockHashesMessage.create(
+            List.of(
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    nextBlock.getHash(), nextBlock.getHeader().getNumber()),
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    Hash.fromHexString("0x" + "de".repeat(32)),
+                    nextBlock.getHeader().getNumber())));
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
+
+    SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, message);
+    peer.respondWhile(responder, peer::hasOutstandingRequests);
+
+    assertThat(blockchain.contains(nextBlock.getHash())).isTrue();
+    // imported exactly once — the second (different-hash, same-number) announcement was deduped
+    verify(stubBlockImporter, times(1)).importBlock(eq(protocolContext), eq(nextBlock), any());
+  }
+
+  @Test
+  public void penalizesPeerThatAnnouncesDuplicateBlockNumbersInSingleMessage() {
+    final BlockPropagationManager blockPropagationManager =
+        new BlockPropagationManager(
+            syncConfig,
+            protocolSchedule,
+            protocolContext,
+            silProtocolManager.silContext(),
+            syncState,
+            pendingBlocksManager,
+            metricsSystem,
+            blockBroadcaster);
+
+    blockchainUtil.importFirstBlocks(2);
+    final Block nextBlock = blockchainUtil.getBlock(2);
+
+    blockPropagationManager.start();
+
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    // Two announcements for the SAME block number (different hashes) in one message: abusive, since
+    // a well-behaved peer announces one hash per number.
+    final NewBlockHashesMessage message =
+        NewBlockHashesMessage.create(
+            List.of(
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    nextBlock.getHash(), nextBlock.getHeader().getNumber()),
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    Hash.fromHexString("0x" + "de".repeat(32)),
+                    nextBlock.getHeader().getNumber())));
+
+    SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, message);
+
+    // The peer is penalized: its reputation drops below a freshly-connected peer's.
+    assertThat(peer.getEthPeer().getReputation().compareTo(new PeerReputation())).isLessThan(0);
+  }
+
+  @Test
+  public void doesNotPenalizePeerForDistinctBlockNumberAnnouncements() {
+    final BlockPropagationManager blockPropagationManager =
+        new BlockPropagationManager(
+            syncConfig,
+            protocolSchedule,
+            protocolContext,
+            silProtocolManager.silContext(),
+            syncState,
+            pendingBlocksManager,
+            metricsSystem,
+            blockBroadcaster);
+
+    blockchainUtil.importFirstBlocks(2);
+    final Block block2 = blockchainUtil.getBlock(2);
+    final Block block3 = blockchainUtil.getBlock(3);
+
+    blockPropagationManager.start();
+
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    // One hash per distinct block number: legitimate, must not be penalized.
+    final NewBlockHashesMessage message =
+        NewBlockHashesMessage.create(
+            List.of(
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    block2.getHash(), block2.getHeader().getNumber()),
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    block3.getHash(), block3.getHeader().getNumber())));
+
+    SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, message);
+
+    // No duplicate numbers → reputation unchanged from a freshly-connected peer's.
+    assertThat(peer.getEthPeer().getReputation().compareTo(new PeerReputation())).isEqualTo(0);
   }
 
   @Test
@@ -457,11 +580,11 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage newBlockHash =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
     final NewBlockMessage newBlock =
         NewBlockMessage.create(
@@ -474,7 +597,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, newBlockHash);
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, newBlock);
     // Respond
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
     assertThat(blockchain.contains(nextBlock.getHash())).isTrue();
@@ -492,16 +615,16 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage futureAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     futureBlock.getHash(), futureBlock.getHeader().getNumber())));
 
     // Broadcast
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, futureAnnouncement);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
     assertThat(blockchain.contains(futureBlock.getHash())).isFalse();
@@ -518,7 +641,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage futureAnnouncement =
         NewBlockMessage.create(
             futureBlock,
@@ -527,7 +650,7 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     // Broadcast
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, futureAnnouncement);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
     assertThat(blockchain.contains(futureBlock.getHash())).isFalse();
@@ -547,19 +670,19 @@ public abstract class AbstractBlockPropagationManagerTest {
     propManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage oldAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     oldBlock.getHash(), oldBlock.getHeader().getNumber())));
 
     // Broadcast
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, oldAnnouncement);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
-    verify(propManager, times(0)).importOrSavePendingBlock(any(), any(Bytes.class));
+    verify(propManager, times(0)).importOrSavePendingBlock(any(), any(SilPeer.class));
     assertThat(blockchain.contains(oldBlock.getHash())).isFalse();
   }
 
@@ -577,16 +700,16 @@ public abstract class AbstractBlockPropagationManagerTest {
     propManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage oldAnnouncement =
         NewBlockMessage.create(oldBlock, Difficulty.ZERO, maxMessageSize);
 
     // Broadcast
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, oldAnnouncement);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
-    verify(propManager, times(0)).importOrSavePendingBlock(any(), any(Bytes.class));
+    verify(propManager, times(0)).importOrSavePendingBlock(any(), any(SilPeer.class));
     assertThat(blockchain.contains(oldBlock.getHash())).isFalse();
   }
 
@@ -614,13 +737,13 @@ public abstract class AbstractBlockPropagationManagerTest {
         gen.block(BlockOptions.create().setBlockNumber(blockchain.getChainHeadBlockNumber()));
 
     blockPropagationManager.start();
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage blockAnnouncementMsg =
         NewBlockMessage.create(blockToPurge, Difficulty.ZERO, maxMessageSize);
 
     // Broadcast
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, blockAnnouncementMsg);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
     // Check that we pushed our block into the pending collection
@@ -649,7 +772,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final Difficulty parentTotalDifficulty =
         getFullBlockchain().getTotalDifficultyByHash(nextBlock.getHeader().getParentHash()).get();
     final Difficulty totalDifficulty =
@@ -659,14 +782,14 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     // Broadcast message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextAnnouncement);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
-    assertThat(peer.getSilPeer().chainState().getBestBlock().getHash())
+    assertThat(peer.getEthPeer().chainState().getBestBlock().getHash())
         .isEqualTo(nextBlock.getHeader().getParentHash());
-    assertThat(peer.getSilPeer().chainState().getEstimatedHeight())
+    assertThat(peer.getEthPeer().chainState().getEstimatedHeight())
         .isEqualTo(nextBlock.getHeader().getNumber() - 1);
-    assertThat(peer.getSilPeer().chainState().getBestBlock().getTotalDifficulty())
+    assertThat(peer.getEthPeer().chainState().getBestBlock().getTotalDifficulty())
         .isEqualTo(parentTotalDifficulty);
   }
 
@@ -707,10 +830,62 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockchainUtil.importFirstBlocks(2);
     final Block nextBlock = blockchainUtil.getBlock(2);
 
-    blockPropagationManager.importOrSavePendingBlock(nextBlock, NODE_ID_1);
-    blockPropagationManager.importOrSavePendingBlock(nextBlock, NODE_ID_1);
+    blockPropagationManager.importOrSavePendingBlock(nextBlock, PEER_1);
+    blockPropagationManager.importOrSavePendingBlock(nextBlock, PEER_1);
 
     verify(silScheduler, times(1)).scheduleSyncWorkerTask(any(Supplier.class));
+  }
+
+  @Test
+  public void shouldNotRequestParentForPendingBlockAtNumberZero() {
+    // A peer can announce a bogus block at number 0 with an unknown parent. Retrieving its
+    // "parent" would request block number -1 and register a bogus requestedBlocksByNumber entry;
+    // the genesis guard in requestParentBlock must skip it, scheduling no fetch at all.
+    final SilScheduler silScheduler = mock(SilScheduler.class);
+    final SilContext silContext =
+        new SilContext(
+            new SilPeers(
+                () -> protocolSchedule.getByBlockHeader(blockchain.getChainHeadHeader()),
+                TestClock.fixed(),
+                metricsSystem,
+                SilProtocolConfiguration.DEFAULT_MAX_MESSAGE_SIZE,
+                Collections.emptyList(),
+                Bytes.random(64),
+                25,
+                25,
+                false,
+                SyncMode.SNAP,
+                new ForkIdManager(blockchain, Collections.emptyList(), Collections.emptyList())),
+            new SilMessages(),
+            silScheduler,
+            null);
+    final BlockPropagationManager blockPropagationManager =
+        new BlockPropagationManager(
+            syncConfig,
+            protocolSchedule,
+            protocolContext,
+            silContext,
+            syncState,
+            pendingBlocksManager,
+            metricsSystem,
+            blockBroadcaster);
+
+    blockchainUtil.importFirstBlocks(2);
+
+    // Number 0 with a random (unknown) parent hash — not connected to the local chain.
+    final Block blockZeroWithUnknownParent =
+        new BlockDataGenerator()
+            .block(
+                BlockOptions.create()
+                    .setBlockNumber(0)
+                    .setBlockHeaderFunctions(new SilaMainnetBlockHeaderFunctions()));
+
+    blockPropagationManager.importOrSavePendingBlock(blockZeroWithUnknownParent, PEER_1);
+
+    // It is saved as pending (its parent is not in the chain) ...
+    assertThat(pendingBlocksManager.contains(blockZeroWithUnknownParent.getHash())).isTrue();
+    // ... but no parent fetch is scheduled: the genesis block has no parent to retrieve.
+    verifyNoInteractions(silScheduler);
   }
 
   @Test
@@ -723,8 +898,8 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Create peer and responder
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // skip first block then create messages from blocklist
     blocks.stream()
@@ -753,8 +928,8 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Create peer and responder
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     // skip two block then create messages from blocklist
     blocks.stream()
@@ -777,7 +952,7 @@ public abstract class AbstractBlockPropagationManagerTest {
   private NewBlockHashesMessage createNewBlockHashMessage(final Block block) {
     return NewBlockHashesMessage.create(
         Collections.singletonList(
-            new NewBlockHashesMessage.NewBlockHash(
+            new NewBlockHashesMessage.BlockAnnouncement(
                 block.getHash(), block.getHeader().getNumber())));
   }
 
@@ -788,7 +963,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
 
     final Difficulty totalDifficulty =
         getFullBlockchain().getTotalDifficultyByHash(block.getHash()).get();
@@ -798,7 +973,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     // Broadcast message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, newBlockMessage);
 
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
     peer.respondWhile(responder, peer::hasOutstandingRequests);
 
     verify(blockBroadcaster, times(1)).propagate(block, totalDifficulty);
@@ -857,7 +1032,7 @@ public abstract class AbstractBlockPropagationManagerTest {
                     .setBlockHeaderFunctions(new SilaMainnetBlockHeaderFunctions()));
 
     assertThat(badBlocksManager.getBadBlocks()).isEmpty();
-    blockPropagationManager.importOrSavePendingBlock(badBlock, NODE_ID_1);
+    blockPropagationManager.importOrSavePendingBlock(badBlock, PEER_1);
     assertThat(badBlocksManager.getBadBlocks().size()).isEqualTo(1);
 
     verify(silScheduler, times(1)).scheduleSyncWorkerTask(any(Supplier.class));
@@ -883,7 +1058,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     final BlockPropagationManager propManager = spy(blockPropagationManager);
     propManager.start();
 
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage newBlockMessage =
         NewBlockMessage.create(badBlock, Difficulty.ONE, maxMessageSize);
 
@@ -892,7 +1067,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     // handleNewBlockFromNetwork must short-circuit before dispatching to importOrSavePendingBlock.
     // Checking addImportingBlock alone would also pass via the defensive second check inside
     // importOrSavePendingBlock, so verify the dispatch itself never happened.
-    verify(propManager, never()).importOrSavePendingBlock(any(), any(Bytes.class));
+    verify(propManager, never()).importOrSavePendingBlock(any(), any(SilPeer.class));
     // BadBlockManager should still contain exactly one entry — we didn't re-add it.
     assertThat(badBlocksManager.getBadBlocks().size()).isEqualTo(1);
   }
@@ -915,17 +1090,22 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     blockPropagationManager.start();
 
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage newBlockHashesMessage =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     badBlock.getHash(), badBlock.getHeader().getNumber())));
 
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, newBlockHashesMessage);
 
     // The hash announcement should have been filtered out before requesting the body.
-    verify(processingBlocksManager, never()).addRequestedBlock(badBlock.getHash());
+    verify(processingBlocksManager, never())
+        .addRequestedBlock(
+            eq(
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    badBlock.getHash(), badBlock.getHeader().getNumber())),
+            any());
     // No body request should have been issued to the peer.
     assertThat(peer.hasOutstandingRequests()).isFalse();
   }
@@ -988,7 +1168,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     badBlocksManager.addBadBlock(badBlock, BadBlockCause.fromValidationFailure("test"));
     assertThat(badBlocksManager.getBadBlocks().size()).isEqualTo(1);
 
-    blockPropagationManager.importOrSavePendingBlock(badBlock, NODE_ID_1);
+    blockPropagationManager.importOrSavePendingBlock(badBlock, PEER_1);
 
     // The defensive check should have short-circuited before scheduling validation.
     verify(silScheduler, never()).scheduleSyncWorkerTask(any(Supplier.class));
@@ -1006,24 +1186,24 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
-    final RespondingSilPeer secondPeer =
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer secondPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 2);
 
     // Pretend the second peer is busier, so the first is selected a first
-    when(spy(secondPeer.getSilPeer()).outstandingRequests()).thenReturn(1);
+    when(spy(secondPeer.getEthPeer()).outstandingRequests()).thenReturn(1);
 
     final NewBlockHashesMessage nextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
 
     // Broadcast first message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextAnnouncement);
-    peer.respondWhile(RespondingSilPeer.emptyResponder(), peer::hasOutstandingRequests);
+    peer.respondWhile(RespondingEthPeer.emptyResponder(), peer::hasOutstandingRequests);
     secondPeer.respondWhile(
-        RespondingSilPeer.blockchainResponder(getFullBlockchain()),
+        RespondingEthPeer.blockchainResponder(getFullBlockchain()),
         secondPeer::hasOutstandingRequests);
 
     assertThat(blockchain.contains(nextBlock.getHash())).isTrue();
@@ -1053,20 +1233,20 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.start();
 
     // Setup peer and messages
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
-    final RespondingSilPeer secondPeer =
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer secondPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
 
     final NewBlockHashesMessage nextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
 
     // Broadcast first message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, peer, nextAnnouncement);
-    peer.respondWhile(RespondingSilPeer.emptyResponder(), peer::hasOutstandingRequests);
-    secondPeer.respondWhile(RespondingSilPeer.emptyResponder(), secondPeer::hasOutstandingRequests);
+    peer.respondWhile(RespondingEthPeer.emptyResponder(), peer::hasOutstandingRequests);
+    secondPeer.respondWhile(RespondingEthPeer.emptyResponder(), secondPeer::hasOutstandingRequests);
 
     assertThat(blockchain.contains(nextBlock.getHash())).isFalse();
   }
@@ -1078,7 +1258,7 @@ public abstract class AbstractBlockPropagationManagerTest {
     blockPropagationManager.onNewUnverifiedForkchoice(
         new ForkchoiceEvent(null, null, this.finalizedHash));
     assertThat(blockPropagationManager.isRunning()).isFalse();
-    assertThat(silProtocolManager.silContext().getSilMessages().messageCodesHandled())
+    assertThat(silProtocolManager.silContext().getEthMessages().messageCodesHandled())
         .doesNotContain(SilProtocolMessages.NEW_BLOCK_HASHES, SilProtocolMessages.NEW_BLOCK);
   }
 
@@ -1103,13 +1283,13 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     blockPropagationManager.start();
 
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage nextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     syncState.setReachedTerminalDifficulty(true);
     blockPropagationManager.onNewUnverifiedForkchoice(
@@ -1132,13 +1312,13 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     blockPropagationManager.start();
 
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockMessage nextAnnouncement =
         NewBlockMessage.create(
             nextBlock,
             getFullBlockchain().getTotalDifficultyByHash(nextBlock.getHash()).get(),
             maxMessageSize);
-    final Responder responder = RespondingSilPeer.blockchainResponder(getFullBlockchain());
+    final Responder responder = RespondingEthPeer.blockchainResponder(getFullBlockchain());
 
     syncState.setReachedTerminalDifficulty(true);
     blockPropagationManager.onNewUnverifiedForkchoice(
@@ -1176,50 +1356,55 @@ public abstract class AbstractBlockPropagationManagerTest {
 
     blockPropagationManager.start();
 
-    final RespondingSilPeer firstPeer =
+    final RespondingEthPeer firstPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
     final NewBlockHashesMessage nextAnnouncement =
         NewBlockHashesMessage.create(
             Collections.singletonList(
-                new NewBlockHashesMessage.NewBlockHash(
+                new NewBlockHashesMessage.BlockAnnouncement(
                     nextBlock.getHash(), nextBlock.getHeader().getNumber())));
 
     Mockito.reset(peerTaskExecutor);
     when(peerTaskExecutor.executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(firstPeer.getSilPeer())))
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(firstPeer.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.empty(), PeerTaskExecutorResponseCode.TIMEOUT, Collections.emptyList()));
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetHeadersFromPeerTask.class)))
         .thenAnswer(
             new GetHeadersFromPeerTaskExecutorAnswer(
-                getFullBlockchain(), silProtocolManager.silContext().getSilPeers()));
+                getFullBlockchain(), silProtocolManager.silContext().getEthPeers()));
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
-                Mockito.any(GetBodiesFromPeerTask.class), Mockito.eq(firstPeer.getSilPeer())))
+                Mockito.any(GetBodiesFromPeerTask.class), Mockito.eq(firstPeer.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.empty(), PeerTaskExecutorResponseCode.TIMEOUT, Collections.emptyList()));
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetBodiesFromPeerTask.class)))
         .thenAnswer(
             new GetBodiesFromPeerTaskExecutorAnswer(
-                getFullBlockchain(), silProtocolManager.silContext().getSilPeers()));
+                getFullBlockchain(), silProtocolManager.silContext().getEthPeers()));
 
     // Broadcast message
     SilProtocolManagerTestUtil.broadcastMessage(silProtocolManager, firstPeer, nextAnnouncement);
 
     Mockito.verify(peerTaskExecutor)
         .executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(firstPeer.getSilPeer()));
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(firstPeer.getEthPeer()));
     Mockito.verify(peerTaskExecutor).execute(Mockito.any(GetHeadersFromPeerTask.class));
     Mockito.verify(peerTaskExecutor)
         .executeAgainstPeer(
-            Mockito.any(GetBodiesFromPeerTask.class), Mockito.eq(firstPeer.getSilPeer()));
+            Mockito.any(GetBodiesFromPeerTask.class), Mockito.eq(firstPeer.getEthPeer()));
     Mockito.verify(peerTaskExecutor).execute(Mockito.any(GetBodiesFromPeerTask.class));
     Mockito.verifyNoMoreInteractions(peerTaskExecutor);
 
-    verify(processingBlocksManager).addRequestedBlock(nextBlock.getHash());
+    verify(processingBlocksManager)
+        .addRequestedBlock(
+            eq(
+                new NewBlockHashesMessage.BlockAnnouncement(
+                    nextBlock.getHash(), nextBlock.getHeader().getNumber())),
+            any());
     verify(processingBlocksManager).addImportingBlock(nextBlock.getHash());
     verify(processingBlocksManager).registerReceivedBlock(nextBlock);
     verify(processingBlocksManager).registerBlockImportDone(nextBlock.getHash());

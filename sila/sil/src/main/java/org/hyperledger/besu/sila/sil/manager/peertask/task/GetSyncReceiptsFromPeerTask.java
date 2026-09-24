@@ -87,7 +87,7 @@ public class GetSyncReceiptsFromPeerTask implements PeerTask<GetSyncReceiptsFrom
   @Override
   public MessageData getRequestMessage(final Set<Capability> agreedCapabilities) {
     final List<Hash> blockHashes = requestedHeaders.stream().map(BlockHeader::getHash).toList();
-    return agreedCapabilities.stream().anyMatch(SilProtocol::isSil70Compatible)
+    return agreedCapabilities.stream().anyMatch(SilProtocol::isEth70Compatible)
         ? GetPaginatedReceiptsMessage.create(blockHashes, request.firstBlockPartialReceipts.size())
         : GetReceiptsMessage.create(blockHashes);
   }
@@ -99,7 +99,7 @@ public class GetSyncReceiptsFromPeerTask implements PeerTask<GetSyncReceiptsFrom
     if (messageData == null) {
       throw new InvalidPeerTaskResponseException("Null message data");
     }
-    if (agreedCapabilities.stream().anyMatch(SilProtocol::isSil70Compatible)) {
+    if (agreedCapabilities.stream().anyMatch(SilProtocol::isEth70Compatible)) {
       return processPaginatedResponse(messageData);
     }
     return processNotPaginatedResponse(messageData);

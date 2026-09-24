@@ -14,6 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.manager.snap;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.p2p.network.ProtocolManager;
@@ -42,6 +45,8 @@ import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
+import java.util.concurrent.ConcurrentHashMap;
+import java.util.concurrent.atomic.AtomicInteger;
 
 import com.google.common.collect.ImmutableList;
 import org.slf4j.Logger;
@@ -55,6 +60,13 @@ public class SnapProtocolManager implements ProtocolManager {
   private final SilMessages snapMessages;
   private final SilScheduler silScheduler;
 
+  private final int maxConcurrentRequestsPerPeer;
+  private final int maxConcurrentRequestsGlobal;
+  private final AtomicInteger globalInFlightRequests = new AtomicInteger(0);
+  private final Map<PeerConnection, AtomicInteger> perPeerInFlightRequests =
+      new ConcurrentHashMap<>();
+  private final Counter rejectedRequestsCounter;
+
   public SnapProtocolManager(
       final WorldStateStorageCoordinator worldStateStorageCoordinator,
       final SnapSyncConfiguration snapConfig,
@@ -62,13 +74,27 @@ public class SnapProtocolManager implements ProtocolManager {
       final SilMessages snapMessages,
       final SilScheduler silScheduler,
       final ProtocolContext protocolContext,
-      final Synchronizer synchronizer) {
+      final Synchronizer synchronizer,
+      final MetricsSystem metricsSystem) {
     this.silPeers = silPeers;
     this.snapMessages = snapMessages;
     this.silScheduler = silScheduler;
     this.supportedCapabilities = calculateCapabilities(snapConfig);
+    this.maxConcurrentRequestsPerPeer = snapConfig.getMaxConcurrentSnapRequestsPerPeer();
+    this.maxConcurrentRequestsGlobal = snapConfig.getMaxConcurrentSnapRequestsGlobal();
     new SnapServer(
         snapConfig, snapMessages, worldStateStorageCoordinator, protocolContext, synchronizer);
+
+    metricsSystem.createIntegerGauge(
+        BesuMetricCategory.PEERS,
+        "snap_service_requests_in_flight_current",
+        "The current number of snap sync GET_* requests concurrently scheduled for processing",
+        globalInFlightRequests::get);
+    this.rejectedRequestsCounter =
+        metricsSystem.createCounter(
+            BesuMetricCategory.PEERS,
+            "snap_service_requests_rejected_total",
+            "Total number of snap sync GET_* requests answered with an empty response because a concurrency cap was reached");
   }
 
   private List<Capability> calculateCapabilities(final SnapSyncConfiguration snapConfig) {
@@ -135,20 +161,68 @@ public class SnapProtocolManager implements ProtocolManager {
       silPeer.disconnect(DisconnectReason.BREACH_OF_PROTOCOL_MALFORMED_MESSAGE_RECEIVED);
       return;
     }
-    final SilMessage decodedSilMessage = new SilMessage(silPeer, messageData);
+    final SilMessage decodedEthMessage = new SilMessage(silPeer, messageData);
 
     // Dispatch to pending response handlers (no-op for inbound requests).
-    silPeers.dispatchMessage(silPeer, decodedSilMessage, getSupportedProtocol());
+    silPeers.dispatchMessage(silPeer, decodedEthMessage, getSupportedProtocol());
 
     // GET_* requests are handled off the Netty event loop to avoid blocking SIL protocol traffic.
     if (SnapV1.REQUEST_CODES.contains(code) || SnapV2.REQUEST_CODES.contains(code)) {
-      scheduleSnapRequest(silPeer, decodedSilMessage, cap, code);
+      scheduleSnapRequest(silPeer, decodedEthMessage, cap, code);
     }
   }
 
   private void scheduleSnapRequest(
       final SilPeer silPeer,
-      final SilMessage decodedSilMessage,
+      final SilMessage decodedEthMessage,
+      final Capability cap,
+      final int code) {
+    if (!reserveSnapRequestSlot(silPeer)) {
+      respondEmptyDueToOverload(silPeer, decodedEthMessage, code);
+      return;
+    }
+    try {
+      scheduleReservedSnapRequest(silPeer, decodedEthMessage, cap, code);
+    } catch (final RuntimeException e) {
+      // Only reachable during shutdown: the services executor rejects synchronously once shut
+      // down. Release the slot so it isn't leaked.
+      releaseSnapRequestSlot(silPeer);
+      throw e;
+    }
+  }
+
+  /** Cap was hit; reply empty instead of leaving the peer to time out. */
+  private void respondEmptyDueToOverload(
+      final SilPeer silPeer, final SilMessage decodedEthMessage, final int code) {
+    final BigInteger requestId;
+    try {
+      requestId = decodedEthMessage.getData().unwrapMessageData().getKey();
+    } catch (final RLPException e) {
+      LOG.debug(
+          "Received malformed snap message code={} (BREACH_OF_PROTOCOL), disconnecting: {}",
+          code,
+          silPeer,
+          e);
+      silPeer.disconnect(DisconnectReason.BREACH_OF_PROTOCOL_MALFORMED_MESSAGE_RECEIVED);
+      return;
+    }
+    sendSnapResponse(silPeer, emptyResponseFor(code).wrapMessageData(requestId));
+  }
+
+  private static MessageData emptyResponseFor(final int code) {
+    return switch (code) {
+      case SnapV1.GET_ACCOUNT_RANGE -> SnapServer.EMPTY_ACCOUNT_RANGE;
+      case SnapV1.GET_STORAGE_RANGE -> SnapServer.EMPTY_STORAGE_RANGE;
+      case SnapV1.GET_BYTECODES -> SnapServer.EMPTY_BYTE_CODES_MESSAGE;
+      case SnapV1.GET_TRIE_NODES -> SnapServer.EMPTY_TRIE_NODES_MESSAGE;
+      case SnapV2.GET_BLOCK_ACCESS_LISTS -> SnapServer.EMPTY_BLOCK_ACCESS_LISTS;
+      default -> throw new IllegalStateException("Unhandled snap GET_* code: " + code);
+    };
+  }
+
+  private void scheduleReservedSnapRequest(
+      final SilPeer silPeer,
+      final SilMessage decodedEthMessage,
       final Capability cap,
       final int code) {
     silScheduler
@@ -156,14 +230,14 @@ public class SnapProtocolManager implements ProtocolManager {
             () -> {
               Optional<MessageData> maybeResponseData = Optional.empty();
               try {
-                final Map.Entry<BigInteger, MessageData> requestIdAndSilMessage =
-                    decodedSilMessage.getData().unwrapMessageData();
+                final Map.Entry<BigInteger, MessageData> requestIdAndEthMessage =
+                    decodedEthMessage.getData().unwrapMessageData();
                 maybeResponseData =
                     snapMessages
-                        .dispatch(new SilMessage(silPeer, requestIdAndSilMessage.getValue()), cap)
+                        .dispatch(new SilMessage(silPeer, requestIdAndEthMessage.getValue()), cap)
                         .map(
                             responseData ->
-                                responseData.wrapMessageData(requestIdAndSilMessage.getKey()));
+                                responseData.wrapMessageData(requestIdAndEthMessage.getKey()));
               } catch (final FramingException | RLPException e) {
                 LOG.debug(
                     "Received malformed snap message code={} (BREACH_OF_PROTOCOL), disconnecting: {}",
@@ -185,7 +259,55 @@ public class SnapProtocolManager implements ProtocolManager {
                     .log();
               }
               return null;
-            });
+            })
+        .whenComplete((result, error) -> releaseSnapRequestSlot(silPeer));
+  }
+
+  /**
+   * Reserves a global and per-peer slot before scheduling; increment-then-check avoids a TOCTOU
+   * race.
+   *
+   * @return true if reserved; false if a cap was hit (request answered empty instead).
+   */
+  private boolean reserveSnapRequestSlot(final SilPeer silPeer) {
+    final int reservedGlobal = globalInFlightRequests.incrementAndGet();
+    if (maxConcurrentRequestsGlobal > 0 && reservedGlobal > maxConcurrentRequestsGlobal) {
+      globalInFlightRequests.decrementAndGet();
+      rejectSnapRequest(silPeer, "global");
+      return false;
+    }
+    if (maxConcurrentRequestsPerPeer > 0) {
+      final AtomicInteger perPeerCount =
+          perPeerInFlightRequests.computeIfAbsent(
+              silPeer.getConnection(), unused -> new AtomicInteger(0));
+      final int reservedPerPeer = perPeerCount.incrementAndGet();
+      if (reservedPerPeer > maxConcurrentRequestsPerPeer) {
+        perPeerCount.decrementAndGet();
+        globalInFlightRequests.decrementAndGet();
+        rejectSnapRequest(silPeer, "per-peer");
+        return false;
+      }
+    }
+    return true;
+  }
+
+  private void releaseSnapRequestSlot(final SilPeer silPeer) {
+    globalInFlightRequests.decrementAndGet();
+    if (maxConcurrentRequestsPerPeer > 0) {
+      final AtomicInteger perPeerCount = perPeerInFlightRequests.get(silPeer.getConnection());
+      if (perPeerCount != null) {
+        perPeerCount.decrementAndGet();
+      }
+    }
+  }
+
+  private void rejectSnapRequest(final SilPeer silPeer, final String scope) {
+    rejectedRequestsCounter.inc();
+    LOG.atDebug()
+        .setMessage("Answering snap request from peer {} empty: {} concurrency cap reached")
+        .addArgument(silPeer::getLoggableId)
+        .addArgument(scope)
+        .log();
   }
 
   private void sendSnapResponse(final SilPeer silPeer, final MessageData responseData) {
@@ -206,7 +328,9 @@ public class SnapProtocolManager implements ProtocolManager {
   public void handleDisconnect(
       final PeerConnection connection,
       final DisconnectReason reason,
-      final boolean initiatedByPeer) {}
+      final boolean initiatedByPeer) {
+    perPeerInFlightRequests.remove(connection);
+  }
 
   @Override
   public int getHighestProtocolVersion() {

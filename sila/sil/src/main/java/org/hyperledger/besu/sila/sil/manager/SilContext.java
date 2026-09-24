@@ -51,11 +51,11 @@ public class SilContext {
     this.peerTaskExecutor = peerTaskExecutor;
   }
 
-  public SilPeers getSilPeers() {
+  public SilPeers getEthPeers() {
     return silPeers;
   }
 
-  public SilMessages getSilMessages() {
+  public SilMessages getEthMessages() {
     return silMessages;
   }
 

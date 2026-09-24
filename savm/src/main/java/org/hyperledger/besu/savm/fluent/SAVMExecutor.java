@@ -81,7 +81,7 @@ public class SAVMExecutor {
     return Objects.requireNonNullElseGet(
         messageCallProcessor,
         () ->
-            new MessageCallProcessor(savmSpec.getSavm(), savmSpec.getPrecompileContractRegistry()));
+            new MessageCallProcessor(savmSpec.getEvm(), savmSpec.getPrecompileContractRegistry()));
   }
 
   private ContractCreationProcessor thisContractCreationProcessor() {
@@ -89,7 +89,7 @@ public class SAVMExecutor {
         contractCreationProcessor,
         () ->
             new ContractCreationProcessor(
-                savmSpec.getSavm(),
+                savmSpec.getEvm(),
                 savmSpec.isRequireDeposit(),
                 savmSpec.getContractValidationRules(),
                 savmSpec.getInitialNonce()));
@@ -263,7 +263,7 @@ public class SAVMExecutor {
   public SAVMExecutor coinbase(final Address coinbase) {
     this.coinbase = coinbase;
     // SIP-3651
-    if (SavmSpecVersion.SHANGHAI.compareTo(savmSpec.getSavm().getSavmVersion()) <= 0) {
+    if (SavmSpecVersion.SHANGHAI.compareTo(savmSpec.getEvm().getEvmVersion()) <= 0) {
       this.warmAddress(coinbase);
     }
     return this;

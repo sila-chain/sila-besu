@@ -58,9 +58,9 @@ import java.util.stream.Collectors;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.units.bigints.UInt64;
+import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.sila.beacon.discovery.schema.NodeRecord;
 
 public class PeerDiscoveryAgentV4Test {
 
@@ -121,6 +121,30 @@ public class PeerDiscoveryAgentV4Test {
     assertThat(nodeRecord.asEnr())
         .isEqualTo(
             "enr:-JG4QF0FFhEXDu_G-1LD5lkWh5-cbnw8vJ00NvO8vGnAf85JMwLiP-Qo49DL2xYMzX3zg_d5VXhegmoVTFJRWgZAtCYBg2V0aMPCgICCaWSCdjSCaXCEfwAAAYlzZWNwMjU2azGhA8pjTK4NSay0Adikxrb-jFW3DRFb9AB2nMFADzJYzTE4g3RjcAKDdWRwgnZf");
+  }
+
+  @Test
+  public void nodeRecord_withAdvertisedHostIpv6_carriesIpv6EnrFields() {
+    final MockPeerDiscoveryAgent agent =
+        helper.startDiscoveryAgent(helper.agentBuilder().advertisedHostIpv6("2001:db8::1"));
+
+    final NodeRecord nodeRecord =
+        agent.getAdvertisedPeer().orElseThrow().getNodeRecord().orElseThrow();
+
+    assertThat(nodeRecord.getTcp6Address()).isPresent();
+    assertThat(nodeRecord.getTcp6Address().get().getPort()).isGreaterThan(0);
+    assertThat(nodeRecord.getUdp6Address()).isPresent();
+  }
+
+  @Test
+  public void nodeRecord_withoutAdvertisedHostIpv6_hasNoIpv6EnrFields() {
+    final MockPeerDiscoveryAgent agent = helper.startDiscoveryAgent();
+
+    final NodeRecord nodeRecord =
+        agent.getAdvertisedPeer().orElseThrow().getNodeRecord().orElseThrow();
+
+    assertThat(nodeRecord.getTcp6Address()).isEmpty();
+    assertThat(nodeRecord.getUdp6Address()).isEmpty();
   }
 
   @Test

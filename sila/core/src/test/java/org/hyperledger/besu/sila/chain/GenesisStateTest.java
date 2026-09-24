@@ -180,7 +180,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaShanghai(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromShanghai(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -229,7 +229,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaCancun(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromCancun(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -279,7 +279,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaPrague(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromPrague(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -334,7 +334,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaAmsterdam(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromAmsterdam(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -359,7 +359,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisSlotNumberNotPresentPreSilaAmsterdam(
+  void genesisSlotNumberNotPresentPreAmsterdam(
       final DataStorageConfiguration dataStorageConfiguration) {
     // SilaPrague genesis should NOT have slot number
     final GenesisState genesisState =

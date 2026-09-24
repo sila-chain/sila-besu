@@ -31,7 +31,7 @@ public class PeerReputationTest {
   private static final int INITIAL_SCORE = 25;
   private static final int MAX_SCORE = 50;
   private final PeerReputation reputation = new PeerReputation(INITIAL_SCORE, MAX_SCORE);
-  private final SilPeer mockSilPeer = mock(SilPeer.class);
+  private final SilPeer mockEthPeer = mock(SilPeer.class);
 
   @Test
   public void shouldThrowOnInvalidInitialScore() {
@@ -46,7 +46,7 @@ public class PeerReputationTest {
         PeerReputation.TIMEOUT_THRESHOLD - 1);
     assertThat(
             reputation.recordRequestTimeout(
-                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockSilPeer))
+                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockEthPeer))
         .contains(TIMEOUT);
   }
 
@@ -63,11 +63,11 @@ public class PeerReputationTest {
 
     assertThat(
             reputation.recordRequestTimeout(
-                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockSilPeer))
+                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockEthPeer))
         .contains(TIMEOUT);
     assertThat(
             reputation.recordRequestTimeout(
-                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_BODIES, mockSilPeer))
+                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_BODIES, mockEthPeer))
         .contains(TIMEOUT);
   }
 
@@ -84,11 +84,11 @@ public class PeerReputationTest {
 
     assertThat(
             reputation.recordRequestTimeout(
-                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockSilPeer))
+                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockEthPeer))
         .contains(TIMEOUT);
     assertThat(
             reputation.recordRequestTimeout(
-                SnapProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockSilPeer))
+                SnapProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockEthPeer))
         .contains(TIMEOUT);
   }
 
@@ -106,18 +106,18 @@ public class PeerReputationTest {
     reputation.resetTimeoutCount(SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS);
     assertThat(
             reputation.recordRequestTimeout(
-                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockSilPeer))
+                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_HEADERS, mockEthPeer))
         .isEmpty();
     assertThat(
             reputation.recordRequestTimeout(
-                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_BODIES, mockSilPeer))
+                SilProtocol.NAME, SilProtocolMessages.GET_BLOCK_BODIES, mockEthPeer))
         .contains(TIMEOUT);
   }
 
   @Test
   public void shouldOnlyDisconnectWhenEmptyResponseThresholdReached() {
     sendUselessResponses(1001, PeerReputation.USELESS_RESPONSE_THRESHOLD - 1);
-    assertThat(reputation.recordUselessResponse(1005, mockSilPeer))
+    assertThat(reputation.recordUselessResponse(1005, mockEthPeer))
         .contains(USELESS_PEER_USELESS_RESPONSES);
   }
 
@@ -129,7 +129,7 @@ public class PeerReputationTest {
     // But then the next empty response doesn't come in until after the window expires on the first
     assertThat(
             reputation.recordUselessResponse(
-                1001 + PeerReputation.USELESS_RESPONSE_WINDOW_IN_MILLIS + 1, mockSilPeer))
+                1001 + PeerReputation.USELESS_RESPONSE_WINDOW_IN_MILLIS + 1, mockEthPeer))
         .isEmpty();
   }
 
@@ -150,13 +150,13 @@ public class PeerReputationTest {
   private void sendRequestTimeouts(
       final String protocolName, final int requestType, final int repeatCount) {
     for (int i = 0; i < repeatCount; i++) {
-      assertThat(reputation.recordRequestTimeout(protocolName, requestType, mockSilPeer)).isEmpty();
+      assertThat(reputation.recordRequestTimeout(protocolName, requestType, mockEthPeer)).isEmpty();
     }
   }
 
   private void sendUselessResponses(final long timestamp, final int repeatCount) {
     for (int i = 0; i < repeatCount; i++) {
-      assertThat(reputation.recordUselessResponse(timestamp + i, mockSilPeer)).isEmpty();
+      assertThat(reputation.recordUselessResponse(timestamp + i, mockEthPeer)).isEmpty();
     }
   }
 }

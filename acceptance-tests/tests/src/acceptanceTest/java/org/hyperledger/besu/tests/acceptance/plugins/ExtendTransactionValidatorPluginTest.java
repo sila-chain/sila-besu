@@ -81,7 +81,7 @@ public class ExtendTransactionValidatorPluginTest extends AcceptanceTestBase {
     final Account recipient = accounts.createAccount("account-two");
 
     final RawTransaction sip1559Tx =
-        RawTransaction.createSilerTransaction(
+        RawTransaction.createEtherTransaction(
             4L,
             sender.getNextNonce(),
             DefaultGasProvider.GAS_LIMIT,
@@ -106,7 +106,7 @@ public class ExtendTransactionValidatorPluginTest extends AcceptanceTestBase {
     final Account recipient = accounts.createAccount("account-two");
 
     final RawTransaction sip1559Tx =
-        RawTransaction.createSilerTransaction(
+        RawTransaction.createEtherTransaction(
             4L,
             sender.getNextNonce(),
             DefaultGasProvider.GAS_LIMIT,

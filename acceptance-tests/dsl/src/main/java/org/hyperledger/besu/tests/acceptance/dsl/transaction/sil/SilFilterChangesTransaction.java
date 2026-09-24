@@ -22,9 +22,9 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.SilLog;
+import org.web3j.protocol.core.methods.response.EthLog;
 
-public class SilFilterChangesTransaction implements Transaction<SilLog> {
+public class SilFilterChangesTransaction implements Transaction<EthLog> {
   private final BigInteger filterId;
 
   public SilFilterChangesTransaction(final BigInteger filterId) {
@@ -32,9 +32,9 @@ public class SilFilterChangesTransaction implements Transaction<SilLog> {
   }
 
   @Override
-  public SilLog execute(final NodeRequests node) {
+  public EthLog execute(final NodeRequests node) {
     try {
-      final SilLog response = node.sil().silGetFilterChanges(filterId).send();
+      final EthLog response = node.sil().ethGetFilterChanges(filterId).send();
       assertThat(response.getLogs()).isNotNull();
       return response;
     } catch (final IOException e) {

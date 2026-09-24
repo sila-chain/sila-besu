@@ -24,7 +24,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.SilGetStorageAt;
+import org.web3j.protocol.core.methods.response.EthGetStorageAt;
 
 public class SilGetStorageAtTransaction implements Transaction<String> {
 
@@ -39,8 +39,8 @@ public class SilGetStorageAtTransaction implements Transaction<String> {
   @Override
   public String execute(final NodeRequests node) {
     try {
-      final SilGetStorageAt result =
-          node.sil().silGetStorageAt(account.getAddress(), position, LATEST).send();
+      final EthGetStorageAt result =
+          node.sil().ethGetStorageAt(account.getAddress(), position, LATEST).send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
 

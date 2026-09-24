@@ -93,7 +93,7 @@ public class BlockSimulationResult {
               false);
       allLogs.addAll(txLogs);
       // Advance offset by at least 1 per transaction so that failed transactions (0 logs)
-      // still increment the log index, matching gsil's sil_simulateV1 behaviour.
+      // still increment the log index, matching geth's sil_simulateV1 behaviour.
       logIndexOffset += Math.max(1, transactionSimulation.logs().size());
     }
     return allLogs;

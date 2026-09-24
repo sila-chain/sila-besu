@@ -137,7 +137,7 @@ public final class StatusMessage extends AbstractMessageData {
     return Optional.ofNullable(status().blockRange);
   }
 
-  public boolean isSil69Compatible() {
+  public boolean isEth69Compatible() {
     return protocolVersion() >= SilProtocolVersion.V69;
   }
 
@@ -301,22 +301,22 @@ public final class StatusMessage extends AbstractMessageData {
       final RLPInput thirdElement = in.readAsRlp();
       // The fourth element is either block hash or fork ID. If it is a list, then it is fork ID and
       // the message is sil/69
-      final boolean isSil69Shape = in.nextIsList();
+      final boolean isEth69Shape = in.nextIsList();
 
-      if (isSil69Shape && protocolVersion <= SilProtocolVersion.V68) {
+      if (isEth69Shape && protocolVersion <= SilProtocolVersion.V68) {
         throw new RLPException(
             "Status with protocolVersion="
                 + protocolVersion
                 + " uses sil/69+ layout (no totalDifficulty); version must be >= 69");
       }
-      if (!isSil69Shape && protocolVersion >= SilProtocolVersion.V69) {
+      if (!isEth69Shape && protocolVersion >= SilProtocolVersion.V69) {
         throw new RLPException(
             "Status with protocolVersion="
                 + protocolVersion
                 + " uses sil/68 layout (with totalDifficulty); version must be <= 68");
       }
 
-      if (isSil69Shape) {
+      if (isEth69Shape) {
         genesisHash = Hash.wrap(thirdElement.readBytes32());
         forkId = ForkId.readFrom(in);
         blockRange = new BlockRange(in.readLongScalar(), in.readLongScalar());

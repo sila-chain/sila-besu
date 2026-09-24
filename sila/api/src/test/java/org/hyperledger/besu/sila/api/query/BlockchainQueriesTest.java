@@ -604,8 +604,8 @@ public class BlockchainQueriesTest {
 
     // Mock the protocol schedule
     final ProtocolSchedule protocolSchedule = mock(ProtocolSchedule.class);
-    final ProtocolSpec preSilaAmsterdamSpec = mock(ProtocolSpec.class);
-    final ProtocolSpec postSilaAmsterdamSpec = mock(ProtocolSpec.class);
+    final ProtocolSpec preAmsterdamSpec = mock(ProtocolSpec.class);
+    final ProtocolSpec postAmsterdamSpec = mock(ProtocolSpec.class);
     final BlockAccessListFactory blockAccessListFactory = mock(BlockAccessListFactory.class);
 
     // First 3 blocks don't support block access list
@@ -613,18 +613,18 @@ public class BlockchainQueriesTest {
     final BlockHeader header1 = data.blockData.get(1).block.getHeader();
     final BlockHeader header2 = data.blockData.get(2).block.getHeader();
 
-    when(protocolSchedule.getByBlockHeader(header0)).thenReturn(preSilaAmsterdamSpec);
-    when(protocolSchedule.getByBlockHeader(header1)).thenReturn(preSilaAmsterdamSpec);
-    when(protocolSchedule.getByBlockHeader(header2)).thenReturn(preSilaAmsterdamSpec);
-    when(preSilaAmsterdamSpec.getBlockAccessListFactory()).thenReturn(Optional.empty());
+    when(protocolSchedule.getByBlockHeader(header0)).thenReturn(preAmsterdamSpec);
+    when(protocolSchedule.getByBlockHeader(header1)).thenReturn(preAmsterdamSpec);
+    when(protocolSchedule.getByBlockHeader(header2)).thenReturn(preAmsterdamSpec);
+    when(preAmsterdamSpec.getBlockAccessListFactory()).thenReturn(Optional.empty());
 
     // Last 2 blocks support block access list
     final BlockHeader header3 = data.blockData.get(3).block.getHeader();
     final BlockHeader header4 = data.blockData.get(4).block.getHeader();
 
-    when(protocolSchedule.getByBlockHeader(header3)).thenReturn(postSilaAmsterdamSpec);
-    when(protocolSchedule.getByBlockHeader(header4)).thenReturn(postSilaAmsterdamSpec);
-    when(postSilaAmsterdamSpec.getBlockAccessListFactory())
+    when(protocolSchedule.getByBlockHeader(header3)).thenReturn(postAmsterdamSpec);
+    when(protocolSchedule.getByBlockHeader(header4)).thenReturn(postAmsterdamSpec);
+    when(postAmsterdamSpec.getBlockAccessListFactory())
         .thenReturn(Optional.of(blockAccessListFactory));
 
     final BlockchainQueries queriesWithMockedSchedule =

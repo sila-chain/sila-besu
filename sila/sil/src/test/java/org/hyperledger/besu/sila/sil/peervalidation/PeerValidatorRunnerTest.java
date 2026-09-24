@@ -41,13 +41,13 @@ public class PeerValidatorRunnerTest {
     final PeerValidator validator = mock(PeerValidator.class);
 
     final SilProtocolManager silProtocolManager = SilProtocolManagerTestBuilder.builder().build();
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
     final SilPeer peer =
         SilProtocolManagerTestUtil.peerBuilder()
             .silProtocolManager(silProtocolManager)
             .peerValidators(validator)
             .build()
-            .getSilPeer();
+            .getEthPeer();
 
     assertThat(peer.isFullyValidated()).isFalse();
 
@@ -80,13 +80,13 @@ public class PeerValidatorRunnerTest {
     final PeerValidator validator = mock(PeerValidator.class);
 
     final SilProtocolManager silProtocolManager = SilProtocolManagerTestBuilder.builder().build();
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
     final SilPeer peer =
         SilProtocolManagerTestUtil.peerBuilder()
             .silProtocolManager(silProtocolManager)
             .peerValidators(validator)
             .build()
-            .getSilPeer();
+            .getEthPeer();
     peer.disconnect(DisconnectReason.SUBPROTOCOL_TRIGGERED);
 
     when(validator.canBeValidated(eq(peer))).thenReturn(false);
@@ -107,13 +107,13 @@ public class PeerValidatorRunnerTest {
     final PeerValidator validator = mock(PeerValidator.class);
 
     final SilProtocolManager silProtocolManager = SilProtocolManagerTestBuilder.builder().build();
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
     final SilPeer peer =
         SilProtocolManagerTestUtil.peerBuilder()
             .silProtocolManager(silProtocolManager)
             .peerValidators(validator)
             .build()
-            .getSilPeer();
+            .getEthPeer();
 
     assertThat(peer.isFullyValidated()).isFalse();
 
@@ -140,13 +140,13 @@ public class PeerValidatorRunnerTest {
     final PeerValidator validator = mock(PeerValidator.class);
 
     final SilProtocolManager silProtocolManager = SilProtocolManagerTestBuilder.builder().build();
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
     final SilPeer peer =
         SilProtocolManagerTestUtil.peerBuilder()
             .silProtocolManager(silProtocolManager)
             .peerValidators(validator)
             .build()
-            .getSilPeer();
+            .getEthPeer();
 
     assertThat(peer.isFullyValidated()).isFalse();
 

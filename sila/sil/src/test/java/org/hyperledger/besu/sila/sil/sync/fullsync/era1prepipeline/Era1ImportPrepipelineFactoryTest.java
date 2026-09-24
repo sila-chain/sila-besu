@@ -57,7 +57,7 @@ public class Era1ImportPrepipelineFactoryTest {
         Path.of(
                 Era1FileSourceTest.class
                     .getClassLoader()
-                    .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+                    .getResource("mainnet-00000-5ec1ffb8.era1")
                     .toURI())
             .getParent()
             .toUri();
@@ -65,7 +65,7 @@ public class Era1ImportPrepipelineFactoryTest {
 
   @BeforeEach
   public void setupTest() {
-    BlockchainSetupUtil localBlockchainSetup = BlockchainSetupUtil.forSilaMainnet();
+    BlockchainSetupUtil localBlockchainSetup = BlockchainSetupUtil.forMainnet();
     localBlockchain = localBlockchainSetup.getBlockchain();
 
     ProtocolSchedule protocolSchedule = localBlockchainSetup.getProtocolSchedule();
@@ -74,10 +74,10 @@ public class Era1ImportPrepipelineFactoryTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(localBlockchainSetup.getWorldArchive())
             .setTransactionPool(localBlockchainSetup.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build();
     silContext = silProtocolManager.silContext();
     MetricsSystem metricsSystem = new NoOpMetricsSystem();

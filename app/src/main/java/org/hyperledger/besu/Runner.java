@@ -20,6 +20,7 @@ import org.hyperledger.besu.cli.BesuCommand;
 import org.hyperledger.besu.cli.options.PluginsConfigurationOptions;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.crypto.KeyPairUtil;
+import org.hyperledger.besu.ethstats.SilStatsService;
 import org.hyperledger.besu.metrics.MetricsService;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.api.graphql.GraphQLHttpService;
@@ -35,7 +36,6 @@ import org.hyperledger.besu.sila.p2p.network.NetworkRunner;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolEvictionService;
-import org.hyperledger.besu.silstats.SilStatsService;
 
 import java.io.File;
 import java.io.FileOutputStream;
@@ -170,7 +170,7 @@ public class Runner implements AutoCloseable {
   }
 
   /** Start sila main loop. */
-  public void startSilaMainLoop() {
+  public void startEthereumMainLoop() {
     try {
       LOG.info("Starting Sila main loop ... ");
       natService.start();
@@ -325,7 +325,7 @@ public class Runner implements AutoCloseable {
   /** Stop services. */
   public void stop() {
     stopServices();
-    vertx.close((res) -> vertxShutdownLatch.countDown());
+    vertx.close().onComplete((res) -> vertxShutdownLatch.countDown());
     waitForServiceToStop("Vertx", vertxShutdownLatch::await);
     if (ephemeryService != null) {
       ephemeryService.close();

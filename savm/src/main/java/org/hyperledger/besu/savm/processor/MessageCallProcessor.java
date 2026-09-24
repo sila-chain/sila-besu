@@ -148,9 +148,9 @@ public class MessageCallProcessor extends AbstractMessageProcessor {
     if (frame.getRecipientAddress().equals(frame.getSenderAddress())) {
       LOG.trace("Message call of {} to itself: no fund transferred", frame.getSenderAddress());
     } else {
-      frame.getSip7928AccessList().ifPresent(t -> t.addTouchedAccount(senderAccount.getAddress()));
+      frame.getEip7928AccessList().ifPresent(t -> t.addTouchedAccount(senderAccount.getAddress()));
       frame
-          .getSip7928AccessList()
+          .getEip7928AccessList()
           .ifPresent(t -> t.addTouchedAccount(recipientAccount.getAddress()));
 
       final Wei prevSenderBalance = senderAccount.decrementBalance(frame.getValue());

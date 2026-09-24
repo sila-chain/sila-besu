@@ -38,8 +38,8 @@ import org.apache.tuweni.units.bigints.UInt256;
 /** The Json genesis config options. */
 public class JsonGenesisConfigOptions implements GenesisConfigOptions {
 
-  private static final String SILASH_CONFIG_KEY = "silash";
-  // Preferred alias for silash's fixeddifficulty block in genesis files; "silash" is retained for
+  private static final String SILASH_CONFIG_KEY = "ethash";
+  // Preferred alias for ethash's fixeddifficulty block in genesis files; "ethash" is retained for
   // backwards compatibility with existing genesis files.
   private static final String FIXED_DIFFICULTY_CONFIG_KEY = "fixeddifficulty";
   private static final String IBFT_LEGACY_CONFIG_KEY = "ibft";
@@ -58,6 +58,10 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   private static final String DEPOSIT_CONTRACT_ADDRESS_KEY = "depositcontractaddress";
   private static final String CONSOLIDATION_REQUEST_CONTRACT_ADDRESS_KEY =
       "consolidationrequestcontractaddress";
+  private static final String BUILDER_DEPOSIT_REQUEST_CONTRACT_ADDRESS_KEY =
+      "builderdepositrequestcontractaddress";
+  private static final String BUILDER_EXIT_REQUEST_CONTRACT_ADDRESS_KEY =
+      "builderexitrequestcontractaddress";
 
   private final ObjectNode configRoot;
   private final Map<String, String> configOverrides = new TreeMap<>(String.CASE_INSENSITIVE_ORDER);
@@ -117,7 +121,7 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
 
   @Override
   public String getConsensusEngine() {
-    if (isSilHash()) {
+    if (isEthHash()) {
       return SILASH_CONFIG_KEY;
     } else if (isIbft2()) {
       return IBFT2_CONFIG_KEY;
@@ -133,7 +137,7 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   }
 
   @Override
-  public boolean isSilHash() {
+  public boolean isEthHash() {
     return configRoot.has(SILASH_CONFIG_KEY) || configRoot.has(FIXED_DIFFICULTY_CONFIG_KEY);
   }
 
@@ -212,7 +216,7 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
 
   @Override
   public FixedDifficultyConfigOptions getFixedDifficultyConfigOptions() {
-    // Prefer the "fixeddifficulty" key; fall back to "silash" for backwards compatibility.
+    // Prefer the "fixeddifficulty" key; fall back to "ethash" for backwards compatibility.
     return JsonUtil.getObjectNode(configRoot, FIXED_DIFFICULTY_CONFIG_KEY)
         .or(() -> JsonUtil.getObjectNode(configRoot, SILASH_CONFIG_KEY))
         .map(FixedDifficultyConfigOptions::new)
@@ -314,22 +318,22 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   }
 
   @Override
-  public OptionalLong getSilaShanghaiTime() {
+  public OptionalLong getShanghaiTime() {
     return getOptionalLong("shanghaitime");
   }
 
   @Override
-  public OptionalLong getSilaCancunTime() {
+  public OptionalLong getCancunTime() {
     return getOptionalLong("cancuntime");
   }
 
   @Override
-  public OptionalLong getSilaPragueTime() {
+  public OptionalLong getPragueTime() {
     return getOptionalLong("praguetime");
   }
 
   @Override
-  public OptionalLong getSilaOsakaTime() {
+  public OptionalLong getOsakaTime() {
     return getOptionalLong("osakatime");
   }
 
@@ -359,18 +363,18 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   }
 
   @Override
-  public OptionalLong getSilaAmsterdamTime() {
+  public OptionalLong getAmsterdamTime() {
     return getOptionalLong("amsterdamtime");
   }
 
   @Override
-  public OptionalLong getFutureSipsTime() {
-    return getOptionalLong("futuresipstime");
+  public OptionalLong getFutureEipsTime() {
+    return getOptionalLong("futureeipstime");
   }
 
   @Override
-  public OptionalLong getExperimentalSipsTime() {
-    return getOptionalLong("experimentalsipstime");
+  public OptionalLong getExperimentalEipsTime() {
+    return getOptionalLong("experimentaleipstime");
   }
 
   @Override
@@ -404,8 +408,8 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   }
 
   @Override
-  public OptionalInt getSavmStackSize() {
-    return getOptionalInt("savmstacksize");
+  public OptionalInt getEvmStackSize() {
+    return getOptionalInt("evmstacksize");
   }
 
   @Override
@@ -444,11 +448,23 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   }
 
   @Override
+  public Optional<Address> getBuilderDepositRequestContractAddress() {
+    return JsonUtil.getString(configRoot, BUILDER_DEPOSIT_REQUEST_CONTRACT_ADDRESS_KEY)
+        .map(Address::fromHexString);
+  }
+
+  @Override
+  public Optional<Address> getBuilderExitRequestContractAddress() {
+    return JsonUtil.getString(configRoot, BUILDER_EXIT_REQUEST_CONTRACT_ADDRESS_KEY)
+        .map(Address::fromHexString);
+  }
+
+  @Override
   public Map<String, Object> asMap() {
     final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
     getChainId().ifPresent(chainId -> builder.put("chainId", chainId));
 
-    // sila-mainnet fork blocks
+    // mainnet fork blocks
     getHomesteadBlockNumber().ifPresent(l -> builder.put("homesteadBlock", l));
     getDaoForkBlock().ifPresent(l -> builder.put("daoForkBlock", l));
     getTangerineWhistleBlockNumber().ifPresent(l -> builder.put("sip150Block", l));
@@ -463,36 +479,40 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
     getArrowGlacierBlockNumber().ifPresent(l -> builder.put("arrowGlacierBlock", l));
     getGrayGlacierBlockNumber().ifPresent(l -> builder.put("grayGlacierBlock", l));
     getMergeNetSplitBlockNumber().ifPresent(l -> builder.put("mergeNetSplitBlock", l));
-    getSilaShanghaiTime().ifPresent(l -> builder.put("shanghaiTime", l));
-    getSilaCancunTime().ifPresent(l -> builder.put("cancunTime", l));
-    getSilaPragueTime().ifPresent(l -> builder.put("pragueTime", l));
-    getSilaOsakaTime().ifPresent(l -> builder.put("osakaTime", l));
+    getShanghaiTime().ifPresent(l -> builder.put("shanghaiTime", l));
+    getCancunTime().ifPresent(l -> builder.put("cancunTime", l));
+    getPragueTime().ifPresent(l -> builder.put("pragueTime", l));
+    getOsakaTime().ifPresent(l -> builder.put("osakaTime", l));
     getBpo1Time().ifPresent(l -> builder.put("bpo1Time", l));
     getBpo2Time().ifPresent(l -> builder.put("bpo2Time", l));
     getBpo3Time().ifPresent(l -> builder.put("bpo3Time", l));
     getBpo4Time().ifPresent(l -> builder.put("bpo4Time", l));
     getBpo5Time().ifPresent(l -> builder.put("bpo5Time", l));
-    getSilaAmsterdamTime().ifPresent(l -> builder.put("amsterdamTime", l));
+    getAmsterdamTime().ifPresent(l -> builder.put("amsterdamTime", l));
     getTerminalBlockNumber().ifPresent(l -> builder.put("terminalBlockNumber", l));
     getTerminalBlockHash()
         .ifPresent(h -> builder.put("terminalBlockHash", h.getBytes().toHexString()));
-    getFutureSipsTime().ifPresent(l -> builder.put("futureSipsTime", l));
-    getExperimentalSipsTime().ifPresent(l -> builder.put("experimentalSipsTime", l));
+    getFutureEipsTime().ifPresent(l -> builder.put("futureEipsTime", l));
+    getExperimentalEipsTime().ifPresent(l -> builder.put("experimentalEipsTime", l));
 
     getContractSizeLimit().ifPresent(l -> builder.put("contractSizeLimit", l));
-    getSavmStackSize().ifPresent(l -> builder.put("savmstacksize", l));
+    getEvmStackSize().ifPresent(l -> builder.put("evmstacksize", l));
 
     getWithdrawalRequestContractAddress()
         .ifPresent(l -> builder.put("withdrawalRequestContractAddress", l));
     getDepositContractAddress().ifPresent(l -> builder.put("depositContractAddress", l));
     getConsolidationRequestContractAddress()
         .ifPresent(l -> builder.put("consolidationRequestContractAddress", l));
+    getBuilderDepositRequestContractAddress()
+        .ifPresent(l -> builder.put("builderDepositRequestContractAddress", l));
+    getBuilderExitRequestContractAddress()
+        .ifPresent(l -> builder.put("builderExitRequestContractAddress", l));
 
     if (isClique()) {
       builder.put("clique", getCliqueConfigOptions().asMap());
     }
-    if (isSilHash()) {
-      builder.put("silash", getFixedDifficultyConfigOptions().asMap());
+    if (isEthHash()) {
+      builder.put("ethash", getFixedDifficultyConfigOptions().asMap());
     }
     if (isIbftLegacy()) {
       builder.put("ibft", getIbftLegacyConfigOptions().asMap());
@@ -604,18 +624,18 @@ public class JsonGenesisConfigOptions implements GenesisConfigOptions {
   public List<Long> getForkBlockTimestamps() {
     Stream<OptionalLong> forkBlockTimestamps =
         Stream.of(
-            getSilaShanghaiTime(),
-            getSilaCancunTime(),
-            getSilaPragueTime(),
-            getSilaOsakaTime(),
+            getShanghaiTime(),
+            getCancunTime(),
+            getPragueTime(),
+            getOsakaTime(),
             getBpo1Time(),
             getBpo2Time(),
             getBpo3Time(),
             getBpo4Time(),
             getBpo5Time(),
-            getSilaAmsterdamTime(),
-            getFutureSipsTime(),
-            getExperimentalSipsTime());
+            getAmsterdamTime(),
+            getFutureEipsTime(),
+            getExperimentalEipsTime());
     // when adding forks add an entry to ${REPO_ROOT}/config/src/test/resources/all_forks.json
 
     return forkBlockTimestamps

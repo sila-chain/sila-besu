@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.controller;
 
+import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.consensus.merge.MergeContext;
 import org.hyperledger.besu.consensus.merge.MergeProtocolSchedule;
 import org.hyperledger.besu.consensus.merge.PostMergeContext;
@@ -23,6 +24,7 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.GenesisState;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
@@ -92,11 +94,11 @@ public class MergeBesuControllerBuilder extends BesuControllerBuilder {
   }
 
   @Override
-  protected SilProtocolManager createSilProtocolManager(
+  protected SilProtocolManager createEthProtocolManager(
       final ProtocolContext protocolContext,
       final SynchronizerConfiguration synchronizerConfiguration,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilContext silContext,
       final SilMessages silMessages,
@@ -127,11 +129,11 @@ public class MergeBesuControllerBuilder extends BesuControllerBuilder {
     mergeContext.addNewUnverifiedForkchoiceListener(filterToUse.get());
 
     SilProtocolManager silProtocolManager =
-        super.createSilProtocolManager(
+        super.createEthProtocolManager(
             protocolContext,
             synchronizerConfiguration,
             transactionPool,
-            silaWireProtocolConfiguration,
+            ethereumWireProtocolConfiguration,
             silPeers,
             silContext,
             silMessages,
@@ -188,6 +190,27 @@ public class MergeBesuControllerBuilder extends BesuControllerBuilder {
         savmConfiguration);
   }
 
+  /**
+   * Whether the chain described by this genesis config is post-merge at genesis, meaning it has no
+   * pre-merge blocks at all.
+   *
+   * <p>The genesis block's total difficulty is simply its own difficulty, so a genesis difficulty
+   * at or above the terminal total difficulty means the terminal condition is already satisfied at
+   * block zero. Hoodi is the motivating case: it sets {@code difficulty: 0x01} alongside {@code
+   * terminalTotalDifficulty: 0}, which a zero-difficulty check misreads as a transition chain.
+   *
+   * @param genesisConfig the genesis config
+   * @return true if genesis already satisfies the terminal total difficulty
+   */
+  static boolean isPostMergeAtGenesis(final GenesisConfig genesisConfig) {
+    return genesisConfig
+        .getConfigOptions()
+        .getTerminalTotalDifficulty()
+        .map(Difficulty::of)
+        .map(ttd -> GenesisState.parseDifficulty(genesisConfig).greaterOrEqualThan(ttd))
+        .orElse(false);
+  }
+
   @Override
   protected MergeContext createConsensusContext(
       final Blockchain blockchain,
@@ -196,10 +219,7 @@ public class MergeBesuControllerBuilder extends BesuControllerBuilder {
 
     final OptionalLong terminalBlockNumber = genesisConfigOptions.getTerminalBlockNumber();
     final Optional<Hash> terminalBlockHash = genesisConfigOptions.getTerminalBlockHash();
-    final boolean isPostMergeAtGenesis =
-        genesisConfigOptions.getTerminalTotalDifficulty().isPresent()
-            && genesisConfigOptions.getTerminalTotalDifficulty().get().isZero()
-            && blockchain.getGenesisBlockHeader().getDifficulty().isZero();
+    final boolean isPostMergeAtGenesis = isPostMergeAtGenesis(genesisConfig);
 
     final MergeContext mergeContext =
         postMergeContext

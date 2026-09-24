@@ -93,7 +93,7 @@ public class GetBlockAccessListsFromPeerTask
           }
 
           @Override
-          public boolean isSilPeerSuitable(final SilPeerImmutableAttributes silPeer) {
+          public boolean isEthPeerSuitable(final SilPeerImmutableAttributes silPeer) {
             return silPeer.isServingSnap()
                 && silPeer.silPeer().getAgreedCapabilities().contains(SnapProtocol.SNAP2);
           }

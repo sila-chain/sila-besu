@@ -44,7 +44,7 @@ class TransactionRLPEncoderTest {
   }
 
   @Test
-  void encodeSIP1559TxNominalCase() {
+  void encodeEIP1559TxNominalCase() {
     final Transaction transaction = decodeRLP(RLP.input(Bytes.fromHexString(SIP1559_TX_RLP)));
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     encodeRLP(transaction, output);
@@ -52,7 +52,7 @@ class TransactionRLPEncoderTest {
   }
 
   @Test
-  void blockWithLegacyAndSIP2930TransactionsRoundTrips() {
+  void blockWithLegacyAndEIP2930TransactionsRoundTrips() {
     final BlockDataGenerator gen = new BlockDataGenerator();
 
     final Block block =

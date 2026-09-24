@@ -94,7 +94,7 @@ public class GetBytecodeFromPeerTask extends AbstractPeerRequestTask<Map<Bytes32
           }
 
           @Override
-          public boolean isSilPeerSuitable(final SilPeerImmutableAttributes silPeer) {
+          public boolean isEthPeerSuitable(final SilPeerImmutableAttributes silPeer) {
             return silPeer.isServingSnap();
           }
         },

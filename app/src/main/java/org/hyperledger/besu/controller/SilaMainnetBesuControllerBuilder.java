@@ -76,6 +76,6 @@ public class SilaMainnetBesuControllerBuilder extends BesuControllerBuilder {
 
   @Override
   protected void prepForBuild() {
-    // No special preparation needed for sila-mainnet
+    // No special preparation needed for mainnet
   }
 }

@@ -122,7 +122,7 @@ public class JsonBlockImporter {
             controller.getTransactionPool(),
             controller.getProtocolContext(),
             controller.getProtocolSchedule(),
-            controller.getSilScheduler());
+            controller.getEthScheduler());
 
     final BlockCreationResult result =
         blockCreator.createBlock(

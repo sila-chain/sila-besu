@@ -77,7 +77,7 @@ public class SyncTargetManager extends AbstractSyncTargetManager {
   @Override
   protected CompletableFuture<Optional<SilPeer>> selectBestAvailableSyncTarget() {
     final BlockHeader pivotBlockHeader = fastSyncState.getPivotBlockHeader().get();
-    final SilPeers silPeers = silContext.getSilPeers();
+    final SilPeers silPeers = silContext.getEthPeers();
     final Optional<SilPeer> maybeBestPeer = silPeers.bestPeerWithHeightEstimate();
     if (maybeBestPeer.isEmpty()) {
       throttledLog(
@@ -85,7 +85,7 @@ public class SyncTargetManager extends AbstractSyncTargetManager {
           String.format(
               "Unable to find sync target. Waiting for %d peers minimum. Currently checking %d peers for usefulness. Pivot block: %d",
               config.getSyncMinimumPeerCount(),
-              silContext.getSilPeers().peerCount(),
+              silContext.getEthPeers().peerCount(),
               pivotBlockHeader.getNumber()),
           logDebug,
           LOG_DEBUG_REPEAT_DELAY);
@@ -93,7 +93,7 @@ public class SyncTargetManager extends AbstractSyncTargetManager {
           LOG::info,
           String.format(
               "Unable to find sync target. Waiting for %d peers minimum. Currently checking %d peers for usefulness.",
-              config.getSyncMinimumPeerCount(), silContext.getSilPeers().peerCount()),
+              config.getSyncMinimumPeerCount(), silContext.getEthPeers().peerCount()),
           logInfo,
           LOG_INFO_REPEAT_DELAY);
       return completedFuture(Optional.empty());

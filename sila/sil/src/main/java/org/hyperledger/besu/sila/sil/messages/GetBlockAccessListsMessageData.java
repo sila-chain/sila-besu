@@ -28,7 +28,7 @@ import org.apache.tuweni.bytes.Bytes;
 public final class GetBlockAccessListsMessageData {
   private GetBlockAccessListsMessageData() {}
 
-  public static Bytes encodeSilRequest(final Iterable<Hash> blockHashes) {
+  public static Bytes encodeEthRequest(final Iterable<Hash> blockHashes) {
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     output.startList();
     blockHashes.forEach(hash -> output.writeBytes(hash.getBytes()));
@@ -41,13 +41,13 @@ public final class GetBlockAccessListsMessageData {
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     output.startList();
     // Snap splices request-id into this body: [[hashes], bytes].
-    output.writeRaw(encodeSilRequest(blockHashes));
+    output.writeRaw(encodeEthRequest(blockHashes));
     output.writeBigIntegerScalar(responseBytes);
     output.endList();
     return output.encoded();
   }
 
-  public static Iterable<Hash> decodeSilRequest(final Bytes data) {
+  public static Iterable<Hash> decodeEthRequest(final Bytes data) {
     return decodeHashes(data, false, false);
   }
 

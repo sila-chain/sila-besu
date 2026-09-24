@@ -63,11 +63,11 @@ public class Era1BlockImporterTest {
         Path.of(
             BlockTestUtil.class
                 .getClassLoader()
-                .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+                .getResource("mainnet-00000-5ec1ffb8.era1")
                 .toURI());
     final BesuController targetController =
         new BesuController.Builder()
-            .fromSilNetworkConfig(
+            .fromEthNetworkConfig(
                 SilNetworkConfig.getNetworkConfig(NetworkDefinition.SILA_MAINNET), SyncMode.SNAP)
             .synchronizerConfiguration(SynchronizerConfiguration.builder().build())
             .silProtocolConfiguration(SilProtocolConfiguration.DEFAULT)

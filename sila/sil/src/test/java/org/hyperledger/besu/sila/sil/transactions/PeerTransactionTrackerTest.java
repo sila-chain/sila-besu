@@ -30,7 +30,7 @@ import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -41,7 +41,7 @@ import org.junit.jupiter.api.Test;
 
 public class PeerTransactionTrackerTest {
   private final SilPeers silPeers = mock(SilPeers.class);
-  private final SilScheduler silScheduler = new DeterministicSilScheduler();
+  private final SilScheduler silScheduler = new DeterministicEthScheduler();
   private final SilPeer silPeer1 = mockPeer();
   private final SilPeer silPeer2 = mockPeer();
   private final BlockDataGenerator generator = new BlockDataGenerator();

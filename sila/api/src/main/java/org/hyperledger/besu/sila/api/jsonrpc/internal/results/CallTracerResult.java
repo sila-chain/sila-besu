@@ -27,7 +27,7 @@ import com.google.common.base.MoreObjects;
 import org.apache.tuweni.bytes.Bytes;
 
 /**
- * Represents the result format for Sila's callTracer as specified in the Gsil documentation.
+ * Represents the result format for Sila's callTracer as specified in the Geth documentation.
  *
  * <p>The callTracer is a built-in tracer that captures information about all calls made during
  * transaction execution, including regular calls, delegate calls, static calls, and contract
@@ -35,7 +35,7 @@ import org.apache.tuweni.bytes.Bytes;
  * the JSON format expected by Sila clients.
  *
  * <p>The JSON output follows the format specified at: <a
- * href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#call-tracer">Gsil
+ * href="https://geth.sila.org/docs/developers/savm-tracing/built-in-tracers#call-tracer">Geth
  * CallTracer Documentation</a>
  *
  * <p>Example JSON output:
@@ -54,8 +54,8 @@ import org.apache.tuweni.bytes.Bytes;
  * }
  * }</pre>
  *
- * @see <a href="https://gsil.sila.org/docs/developers/savm-tracing/built-in-tracers#call-tracer">
- *     Gsil CallTracer Documentation</a>
+ * @see <a href="https://geth.sila.org/docs/developers/savm-tracing/built-in-tracers#call-tracer">
+ *     Geth CallTracer Documentation</a>
  */
 @JsonPropertyOrder({
   "from",
@@ -429,7 +429,7 @@ public class CallTracerResult {
      * Sets the revert reason directly from a decoded string.
      *
      * <p>This method should be used when you have already decoded the revert reason and want to set
-     * it directly without any fallback to hex encoding. This is useful for Gsil compatibility where
+     * it directly without any fallback to hex encoding. This is useful for Geth compatibility where
      * revertReason should only be set if it's a valid decoded Error(string).
      *
      * @param revertReason the decoded revert reason string

@@ -117,13 +117,13 @@ class BesuUpnpServiceConfiguration implements UpnpServiceConfiguration {
     return new GENAEventProcessorImpl();
   }
 
-  @SuppressWarnings("rawtypes") // superlass uses raw types
+  @SuppressWarnings("rawtypes") // superclass uses raw types
   @Override
   public StreamClient createStreamClient() {
     return new OkHttpStreamClient(new StreamClientConfigurationImpl(executorService));
   }
 
-  @SuppressWarnings("rawtypes") // superlass uses raw types
+  @SuppressWarnings("rawtypes") // superclass uses raw types
   @Override
   public MulticastReceiver createMulticastReceiver(
       final NetworkAddressFactory networkAddressFactory) {
@@ -132,7 +132,7 @@ class BesuUpnpServiceConfiguration implements UpnpServiceConfiguration {
             networkAddressFactory.getMulticastGroup(), networkAddressFactory.getMulticastPort()));
   }
 
-  @SuppressWarnings("rawtypes") // superlass uses raw types
+  @SuppressWarnings("rawtypes") // superclass uses raw types
   @Override
   public DatagramIO createDatagramIO(final NetworkAddressFactory networkAddressFactory) {
     return new DatagramIOImpl(new DatagramIOConfigurationImpl());

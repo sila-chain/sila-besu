@@ -112,19 +112,19 @@
     },
     {
       "prompt-type": "CONFIRM",
-      "question": "Do you want to use Silstats ?",
+      "question": "Do you want to use Ethstats ?",
       "default-option": "no",
       "sub-questions": [
         {
           "prompt-type": "INPUT",
-          "question": "What is the URL of Silstats (nodename:secret@host:port) ?",
-          "config-key": "silstats",
+          "question": "What is the URL of Ethstats (nodename:secret@host:port) ?",
+          "config-key": "ethstats",
           "regex": "([-\\w]+):([\\w]+)?@([-.\\w]+):([\\d]+)"
         },
         {
           "prompt-type": "INPUT",
           "question": "What is the contact address ?",
-          "config-key": "silstats-contact"
+          "config-key": "ethstats-contact"
         }
       ]
     },

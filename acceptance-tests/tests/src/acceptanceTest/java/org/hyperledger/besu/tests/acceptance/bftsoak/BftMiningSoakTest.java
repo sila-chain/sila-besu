@@ -28,8 +28,8 @@ import org.hyperledger.besu.tests.acceptance.bft.ParameterizedBftTestBase;
 import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 import org.hyperledger.besu.tests.acceptance.dsl.node.BesuNode;
 import org.hyperledger.besu.tests.web3j.generated.SimpleStorage;
-import org.hyperledger.besu.tests.web3j.generated.SimpleStorageSilaOsaka;
-import org.hyperledger.besu.tests.web3j.generated.SimpleStorageSilaShanghai;
+import org.hyperledger.besu.tests.web3j.generated.SimpleStorageOsaka;
+import org.hyperledger.besu.tests.web3j.generated.SimpleStorageShanghai;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -79,7 +79,8 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     // in between certain steps. There should be no upper-limit to how long the test is run for
     assertThat(getTestDurationMins()).isGreaterThanOrEqualTo(MIN_TEST_TIME_MINS);
 
-    // Create a mix of Bonsai and Forest DB nodes
+    // Create a mix of Bonsai and Forest DB nodes. Use fixed ports so that nodes reliably re-peer
+    // after restarts
     final BesuNode minerNode1 = nodeFactory.createBonsaiNodeFixedPort(besu, "miner1");
     final BesuNode minerNode2 = nodeFactory.createBonsaiArchiveNodeFixedPort(besu, "miner2");
     final BesuNode minerNode3 = nodeFactory.createBonsaiNodeFixedPort(besu, "miner3");
@@ -120,7 +121,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     // Before upgrading to shanghai, try creating a shanghai-savm contract and check that
     // the transaction fails
     try {
-      minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageSilaShanghai.class));
+      minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageShanghai.class));
       Assertions.fail("SilaShanghai transaction should not be executed on a pre-shanghai chain");
     } catch (RuntimeException e) {
       assertThat(e.getMessage())
@@ -130,7 +131,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
 
     // Before upgrading to osaka, try creating an osaka-savm contract and check that it fails
     try {
-      minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageSilaOsaka.class));
+      minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageOsaka.class));
       Assertions.fail("SilaOsaka transaction should not be executed on a pre-osaka chain");
     } catch (RuntimeException e) {
       assertThat(e.getMessage())
@@ -300,7 +301,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
 
     // Upgrade the chain to shanghai in 120 seconds, then deploy a shanghai-era contract to verify
     Instant shanghaiUpgradeStartTime = Instant.now();
-    upgradeToSilaShanghai(
+    upgradeToShanghai(
         minerNode1,
         minerNode2,
         minerNode3,
@@ -316,20 +317,19 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
 
     LOG.info(
         "Deploying a smart contract that should only work if the chain is running on the shanghai fork");
-    SimpleStorageSilaShanghai simpleStorageContractSilaShanghai =
-        minerNode1.execute(
-            contractTransactions.createSmartContract(SimpleStorageSilaShanghai.class));
+    SimpleStorageShanghai simpleStorageContractShanghai =
+        minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageShanghai.class));
 
-    assertThat(simpleStorageContractSilaShanghai.getContractAddress()).isNotNull();
+    assertThat(simpleStorageContractShanghai.getContractAddress()).isNotNull();
 
     // Verify standard storage works under shanghai
-    assertThat(simpleStorageContractSilaShanghai.get().send()).isEqualTo(BigInteger.ZERO);
-    simpleStorageContractSilaShanghai.set(BigInteger.valueOf(111)).send();
-    assertThat(simpleStorageContractSilaShanghai.get().send()).isEqualTo(BigInteger.valueOf(111));
+    assertThat(simpleStorageContractShanghai.get().send()).isEqualTo(BigInteger.ZERO);
+    simpleStorageContractShanghai.set(BigInteger.valueOf(111)).send();
+    assertThat(simpleStorageContractShanghai.get().send()).isEqualTo(BigInteger.valueOf(111));
 
     // Upgrade the chain to osaka in 120 seconds. Then try to deploy osaka-era contracts
     Instant osakaUpgradeStartTime = Instant.now();
-    upgradeToSilaOsaka(
+    upgradeToOsaka(
         minerNode1,
         minerNode2,
         minerNode3,
@@ -345,20 +345,20 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
 
     LOG.info(
         "Deploying a smart contract that should only work if the chain is running on the osaka fork");
-    SimpleStorageSilaOsaka simpleStorageContractSilaOsaka =
-        minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageSilaOsaka.class));
+    SimpleStorageOsaka simpleStorageContractOsaka =
+        minerNode1.execute(contractTransactions.createSmartContract(SimpleStorageOsaka.class));
 
-    assertThat(simpleStorageContractSilaOsaka.getContractAddress()).isNotNull();
+    assertThat(simpleStorageContractOsaka.getContractAddress()).isNotNull();
 
     // Verify standard storage works under osaka
-    assertThat(simpleStorageContractSilaOsaka.get().send()).isEqualTo(BigInteger.ZERO);
-    simpleStorageContractSilaOsaka.set(BigInteger.valueOf(123)).send();
-    assertThat(simpleStorageContractSilaOsaka.get().send()).isEqualTo(BigInteger.valueOf(123));
+    assertThat(simpleStorageContractOsaka.get().send()).isEqualTo(BigInteger.ZERO);
+    simpleStorageContractOsaka.set(BigInteger.valueOf(123)).send();
+    assertThat(simpleStorageContractOsaka.get().send()).isEqualTo(BigInteger.valueOf(123));
 
     // Verify TSTORE/TLOAD (SIP-1153 transient storage) by sending a transaction and checking
     // it succeeds. testTransientStorage is non-view (uses TSTORE), so send() returns a receipt.
     assertThat(
-            simpleStorageContractSilaOsaka
+            simpleStorageContractOsaka
                 .testTransientStorage(BigInteger.valueOf(99))
                 .send()
                 .getStatus())
@@ -375,7 +375,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     final Address authorizerAddress =
         Address.fromHexString("627306090abaB3A6e1400e9345bC60c78a8BEf57");
     final Address delegationTarget =
-        Address.fromHexString(simpleStorageContractSilaOsaka.getContractAddress());
+        Address.fromHexString(simpleStorageContractOsaka.getContractAddress());
 
     final CodeDelegation codeDelegation =
         org.hyperledger.besu.sila.core.CodeDelegation.builder()
@@ -459,7 +459,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     }
   }
 
-  private static void updateGenesisConfigToSilaShanghai(
+  private static void updateGenesisConfigToShanghai(
       final BesuNode minerNode, final long shanghaiTime) {
 
     if (minerNode.getGenesisConfig().isPresent()) {
@@ -471,7 +471,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     }
   }
 
-  private static void updateGenesisConfigToSilaOsaka(
+  private static void updateGenesisConfigToOsaka(
       final BesuNode minerNode, final long blockTimestamp) {
 
     if (minerNode.getGenesisConfig().isPresent()) {
@@ -516,7 +516,7 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     startNode(minerNode4);
   }
 
-  private void upgradeToSilaShanghai(
+  private void upgradeToShanghai(
       final BesuNode minerNode1,
       final BesuNode minerNode2,
       final BesuNode minerNode3,
@@ -525,26 +525,26 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
       throws InterruptedException {
     LOG.info("Upgrading node 1 to shanghai fork");
     stopNode(minerNode1);
-    updateGenesisConfigToSilaShanghai(minerNode1, shanghaiTime);
+    updateGenesisConfigToShanghai(minerNode1, shanghaiTime);
     startNode(minerNode1);
 
     LOG.info("Upgrading node 2 to shanghai fork");
     stopNode(minerNode2);
-    updateGenesisConfigToSilaShanghai(minerNode2, shanghaiTime);
+    updateGenesisConfigToShanghai(minerNode2, shanghaiTime);
     startNode(minerNode2);
 
     LOG.info("Upgrading node 3 to shanghai fork");
     stopNode(minerNode3);
-    updateGenesisConfigToSilaShanghai(minerNode3, shanghaiTime);
+    updateGenesisConfigToShanghai(minerNode3, shanghaiTime);
     startNode(minerNode3);
 
     LOG.info("Upgrading node 4 to shanghai fork");
     stopNode(minerNode4);
-    updateGenesisConfigToSilaShanghai(minerNode4, shanghaiTime);
+    updateGenesisConfigToShanghai(minerNode4, shanghaiTime);
     startNode(minerNode4);
   }
 
-  private void upgradeToSilaOsaka(
+  private void upgradeToOsaka(
       final BesuNode minerNode1,
       final BesuNode minerNode2,
       final BesuNode minerNode3,
@@ -554,25 +554,25 @@ public class BftMiningSoakTest extends ParameterizedBftTestBase {
     // Node 1
     LOG.info("Upgrading node 1 to osaka fork");
     stopNode(minerNode1);
-    updateGenesisConfigToSilaOsaka(minerNode1, osakaTime);
+    updateGenesisConfigToOsaka(minerNode1, osakaTime);
     startNode(minerNode1);
 
     // Node 2
     LOG.info("Upgrading node 2 to osaka fork");
     stopNode(minerNode2);
-    updateGenesisConfigToSilaOsaka(minerNode2, osakaTime);
+    updateGenesisConfigToOsaka(minerNode2, osakaTime);
     startNode(minerNode2);
 
     // Node 3
     LOG.info("Upgrading node 3 to osaka fork");
     stopNode(minerNode3);
-    updateGenesisConfigToSilaOsaka(minerNode3, osakaTime);
+    updateGenesisConfigToOsaka(minerNode3, osakaTime);
     startNode(minerNode3);
 
     // Node 4
     LOG.info("Upgrading node 4 to osaka fork");
     stopNode(minerNode4);
-    updateGenesisConfigToSilaOsaka(minerNode4, osakaTime);
+    updateGenesisConfigToOsaka(minerNode4, osakaTime);
     startNode(minerNode4);
   }
 

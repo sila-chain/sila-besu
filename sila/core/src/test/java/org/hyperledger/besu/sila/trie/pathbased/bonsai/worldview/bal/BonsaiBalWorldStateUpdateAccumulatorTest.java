@@ -35,9 +35,9 @@ import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListAc
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListOverlay;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.account.BonsaiAccount;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiValue;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiWorldStateUpdateAccumulator;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedValue;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 
 import java.util.List;
 import java.util.function.Consumer;
@@ -59,7 +59,7 @@ class BonsaiBalWorldStateUpdateAccumulatorTest {
   @BeforeEach
   void setUp() {
     contextTestFixture =
-        ExecutionContextTestFixture.builder(GenesisConfig.sila - mainnet())
+        ExecutionContextTestFixture.builder(GenesisConfig.silaMainnet())
             .dataStorageFormat(DataStorageFormat.BONSAI)
             .build();
     protocolContext = contextTestFixture.getProtocolContext();
@@ -96,8 +96,7 @@ class BonsaiBalWorldStateUpdateAccumulatorTest {
           assertThat(readAccount.getBalance()).isEqualTo(balBalance);
           assertThat(readAccount.getNonce()).isEqualTo(balNonce);
 
-          final PathBasedValue<BonsaiAccount> tracked =
-              accumulator.getAccountsToUpdate().get(ADDRESS);
+          final BonsaiValue<BonsaiAccount> tracked = accumulator.getAccountsToUpdate().get(ADDRESS);
           assertThat(tracked.getPrior()).isNull();
           assertThat(tracked.getUpdated().getBalance()).isEqualTo(balBalance);
           assertThat(tracked.getUpdated().getNonce()).isEqualTo(balNonce);
@@ -131,7 +130,7 @@ class BonsaiBalWorldStateUpdateAccumulatorTest {
           assertThat(readAccount.getBalance()).isEqualTo(balBalance);
           assertThat(readAccount.getNonce()).isEqualTo(balNonce);
 
-          final PathBasedValue<BonsaiAccount> tracked =
+          final BonsaiValue<BonsaiAccount> tracked =
               accumulator.getAccountsToUpdate().get(balOnlyAddress);
           assertThat(tracked.getPrior()).isNull();
           assertThat(tracked.getUpdated().getBalance()).isEqualTo(balBalance);

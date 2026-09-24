@@ -24,7 +24,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.SilGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 
 public class SilGetBalanceAtBlockTransaction implements Transaction<BigInteger> {
 
@@ -39,9 +39,9 @@ public class SilGetBalanceAtBlockTransaction implements Transaction<BigInteger> 
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      final SilGetBalance result =
+      final EthGetBalance result =
           node.sil()
-              .silGetBalance(account.getAddress(), DefaultBlockParameter.valueOf(block))
+              .ethGetBalance(account.getAddress(), DefaultBlockParameter.valueOf(block))
               .send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();

@@ -27,13 +27,13 @@ import org.mockito.junit.jupiter.MockitoExtension;
 public final class BesuVersionUtilsTest {
 
   /**
-   * Silstats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
-   * client identity (besu, Gsil, Parity, etc). Bar is the version, in semantic version form
+   * Ethstats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
+   * client identity (besu, Geth, Parity, etc). Bar is the version, in semantic version form
    * (1.2.3-whatever), baz is OS and chip architecture, and bif is "compiler" - which we use as JVM
    * info.
    */
   @Test
-  public void versionStringIsSilstatsFriendly() {
+  public void versionStringIsEthstatsFriendly() {
     assertThat(BesuVersionUtils.version())
         .matches(
             "[^/]+/v(\\d+\\.\\d+\\.\\d+[^/]*|"
@@ -42,13 +42,13 @@ public final class BesuVersionUtilsTest {
   }
 
   /**
-   * Silstats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
-   * client identity (besu, Gsil, Parity, etc). Bar is the version, in semantic version form
+   * Ethstats wants a version string like &lt;foo&gt/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the
+   * client identity (besu, Geth, Parity, etc). Bar is the version, in semantic version form
    * (1.2.3-whatever), baz is OS and chip architecture, and bif is "compiler" - which we use as JVM
    * info.
    */
   @Test
-  public void noIdentityNodeNameIsSilstatsFriendly() {
+  public void noIdentityNodeNameIsEthstatsFriendly() {
     assertThat(BesuVersionUtils.nodeName(Optional.empty()))
         .matches(
             "[^/]+/v(\\d+\\.\\d+\\.\\d+[^/]*|"
@@ -57,14 +57,14 @@ public final class BesuVersionUtilsTest {
   }
 
   /**
-   * Silstats also accepts a version string like
+   * Ethstats also accepts a version string like
    * &lt;foo&gt/%lt;qux&gt;/v&lt;bar&gt/&lt;baz&gt/&lt;bif&gt. Foo is the client identity (besu,
-   * Gsil, Parity, etc). Qux is user identity (PegaSysEng, Yes-SIP-1679, etc) Bar is the version, in
+   * Geth, Parity, etc). Qux is user identity (PegaSysEng, Yes-SIP-1679, etc) Bar is the version, in
    * semantic version form (1.2.3-whatever), baz is OS and chip architecture, and bif is "compiler"
    * - which we use as JVM info.
    */
   @Test
-  public void userIdentityNodeNameIsSilstatsFriendly() {
+  public void userIdentityNodeNameIsEthstatsFriendly() {
     assertThat(BesuVersionUtils.nodeName(Optional.of("TestUserIdentity")))
         .matches(
             "[^/]+/[^/]+/v(\\d+\\.\\d+\\.\\d+[^/]*|"

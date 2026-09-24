@@ -63,22 +63,22 @@ class SilServer {
   private final Blockchain blockchain;
   private final TransactionPool transactionPool;
   private final SilMessages silMessages;
-  private final SilProtocolConfiguration silaWireProtocolConfiguration;
+  private final SilProtocolConfiguration ethereumWireProtocolConfiguration;
 
   SilServer(
       final Blockchain blockchain,
       final TransactionPool transactionPool,
       final SilMessages silMessages,
-      final SilProtocolConfiguration silaWireProtocolConfiguration) {
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration) {
     this.blockchain = blockchain;
     this.transactionPool = transactionPool;
     this.silMessages = silMessages;
-    this.silaWireProtocolConfiguration = silaWireProtocolConfiguration;
+    this.ethereumWireProtocolConfiguration = ethereumWireProtocolConfiguration;
     this.registerResponseConstructors();
   }
 
   private void registerResponseConstructors() {
-    final int maxMessageSize = silaWireProtocolConfiguration.getMaxMessageSize();
+    final int maxMessageSize = ethereumWireProtocolConfiguration.getMaxMessageSize();
 
     silMessages.registerResponseConstructor(
         SilProtocolMessages.GET_BLOCK_HEADERS,
@@ -86,7 +86,7 @@ class SilServer {
             constructGetHeadersResponse(
                 blockchain,
                 messageData,
-                silaWireProtocolConfiguration.getMaxGetBlockHeaders(),
+                ethereumWireProtocolConfiguration.getMaxGetBlockHeaders(),
                 maxMessageSize));
     silMessages.registerResponseConstructor(
         SilProtocolMessages.GET_BLOCK_BODIES,
@@ -94,23 +94,23 @@ class SilServer {
             constructGetBodiesResponse(
                 blockchain,
                 messageData,
-                silaWireProtocolConfiguration.getMaxGetBlockBodies(),
+                ethereumWireProtocolConfiguration.getMaxGetBlockBodies(),
                 maxMessageSize));
     silMessages.registerResponseConstructor(
         SilProtocolMessages.GET_RECEIPTS,
         (peer, messageData, capability) -> {
-          if (SilProtocol.isSil70Compatible(capability)) {
+          if (SilProtocol.isEth70Compatible(capability)) {
             return constructGetPaginatedReceiptsResponse(
                 peer,
                 blockchain,
                 messageData,
-                silaWireProtocolConfiguration.getMaxGetReceipts(),
+                ethereumWireProtocolConfiguration.getMaxGetReceipts(),
                 maxMessageSize);
           }
           return constructGetReceiptsResponse(
               blockchain,
               messageData,
-              silaWireProtocolConfiguration.getMaxGetReceipts(),
+              ethereumWireProtocolConfiguration.getMaxGetReceipts(),
               maxMessageSize,
               capability);
         });
@@ -121,7 +121,7 @@ class SilServer {
                 transactionPool,
                 peer,
                 messageData,
-                silaWireProtocolConfiguration.getMaxGetPooledTransactions(),
+                ethereumWireProtocolConfiguration.getMaxGetPooledTransactions(),
                 maxMessageSize));
     silMessages.registerResponseConstructor(
         SilProtocolMessages.GET_BLOCK_ACCESS_LISTS,
@@ -129,7 +129,7 @@ class SilServer {
             constructGetBlockAccessListsResponse(
                 blockchain,
                 messageData,
-                silaWireProtocolConfiguration.getMaxGetBlockAccessLists(),
+                ethereumWireProtocolConfiguration.getMaxGetBlockAccessLists(),
                 maxMessageSize));
   }
 
@@ -255,7 +255,7 @@ class SilServer {
       final BytesValueRLPOutput encodedReceipts = new BytesValueRLPOutput();
       encodedReceipts.startList();
       TransactionReceiptEncodingConfiguration encodingConfiguration =
-          SilProtocol.isSil69Compatible(cap)
+          SilProtocol.isEth69Compatible(cap)
               ? TransactionReceiptEncodingConfiguration.SIL69_RECEIPT_CONFIGURATION
               : TransactionReceiptEncodingConfiguration.DEFAULT_NETWORK_CONFIGURATION;
       maybeReceipts

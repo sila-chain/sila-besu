@@ -14,7 +14,9 @@
  */
 package org.hyperledger.besu.sila.referencetests;
 
+import org.hyperledger.besu.config.BlobScheduleOptions;
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.config.JsonUtil;
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
@@ -31,6 +33,7 @@ import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
 
 import java.math.BigInteger;
 import java.util.Arrays;
+import java.util.HashMap;
 import java.util.List;
 import java.util.Locale;
 import java.util.Map;
@@ -38,6 +41,8 @@ import java.util.Optional;
 import java.util.Set;
 import java.util.function.Function;
 import java.util.stream.Collectors;
+
+import com.fasterxml.jackson.databind.node.ObjectNode;
 
 /**
  * Loads all available protocol schedules into memory and lets users select the appropriate one.
@@ -56,11 +61,17 @@ public class ReferenceTestProtocolSchedules {
           "frontier",
           "frontiertohomesteadat5",
           "homestead",
-          "homesteadtosip150at5",
+          "homesteadtoeip150at5",
           "homesteadtodaoat5",
           "sip150",
           "sip158",
           "sip158tobyzantiumat5");
+
+  /** Guarded by {@link #cached(SavmConfiguration, BlobScheduleOptions)}, which is synchronized. */
+  private static final Map<CacheKey, ReferenceTestProtocolSchedules> CACHED_SCHEDULES =
+      new HashMap<>();
+
+  private record CacheKey(SavmConfiguration savmConfiguration, ObjectNode blobSchedule) {}
 
   public static ReferenceTestProtocolSchedules create() {
     return create(new StubGenesisConfigOptions(), SavmConfiguration.DEFAULT);
@@ -70,13 +81,65 @@ public class ReferenceTestProtocolSchedules {
     return create(new StubGenesisConfigOptions(), savmConfiguration);
   }
 
+  /**
+   * Creates the reference-test schedules with a fixture-supplied blob schedule applied to every
+   * fork (used by engine/blockchain tests on devnets whose blob target/max differ from defaults).
+   *
+   * @param savmConfiguration the SAVM configuration
+   * @param blobScheduleOptions the blob schedule from the fixture config, or null for defaults
+   * @return the schedules
+   */
+  public static ReferenceTestProtocolSchedules create(
+      final SavmConfiguration savmConfiguration, final BlobScheduleOptions blobScheduleOptions) {
+    final StubGenesisConfigOptions genesisStub = new StubGenesisConfigOptions();
+    if (blobScheduleOptions != null) {
+      genesisStub.blobScheduleOptions(blobScheduleOptions);
+    }
+    return create(genesisStub, savmConfiguration);
+  }
+
+  /**
+   * As {@link #create(SavmConfiguration, BlobScheduleOptions)}, but built once per distinct blob
+   * schedule and shared by every caller. Fixture runners hand each fixture's own blob schedule in,
+   * and a fixture tree holds only a handful of distinct ones, so building a schedule set per
+   * fixture is pure waste.
+   *
+   * <p>Synchronized rather than a {@code ConcurrentHashMap.computeIfAbsent}: the map holds a key
+   * per distinct blob schedule, so per-key serialisation would still let several threads into
+   * {@code create()} at once, and {@code create()} initialises the KZG trusted setup, which is
+   * process-wide state guarded by a {@code compareAndSet} that lets the losing thread proceed
+   * before the setup is loaded. The check-then-act has to be atomic across keys, not merely
+   * visible.
+   *
+   * <p>The key is the blob schedule's whole config root rather than {@link
+   * BlobScheduleOptions#asMap()}, which enumerates only the fork keys this Besu version has a
+   * getter for and would silently collide two schedules differing only outside that set — the
+   * devnet forks these runners exist to test. {@link
+   * com.fasterxml.jackson.databind.node.ObjectNode} equality is by content and insensitive to field
+   * order.
+   *
+   * @param savmConfiguration the SAVM configuration
+   * @param blobScheduleOptions the blob schedule from the fixture config, or null for defaults
+   * @return the schedules
+   */
+  public static synchronized ReferenceTestProtocolSchedules cached(
+      final SavmConfiguration savmConfiguration, final BlobScheduleOptions blobScheduleOptions) {
+    final ObjectNode key =
+        blobScheduleOptions == null
+            ? JsonUtil.createEmptyObjectNode()
+            : blobScheduleOptions.getConfigRoot().deepCopy();
+    return CACHED_SCHEDULES.computeIfAbsent(
+        new CacheKey(savmConfiguration, key),
+        ignored -> create(savmConfiguration, blobScheduleOptions));
+  }
+
   public static ReferenceTestProtocolSchedules create(
       final StubGenesisConfigOptions genesisStub, final SavmConfiguration savmConfiguration) {
     // the following schedules activate SIP-1559, but may have non-default
     if (genesisStub.getBaseFeePerGas().isEmpty()) {
       genesisStub.baseFeePerGas(0x0a);
     }
-    // also load KZG file for sila-mainnet
+    // also load KZG file for mainnet
     KZGPointEvalPrecompiledContract.init();
     return new ReferenceTestProtocolSchedules(
         Map.ofEntries(
@@ -88,7 +151,7 @@ public class ReferenceTestProtocolSchedules {
                     "Homestead",
                     createSchedule(genesisStub.clone().homesteadBlock(0), savmConfiguration)),
                 Map.entry(
-                    "HomesteadToSIP150At5",
+                    "HomesteadToEIP150At5",
                     createSchedule(
                         genesisStub.clone().homesteadBlock(0).sip150Block(5), savmConfiguration)),
                 Map.entry(
@@ -142,43 +205,108 @@ public class ReferenceTestProtocolSchedules {
                     "SilaParis",
                     createSchedule(genesisStub.clone().mergeNetSplitBlock(0), savmConfiguration)),
                 Map.entry(
+                    "SilaParisToShanghaiAtTime15k",
+                    createSchedule(
+                        genesisStub.clone().mergeNetSplitBlock(0).shanghaiTime(15000),
+                        savmConfiguration)),
+                Map.entry(
                     "SilaShanghai",
                     createSchedule(genesisStub.clone().shanghaiTime(0), savmConfiguration)),
                 Map.entry(
-                    "SilaShanghaiToSilaCancunAtTime15k",
+                    "SilaShanghaiToCancunAtTime15k",
                     createSchedule(
                         genesisStub.clone().shanghaiTime(0).cancunTime(15000), savmConfiguration)),
                 Map.entry(
                     "SilaCancun",
                     createSchedule(genesisStub.clone().cancunTime(0), savmConfiguration)),
                 Map.entry(
-                    "SilaCancunToSilaPragueAtTime15k",
+                    "SilaCancunToPragueAtTime15k",
                     createSchedule(
                         genesisStub.clone().cancunTime(0).pragueTime(15000), savmConfiguration)),
                 Map.entry(
                     "SilaPrague",
                     createSchedule(genesisStub.clone().pragueTime(0), savmConfiguration)),
+                // Forks left without an activation time are folded into the first configured
+                // milestone, so each entry only needs to give times to the forks that have to be
+                // told apart (the fork under test and, for transitions, the one it starts from).
+                Map.entry(
+                    "SilaPragueToOsakaAtTime15k",
+                    createSchedule(
+                        genesisStub.clone().pragueTime(0).osakaTime(15000), savmConfiguration)),
                 Map.entry(
                     "SilaOsaka",
-                    createSchedule(genesisStub.clone().osakaTime(0), savmConfiguration)),
+                    createSchedule(
+                        genesisStub.clone().pragueTime(0).osakaTime(0), savmConfiguration)),
+                Map.entry(
+                    "SilaOsakaToBPO1AtTime15k",
+                    createSchedule(
+                        genesisStub.clone().pragueTime(0).osakaTime(0).bpo1Time(15000),
+                        savmConfiguration)),
+                Map.entry(
+                    "BPO1ToBPO2AtTime15k",
+                    createSchedule(
+                        genesisStub.clone().pragueTime(0).osakaTime(0).bpo1Time(0).bpo2Time(15000),
+                        savmConfiguration)),
+                Map.entry(
+                    "BPO2ToBPO3AtTime15k",
+                    createSchedule(
+                        genesisStub
+                            .clone()
+                            .pragueTime(0)
+                            .osakaTime(0)
+                            .bpo1Time(0)
+                            .bpo2Time(0)
+                            .bpo3Time(15000),
+                        savmConfiguration)),
+                Map.entry(
+                    "BPO3ToBPO4AtTime15k",
+                    createSchedule(
+                        genesisStub
+                            .clone()
+                            .pragueTime(0)
+                            .osakaTime(0)
+                            .bpo1Time(0)
+                            .bpo2Time(0)
+                            .bpo3Time(0)
+                            .bpo4Time(15000),
+                        savmConfiguration)),
                 Map.entry(
                     "SilaAmsterdam",
-                    createSchedule(genesisStub.clone().amsterdamTime(0), savmConfiguration)),
+                    createSchedule(
+                        genesisStub
+                            .clone()
+                            .pragueTime(0)
+                            .osakaTime(0)
+                            .bpo1Time(0)
+                            .bpo2Time(0)
+                            .amsterdamTime(0),
+                        savmConfiguration)),
+                Map.entry(
+                    "BPO2ToAmsterdamAtTime15k",
+                    createSchedule(
+                        genesisStub
+                            .clone()
+                            .pragueTime(0)
+                            .osakaTime(0)
+                            .bpo1Time(0)
+                            .bpo2Time(0)
+                            .amsterdamTime(15000),
+                        savmConfiguration)),
                 Map.entry(
                     "Bogota",
-                    createSchedule(genesisStub.clone().futureSipsTime(0), savmConfiguration)),
+                    createSchedule(genesisStub.clone().futureEipsTime(0), savmConfiguration)),
                 Map.entry(
                     "Polis",
-                    createSchedule(genesisStub.clone().futureSipsTime(0), savmConfiguration)),
+                    createSchedule(genesisStub.clone().futureEipsTime(0), savmConfiguration)),
                 Map.entry(
                     "Bangkok",
-                    createSchedule(genesisStub.clone().futureSipsTime(0), savmConfiguration)),
+                    createSchedule(genesisStub.clone().futureEipsTime(0), savmConfiguration)),
                 Map.entry(
-                    "Future_SIPs",
-                    createSchedule(genesisStub.clone().futureSipsTime(0), savmConfiguration)),
+                    "Future_EIPs",
+                    createSchedule(genesisStub.clone().futureEipsTime(0), savmConfiguration)),
                 Map.entry(
-                    "Experimental_SIPs",
-                    createSchedule(genesisStub.clone().experimentalSipsTime(0), savmConfiguration)))
+                    "Experimental_EIPs",
+                    createSchedule(genesisStub.clone().experimentalEipsTime(0), savmConfiguration)))
             .entrySet()
             .stream()
             .map(e -> Map.entry(e.getKey().toLowerCase(Locale.ROOT), e.getValue()))

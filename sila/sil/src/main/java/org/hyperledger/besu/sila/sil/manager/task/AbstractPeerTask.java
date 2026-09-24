@@ -21,7 +21,7 @@ import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerTask.PeerTaskResul
 
 import java.util.Optional;
 
-public abstract class AbstractPeerTask<R> extends AbstractSilTask<PeerTaskResult<R>> {
+public abstract class AbstractPeerTask<R> extends AbstractEthTask<PeerTaskResult<R>> {
   protected Optional<SilPeer> assignedPeer = Optional.empty();
   protected final SilContext silContext;
 

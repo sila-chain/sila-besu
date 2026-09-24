@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.tests.acceptance.dsl.blockchain;
 
-import static org.web3j.utils.Convert.Unit.SILER;
+import static org.web3j.utils.Convert.Unit.ETHER;
 import static org.web3j.utils.Convert.Unit.WEI;
 
 import java.math.BigDecimal;
@@ -35,8 +35,8 @@ public class Amount {
     this.unit = unit;
   }
 
-  public static Amount siler(final long value) {
-    return new Amount(BigDecimal.valueOf(value), SILER);
+  public static Amount sila(final long value) {
+    return new Amount(BigDecimal.valueOf(value), ETHER);
   }
 
   public static Amount wei(final BigInteger value) {

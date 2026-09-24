@@ -39,7 +39,7 @@ import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.util.RawBlockIterator;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.testutil.BlockTestUtil;
@@ -116,54 +116,54 @@ public class BlockchainSetupUtil {
   }
 
   public static BlockchainSetupUtil forTesting(final DataStorageFormat storageFormat) {
-    return createForSilashChain(BlockTestUtil.getTestChainResources(), storageFormat);
+    return createForEthashChain(BlockTestUtil.getTestChainResources(), storageFormat);
   }
 
   public static BlockchainSetupUtil forHiveTesting(final DataStorageFormat storageFormat) {
-    return createForSilashChain(BlockTestUtil.getHiveTestChainResources(), storageFormat);
+    return createForEthashChain(BlockTestUtil.getHiveTestChainResources(), storageFormat);
   }
 
-  public static BlockchainSetupUtil forSilaMainnet() {
-    return createForSilashChain(BlockTestUtil.getSilaMainnetResources(), DataStorageFormat.BONSAI);
+  public static BlockchainSetupUtil forMainnet() {
+    return createForEthashChain(BlockTestUtil.getMainnetResources(), DataStorageFormat.BONSAI);
   }
 
   public static BlockchainSetupUtil forOutdatedFork() {
-    return createForSilashChain(BlockTestUtil.getOutdatedForkResources(), DataStorageFormat.FOREST);
+    return createForEthashChain(BlockTestUtil.getOutdatedForkResources(), DataStorageFormat.FOREST);
   }
 
   public static BlockchainSetupUtil forUpgradedFork() {
-    return createForSilashChain(BlockTestUtil.getUpgradedForkResources(), DataStorageFormat.FOREST);
+    return createForEthashChain(BlockTestUtil.getUpgradedForkResources(), DataStorageFormat.FOREST);
   }
 
   public static BlockchainSetupUtil forSnapTesting(final DataStorageFormat storageFormat) {
-    return createForSilashChain(BlockTestUtil.getSnapTestChainResources(), storageFormat);
+    return createForEthashChain(BlockTestUtil.getSnapTestChainResources(), storageFormat);
   }
 
-  public static BlockchainSetupUtil createForSilashChain(
+  public static BlockchainSetupUtil createForEthashChain(
       final ChainResources chainResources, final DataStorageFormat storageFormat) {
     return create(
         chainResources,
         storageFormat,
-        BlockchainSetupUtil::silaMainnetProtocolScheduleProvider,
-        BlockchainSetupUtil::silaMainnetProtocolContextProvider,
+        BlockchainSetupUtil::mainnetProtocolScheduleProvider,
+        BlockchainSetupUtil::mainnetProtocolContextProvider,
         new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()),
         null);
   }
 
-  public static BlockchainSetupUtil createForSilashChain(
+  public static BlockchainSetupUtil createForEthashChain(
       final ChainResources chainResources,
       final DataStorageFormat storageFormat,
       final ServiceManager serviceManager) {
     return create(
         chainResources,
         storageFormat,
-        BlockchainSetupUtil::silaMainnetProtocolScheduleProvider,
-        BlockchainSetupUtil::silaMainnetProtocolContextProvider,
+        BlockchainSetupUtil::mainnetProtocolScheduleProvider,
+        BlockchainSetupUtil::mainnetProtocolContextProvider,
         new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()),
         serviceManager);
   }
 
-  private static ProtocolSchedule silaMainnetProtocolScheduleProvider(
+  private static ProtocolSchedule mainnetProtocolScheduleProvider(
       final GenesisConfig genesisConfig) {
     return SilaMainnetProtocolSchedule.fromConfig(
         genesisConfig.getConfigOptions(),
@@ -175,7 +175,7 @@ public class BlockchainSetupUtil {
         new NoOpMetricsSystem());
   }
 
-  private static ProtocolContext silaMainnetProtocolContextProvider(
+  private static ProtocolContext mainnetProtocolContextProvider(
       final MutableBlockchain blockchain, final WorldStateArchive worldStateArchive) {
     return new ProtocolContext.Builder()
         .withBlockchain(blockchain)
@@ -197,7 +197,7 @@ public class BlockchainSetupUtil {
 
       // only used in tests no global code cache is needed
       final GenesisState genesisState =
-          GenesisState.fromConfig(genesisConfig, protocolSchedule, new PathBasedCodeCache());
+          GenesisState.fromConfig(genesisConfig, protocolSchedule, new BonsaiCodeCache());
       final MutableBlockchain blockchain = createInMemoryBlockchain(genesisState.getBlock());
       final WorldStateArchive worldArchive =
           storageFormat == DataStorageFormat.BONSAI

@@ -87,7 +87,7 @@ public class SilServerTest {
     }
 
     final int msgSizeLimit = sizeLimit;
-    setupSilServer(b -> b.maxMessageSize(msgSizeLimit));
+    setupEthServer(b -> b.maxMessageSize(msgSizeLimit));
 
     // Request all blocks, which will exceed the limit
     final BlockHeader firstHeader = blocks.get(0).getHeader();
@@ -109,7 +109,7 @@ public class SilServerTest {
     final List<BlockHeader> expectedHeaders =
         blocks.stream().limit(limit).map(Block::getHeader).collect(Collectors.toList());
 
-    setupSilServer(b -> b.maxGetBlockHeaders(limit));
+    setupEthServer(b -> b.maxGetBlockHeaders(limit));
 
     // Request all blocks, which will exceed the limit
     final BlockHeader firstHeader = blocks.get(0).getHeader();
@@ -135,7 +135,7 @@ public class SilServerTest {
     }
 
     final int msgSizeLimit = sizeLimit;
-    setupSilServer(b -> b.maxMessageSize(msgSizeLimit));
+    setupEthServer(b -> b.maxMessageSize(msgSizeLimit));
 
     // Request all blocks, which will exceed the limit
     final List<Hash> blockHashes = blocks.stream().map(Block::getHash).collect(Collectors.toList());
@@ -156,7 +156,7 @@ public class SilServerTest {
     final List<BlockBody> expectedBodies =
         blocks.stream().limit(limit).map(Block::getBody).collect(Collectors.toList());
 
-    setupSilServer(b -> b.maxGetBlockBodies(limit));
+    setupEthServer(b -> b.maxGetBlockBodies(limit));
 
     // Request all blocks, which will exceed the limit
     final List<Hash> blockHashes = blocks.stream().map(Block::getHash).collect(Collectors.toList());
@@ -182,7 +182,7 @@ public class SilServerTest {
     }
 
     final int msgSizeLimit = sizeLimit;
-    setupSilServer(b -> b.maxMessageSize(msgSizeLimit));
+    setupEthServer(b -> b.maxMessageSize(msgSizeLimit));
 
     // Request all records, which will exceed the limit
     final GetReceiptsMessage bodiesMsg = GetReceiptsMessage.create(hashes);
@@ -206,7 +206,7 @@ public class SilServerTest {
     final List<List<TransactionReceipt>> expectedResults =
         receiptsByHash.values().stream().limit(limit).collect(Collectors.toList());
 
-    setupSilServer(b -> b.maxGetReceipts(limit));
+    setupEthServer(b -> b.maxGetReceipts(limit));
 
     // Request all records, which will exceed the limit
     final GetReceiptsMessage bodiesMsg = GetReceiptsMessage.create(hashes);
@@ -234,7 +234,7 @@ public class SilServerTest {
     }
 
     final int msgSizeLimit = sizeLimit;
-    setupSilServer(b -> b.maxMessageSize(msgSizeLimit));
+    setupEthServer(b -> b.maxMessageSize(msgSizeLimit));
 
     // Request all hashes, which will exceed the limit
     final List<Hash> hashes =
@@ -255,7 +255,7 @@ public class SilServerTest {
     final List<Transaction> expectedResult =
         transactions.stream().limit(limit).collect(Collectors.toList());
 
-    setupSilServer(b -> b.maxGetPooledTransactions(limit));
+    setupEthServer(b -> b.maxGetPooledTransactions(limit));
 
     // Request all hashes, which will exceed the limit
     final List<Hash> hashes =
@@ -282,7 +282,7 @@ public class SilServerTest {
     when(blockchain.getTxReceipts(hash0)).thenReturn(Optional.of(receipts0));
     when(blockchain.getTxReceipts(hash1)).thenReturn(Optional.of(receipts1));
     when(blockchain.getTxReceipts(hash2)).thenReturn(Optional.of(receipts2));
-    setupSilServer();
+    setupEthServer();
 
     final List<Hash> hashes = List.of(hash0, hash1, hash2);
     final GetPaginatedReceiptsMessage msg = GetPaginatedReceiptsMessage.create(hashes, 0);
@@ -310,7 +310,7 @@ public class SilServerTest {
       allReceipts.add(receipts);
       when(blockchain.getTxReceipts(hash)).thenReturn(Optional.of(receipts));
     }
-    setupSilServer(b -> b.maxGetReceipts(limit));
+    setupEthServer(b -> b.maxGetReceipts(limit));
 
     final GetPaginatedReceiptsMessage msg = GetPaginatedReceiptsMessage.create(hashes, 0);
 
@@ -348,7 +348,7 @@ public class SilServerTest {
     //                 = size(receipt1) + MAX_PREFIX > 0 → always true → lastBlockIncomplete = true
     final int sizeLimit =
         3 * RLP.MAX_PREFIX_SIZE + 2 + calculatePaginatedReceiptEncodedSize(receipt0);
-    setupSilServer(b -> b.maxMessageSize(sizeLimit));
+    setupEthServer(b -> b.maxMessageSize(sizeLimit));
 
     final List<Hash> hashes = List.of(block0Hash, block1Hash);
     final GetPaginatedReceiptsMessage msg = GetPaginatedReceiptsMessage.create(hashes, 0);
@@ -375,7 +375,7 @@ public class SilServerTest {
         List.of(dataGenerator.receipt(), dataGenerator.receipt());
     when(blockchain.getTxReceipts(firstBlockHash)).thenReturn(Optional.of(firstBlockReceipts));
     when(blockchain.getTxReceipts(secondBlockHash)).thenReturn(Optional.of(secondBlockReceipts));
-    setupSilServer();
+    setupEthServer();
 
     final int firstIndex = 1;
     // Use List.of to guarantee ordering: firstBlockHash is always the block that gets paginated
@@ -403,7 +403,7 @@ public class SilServerTest {
     when(blockchain.getTxReceipts(knownHash)).thenReturn(Optional.of(List.of(receipt)));
     final Hash unknownHash = dataGenerator.hash();
     when(blockchain.getTxReceipts(unknownHash)).thenReturn(Optional.empty());
-    setupSilServer();
+    setupEthServer();
 
     final GetPaginatedReceiptsMessage msg =
         GetPaginatedReceiptsMessage.create(List.of(knownHash, unknownHash), 0);
@@ -424,7 +424,7 @@ public class SilServerTest {
     final List<TransactionReceipt> receipts =
         List.of(dataGenerator.receipt(), dataGenerator.receipt());
     when(blockchain.getTxReceipts(blockHash)).thenReturn(Optional.of(receipts));
-    setupSilServer();
+    setupEthServer();
 
     final GetPaginatedReceiptsMessage msg =
         GetPaginatedReceiptsMessage.create(List.of(blockHash), 3);
@@ -445,7 +445,7 @@ public class SilServerTest {
     final List<TransactionReceipt> block1Receipts = List.of(dataGenerator.receipt());
     when(blockchain.getTxReceipts(block0Hash)).thenReturn(Optional.of(block0Receipts));
     when(blockchain.getTxReceipts(block1Hash)).thenReturn(Optional.of(block1Receipts));
-    setupSilServer();
+    setupEthServer();
 
     // firstBlockReceiptIndex == size(block0) == 2: skip all receipts → empty list for block0
     final GetPaginatedReceiptsMessage msg =
@@ -476,7 +476,7 @@ public class SilServerTest {
     // Uses the same accounting as shouldLimitPaginatedReceiptsByMessageSize:
     //   3*MAX_PREFIX + 2 + size(r1) is exactly the boundary where r1 fits but r2 doesn't.
     final int sizeLimit = 3 * RLP.MAX_PREFIX_SIZE + 2 + calculatePaginatedReceiptEncodedSize(r1);
-    setupSilServer(b -> b.maxMessageSize(sizeLimit));
+    setupEthServer(b -> b.maxMessageSize(sizeLimit));
 
     final GetPaginatedReceiptsMessage msg =
         GetPaginatedReceiptsMessage.create(List.of(block0Hash, block1Hash), 1);
@@ -493,7 +493,7 @@ public class SilServerTest {
 
   @Test
   public void shouldIncludeEmptyEntryForUnavailableBlockAccessList() {
-    setupSilServer();
+    setupEthServer();
 
     final Hash availableHash = dataGenerator.hash();
     final Hash unavailableHash = dataGenerator.hash();
@@ -516,7 +516,7 @@ public class SilServerTest {
   public void shouldLimitBlockAccessListsByCount() {
     final int count = 10;
     final int limit = 6;
-    setupSilServer(b -> b.maxGetBlockAccessLists(limit));
+    setupEthServer(b -> b.maxGetBlockAccessLists(limit));
 
     final List<Hash> hashes = new ArrayList<>(count);
     final List<BlockAccessList> accessLists = new ArrayList<>(count);
@@ -541,7 +541,7 @@ public class SilServerTest {
   @Test
   public void shouldLimitBlockAccessListsByMessageSize() {
     final int count = 10;
-    setupSilServer();
+    setupEthServer();
 
     final List<Hash> hashes = new ArrayList<>(count);
     final BlockAccessList bal = dataGenerator.blockAccessList();
@@ -557,7 +557,7 @@ public class SilServerTest {
     final List<BlockAccessList> expectedAccessLists = List.of(bal, bal, bal, bal);
 
     final int messageSizeLimit = sizeLimit;
-    setupSilServer(b -> b.maxMessageSize(messageSizeLimit));
+    setupEthServer(b -> b.maxMessageSize(messageSizeLimit));
 
     final GetBlockAccessListsMessage request = GetBlockAccessListsMessage.create(hashes);
     final BlockAccessListsMessage expected =
@@ -571,7 +571,7 @@ public class SilServerTest {
   public void
       shouldLimitTheNumberOfBlockAccessListsLookedUpByRequestLimitEvenWhenSomeAreUnavailable() {
     final int requestLimit = 2;
-    setupSilServer(b -> b.maxGetBlockAccessLists(requestLimit));
+    setupEthServer(b -> b.maxGetBlockAccessLists(requestLimit));
 
     final Hash firstAvailableHash = dataGenerator.hash();
     final Hash unavailableHash = dataGenerator.hash();
@@ -600,7 +600,7 @@ public class SilServerTest {
 
   @Test
   public void shouldReturnEmptyResponseWhenFirstBlockAccessListWouldExceedMessageSize() {
-    setupSilServer(b -> b.maxMessageSize(RLP.MAX_PREFIX_SIZE));
+    setupEthServer(b -> b.maxMessageSize(RLP.MAX_PREFIX_SIZE));
 
     final Hash firstHash = dataGenerator.hash();
     final Hash secondHash = dataGenerator.hash();
@@ -619,11 +619,11 @@ public class SilServerTest {
     verify(blockchain, never()).getBlockAccessList(secondHash);
   }
 
-  private void setupSilServer() {
-    setupSilServer(Function.identity());
+  private void setupEthServer() {
+    setupEthServer(Function.identity());
   }
 
-  private void setupSilServer(
+  private void setupEthServer(
       final Function<
               ImmutableSilProtocolConfiguration.Builder, ImmutableSilProtocolConfiguration.Builder>
           configModifier) {

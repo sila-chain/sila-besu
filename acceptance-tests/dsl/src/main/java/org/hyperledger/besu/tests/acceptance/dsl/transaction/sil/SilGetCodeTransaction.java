@@ -24,7 +24,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.web3j.protocol.core.methods.response.SilGetCode;
+import org.web3j.protocol.core.methods.response.EthGetCode;
 
 public class SilGetCodeTransaction implements Transaction<Bytes> {
 
@@ -37,7 +37,7 @@ public class SilGetCodeTransaction implements Transaction<Bytes> {
   @Override
   public Bytes execute(final NodeRequests node) {
     try {
-      final SilGetCode result = node.sil().silGetCode(account.getAddress(), LATEST).send();
+      final EthGetCode result = node.sil().ethGetCode(account.getAddress(), LATEST).send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
 

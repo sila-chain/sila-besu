@@ -19,7 +19,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import javax.inject.Inject;
 import javax.inject.Singleton;
 
-import org.sila.beacon.discovery.schema.NodeRecord;
+import org.ethereum.beacon.discovery.schema.NodeRecord;
 
 @Singleton
 public class NodeRecordValidator {

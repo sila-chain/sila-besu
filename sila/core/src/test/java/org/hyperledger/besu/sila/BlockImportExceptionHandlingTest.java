@@ -15,7 +15,7 @@
 package org.hyperledger.besu.sila;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig.createStatefulConfigWithTrie;
+import static org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig.createStatefulConfigWithTrie;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -50,12 +50,12 @@ import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockProcessor;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
 import org.hyperledger.besu.sila.silaMainnet.blockhash.FrontierPreExecutionProcessor;
 import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.DefaultStateRootCommitterFactory;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.StateRootCommitterFactory;
 import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
@@ -115,11 +115,11 @@ class BlockImportExceptionHandlingTest {
                   worldStateStorageCoordinator.worldStateKeyValueStorage(),
               SavmConfiguration.DEFAULT,
               createStatefulConfigWithTrie(),
-              new PathBasedCodeCache()));
+              new BonsaiCodeCache()));
 
   private final BadBlockManager badBlockManager = new BadBlockManager();
 
-  private BlockValidator silaMainnetBlockValidator;
+  private BlockValidator mainnetBlockValidator;
 
   @BeforeEach
   public void setup() {
@@ -132,8 +132,8 @@ class BlockImportExceptionHandlingTest {
     when(protocolSpec.getFeeMarket()).thenReturn(feeMarket);
     when(blockAccessListValidator.validate(any(), any(), anyInt())).thenReturn(true);
     when(protocolSpec.getStateRootCommitterFactory())
-        .thenReturn(new DefaultStateRootCommitterFactory());
-    silaMainnetBlockValidator =
+        .thenReturn(new StateRootCommitterFactory(BalConfiguration.DISABLED));
+    mainnetBlockValidator =
         SilaMainnetBlockValidatorBuilder.frontier(
             blockHeaderValidator, blockBodyValidator, blockProcessor, blockAccessListValidator);
   }
@@ -172,7 +172,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenReturn(true);
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    silaMainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -210,7 +210,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenReturn(true);
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    silaMainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -239,7 +239,7 @@ class BlockImportExceptionHandlingTest {
         .thenThrow(new StorageException("database problem"));
 
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    silaMainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -280,7 +280,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenThrow(new StorageException("database problem"));
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    silaMainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,

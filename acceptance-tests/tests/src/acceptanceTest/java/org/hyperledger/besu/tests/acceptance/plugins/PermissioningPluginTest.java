@@ -75,7 +75,7 @@ public class PermissioningPluginTest extends AcceptanceTestBase {
         .jsonRpcAdmin();
   }
 
-  @Disabled("flaky see https://github.com/hyperledger/besu/issues/8726")
+  @Disabled("flaky see https://github.com/sila-chain/sila-besu/issues/8726")
   @Test
   public void blockedConnectionNodeCanOnlyConnectToTransactionNode() {
     minerNode.verify(admin.hasPeer(aliceNode));
@@ -98,7 +98,7 @@ public class PermissioningPluginTest extends AcceptanceTestBase {
   @Test
   public void transactionsAreNotSendToBlockPendingTransactionsNode() {
     final Account account = accounts.createAccount("account-one");
-    final Amount balance = Amount.siler(20);
+    final Amount balance = Amount.sila(20);
 
     final TransferTransaction tx = accountTransactions.createTransfer(account, balance);
 
@@ -120,7 +120,7 @@ public class PermissioningPluginTest extends AcceptanceTestBase {
     final Amount amount = Amount.wei(BigInteger.valueOf(29));
 
     final RawTransaction tx =
-        RawTransaction.createSilerTransaction(
+        RawTransaction.createEtherTransaction(
             sender.getNextNonce(),
             GAS_PRICE,
             GAS_LIMIT,
@@ -144,7 +144,7 @@ public class PermissioningPluginTest extends AcceptanceTestBase {
     final Amount amount = Amount.wei(BigInteger.valueOf(29));
 
     final RawTransaction tx =
-        RawTransaction.createSilerTransaction(
+        RawTransaction.createEtherTransaction(
             sender.getNextNonce(),
             GAS_PRICE,
             GAS_LIMIT,

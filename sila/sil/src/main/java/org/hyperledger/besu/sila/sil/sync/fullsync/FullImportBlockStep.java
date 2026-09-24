@@ -66,8 +66,8 @@ public class FullImportBlockStep implements Consumer<Block> {
     }
     gasAccumulator += block.getHeader().getGasUsed();
     int peerCount = -1; // silContext is not available in tests
-    if (silContext != null && silContext.getSilPeers().peerCount() >= 0) {
-      peerCount = silContext.getSilPeers().peerCount();
+    if (silContext != null && silContext.getEthPeers().peerCount() >= 0) {
+      peerCount = silContext.getEthPeers().peerCount();
     }
     if (blockNumber % 200 == 0 || LOG.isTraceEnabled()) {
       final long nowMilli = Instant.now().toEpochMilli();

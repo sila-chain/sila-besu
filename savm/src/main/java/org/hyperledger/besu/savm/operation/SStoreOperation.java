@@ -69,6 +69,16 @@ public class SStoreOperation extends AbstractOperation {
 
   @Override
   public OperationResult execute(final MessageFrame frame, final SAVM savm) {
+    final UInt256 key = UInt256.fromBytes(frame.popStackItem());
+    final UInt256 newValue = UInt256.fromBytes(frame.popStackItem());
+
+    // SIP-8038: resolve the account ahead of the gas checks below, so that an SSTORE which halts
+    // for insufficient gas has still recorded the account in the block access list.
+    final MutableAccount account = getMutableAccount(frame.getRecipientAddress(), frame);
+    if (account == null) {
+      return ILLEGAL_STATE_CHANGE;
+    }
+
     final long remainingGas = frame.getRemainingGas();
 
     if (frame.isStatic()) {
@@ -79,20 +89,17 @@ public class SStoreOperation extends AbstractOperation {
       return new OperationResult(minimumGasRemaining, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
-    final UInt256 key = UInt256.fromBytes(frame.popStackItem());
-    final UInt256 newValue = UInt256.fromBytes(frame.popStackItem());
+    final Address address = account.getAddress();
+    final boolean slotIsWarm = frame.warmUpStorage(address, key);
 
-    final Address address = frame.getRecipientAddress();
-
-    final long sloadCost =
-        frame.warmUpStorage(address, key) ? 0L : gasCalculator().getColdSloadCost();
-    if (remainingGas < sloadCost) {
-      return new OperationResult(sloadCost, ExceptionalHaltReason.INSUFFICIENT_GAS);
-    }
-
-    final MutableAccount account = getMutableAccount(address, frame);
-    if (account == null) {
-      return ILLEGAL_STATE_CHANGE;
+    // SIP-8038: the repriced access cost can exceed the SIP-2200 stipend, so the sentry above no
+    // longer guarantees the access is affordable. Check before the current-value read below, which
+    // would otherwise record the slot in the block access list (SIP-7928) for an unpaid access.
+    final long accessCost =
+        gasCalculator().getWarmStorageReadCost()
+            + (slotIsWarm ? 0L : gasCalculator().getSStoreColdAccessGasCost());
+    if (remainingGas < accessCost) {
+      return new OperationResult(accessCost, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
     final Supplier<UInt256> currentValueSupplier =
@@ -101,14 +108,14 @@ public class SStoreOperation extends AbstractOperation {
         Suppliers.memoize(() -> account.getOriginalStorageValue(key));
 
     final long cost =
-        gasCalculator().calculateStorageCost(newValue, currentValueSupplier, originalValueSupplier)
-            + sloadCost;
+        gasCalculator().slotAccessCost(newValue, currentValueSupplier, originalValueSupplier)
+            + (slotIsWarm ? 0L : gasCalculator().getSStoreColdAccessGasCost());
     if (remainingGas < cost) {
       return new OperationResult(cost, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
-    // SIP-8037: Deduct regular gas before charging state gas (ordering requirement).
-    // State gas draws from the reservoir first, then from gasRemaining; deducting regular
+    // SIP-8037: Deduct execution gas before charging state gas (ordering requirement).
+    // State gas draws from the reservoir first, then from gasRemaining; deducting execution
     // gas first ensures the reservoir/gasRemaining split is correct.
     frame.decrementRemainingGas(cost);
 
@@ -117,14 +124,16 @@ public class SStoreOperation extends AbstractOperation {
         gasCalculator()
             .calculateStorageRefundAmount(newValue, currentValueSupplier, originalValueSupplier));
 
-    LOG.trace(
-        "SIP-8037 REC_STORAGE depth={} addr={} key={} txEntryIsZero={} beforeIsZero={} afterIsZero={}",
-        frame.getDepth(),
-        address.toHexString(),
-        "0x" + key.toHexString().substring(2),
-        originalValueSupplier.get().isZero(),
-        currentValueSupplier.get().isZero(),
-        newValue.isZero());
+    if (LOG.isTraceEnabled()) {
+      LOG.trace(
+          "SIP-8037 REC_STORAGE depth={} addr={} key={} txEntryIsZero={} beforeIsZero={} afterIsZero={}",
+          frame.getDepth(),
+          address.toHexString(),
+          "0x" + key.toHexString().substring(2),
+          originalValueSupplier.get().isZero(),
+          currentValueSupplier.get().isZero(),
+          newValue.isZero());
+    }
 
     final StateGasCostCalculator stateGasCalc = gasCalculator().stateGasCostCalculator();
     final StorageTransition transition =
@@ -139,12 +148,12 @@ public class SStoreOperation extends AbstractOperation {
       return new OperationResult(cost, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
-    // Add regular gas back — the SAVM loop will deduct it via the OperationResult.
+    // Add execution gas back — the SAVM loop will deduct it via the OperationResult.
     frame.incrementRemainingGas(cost);
 
     account.setStorageValue(key, newValue);
     frame.storageWasUpdated(key, newValue);
-    frame.getSip7928AccessList().ifPresent(t -> t.addSlotAccessForAccount(address, key));
+    frame.getEip7928AccessList().ifPresent(t -> t.addSlotAccessForAccount(address, key));
 
     return new OperationResult(cost, null);
   }

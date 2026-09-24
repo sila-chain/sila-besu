@@ -132,8 +132,7 @@ public class SilaAmsterdamAcceptanceTestHelper {
         createNewPayloadRequest(
             executionPayload.toString(),
             PARENT_BEACON_BLOCK_ROOT_TEST,
-            executionRequests.toString(),
-            blockAccessList);
+            executionRequests.toString());
     final Call newPayloadRequest = createEngineCall(newPayloadRequestBody);
     try (final Response newPayloadResponse = newPayloadRequest.execute()) {
       assertThat(newPayloadResponse.code()).isEqualTo(200);
@@ -278,12 +277,9 @@ public class SilaAmsterdamAcceptanceTestHelper {
   private String createNewPayloadRequest(
       final String executionPayload,
       final String parentBeaconBlockRoot,
-      final String executionRequests,
-      final String blockAccessList) {
+      final String executionRequests) {
     // engine_newPayloadV5 params: [executionPayload, versionedHashes, parentBeaconBlockRoot,
-    // executionRequests, blockAccessList]
-    String blockAccessListParam =
-        blockAccessList != null ? "\"" + blockAccessList + "\"" : "\"0xc0\"";
+    // executionRequests]
     return "{"
         + "  \"jsonrpc\": \"2.0\","
         + "  \"method\": \"engine_newPayloadV5\","
@@ -295,8 +291,6 @@ public class SilaAmsterdamAcceptanceTestHelper {
         + "\""
         + ","
         + executionRequests
-        + ","
-        + blockAccessListParam
         + "],"
         + "  \"id\": 67"
         + "}";

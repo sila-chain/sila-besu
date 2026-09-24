@@ -68,7 +68,7 @@ public class SelfBalanceOperationBenchmarkV2 {
 
     frame =
         MessageFrame.builder()
-            .enableSavmV2(true)
+            .enableEvmV2(true)
             .worldUpdater(worldUpdater)
             .originator(Address.ZERO)
             .gasPrice(Wei.ONE)

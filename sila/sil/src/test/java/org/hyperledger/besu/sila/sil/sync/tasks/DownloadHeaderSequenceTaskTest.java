@@ -35,7 +35,7 @@ import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
@@ -63,7 +63,7 @@ import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
 import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.time.ZoneId;
@@ -130,11 +130,11 @@ public class DownloadHeaderSequenceTaskTest {
 
     final SilMessages silMessages = new SilMessages();
     final SilScheduler silScheduler =
-        new DeterministicSilScheduler(
+        new DeterministicEthScheduler(
             () -> peerCountToTimeout.getAndDecrement() > 0 || peersDoTimeout.get());
     peerTaskExecutor = Mockito.mock(PeerTaskExecutor.class);
     silContext = new SilContext(silPeers, silMessages, silScheduler, peerTaskExecutor);
-    final SyncState syncState = new SyncState(blockchain, silContext.getSilPeers());
+    final SyncState syncState = new SyncState(blockchain, silContext.getEthPeers());
     final SilProtocolConfiguration silProtocolConfiguration = SilProtocolConfiguration.DEFAULT;
     transactionPool =
         TransactionPoolFactory.createTransactionPool(
@@ -154,12 +154,12 @@ public class DownloadHeaderSequenceTaskTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(silScheduler)
+            .setEthScheduler(silScheduler)
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(silProtocolConfiguration)
-            .setSilPeers(silPeers)
-            .setSilMessages(silMessages)
-            .setSilContext(silContext)
+            .setEthereumWireProtocolConfiguration(silProtocolConfiguration)
+            .setEthPeers(silPeers)
+            .setEthMessages(silMessages)
+            .setEthContext(silContext)
             .build();
   }
 
@@ -188,7 +188,7 @@ public class DownloadHeaderSequenceTaskTest {
 
   @Test
   public void failsWhenPeerReturnsOnlyReferenceHeader() {
-    RespondingSilPeer respondingSilPeer = SilProtocolManagerTestUtil.createPeer(silProtocolManager);
+    RespondingEthPeer respondingEthPeer = SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     // Execute task and wait for response
     final BlockHeader referenceHeader = blockchain.getChainHeadHeader();
@@ -197,7 +197,7 @@ public class DownloadHeaderSequenceTaskTest {
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(referenceHeader)),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(respondingSilPeer.getSilPeer())));
+                List.of(respondingEthPeer.getEthPeer())));
     final SilTask<List<BlockHeader>> task =
         DownloadHeaderSequenceTask.endingAtHeader(
             protocolSchedule,
@@ -217,7 +217,7 @@ public class DownloadHeaderSequenceTaskTest {
 
   @Test
   public void failsWhenPeerReturnsOnlySubsetOfHeaders() {
-    final RespondingSilPeer respondingPeer =
+    final RespondingEthPeer respondingPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     // Execute task and wait for response
@@ -230,7 +230,7 @@ public class DownloadHeaderSequenceTaskTest {
                         referenceHeader,
                         blockchain.getBlockHeader(referenceHeader.getNumber() - 1).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(respondingPeer.getSilPeer())));
+                List.of(respondingPeer.getEthPeer())));
 
     final SilTask<List<BlockHeader>> task =
         DownloadHeaderSequenceTask.endingAtHeader(
@@ -251,7 +251,7 @@ public class DownloadHeaderSequenceTaskTest {
 
   @Test
   public void marksBadBlockWhenHeaderValidationFails() {
-    final RespondingSilPeer respondingPeer =
+    final RespondingEthPeer respondingPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
     // Set up a chain with an invalid block
     final int blockCount = 5;
@@ -279,7 +279,7 @@ public class DownloadHeaderSequenceTaskTest {
               return new PeerTaskExecutorResult<List<BlockHeader>>(
                   Optional.of(headers),
                   PeerTaskExecutorResponseCode.SUCCESS,
-                  List.of(respondingPeer.getSilPeer()));
+                  List.of(respondingPeer.getEthPeer()));
             });
 
     Mockito.when(
@@ -315,7 +315,7 @@ public class DownloadHeaderSequenceTaskTest {
             metricsSystem);
     final CompletableFuture<List<BlockHeader>> future = task.run();
 
-    //    final RespondingSilPeer.Responder fullResponder = getFullResponder();
+    //    final RespondingEthPeer.Responder fullResponder = getFullResponder();
     //    respondingPeer.respondWhile(fullResponder, () -> !future.isDone());
 
     // Check that the future completed exceptionally

@@ -19,7 +19,7 @@ import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.PA
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.GasLimitCalculator;
@@ -74,9 +74,9 @@ public class MergeProtocolSchedule {
     postMergeModifications.put(
         0L,
         (specBuilder) ->
-            MergeProtocolSchedule.applySilaParisSpecificModifications(
+            MergeProtocolSchedule.applyParisSpecificModifications(
                 specBuilder, config.getChainId(), miningConfiguration, savmConfiguration));
-    unapplyModificationsFromSilaShanghaiOnwards(config, postMergeModifications);
+    unapplyModificationsFromShanghaiOnwards(config, postMergeModifications);
 
     return new ProtocolScheduleBuilder(
             config,
@@ -98,7 +98,7 @@ public class MergeProtocolSchedule {
    * until the shanghaiDefinition is utilised. This is due to the way the Transition works via TTD
    * rather than via a blockNumber so it can't be looked up in the schedule.
    */
-  private static ProtocolSpecBuilder applySilaParisSpecificModifications(
+  private static ProtocolSpecBuilder applyParisSpecificModifications(
       final ProtocolSpecBuilder specBuilder,
       final Optional<BigInteger> chainId,
       final MiningConfiguration miningConfiguration,
@@ -107,7 +107,7 @@ public class MergeProtocolSchedule {
     return specBuilder
         .savmBuilder(
             (gasCalculator, jdCacheConfig) ->
-                SilaMainnetSAVMs.paris(
+                SilaMainnetEVMs.paris(
                     gasCalculator, chainId.orElse(BigInteger.ZERO), savmConfiguration))
         .blockHeaderValidatorBuilder(MergeProtocolSchedule::getBlockHeaderValidator)
         .blockReward(Wei.ZERO)
@@ -125,7 +125,7 @@ public class MergeProtocolSchedule {
     return MergeValidationRulesetFactory.mergeBlockHeaderValidator(feeMarket);
   }
 
-  private static void unapplyModificationsFromSilaShanghaiOnwards(
+  private static void unapplyModificationsFromShanghaiOnwards(
       final GenesisConfigOptions config,
       final Map<Long, Function<ProtocolSpecBuilder, ProtocolSpecBuilder>> postMergeModifications) {
     // Any post-SilaParis fork can rely on the SilaMainnetProtocolSpec definitions again

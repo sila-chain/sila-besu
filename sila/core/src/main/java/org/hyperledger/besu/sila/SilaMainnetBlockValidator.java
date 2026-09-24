@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila;
 
+import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.plugin.services.exception.StorageException;
 import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.sila.chain.BadBlockCause;
@@ -21,6 +22,7 @@ import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Request;
+import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidator;
 import org.hyperledger.besu.sila.silaMainnet.BlockBodyValidator;
@@ -30,10 +32,11 @@ import org.hyperledger.besu.sila.silaMainnet.BodyValidationMode;
 import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.trie.MerkleTrieException;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 
 import java.util.ArrayList;
 import java.util.List;
+import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalLong;
 
@@ -195,6 +198,14 @@ public class SilaMainnetBlockValidator implements BlockValidator {
         return retval;
       }
 
+      // A transaction whose gas limit does not fit an otherwise empty block can never fit, whatever
+      // ran before it, so no execution can make the block valid and the gas limit is the reason.
+      if (transactionsExceedBlockGasLimit(block)) {
+        final var result = BlockProcessingResult.INSUFFICIENT_BLOCK_GAS;
+        handleFailedBlockProcessing(block, blockAccessList, result, shouldRecordBadBlock, context);
+        return result;
+      }
+
       if (!blockAccessListValidator.validate(
           blockAccessList, block.getHeader(), block.getBody().getTransactions().size())) {
         var result =
@@ -205,6 +216,8 @@ public class SilaMainnetBlockValidator implements BlockValidator {
         handleFailedBlockProcessing(block, blockAccessList, result, shouldRecordBadBlock, context);
         return result;
       }
+
+      context.getWorldStateArchive().prepareWorldStateForBlock(block.getHeader(), worldState);
 
       var result = processBlock(context, worldState, block, blockAccessList);
       if (result.isFailed()) {
@@ -217,6 +230,8 @@ public class SilaMainnetBlockValidator implements BlockValidator {
             result.getYield().flatMap(BlockProcessingOutputs::getRequests);
         Optional<BlockAccessList> processedBlockAccessList =
             result.getYield().flatMap(BlockProcessingOutputs::getBlockAccessList);
+        Map<Long, Hash> accessedAncestors =
+            result.getYield().map(BlockProcessingOutputs::getAccessedAncestors).orElse(Map.of());
         long cumulativeBlockGasUsed =
             result.getYield().map(BlockProcessingOutputs::getCumulativeBlockGasUsed).orElse(0L);
         if (!blockBodyValidator.validateBody(
@@ -240,11 +255,19 @@ public class SilaMainnetBlockValidator implements BlockValidator {
                     receipts,
                     maybeRequests,
                     processedBlockAccessList,
-                    cumulativeBlockGasUsed)),
+                    cumulativeBlockGasUsed,
+                    accessedAncestors)),
             result.getNbParallelizedTransactions());
       }
     } catch (MerkleTrieException ex) {
-      context.getWorldStateArchive().heal(ex.getMaybeAddress(), ex.getLocation());
+      LOG.debug(
+          "Merkle trie exception while processing block {}: message={}, address={}, location={}, hash={}",
+          block.toLogString(),
+          ex.getMessage(),
+          ex.getMaybeAddress(),
+          ex.getLocation(),
+          ex.getHash(),
+          ex);
       return new BlockProcessingResult(Optional.empty(), ex);
     } catch (StorageException ex) {
       var retval = new BlockProcessingResult(Optional.empty(), ex);
@@ -302,6 +325,16 @@ public class SilaMainnetBlockValidator implements BlockValidator {
         LOG.debug("Invalid block {} not added to badBlockManager ", failedBlock.toLogString());
       }
     }
+  }
+
+  private static boolean transactionsExceedBlockGasLimit(final Block block) {
+    final long blockGasLimit = block.getHeader().getGasLimit();
+    for (final Transaction transaction : block.getBody().getTransactions()) {
+      if (transaction.getGasLimit() > blockGasLimit) {
+        return true;
+      }
+    }
+    return false;
   }
 
   /**

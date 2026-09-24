@@ -32,7 +32,7 @@ import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.metrics.MetricsService;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
@@ -268,7 +268,7 @@ public class BlocksSubCommand implements Runnable {
         return parentCommand
             .parentCommand
             .setupControllerBuilder()
-            // set to sila-mainnet genesis block so validation rules won't reject it.
+            // set to mainnet genesis block so validation rules won't reject it.
             .clock(Clock.fixed(Instant.ofEpochSecond(startTime), ZoneOffset.UTC))
             .miningParameters(getMiningParameters())
             .build();

@@ -84,7 +84,7 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
       final BigInteger networkId,
       final WorldStateArchive worldStateArchive,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilMessages silMessages,
       final SilContext silContext,
@@ -108,9 +108,9 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
     this.silContext = silContext;
 
     this.blockBroadcaster =
-        new BlockBroadcaster(silContext, silaWireProtocolConfiguration.getMaxMessageSize());
+        new BlockBroadcaster(silContext, ethereumWireProtocolConfiguration.getMaxMessageSize());
 
-    this.supportedCapabilities = calculateCapabilities(silaWireProtocolConfiguration);
+    this.supportedCapabilities = calculateCapabilities(ethereumWireProtocolConfiguration);
 
     subscribeBlockRangeBroadcaster(silContext, blockchain);
 
@@ -120,7 +120,7 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
     }
 
     // Set up request handlers
-    new SilServer(blockchain, transactionPool, silMessages, silaWireProtocolConfiguration);
+    new SilServer(blockchain, transactionPool, silMessages, ethereumWireProtocolConfiguration);
   }
 
   @VisibleForTesting
@@ -129,7 +129,7 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
       final BigInteger networkId,
       final WorldStateArchive worldStateArchive,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilMessages silMessages,
       final SilContext silContext,
@@ -142,7 +142,7 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
         networkId,
         worldStateArchive,
         transactionPool,
-        silaWireProtocolConfiguration,
+        ethereumWireProtocolConfiguration,
         silPeers,
         silMessages,
         silContext,
@@ -174,8 +174,8 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
     capabilities.add(SilProtocol.SIL69);
     capabilities.add(SilProtocol.SIL70);
     capabilities.add(SilProtocol.SIL71);
-    capabilities.removeIf(cap -> cap.getVersion() > silProtocolConfiguration.getMaxSilCapability());
-    capabilities.removeIf(cap -> cap.getVersion() < silProtocolConfiguration.getMinSilCapability());
+    capabilities.removeIf(cap -> cap.getVersion() > silProtocolConfiguration.getMaxEthCapability());
+    capabilities.removeIf(cap -> cap.getVersion() < silProtocolConfiguration.getMinEthCapability());
 
     if (capabilities.isEmpty()) {
       throw new IllegalStateException(
@@ -301,12 +301,12 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
 
       // This will handle requests
       if (SilProtocol.requestIdCompatible(code)) {
-        final Map.Entry<BigInteger, MessageData> requestIdAndSilMessage =
+        final Map.Entry<BigInteger, MessageData> requestIdAndEthMessage =
             silMessage.getData().unwrapMessageData();
         maybeResponseData =
             silMessages
-                .dispatch(new SilMessage(silPeer, requestIdAndSilMessage.getValue()), capability)
-                .map(responseData -> responseData.wrapMessageData(requestIdAndSilMessage.getKey()));
+                .dispatch(new SilMessage(silPeer, requestIdAndEthMessage.getValue()), capability)
+                .map(responseData -> responseData.wrapMessageData(requestIdAndEthMessage.getKey()));
       } else {
         maybeResponseData = silMessages.dispatch(silMessage, capability);
       }
@@ -367,7 +367,7 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
             .forkId(forkIdManager.getForkIdForChainHead())
             .apply(
                 builder -> {
-                  if (SilProtocol.isSil69Compatible(cap)) {
+                  if (SilProtocol.isEth69Compatible(cap)) {
                     builder.blockRange(createBlockRange());
                   } else {
                     builder.totalDifficulty(blockchain.getChainHead().getTotalDifficulty());
@@ -445,8 +445,8 @@ public class SilProtocolManager implements ProtocolManager, MinedBlockObserver {
             .log();
         handleDisconnect(
             peer.getConnection(), DisconnectReason.SUBPROTOCOL_TRIGGERED_POW_DIFFICULTY, false);
-      } else if (SilProtocol.isSil69Compatible(peer.getConnection().capability(SilProtocol.NAME))
-          && !status.isSil69Compatible()) {
+      } else if (SilProtocol.isEth69Compatible(peer.getConnection().capability(SilProtocol.NAME))
+          && !status.isEth69Compatible()) {
         LOG.atDebug()
             .setMessage("{} sent invalid status message {}")
             .addArgument(peer::toString)

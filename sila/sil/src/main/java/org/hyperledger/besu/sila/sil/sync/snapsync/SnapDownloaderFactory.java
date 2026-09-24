@@ -18,6 +18,8 @@ import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.services.tasks.InMemoryTasksPriorityQueues;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.ChainDataPruner;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.sync.PivotBlockSelector;
@@ -25,6 +27,7 @@ import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.common.ChainSyncState;
 import org.hyperledger.besu.sila.sil.sync.common.ChainSyncStateStorage;
 import org.hyperledger.besu.sila.sil.sync.common.PivotSyncActions;
+import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
 import org.hyperledger.besu.sila.sil.sync.snapsync.context.SnapSyncStatePersistenceManager;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.v2.SnapV2WorldStateDownloader;
@@ -32,12 +35,12 @@ import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloader;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.trie.CompactEncoding;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
 
 import java.nio.file.Path;
 import java.time.Clock;
 import java.util.Optional;
+import java.util.OptionalLong;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -59,7 +62,8 @@ public class SnapDownloaderFactory {
       final WorldStateStorageCoordinator worldStateStorageCoordinator,
       final SyncState syncState,
       final Clock clock,
-      final SyncDurationMetrics syncDurationMetrics) {
+      final SyncDurationMetrics syncDurationMetrics,
+      final Optional<ChainDataPruner> chainDataPruner) {
     if (Boolean.TRUE.equals(syncConfig.getSnapSyncConfiguration().isSnap2Enabled())) {
       // The snap/2 controller will be created here; until then v2 uses v1 behavior.
     }
@@ -76,7 +80,8 @@ public class SnapDownloaderFactory {
         worldStateStorageCoordinator,
         syncState,
         clock,
-        syncDurationMetrics);
+        syncDurationMetrics,
+        chainDataPruner);
   }
 
   public static Optional<SnapSyncController> createSnapDownloaderV1(
@@ -91,7 +96,8 @@ public class SnapDownloaderFactory {
       final WorldStateStorageCoordinator worldStateStorageCoordinator,
       final SyncState syncState,
       final Clock clock,
-      final SyncDurationMetrics syncDurationMetrics) {
+      final SyncDurationMetrics syncDurationMetrics,
+      final Optional<ChainDataPruner> chainDataPruner) {
     final boolean snap2Enabled =
         Boolean.TRUE.equals(syncConfig.getSnapSyncConfiguration().isSnap2Enabled());
 
@@ -107,17 +113,8 @@ public class SnapDownloaderFactory {
                         rlpInput, ScheduleBasedBlockHeaderFunctions.create(protocolSchedule)));
     if (syncState.isResyncNeeded()) {
       snapContext.clear();
-      if (!snap2Enabled) {
-        syncState
-            .getAccountToRepair()
-            .ifPresent(
-                address ->
-                    snapContext.addAccountToHealingList(
-                        CompactEncoding.bytesToPath(address.addressHash().getBytes())));
-      }
     } else if (chainSyncState == null
-        && protocolContext.getBlockchain().getChainHeadBlockNumber()
-            != BlockHeader.GENESIS_BLOCK_NUMBER) {
+        && !holdsNothingButTheTrustAnchor(protocolContext.getBlockchain(), syncState)) {
       LOG.info(
           "Snap sync was requested, but cannot be enabled because the local blockchain is not empty.");
       return Optional.empty();
@@ -125,13 +122,19 @@ public class SnapDownloaderFactory {
 
     final SnapSyncProcessState snapSyncState =
         chainSyncState != null
-            ? new SnapSyncProcessState(chainSyncState.pivotBlockHeader(), false)
+            ? new SnapSyncProcessState(chainSyncState.pivotBlockHeader())
             : new SnapSyncProcessState();
 
     final InMemoryTasksPriorityQueues<SnapDataRequest> snapTaskCollection =
         createSnapWorldStateDownloaderTaskCollection();
     final WorldStateDownloader snapWorldStateDownloader;
     if (snap2Enabled) {
+      if (!worldStateStorageCoordinator.getDataStorageFormat().isBonsaiFormat()) {
+        throw new IllegalStateException(
+            "Snap/2 synchronization requires a Bonsai data storage format, but "
+                + worldStateStorageCoordinator.getDataStorageFormat()
+                + " is configured");
+      }
       snapWorldStateDownloader =
           new SnapV2WorldStateDownloader(
               silContext,
@@ -174,13 +177,51 @@ public class SnapDownloaderFactory {
                 syncState,
                 pivotBlockSelector,
                 metricsSystem,
-                syncDataDirectory),
+                syncDataDirectory,
+                chainDataPruner),
             snapWorldStateDownloader,
             syncDataDirectory,
             snapSyncState,
-            syncDurationMetrics);
+            syncDurationMetrics,
+            syncState
+                .getCheckpoint()
+                .map(checkpoint -> OptionalLong.of(checkpoint.blockNumber()))
+                .orElse(OptionalLong.empty()));
     syncState.setWorldStateDownloadStatus(snapWorldStateDownloader);
     return Optional.of(fastSyncDownloader);
+  }
+
+  /**
+   * Whether the local blockchain holds nothing but the lower trust anchor, so a snap sync may still
+   * start from scratch. That anchor is genesis, or — with checkpoint sync — the trusted checkpoint
+   * header on its own: {@code SnapSyncChainDownloader} stores that header and moves the chain head
+   * to it before it persists its {@code ChainSyncState}, so a crash in between leaves a database
+   * whose only content is the checkpoint header. Treating that as "not empty" would permanently
+   * disable snap sync for the data directory and silently fall back to full sync over a chain with
+   * a gap below the checkpoint.
+   *
+   * @param blockchain the local blockchain
+   * @param syncState the sync state holding the configured checkpoint, if any
+   * @return true when nothing but the trust anchor is stored
+   */
+  static boolean holdsNothingButTheTrustAnchor(
+      final Blockchain blockchain, final SyncState syncState) {
+    final BlockHeader chainHead = blockchain.getChainHeadHeader();
+    if (chainHead.getNumber() == BlockHeader.GENESIS_BLOCK_NUMBER) {
+      return true;
+    }
+    final Optional<Checkpoint> maybeCheckpoint = syncState.getCheckpoint();
+    // A body at the chain head means real block data was imported, not just the checkpoint header.
+    if (maybeCheckpoint
+            .map(checkpoint -> chainHead.getHash().equals(checkpoint.blockHash()))
+            .orElse(false)
+        && blockchain.getBlockBody(chainHead.getHash()).isEmpty()) {
+      LOG.info(
+          "Local blockchain holds only the trusted checkpoint header {}, most likely from an interrupted snap sync; restarting snap sync.",
+          chainHead.getNumber());
+      return true;
+    }
+    return false;
   }
 
   protected static InMemoryTasksPriorityQueues<SnapDataRequest>

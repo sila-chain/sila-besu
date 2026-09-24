@@ -24,7 +24,7 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCo
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask.Direction;
-import org.hyperledger.besu.sila.sil.manager.task.AbstractSilTask;
+import org.hyperledger.besu.sila.sil.manager.task.AbstractEthTask;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.util.BlockchainUtil;
 
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  * genesis block will result in undefined behavior: the task may complete exceptionally or in some
  * cases this node's genesis block will be returned.
  */
-public class DetermineCommonAncestorTask extends AbstractSilTask<BlockHeader> {
+public class DetermineCommonAncestorTask extends AbstractEthTask<BlockHeader> {
   private static final Logger LOG = LoggerFactory.getLogger(DetermineCommonAncestorTask.class);
   private final SilContext silContext;
   private final ProtocolSchedule protocolSchedule;

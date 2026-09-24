@@ -86,7 +86,7 @@ public class PendingPeerRequest {
         : silPeers
             .streamAvailablePeers()
             .filter(peer -> peer.estimatedChainHeight() >= minimumBlockNumber)
-            .filter(request::isSilPeerSuitable)
+            .filter(request::isEthPeerSuitable)
             .min(SilPeers.LEAST_TO_MOST_BUSY)
             .map(SilPeerImmutableAttributes::silPeer);
   }

@@ -220,7 +220,8 @@ public class SnapWorldStateDownloader implements WorldStateDownloader {
               silContext,
               fastSyncActions,
               snapSyncState,
-              fastSyncActions.getChainDownloaderListener());
+              fastSyncActions.getChainDownloaderListener(),
+              snapSyncConfiguration.getPivotBlockCheckIntervalMillis());
 
       SnapWorldStateDownloadProcess downloadProcess =
           SnapWorldStateDownloadProcess.builder()

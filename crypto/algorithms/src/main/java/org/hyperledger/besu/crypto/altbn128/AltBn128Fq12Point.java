@@ -18,7 +18,7 @@ import java.util.Arrays;
 
 /**
  * Adapted from the pc_ecc (Apache 2 License) implementation:
- * https://github.com/sila-chain/py_ecc/blob/master/py_ecc/bn128/bn128_field_elements.py
+ * https://github.com/sila/py_ecc/blob/master/py_ecc/bn128/bn128_field_elements.py
  */
 public class AltBn128Fq12Point extends AbstractFieldPoint<AltBn128Fq12Point> {
 

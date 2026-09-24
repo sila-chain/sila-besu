@@ -19,7 +19,7 @@ import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
@@ -48,7 +48,7 @@ class ExtendedOperationTracerTest {
   void setUp() {
     when(frame.getOutputData()).thenReturn(Bytes.EMPTY);
     when(frame.getRemainingGas()).thenReturn(1L);
-    // futureSips is pre-SilaAmsterdam, so the state-gas charge is 0; the mock must not refuse it.
+    // futureEips is pre-SilaAmsterdam, so the state-gas charge is 0; the mock must not refuse it.
     when(frame.consumeStateGas(0L)).thenReturn(true);
 
     when(frame.getWorldUpdater()).thenReturn(worldUpdater);
@@ -57,7 +57,7 @@ class ExtendedOperationTracerTest {
 
   @Test
   void shouldCallTraceAccountCreationResultIfIsExtendedTracing() {
-    SAVM savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+    SAVM savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
     final ContractCreationProcessor contractCreationProcessor =
         new ContractCreationProcessor(savm, false, Collections.emptyList(), 0);
 
@@ -71,7 +71,7 @@ class ExtendedOperationTracerTest {
 
   @Test
   void shouldNotCallTraceAccountCreationResultIfIsNotExtendedTracing() {
-    SAVM savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+    SAVM savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
     final ContractCreationProcessor contractCreationProcessor =
         new ContractCreationProcessor(savm, false, Collections.emptyList(), 0);
 

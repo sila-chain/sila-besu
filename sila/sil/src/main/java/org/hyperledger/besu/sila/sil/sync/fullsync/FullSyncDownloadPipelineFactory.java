@@ -68,7 +68,7 @@ public class FullSyncDownloadPipelineFactory implements DownloadPipelineFactory 
     this.metricsSystem = metricsSystem;
     this.fullSyncTerminationCondition = syncTerminationCondition;
     this.betterSyncTargetEvaluator =
-        new BetterSyncTargetEvaluator(syncConfig, silContext.getSilPeers());
+        new BetterSyncTargetEvaluator(syncConfig, silContext.getEthPeers());
   }
 
   @Override

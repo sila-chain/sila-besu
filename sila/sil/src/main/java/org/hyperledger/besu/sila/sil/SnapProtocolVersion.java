@@ -22,7 +22,7 @@ import java.util.List;
 
 /**
  * Snap protocol messages as defined in <a
- * href="https://github.com/sila-chain/devp2p/blob/master/caps/snap.md">Snap Protocol</a>
+ * href="https://github.com/sila/devp2p/blob/master/caps/snap.md">Snap Protocol</a>
  */
 public class SnapProtocolVersion {
   public static final int V1 = 1;

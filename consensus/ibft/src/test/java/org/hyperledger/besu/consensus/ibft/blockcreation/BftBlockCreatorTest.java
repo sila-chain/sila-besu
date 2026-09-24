@@ -63,7 +63,7 @@ import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
 import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.time.Duration;
@@ -146,7 +146,7 @@ public class BftBlockCreatorTest {
             blockchain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -195,7 +195,7 @@ public class BftBlockCreatorTest {
             protContext,
             protocolSchedule,
             bftExtraDataEncoder,
-            new DeterministicSilScheduler());
+            new DeterministicEthScheduler());
 
     final int secondsBetweenBlocks = 1;
     final Block block =
@@ -294,7 +294,7 @@ public class BftBlockCreatorTest {
             blockchain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -343,7 +343,7 @@ public class BftBlockCreatorTest {
             protContext,
             protocolSchedule,
             bftExtraDataEncoder,
-            new DeterministicSilScheduler());
+            new DeterministicEthScheduler());
 
     final Block block =
         blockCreator.createBlock(parentHeader.getTimestamp() + 1, parentHeader).getBlock();
@@ -428,7 +428,7 @@ public class BftBlockCreatorTest {
             blockchain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -477,7 +477,7 @@ public class BftBlockCreatorTest {
             protContext,
             protocolSchedule,
             bftExtraDataEncoder,
-            new DeterministicSilScheduler());
+            new DeterministicEthScheduler());
 
     final Block block =
         blockCreator.createBlock(parentHeader.getTimestamp() + 1, parentHeader).getBlock();
@@ -563,7 +563,7 @@ public class BftBlockCreatorTest {
             blockchain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -612,7 +612,7 @@ public class BftBlockCreatorTest {
             protContext,
             protocolSchedule,
             bftExtraDataEncoder,
-            new DeterministicSilScheduler());
+            new DeterministicEthScheduler());
 
     final Block block =
         blockCreator.createBlock(parentHeader.getTimestamp() + 1, parentHeader).getBlock();

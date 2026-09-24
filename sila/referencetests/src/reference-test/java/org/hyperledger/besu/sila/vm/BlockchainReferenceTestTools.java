@@ -51,11 +51,13 @@ import org.hyperledger.besu.sila.referencetests.BlockchainReferenceTestCaseSpec;
 import org.hyperledger.besu.sila.referencetests.BlockExceptionMatcher;
 import org.hyperledger.besu.sila.referencetests.ReferenceTestProtocolSchedules;
 import org.hyperledger.besu.sila.rlp.RLPException;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.SavmSpecVersion;
 import org.hyperledger.besu.savm.account.AccountState;
+import org.hyperledger.besu.config.StubGenesisConfigOptions;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.savm.internal.SavmConfiguration.WorldUpdaterMode;
 import org.hyperledger.besu.testutil.JsonTestParameters;
 
@@ -80,7 +82,7 @@ public class BlockchainReferenceTestTools {
         final String networks =
                 System.getProperty(
                         "test.sila.blockchain.sips",
-                        "FrontierToHomesteadAt5,HomesteadToSIP150At5,HomesteadToDaoAt5,SIP158ToByzantiumAt5,SilaCancunToSilaPragueAtTime15k,"
+                        "FrontierToHomesteadAt5,HomesteadToEIP150At5,HomesteadToDaoAt5,SIP158ToByzantiumAt5,SilaCancunToPragueAtTime15k,"
                                 + "Frontier,Homestead,SIP150,SIP158,Byzantium,Constantinople,ConstantinopleFix,Istanbul,Berlin,"
                                 + "London,Merge,SilaParis,SilaShanghai,SilaCancun,SilaPrague,SilaOsaka,SilaAmsterdam,Bogota,Polis,Bangkok");
         NETWORKS_TO_RUN = Arrays.asList(networks.split(","));
@@ -101,13 +103,6 @@ public class BlockchainReferenceTestTools {
             params.ignoreAll();
         }
 
-        // Consumes a huge amount of memory
-        params.ignore("static_Call1MB1024Calldepth");
-        params.ignore("SilaShanghaiLove_");
-
-        // Absurd amount of gas, doesn't run in parallel
-        params.ignore("randomStatetest94_\\w+");
-
         // Don't do time-consuming tests
         params.ignore("CALLBlake2f_MaxRounds");
         params.ignore("loopMul_");
@@ -118,8 +113,18 @@ public class BlockchainReferenceTestTools {
         params.ignore(
                 "UncleFromSideChain_(Merge|SilaParis|SilaShanghai|SilaCancun|SilaPrague|SilaOsaka|SilaAmsterdam|Bogota|Polis|Bangkok)");
 
-        // These are for the older reference tests but SIP-2537 is covered by sip2537_bls_12_381_precompiles in the execution-spec-tests
-        params.ignore("/stSIP2537/");
+        // These are for the older reference tests but SIP-2537 is covered by eip2537_bls_12_381_precompiles in the execution-spec-tests
+        params.ignore("/stEIP2537/");
+
+        // SIP-7610 (revert creation when the destination address has non-empty storage) was never
+        // part of the spec and has been dropped retroactively for every fork, see
+        // https://github.com/sila/execution-specs/pull/3417. Upstream has deleted these tests
+        // from sila/tests, but the submodule is still pinned to a revision that contains them.
+        params.ignore("create2collisionStorageParis");
+        params.ignore("dynamicAccountOverwriteEmpty_Paris");
+        params.ignore("InitCollisionParis");
+        params.ignore("RevertInCreateInInitCreate2Paris");
+        params.ignore("RevertInCreateInInit_Paris");
     }
 
     private BlockchainReferenceTestTools() {
@@ -141,7 +146,15 @@ public class BlockchainReferenceTestTools {
                         .getWorldState(WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead(genesisBlockHeader))
                         .orElseThrow();
 
-        final ProtocolSchedule schedule = PROTOCOL_SCHEDULES.getByName(spec.getNetwork());
+        final ReferenceTestProtocolSchedules protocolSchedules =
+            spec.getBlobScheduleOptions()
+                .map(
+                    bso ->
+                        ReferenceTestProtocolSchedules.create(
+                            new StubGenesisConfigOptions().blobScheduleOptions(bso),
+                            SavmConfiguration.DEFAULT))
+                .orElse(PROTOCOL_SCHEDULES);
+        final ProtocolSchedule schedule = protocolSchedules.getByName(spec.getNetwork());
 
         try (BlockCreationFixture blockCreation =
                      BlockCreationFixture.create(schedule, protocolContext, blockchain)) {
@@ -156,7 +169,7 @@ public class BlockchainReferenceTestTools {
 
                     final ProtocolSpec protocolSpec = schedule.getByBlockHeader(blockFromReference.getHeader());
 
-                    verifyJournaledSAVMAccountCompatability(worldState, protocolSpec);
+                    verifyJournaledEVMAccountCompatability(worldState, protocolSpec);
 
                     final boolean supportsBlockBuilding =
                             ReferenceTestProtocolSchedules.supportsBlockBuilding(spec.getNetwork());
@@ -215,9 +228,10 @@ public class BlockchainReferenceTestTools {
                             final String actualError = processingResult.errorMessage.orElse("");
                             assertThat(BlockExceptionMatcher.matches(expectedExceptionKey, actualError))
                                     .as(
-                                            "Block rejected for wrong reason.\n"
-                                                    + "  Expected exception : %s (%s)\n"
-                                                    + "  Actual error       : %s",
+                                            """
+                                            Block rejected for wrong reason.
+                                              Expected exception : %s (%s)
+                                              Actual error       : %s""",
                                             expectedExceptionKey,
                                             BlockExceptionMatcher.describeExpected(expectedExceptionKey).orElse("unknown key"),
                                             actualError)
@@ -275,15 +289,15 @@ public class BlockchainReferenceTestTools {
         blockFromReference.getHeader().getOptionalSlotNumber());
   }
 
-  static void verifyJournaledSAVMAccountCompatability(
+  static void verifyJournaledEVMAccountCompatability(
           final MutableWorldState worldState, final ProtocolSpec protocolSpec) {
-    SAVM savm = protocolSpec.getSavm();
-    if (savm.getSavmConfiguration().worldUpdaterMode() == WorldUpdaterMode.JOURNALED) {
+    SAVM savm = protocolSpec.getEvm();
+    if (savm.getEvmConfiguration().worldUpdaterMode() == WorldUpdaterMode.JOURNALED) {
       assumeFalse(
               worldState
                       .streamAccounts(Bytes32.ZERO, Integer.MAX_VALUE).anyMatch(AccountState::isEmpty),
               "Journaled account configured and empty account detected");
-      assumeFalse(SavmSpecVersion.SPURIOUS_DRAGON.compareTo(savm.getSavmVersion()) > 0,
+      assumeFalse(SavmSpecVersion.SPURIOUS_DRAGON.compareTo(savm.getEvmVersion()) > 0,
               "Journaled account configured and fork prior to the merge specified");
     }
   }

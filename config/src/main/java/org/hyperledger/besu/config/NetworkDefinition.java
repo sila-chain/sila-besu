@@ -18,6 +18,8 @@ import java.math.BigInteger;
 import java.util.Locale;
 import java.util.Optional;
 
+import org.jspecify.annotations.Nullable;
+
 /** The enum Network name. */
 public enum NetworkDefinition {
   /** SilaMainnet network name. */
@@ -56,12 +58,12 @@ public enum NetworkDefinition {
       true, // native required
       60_000_000L), // target gas limit
   /**
-   * Linea sila-mainnet network name <a
+   * Linea mainnet network name <a
    * href="https://docs.linea.build/get-started/how-to/run-a-node/besu">Linea Besu developer
    * info</a>
    */
-  LINEA_SILA_MAINNET(
-      "/linea-sila-mainnet.json",
+  LINEA_MAINNET(
+      "/linea-mainnet.json",
       59144, // chain id
       59144, // network id
       true, // can snap sync
@@ -75,7 +77,7 @@ public enum NetworkDefinition {
       true, // can snap sync
       true, // native required
       60_000_000L), // target gas limit
-  /** LUKSO sila-mainnet network name. */
+  /** LUKSO mainnet network name. */
   LUKSO(
       "/lukso.json",
       42, // chain id
@@ -90,9 +92,16 @@ public enum NetworkDefinition {
       2018, // network id
       false, // can snap sync
       false, // native required
-      60_000_000L), // target gas limit
+      60_000_000L, // target gas limit
+      "2026-12-31",
+      "--network=dev is no longer supported and Besu will not start.\n"
+          + "PoW mining has been removed; this network cannot produce blocks.\n"
+          + "For local development, use Ephemery (--network=ephemery)\n"
+          + "with a consensus layer client, or use Kurtosis:\n"
+          + "https://github.com/ethpandaops/sila-package",
+      true),
   /** Future SIPs network name. */
-  FUTURE_SIPS(
+  FUTURE_EIPS(
       "/future.json",
       2022, // chain id
       2022, // network id
@@ -100,7 +109,7 @@ public enum NetworkDefinition {
       false, // native required
       60_000_000L), // target gas limit
   /** Experimental SIPs network name. */
-  EXPERIMENTAL_SIPS(
+  EXPERIMENTAL_EIPS(
       "/experimental.json",
       2023, // chain id
       2023, // network id
@@ -112,7 +121,9 @@ public enum NetworkDefinition {
   private final long chainId;
   private final long networkId;
   private final boolean canSnapSync;
-  private final String deprecationDate;
+  private final @Nullable String deprecationDate;
+  private final @Nullable String deprecationMessage;
+  private final boolean removed;
   private final boolean nativeRequired;
   private final long targetGasLimit;
 
@@ -123,7 +134,16 @@ public enum NetworkDefinition {
       final boolean canSnapSync,
       final boolean nativeRequired,
       final long targetGasLimit) {
-    this(genesisFile, chainId, networkId, canSnapSync, nativeRequired, targetGasLimit, null);
+    this(
+        genesisFile,
+        chainId,
+        networkId,
+        canSnapSync,
+        nativeRequired,
+        targetGasLimit,
+        null,
+        null,
+        false);
   }
 
   NetworkDefinition(
@@ -133,7 +153,9 @@ public enum NetworkDefinition {
       final boolean canSnapSync,
       final boolean nativeRequired,
       final long targetGasLimit,
-      final String deprecationDate) {
+      final @Nullable String deprecationDate,
+      final @Nullable String deprecationMessage,
+      final boolean removed) {
     this.genesisFile = genesisFile;
     this.chainId = chainId;
     this.networkId = networkId;
@@ -141,6 +163,8 @@ public enum NetworkDefinition {
     this.nativeRequired = nativeRequired;
     this.targetGasLimit = targetGasLimit;
     this.deprecationDate = deprecationDate;
+    this.deprecationMessage = deprecationMessage;
+    this.removed = removed;
   }
 
   /**
@@ -199,12 +223,30 @@ public enum NetworkDefinition {
   }
 
   /**
+   * Is removed boolean. Removed networks are deprecated and will cause Besu to abort on startup.
+   *
+   * @return the boolean
+   */
+  public boolean isRemoved() {
+    return removed;
+  }
+
+  /**
    * Gets deprecation date.
    *
    * @return the deprecation date
    */
   public Optional<String> getDeprecationDate() {
     return Optional.ofNullable(deprecationDate);
+  }
+
+  /**
+   * Gets custom deprecation message, if set.
+   *
+   * @return the deprecation message
+   */
+  public Optional<String> getDeprecationMessage() {
+    return Optional.ofNullable(deprecationMessage);
   }
 
   /**

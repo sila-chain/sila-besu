@@ -21,7 +21,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.io.IOException;
 
-import org.web3j.protocol.core.methods.response.SilSendTransaction;
+import org.web3j.protocol.core.methods.response.EthSendTransaction;
 
 public class SilSendRawTransactionTransaction implements Transaction<String> {
 
@@ -34,7 +34,7 @@ public class SilSendRawTransactionTransaction implements Transaction<String> {
   @Override
   public String execute(final NodeRequests node) {
     try {
-      SilSendTransaction response = node.sil().silSendRawTransaction(transactionData).send();
+      EthSendTransaction response = node.sil().ethSendRawTransaction(transactionData).send();
       assertThat(response).isNotNull();
       if (response.hasError()) {
         throw new RuntimeException(response.getError().getMessage());

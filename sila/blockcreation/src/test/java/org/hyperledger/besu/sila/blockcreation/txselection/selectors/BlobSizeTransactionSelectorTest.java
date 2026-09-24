@@ -108,7 +108,7 @@ class BlobSizeTransactionSelectorTest {
     evaluateAndAssertSelected(txEvaluationContext);
 
     // this non blob tx is selected regardless the blob space is already filled
-    final var nonBlobTx = createSIP1559PendingTransaction();
+    final var nonBlobTx = createEIP1559PendingTransaction();
 
     final var nonBlobTxEvaluationContext =
         new TransactionEvaluationContext(
@@ -190,7 +190,7 @@ class BlobSizeTransactionSelectorTest {
         .isEqualTo(preProcessedResult);
   }
 
-  private PendingTransaction createSIP1559PendingTransaction() {
+  private PendingTransaction createEIP1559PendingTransaction() {
     return PendingTransaction.newPendingTransaction(
         createTransaction(TransactionType.SIP1559, 0), false, false, MAX_SCORE);
   }

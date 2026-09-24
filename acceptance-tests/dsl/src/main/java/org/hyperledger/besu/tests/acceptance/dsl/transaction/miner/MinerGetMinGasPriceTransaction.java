@@ -22,14 +22,14 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.SilGasPrice;
+import org.web3j.protocol.core.methods.response.EthGasPrice;
 
 public class MinerGetMinGasPriceTransaction implements Transaction<BigInteger> {
 
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      final SilGasPrice result = node.miner().minerGetMinGasPrice().send();
+      final EthGasPrice result = node.miner().minerGetMinGasPrice().send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
 

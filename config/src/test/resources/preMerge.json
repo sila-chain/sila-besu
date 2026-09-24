@@ -5,7 +5,7 @@
     "phillyBlock": 5,
     "parisBlock": 10,
     "contractSizeLimit": 2147483647,
-    "silash": {
+    "ethash": {
       "fixeddifficulty": 100
     }
   },

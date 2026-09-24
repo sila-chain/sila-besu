@@ -35,7 +35,7 @@ public class SilConfigBySpecTest extends AbstractJsonRpcHttpBySpecTest {
   @Override
   protected BlockchainSetupUtil getBlockchainSetupUtil(final DataStorageFormat storageFormat) {
     return createBlockchainSetupUtil(
-        "sil/config/chain-data/sila-mainnet-plus-future.json",
+        "sil/config/chain-data/mainnet-plus-future.json",
         "sil/simulateV1/chain-data/blocks.bin",
         storageFormat);
   }

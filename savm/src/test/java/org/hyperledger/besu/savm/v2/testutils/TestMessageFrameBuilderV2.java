@@ -172,7 +172,7 @@ public class TestMessageFrameBuilderV2 {
                 blockHashLookup.orElse((__, number) -> Hash.hash(Words.longBytes(number))))
             .maxStackSize(maxStackSize)
             .isStatic(isStatic)
-            .enableSavmV2(true)
+            .enableEvmV2(true)
             .build();
     frame.setPC(pc);
     stackItems.forEach(

@@ -144,7 +144,7 @@ public abstract class AbstractBftBesuControllerBuilderTest {
         .thenReturn(Range.closed(1L, 2L));
 
     lenient()
-        .when(silProtocolConfiguration.getMaxSilCapability())
+        .when(silProtocolConfiguration.getMaxEthCapability())
         .thenReturn(SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY);
     setupBftGenesisConfig();
 
@@ -171,6 +171,30 @@ public abstract class AbstractBftBesuControllerBuilderTest {
   protected abstract void setupBftGenesisConfig() throws JsonProcessingException;
 
   protected abstract BesuControllerBuilder createBftControllerBuilder();
+
+  @Test
+  public void miningCoordinatorOnlyReactsToSyncEventsAfterSubscribe() {
+    final var besuController = bftBesuControllerBuilder.build();
+    final var miningCoordinator = besuController.getMiningCoordinator();
+
+    try {
+      // Sync events must not start the coordinator before subscribe() is called. On consensus
+      // migration networks only the MigratingMiningCoordinator may start the delegate
+      // coordinators, otherwise a stopped consensus mechanism resumes producing blocks.
+      besuController.getSyncState().markInitialSyncPhaseAsDone();
+      assertThat(miningCoordinator.isMining()).isFalse();
+
+      // After subscribe() (invoked by the Runner on non-migration networks) sync completion
+      // starts the coordinator as before
+      miningCoordinator.subscribe();
+      besuController.getSyncState().markInitialSyncPhaseAsDone();
+      assertThat(miningCoordinator.isMining()).isTrue();
+    } finally {
+      // the coordinator was actually started, stop it so its executor threads don't outlive
+      // the test
+      miningCoordinator.stop();
+    }
+  }
 
   @Test
   public void miningParametersBlockPeriodSecondsIsUpdatedOnTransition() {

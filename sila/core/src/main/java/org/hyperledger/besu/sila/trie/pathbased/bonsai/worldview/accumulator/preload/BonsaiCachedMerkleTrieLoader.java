@@ -23,7 +23,7 @@ import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.MerkleTrieException;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.StorageSubscriber;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.StorageSubscriber;
 import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 
 import java.util.Optional;

@@ -30,7 +30,7 @@ import org.junit.jupiter.api.Test;
  * {@code IllegalArgumentException("Unknown consensus mechanism defined")}, and the JSON-RPC
  * endpoint must be reachable end-to-end. This exercises the full {@code
  * BesuController.fromGenesisFile} → {@code MergeBesuControllerBuilder.build()} → {@code
- * createSilProtocolManager} chain, including the TTD=0 path through {@code
+ * createEthProtocolManager} chain, including the TTD=0 path through {@code
  * TransitionBestPeerComparator}.
  */
 public class EmptyConsensusGenesisTest extends AcceptanceTestBase {

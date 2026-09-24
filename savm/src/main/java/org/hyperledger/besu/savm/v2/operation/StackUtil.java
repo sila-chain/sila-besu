@@ -62,7 +62,7 @@ final class StackUtil {
    * @param top the slot index to write to
    */
   static void pushWei(final Wei wei, final long[] stack, final int top) {
-    // TODO SAVMv2 store this representation at Wei object construction time when switching from v2
+    // TODO EVMv2 store this representation at Wei object construction time when switching from v2
     // to v1
     int offset = top << 2;
     final byte[] b = wei.toArrayUnsafe();

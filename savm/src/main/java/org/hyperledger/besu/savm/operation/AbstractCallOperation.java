@@ -240,13 +240,9 @@ public abstract class AbstractCallOperation extends AbstractOperation {
 
     // SIP-8037: Charge state gas for new account creation in CALL. Charge all the gas upfront,
     // before any further work (and before touching the BAL below).
-    if (!transferValue.isZero()) {
-      final Account recipient = frame.getWorldUpdater().get(recipientAddress);
-      if (recipient == null || recipient.isEmpty()) {
-        if (!frame.consumeStateGas(gasCalculator().stateGasCostCalculator().newAccountStateGas())) {
-          return new OperationResult(cost, ExceptionalHaltReason.INSUFFICIENT_GAS);
-        }
-      }
+    if (callCreatesNewAccount(frame, recipientAddress, transferValue)
+        && !frame.consumeStateGas(gasCalculator().stateGasCostCalculator().newAccountStateGas())) {
+      return new OperationResult(cost, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
     // Record the 7702 delegation target in the BAL once the gas checks have passed. getCode() does
@@ -257,7 +253,7 @@ public abstract class AbstractCallOperation extends AbstractOperation {
       final Bytes contractCode = contract.getCode();
       if (hasCodeDelegation(contractCode)) {
         frame
-            .getSip7928AccessList()
+            .getEip7928AccessList()
             .ifPresent(t -> t.addTouchedAccount(getTargetAddress(contractCode)));
       }
     }
@@ -273,6 +269,8 @@ public abstract class AbstractCallOperation extends AbstractOperation {
     final boolean insufficientBalance = transferValue.compareTo(balance) > 0;
     final boolean isFrameDepthTooDeep = frame.getDepth() >= 1024;
     if (insufficientBalance || isFrameDepthTooDeep) {
+      // SIP-8037: no child frame runs, so no account is created — undo the charge above.
+      refundCallNewAccountStateGas(frame, recipientAddress, transferValue);
       frame.expandMemory(inputDataOffset(frame), inputDataLength(frame));
       frame.expandMemory(outputDataOffset(frame), outputDataLength(frame));
       // For the following, we either increment the gas or return zero, so we don't get double
@@ -305,8 +303,8 @@ public abstract class AbstractCallOperation extends AbstractOperation {
             .isStatic(isStatic(frame))
             .completer(child -> complete(frame, child));
 
-    if (frame.getSip7928AccessList().isPresent()) {
-      builder.sip7928AccessList(frame.getSip7928AccessList().get());
+    if (frame.getEip7928AccessList().isPresent()) {
+      builder.sip7928AccessList(frame.getEip7928AccessList().get());
     }
 
     builder.build();
@@ -351,6 +349,15 @@ public abstract class AbstractCallOperation extends AbstractOperation {
     final long gasRemaining = childFrame.getRemainingGas();
     frame.incrementRemainingGas(gasRemaining);
 
+    // On success the parent takes over the child's spill so later refunds can unwind it. On
+    // failure the child already returned it, and no account was created, so undo that charge.
+    if (childFrame.getState() == State.COMPLETED_SUCCESS) {
+      frame.incrementStateGasSpilled(childFrame.getStateGasSpilled());
+      frame.settleStateGasOnChildSuccess();
+    } else {
+      refundCallNewAccountStateGas(frame, childFrame.getRecipientAddress(), childFrame.getValue());
+    }
+
     frame.popStackItems(getStackItemsConsumed());
     Bytes resultItem;
 
@@ -359,6 +366,25 @@ public abstract class AbstractCallOperation extends AbstractOperation {
 
     final int currentPC = frame.getPC();
     frame.setPC(currentPC + 1);
+  }
+
+  /** Whether the CALL transfers value to a non-existent or empty recipient, creating a leaf. */
+  private boolean callCreatesNewAccount(
+      final MessageFrame frame, final Address recipientAddress, final Wei transferValue) {
+    // Only state-gas metering charges for this, so nothing needs the lookup otherwise.
+    if (transferValue.isZero() || !gasCalculator().stateGasCostCalculator().isActive()) {
+      return false;
+    }
+    final Account recipient = frame.getWorldUpdater().get(recipientAddress);
+    return recipient == null || recipient.isEmpty();
+  }
+
+  /** Re-tests the charge condition, so this is a no-op when nothing was charged. */
+  private void refundCallNewAccountStateGas(
+      final MessageFrame frame, final Address recipientAddress, final Wei transferValue) {
+    if (callCreatesNewAccount(frame, recipientAddress, transferValue)) {
+      frame.refillStateGasReservoir(gasCalculator().stateGasCostCalculator().newAccountStateGas());
+    }
   }
 
   Bytes getCallResultStackItem(final MessageFrame childFrame) {
@@ -383,7 +409,7 @@ public abstract class AbstractCallOperation extends AbstractOperation {
     }
 
     final Hash codeHash = account.getCodeHash();
-    frame.getSip7928AccessList().ifPresent(t -> t.addTouchedAccount(account.getAddress()));
+    frame.getEip7928AccessList().ifPresent(t -> t.addTouchedAccount(account.getAddress()));
     if (codeHash == null || codeHash.equals(Hash.EMPTY)) {
       return Code.EMPTY_CODE;
     }
@@ -409,7 +435,7 @@ public abstract class AbstractCallOperation extends AbstractOperation {
             frame.getWorldUpdater(),
             savm.getGasCalculator()::isPrecompile,
             account,
-            frame.getSip7928AccessList());
+            frame.getEip7928AccessList());
 
     if (accountHasCodeCache) {
       // If the account has a code cache, we can return the cached code of the target

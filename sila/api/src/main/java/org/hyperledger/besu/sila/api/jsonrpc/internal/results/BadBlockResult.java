@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
+import java.util.List;
 import java.util.Optional;
 
 import com.fasterxml.jackson.annotation.JsonProperty;
@@ -42,10 +43,10 @@ public interface BadBlockResult {
   String getRlp();
 
   @JsonProperty("blockAccessList")
-  Optional<BlockAccessListResult> getBlockAccessList();
+  Optional<List<BlockAccessListResult.AccountChangesResult>> getBlockAccessList();
 
   @JsonProperty("generatedBlockAccessList")
-  Optional<BlockAccessListResult> getGeneratedBlockAccessList();
+  Optional<List<BlockAccessListResult.AccountChangesResult>> getGeneratedBlockAccessList();
 
   static BadBlockResult from(
       final BlockResult blockResult,

@@ -46,7 +46,7 @@ import org.slf4j.LoggerFactory;
  * An Elliptic Curve Integrated Encryption Scheme implementation, following the handshake ceremony
  * of Sila.
  *
- * @see <a href="https://github.com/sila-chain/devp2p/blob/master/rlpx.md#encrypted-handshake">RLPx
+ * @see <a href="https://github.com/sila/devp2p/blob/master/rlpx.md#encrypted-handshake">RLPx
  *     encrypted handshake</a>
  */
 public class ECIESHandshaker implements Handshaker {
@@ -128,7 +128,7 @@ public class ECIESHandshaker implements Handshaker {
         InitiatorHandshakeMessageV4.create(
             nodeKey.getPublicKey(), ephKeyPair, staticSharedSecret, initiatorNonce);
     try {
-      initiatorMsgEnc = EncryptedMessage.encryptMsgSip8(initiatorMsg.encode(), partyPubKey);
+      initiatorMsgEnc = EncryptedMessage.encryptMsgEip8(initiatorMsg.encode(), partyPubKey);
     } catch (final InvalidCipherTextException e) {
       status.set(Handshaker.HandshakeStatus.FAILED);
       throw new HandshakeException("Encrypting the first handshake message failed", e);
@@ -164,7 +164,7 @@ public class ECIESHandshaker implements Handshaker {
 
     final Bytes bytes;
     try {
-      bytes = EncryptedMessage.decryptMsgSIP8(encryptedMsg, nodeKey);
+      bytes = EncryptedMessage.decryptMsgEIP8(encryptedMsg, nodeKey);
     } catch (final InvalidCipherTextException e) {
       status.set(Handshaker.HandshakeStatus.FAILED);
       throw new HandshakeException("Decrypting an incoming handshake message failed", e);
@@ -238,7 +238,7 @@ public class ECIESHandshaker implements Handshaker {
           responderMsg);
 
       try {
-        responderMsgEnc = EncryptedMessage.encryptMsgSip8(responderMsg.encode(), partyPubKey);
+        responderMsgEnc = EncryptedMessage.encryptMsgEip8(responderMsg.encode(), partyPubKey);
       } catch (final InvalidCipherTextException e) {
         status.set(Handshaker.HandshakeStatus.FAILED);
         throw new HandshakeException("Encrypting the next handshake message failed", e);

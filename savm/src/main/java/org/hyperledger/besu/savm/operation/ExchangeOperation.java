@@ -75,10 +75,10 @@ public class ExchangeOperation extends AbstractFixedCostOperation {
     final int imm = (pc + 1 >= code.length) ? 0 : code[pc + 1] & 0xFF;
 
     // Single lookup for validity and both indices
-    final int packed = Sip8024Decoder.DECODE_PAIR_PACKED[imm];
+    final int packed = Eip8024Decoder.DECODE_PAIR_PACKED[imm];
 
     // Check for invalid immediate range (80-127)
-    if (packed == Sip8024Decoder.INVALID_PAIR) {
+    if (packed == Eip8024Decoder.INVALID_PAIR) {
       return INVALID_IMMEDIATE;
     }
 
@@ -106,6 +106,6 @@ public class ExchangeOperation extends AbstractFixedCostOperation {
    * @return an array of [n, m], or null if the immediate is invalid
    */
   public static int[] decodePair(final int imm) {
-    return Sip8024Decoder.decodePair(imm);
+    return Eip8024Decoder.decodePair(imm);
   }
 }

@@ -25,6 +25,7 @@ import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.sila.chain.Blockchain;
 
 /** Bft query plugin service factory which is a concrete implementation of PluginServiceFactory. */
+@SuppressWarnings("removal")
 public class BftQueryPluginServiceFactory implements PluginServiceFactory {
 
   private final Blockchain blockchain;

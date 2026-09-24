@@ -17,6 +17,9 @@ package org.hyperledger.besu.sila.sil.sync.backwardsync;
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider.createInMemoryBlockchain;
 import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
+import static org.mockito.Mockito.never;
+import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
@@ -33,7 +36,7 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.referencetests.ForestReferenceTestWorldState;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
@@ -54,6 +57,7 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ExecutionException;
 import java.util.stream.Collectors;
 
 import jakarta.validation.constraints.NotNull;
@@ -82,7 +86,7 @@ public class ForwardSyncStepTest {
   @Mock private PeerTaskExecutor peerTaskExecutor;
 
   private MutableBlockchain remoteBlockchain;
-  private RespondingSilPeer peer;
+  private RespondingEthPeer peer;
 
   private final ProtocolSchedule protocolSchedule =
       SilaMainnetProtocolSchedule.fromConfig(
@@ -152,7 +156,7 @@ public class ForwardSyncStepTest {
 
     peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager);
     SilContext silContext = silProtocolManager.silContext();
-    when(context.getSilContext()).thenReturn(silContext);
+    when(context.getEthContext()).thenReturn(silContext);
 
     when(context
             .getBlockValidatorForBlock(any())
@@ -182,7 +186,7 @@ public class ForwardSyncStepTest {
               return new PeerTaskExecutorResult<List<Block>>(
                   Optional.of(blocks),
                   PeerTaskExecutorResponseCode.SUCCESS,
-                  List.of(peer.getSilPeer()));
+                  List.of(peer.getEthPeer()));
             });
   }
 
@@ -219,6 +223,39 @@ public class ForwardSyncStepTest {
     Assertions.assertThat(blocks)
         .hasSize(1)
         .containsExactlyInAnyOrder(getBlockByNumber(LOCAL_HEIGHT + 1));
+  }
+
+  @Test
+  public void shouldFailWhenABlockCannotBeSaved() {
+    doThrow(new BackwardSyncException("parent world state unavailable", false))
+        .when(context)
+        .saveBlock(any());
+    final ForwardSyncStep step =
+        new ForwardSyncStep(context, createBackwardChain(LOCAL_HEIGHT, LOCAL_HEIGHT + 3));
+
+    final CompletableFuture<Void> future =
+        step.possibleRequestBodies(List.of(getBlockByNumber(LOCAL_HEIGHT + 1).getHeader()));
+
+    Assertions.assertThatThrownBy(future::get)
+        .isInstanceOf(ExecutionException.class)
+        .hasRootCauseInstanceOf(BackwardSyncException.class)
+        .hasRootCauseMessage("parent world state unavailable");
+    verify(context, never()).halveBatchSize();
+  }
+
+  @Test
+  public void shouldReduceBatchSizeWhenBodiesCannotBeDownloaded() throws Exception {
+    when(peerTaskExecutor.execute(any(GetBodiesFromPeerTask.class)))
+        .thenReturn(
+            new PeerTaskExecutorResult<List<Block>>(
+                Optional.empty(), PeerTaskExecutorResponseCode.NO_PEER_AVAILABLE, List.of()));
+    final ForwardSyncStep step =
+        new ForwardSyncStep(context, createBackwardChain(LOCAL_HEIGHT, LOCAL_HEIGHT + 3));
+
+    step.possibleRequestBodies(List.of(getBlockByNumber(LOCAL_HEIGHT + 1).getHeader())).get();
+
+    verify(context).halveBatchSize();
+    verify(context, never()).saveBlock(any());
   }
 
   private BackwardChain createBackwardChain(final int from, final int until) {

@@ -80,8 +80,8 @@ public class CompleteBlocksWithPeerTaskTest {
   @Test
   public void shouldCreateWithdrawalsAwareEmptyBlock_whenWithdrawalsAreEnabled() {
     final ProtocolSchedule mockProtocolSchedule = Mockito.mock(ProtocolSchedule.class);
-    final ProtocolSpec mockSilaParisSpec = Mockito.mock(ProtocolSpec.class);
-    final ProtocolSpec mockSilaShanghaiSpec = Mockito.mock(ProtocolSpec.class);
+    final ProtocolSpec mockParisSpec = Mockito.mock(ProtocolSpec.class);
+    final ProtocolSpec mockShanghaiSpec = Mockito.mock(ProtocolSpec.class);
     final WithdrawalsProcessor mockWithdrawalsProcessor = Mockito.mock(WithdrawalsProcessor.class);
 
     final BlockHeader header1 =
@@ -89,10 +89,10 @@ public class CompleteBlocksWithPeerTaskTest {
     final BlockHeader header2 =
         new BlockHeaderTestFixture().number(2).withdrawalsRoot(Hash.EMPTY_TRIE_HASH).buildHeader();
 
-    when(mockProtocolSchedule.getByBlockHeader((eq(header1)))).thenReturn(mockSilaParisSpec);
-    when(mockSilaParisSpec.getWithdrawalsProcessor()).thenReturn(Optional.empty());
-    when(mockProtocolSchedule.getByBlockHeader((eq(header2)))).thenReturn(mockSilaShanghaiSpec);
-    when(mockSilaShanghaiSpec.getWithdrawalsProcessor())
+    when(mockProtocolSchedule.getByBlockHeader((eq(header1)))).thenReturn(mockParisSpec);
+    when(mockParisSpec.getWithdrawalsProcessor()).thenReturn(Optional.empty());
+    when(mockProtocolSchedule.getByBlockHeader((eq(header2)))).thenReturn(mockShanghaiSpec);
+    when(mockShanghaiSpec.getWithdrawalsProcessor())
         .thenReturn(Optional.of(mockWithdrawalsProcessor));
 
     final List<Block> expectedBlocks = getExpectedBlocks(header1, header2);

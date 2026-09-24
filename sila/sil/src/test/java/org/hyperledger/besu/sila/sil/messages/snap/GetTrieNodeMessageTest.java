@@ -130,7 +130,7 @@ public final class GetTrieNodeMessageTest {
   @Test
   public void emptyGroupsDoNotConsumePathBudget() {
     final Hash rootHash = Hash.wrap(Bytes32.random());
-    // Empty groups cost 0 budget — both gsil and nsilermind reject them immediately,
+    // Empty groups cost 0 budget — both geth and nethermind reject them immediately,
     // so no legitimate client sends them and they need no special flooding protection.
     final List<List<Bytes>> groups =
         IntStream.range(0, 2000).mapToObj(i -> List.<Bytes>of()).toList();

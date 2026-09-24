@@ -25,7 +25,7 @@ import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.util.RawBlockIterator;
 
 import java.net.URL;
@@ -65,7 +65,7 @@ public class BlockchainImporter {
 
     genesisBlock = blocks.get(0);
     // only used in tests no global code cache is needed
-    genesisState = GenesisState.fromJson(genesisJson, protocolSchedule, new PathBasedCodeCache());
+    genesisState = GenesisState.fromJson(genesisJson, protocolSchedule, new BonsaiCodeCache());
   }
 
   public GenesisState getGenesisState() {

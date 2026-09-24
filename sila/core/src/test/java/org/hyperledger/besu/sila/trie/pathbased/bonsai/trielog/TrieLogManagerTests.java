@@ -30,11 +30,10 @@ import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiWorldStateUpdateAccumulator;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
@@ -67,7 +66,7 @@ class TrieLogManagerTests {
               (__, ___) -> {},
               (__, ___) -> {},
               SavmConfiguration.DEFAULT,
-              new PathBasedCodeCache()));
+              new BonsaiCodeCache()));
 
   TrieLogManager trieLogManager;
 

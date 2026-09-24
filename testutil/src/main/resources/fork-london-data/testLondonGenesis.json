@@ -1,7 +1,7 @@
 {
     "config": {
         "londonBlock":3,
-        "silash": {
+        "ethash": {
             "fixeddifficulty": 15
         },
         "chainID": 1982,

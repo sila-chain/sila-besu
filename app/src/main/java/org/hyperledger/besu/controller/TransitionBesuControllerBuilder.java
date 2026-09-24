@@ -31,6 +31,7 @@ import org.hyperledger.besu.sila.ConsensusContext;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.ChainDataPruner;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
@@ -156,11 +157,11 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
   }
 
   @Override
-  protected SilProtocolManager createSilProtocolManager(
+  protected SilProtocolManager createEthProtocolManager(
       final ProtocolContext protocolContext,
       final SynchronizerConfiguration synchronizerConfiguration,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilContext silContext,
       final SilMessages silMessages,
@@ -168,11 +169,11 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
       final List<PeerValidator> peerValidators,
       final Optional<MergePeerFilter> mergePeerFilter,
       final ForkIdManager forkIdManager) {
-    return mergeBesuControllerBuilder.createSilProtocolManager(
+    return mergeBesuControllerBuilder.createEthProtocolManager(
         protocolContext,
         synchronizerConfiguration,
         transactionPool,
-        silaWireProtocolConfiguration,
+        ethereumWireProtocolConfiguration,
         silPeers,
         silContext,
         silMessages,
@@ -232,7 +233,8 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
       final PeerTaskExecutor peerTaskExecutor,
       final SyncState syncState,
       final SilProtocolManager silProtocolManager,
-      final PivotBlockSelector pivotBlockSelector) {
+      final PivotBlockSelector pivotBlockSelector,
+      final Optional<ChainDataPruner> chainDataPruner) {
 
     DefaultSynchronizer sync =
         super.createSynchronizer(
@@ -243,7 +245,8 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
             peerTaskExecutor,
             syncState,
             silProtocolManager,
-            pivotBlockSelector);
+            pivotBlockSelector,
+            chainDataPruner);
 
     if (genesisConfigOptions.getTerminalTotalDifficulty().isPresent()) {
       LOG.info(
@@ -265,6 +268,8 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
         (isPoS, priorState, difficultyStoppedAt) -> {
           if (isPoS) {
             // if we transitioned to post-merge, stop and disable any mining
+            // Note: this callback can run on the BFT event thread itself (during import of the
+            // terminal block), so stop() must remain safe to call from that thread.
             composedCoordinator.getPreMergeObject().disable();
             composedCoordinator.getPreMergeObject().stop();
             // set the blockchoiceRule to never reorg, rely on forkchoiceUpdated instead

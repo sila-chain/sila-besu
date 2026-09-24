@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.math.BigInteger;
 
 import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.response.SilGetTransactionCount;
+import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
 
 public class SilGetTransactionCountTransaction implements Transaction<BigInteger> {
 
@@ -36,9 +36,9 @@ public class SilGetTransactionCountTransaction implements Transaction<BigInteger
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      SilGetTransactionCount result =
+      EthGetTransactionCount result =
           node.sil()
-              .silGetTransactionCount(accountAddress, DefaultBlockParameterName.LATEST)
+              .ethGetTransactionCount(accountAddress, DefaultBlockParameterName.LATEST)
               .send();
       assertThat(result).isNotNull();
       return result.getTransactionCount();

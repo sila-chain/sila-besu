@@ -70,7 +70,7 @@ public class SingleBlockHeaderDownloader {
                       1,
                       0,
                       GetHeadersFromPeerTask.Direction.FORWARD,
-                      silContext.getSilPeers().peerCount(),
+                      silContext.getEthPeers().peerCount(),
                       protocolSchedule);
               PeerTaskExecutorResult<List<BlockHeader>> taskResult =
                   silContext.getPeerTaskExecutor().execute(task);

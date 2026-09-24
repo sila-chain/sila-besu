@@ -107,7 +107,7 @@ public class Account {
   }
 
   public Condition balanceEquals(final int expectedBalance) {
-    return new ExpectAccountBalance(sil, this, BigDecimal.valueOf(expectedBalance), Unit.SILER);
+    return new ExpectAccountBalance(sil, this, BigDecimal.valueOf(expectedBalance), Unit.ETHER);
   }
 
   public Condition balanceEquals(final Amount expectedBalance) {
@@ -122,7 +122,7 @@ public class Account {
 
   public Condition balanceDoesNotChange(final int startingBalance) {
     return new ExpectAccountBalanceNotChanging(
-        sil, this, BigDecimal.valueOf(startingBalance), Unit.SILER);
+        sil, this, BigDecimal.valueOf(startingBalance), Unit.ETHER);
   }
 
   @Override

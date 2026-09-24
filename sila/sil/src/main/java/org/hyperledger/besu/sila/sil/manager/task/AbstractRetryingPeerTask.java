@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> The type as a typed list that the peer task can get partial or full results in.
  */
-public abstract class AbstractRetryingPeerTask<T> extends AbstractSilTask<T> {
+public abstract class AbstractRetryingPeerTask<T> extends AbstractEthTask<T> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractRetryingPeerTask.class);
   private final SilContext silContext;
@@ -129,12 +129,12 @@ public abstract class AbstractRetryingPeerTask<T> extends AbstractSilTask<T> {
     if (cause instanceof NoAvailablePeersException) {
       LOG.debug(
           "No useful peer found, wait max 5 seconds for new peer to connect: current peers {}",
-          silContext.getSilPeers().peerCount());
+          silContext.getEthPeers().peerCount());
 
       executeSubTask(
           () ->
               silContext
-                  .getSilPeers()
+                  .getEthPeers()
                   .waitForPeer(this::isSuitablePeer)
                   .orTimeout(5, TimeUnit.SECONDS)
                   // execute the task again
@@ -165,7 +165,7 @@ public abstract class AbstractRetryingPeerTask<T> extends AbstractSilTask<T> {
         || error instanceof NoAvailablePeersException;
   }
 
-  protected SilContext getSilContext() {
+  protected SilContext getEthContext() {
     return silContext;
   }
 

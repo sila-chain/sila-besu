@@ -37,17 +37,22 @@ import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.MilestoneStreamingProtocolSchedule;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Util;
 import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.util.number.PositiveNumber;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.Collection;
 import java.util.List;
 import java.util.Optional;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import org.junit.jupiter.api.Test;
 
 public class QbftProtocolScheduleTest {
@@ -129,6 +134,38 @@ public class QbftProtocolScheduleTest {
     assertThat(validateHeader(schedule, validators, parentHeader, blockHeader, 2)).isTrue();
   }
 
+  @Test
+  public void poaBlockTxsSelectionMaxTimeAppliesWhenShanghaiOrLaterForkIsConfigured() {
+    final long shanghaiTime = 10;
+    final ObjectNode genesisConfigNode = JsonUtil.createEmptyObjectNode();
+    genesisConfigNode.put("shanghaitime", shanghaiTime);
+
+    final BftProtocolSchedule schedule =
+        createProtocolSchedule(
+            JsonGenesisConfigOptions.fromJsonObject(genesisConfigNode),
+            List.of(new ForkSpec<>(0, JsonQbftConfigOptions.DEFAULT)));
+
+    final ProtocolSpec shanghaiSpec = schedule.getByBlockNumberOrTimestamp(1, shanghaiTime);
+
+    // 2s block period with --poa-block-txs-selection-max-time=75
+    final MiningConfiguration miningConfiguration =
+        ImmutableMiningConfiguration.builder()
+            .mutableInitValues(
+                ImmutableMiningConfiguration.MutableInitValues.builder()
+                    .blockPeriodSeconds(2)
+                    .build())
+            .poaBlockTxsSelectionMaxTime(PositiveNumber.fromInt(75))
+            .build();
+
+    // a BFT spec must not be marked as PoS, even with SilaShanghai or a later fork configured
+    assertThat(shanghaiSpec.isPoS()).isFalse();
+
+    // same expression BlockTransactionSelector uses to size the selection timeout: the PoA
+    // percentage of the block period must apply, not the PoS timeout (5000 ms by default)
+    assertThat(miningConfiguration.getBlockTxsSelectionMaxTime(false))
+        .isEqualTo(Duration.ofMillis(1500));
+  }
+
   private BftProtocolSchedule createProtocolSchedule(
       final GenesisConfigOptions genesisConfig, final List<ForkSpec<QbftConfigOptions>> forks) {
     return QbftProtocolScheduleBuilder.create(
@@ -141,7 +178,8 @@ public class QbftProtocolScheduleTest {
         new BadBlockManager(),
         false,
         BalConfiguration.DEFAULT,
-        new NoOpMetricsSystem());
+        new NoOpMetricsSystem(),
+        Long.MAX_VALUE);
   }
 
   private boolean validateHeader(

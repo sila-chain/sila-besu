@@ -50,7 +50,7 @@ import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.Optional;
 
@@ -118,7 +118,7 @@ public class TransitionControllerBuilderTest {
         .when(protocolContext.getConsensusContext(MergeContext.class))
         .thenReturn(mergeContext);
     when(silProtocolManager.silContext().getScheduler())
-        .thenReturn(new DeterministicSilScheduler());
+        .thenReturn(new DeterministicEthScheduler());
     miningConfiguration = MiningConfiguration.newDefault();
   }
 
@@ -251,7 +251,7 @@ public class TransitionControllerBuilderTest {
   TransitionCoordinator buildTransitionCoordinator(
       final BesuControllerBuilder preMerge, final MergeBesuControllerBuilder postMerge) {
     var builder = new TransitionBesuControllerBuilder(preMerge, postMerge);
-    builder.genesisConfig(GenesisConfig.sila - mainnet());
+    builder.genesisConfig(GenesisConfig.silaMainnet());
     builder.storageProvider(storageProvider);
     builder.metricsSystem(new NoOpMetricsSystem());
     var coordinator =

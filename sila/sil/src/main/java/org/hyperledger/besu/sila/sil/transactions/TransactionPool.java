@@ -20,9 +20,10 @@ import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolStructur
 import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolStructuredLogUtils.logStop;
 import static org.hyperledger.besu.sila.transaction.TransactionInvalidReason.CHAIN_HEAD_NOT_AVAILABLE;
 import static org.hyperledger.besu.sila.transaction.TransactionInvalidReason.CHAIN_HEAD_WORLD_STATE_NOT_AVAILABLE;
+import static org.hyperledger.besu.sila.transaction.TransactionInvalidReason.EXCEEDS_MAX_TX_BYTES;
 import static org.hyperledger.besu.sila.transaction.TransactionInvalidReason.INTERNAL_ERROR;
 import static org.hyperledger.besu.sila.transaction.TransactionInvalidReason.TRANSACTION_ALREADY_KNOWN;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
@@ -124,6 +125,7 @@ public class TransactionPool implements BlockAddedObserver {
   private final ListMultimap<VersionedHash, BlobProofBundle> mapOfBlobsInTransactionPool =
       Multimaps.synchronizedListMultimap(
           Multimaps.newListMultimap(new HashMap<>(), () -> new ArrayList<>(1)));
+  private final AtomicReference<Bytes> blobCustodyColumns = new AtomicReference<>();
 
   public TransactionPool(
       final Supplier<PendingTransactions> pendingTransactionsSupplier,
@@ -161,10 +163,13 @@ public class TransactionPool implements BlockAddedObserver {
       final Transaction transaction) {
 
     final boolean hasPriority = isPriorityTransaction(transaction, true);
-    final var result = addTransaction(transaction, true, hasPriority, MAX_SCORE);
+    final var outcome = addTransaction(transaction, true, hasPriority, MAX_SCORE);
+    final var result = outcome.result();
     if (result.isValid()) {
       localSenders.add(transaction.getSender());
-      transactionBroadcaster.onTransactionsAdded(List.of(transaction));
+      // broadcast the pooled representation, not the submitted one: they can differ (see
+      // AdditionOutcome) and peers must be announced the transaction we will actually serve.
+      transactionBroadcaster.onTransactionsAdded(List.of(outcome.pooledTransaction()));
     } else {
       logInvalid(transaction, result, true, hasPriority);
     }
@@ -198,12 +203,28 @@ public class TransactionPool implements BlockAddedObserver {
                     Transaction::getHash,
                     transaction -> {
                       final boolean hasPriority = isPriorityTransaction(transaction, false);
-                      final var result = addTransaction(transaction, false, hasPriority, MAX_SCORE);
-                      if (result.isValid()) {
-                        addedTransactions.add(transaction);
-                      } else {
-                        logInvalid(transaction, result, false, hasPriority);
+                      ValidationResult<TransactionInvalidReason> result;
+                      try {
+                        final var outcome =
+                            addTransaction(transaction, false, hasPriority, MAX_SCORE);
+                        result = outcome.result();
+                        if (result.isValid()) {
+                          addedTransactions.add(outcome.pooledTransaction());
+                          return result;
+                        }
+                      } catch (final RuntimeException e) {
+                        LOG.warn(
+                            "Unexpected error validating transaction {}, treating as invalid",
+                            transaction.getHash(),
+                            e);
+                        result =
+                            ValidationResult.invalid(
+                                INTERNAL_ERROR,
+                                "unexpected error during validation: " + e.getMessage());
+                        metrics.incrementRejected(
+                            false, hasPriority, result.getInvalidReason(), "txpool");
                       }
+                      logInvalid(transaction, result, false, hasPriority);
                       return result;
                     },
                     (transaction1, transaction2) -> transaction1));
@@ -226,7 +247,25 @@ public class TransactionPool implements BlockAddedObserver {
     return validationResults;
   }
 
-  private ValidationResult<TransactionInvalidReason> addTransaction(
+  /**
+   * The outcome of an attempt to add a transaction to the pool: the validation result, plus the
+   * transaction as it was actually pooled.
+   *
+   * <p>The pooled transaction is not always the one that was submitted: fork specific
+   * pre-processing may rewrite it. SIP-7594 (SilaOsaka) upgrades a locally submitted blob
+   * transaction from the version 0 to the version 1 network wrapper, which changes its pooled
+   * encoding, and therefore its size, without changing its hash. Callers must broadcast and
+   * announce the pooled transaction, because that is the one {@code GetPooledTransactions} will
+   * serve, and the size in a {@code NewPooledTransactionHashes} announcement has to match it.
+   *
+   * @param result the validation result
+   * @param pooledTransaction the transaction as pooled, which is the submitted transaction when no
+   *     pre-processing applied, or when the transaction was not added at all
+   */
+  private record AdditionOutcome(
+      ValidationResult<TransactionInvalidReason> result, Transaction pooledTransaction) {}
+
+  private AdditionOutcome addTransaction(
       final Transaction baseTransaction,
       final boolean isLocal,
       final boolean hasPriority,
@@ -239,7 +278,8 @@ public class TransactionPool implements BlockAddedObserver {
           .log();
       // We already have this transaction, don't even validate it.
       metrics.incrementRejected(isLocal, hasPriority, TRANSACTION_ALREADY_KNOWN, "txpool");
-      return ValidationResult.invalid(TRANSACTION_ALREADY_KNOWN);
+      return new AdditionOutcome(
+          ValidationResult.invalid(TRANSACTION_ALREADY_KNOWN), baseTransaction);
     }
 
     // Apply any necessary fork related pre-processing before submitting the transaction to the pool
@@ -277,7 +317,7 @@ public class TransactionPool implements BlockAddedObserver {
             .addArgument(rejectReason)
             .log();
         metrics.incrementRejected(isLocal, hasPriority, rejectReason, "txpool");
-        return ValidationResult.invalid(rejectReason);
+        return new AdditionOutcome(ValidationResult.invalid(rejectReason), transaction);
       }
     } else {
       LOG.atTrace()
@@ -290,7 +330,7 @@ public class TransactionPool implements BlockAddedObserver {
           isLocal, hasPriority, validationResult.result.getInvalidReason(), "txpool");
     }
 
-    return validationResult.result;
+    return new AdditionOutcome(validationResult.result, transaction);
   }
 
   private Optional<Wei> getMaxGasPrice(final Transaction transaction) {
@@ -418,6 +458,17 @@ public class TransactionPool implements BlockAddedObserver {
       return ValidationResultAndAccount.invalid(CHAIN_HEAD_NOT_AVAILABLE);
     }
 
+    final int txSizeForBlockInclusion = transaction.getSizeForBlockInclusion();
+    if (txSizeForBlockInclusion > configuration.getTxPoolMaxTxBytes()) {
+      LOG.atDebug()
+          .setMessage("rejecting transaction {} with {} bytes > max tx bytes of {}")
+          .addArgument(transaction::getHash)
+          .addArgument(txSizeForBlockInclusion)
+          .addArgument(configuration::getTxPoolMaxTxBytes)
+          .log();
+      return ValidationResultAndAccount.invalid(EXCEEDS_MAX_TX_BYTES);
+    }
+
     final FeeMarket feeMarket =
         protocolSchedule.getByBlockHeader(chainHeadBlockHeader).getFeeMarket();
     final TransactionInvalidReason priceInvalidReason =
@@ -505,8 +556,14 @@ public class TransactionPool implements BlockAddedObserver {
       final FeeMarket feeMarket) {
 
     if (isLocal) {
+      // Local (RPC) fee cap
       if (!configuration.getTxFeeCap().isZero()
           && getMaxGasPrice(transaction).get().greaterThan(configuration.getTxFeeCap())) {
+        return TransactionInvalidReason.TX_FEECAP_EXCEEDED;
+      }
+    } else {
+      // Remote (P2P) fee cap
+      if (getMaxGasPrice(transaction).get().greaterThan(configuration.getP2pTxFeeCap())) {
         return TransactionInvalidReason.TX_FEECAP_EXCEEDED;
       }
     }
@@ -652,7 +709,7 @@ public class TransactionPool implements BlockAddedObserver {
       pendingTransactionsListenersProxy.subscribe();
       isPoolEnabled.set(true);
       subscribeConnectId =
-          OptionalLong.of(silContext.getSilPeers().subscribeConnect(this::handleConnect));
+          OptionalLong.of(silContext.getEthPeers().subscribeConnect(this::handleConnect));
       return saveRestoreManager
           .loadFromDisk()
           .whenComplete(
@@ -683,7 +740,7 @@ public class TransactionPool implements BlockAddedObserver {
   public CompletableFuture<Void> setDisabled() {
     if (isEnabled()) {
       isPoolEnabled.set(false);
-      subscribeConnectId.ifPresent(silContext.getSilPeers()::unsubscribeConnect);
+      subscribeConnectId.ifPresent(silContext.getEthPeers()::unsubscribeConnect);
       pendingTransactionsListenersProxy.unsubscribe();
       mapOfBlobsInTransactionPool.clear();
       final CompletableFuture<Void> saveOperation =
@@ -732,6 +789,20 @@ public class TransactionPool implements BlockAddedObserver {
       // do nothing
     }
     return cacheForBlobsOfTransactionsAddedToABlock.get(vh);
+  }
+
+  /**
+   * The CL's current blob custody column set, as last reported via {@code
+   * engine_forkchoiceUpdatedV4}'s {@code custodyColumns} parameter.
+   *
+   * @return the 16-byte custody bitarray, or empty if the CL has never reported one.
+   */
+  public Optional<Bytes> getBlobCustodyColumns() {
+    return Optional.ofNullable(blobCustodyColumns.get());
+  }
+
+  public void updateBlobCustodyColumns(final Bytes custodyColumns) {
+    blobCustodyColumns.set(custodyColumns);
   }
 
   public boolean isEnabled() {
@@ -957,7 +1028,7 @@ public class TransactionPool implements BlockAddedObserver {
                                   EncodingContext.POOLED_TRANSACTION);
                           final boolean hasPriority = isPriorityTransaction(tx, isLocal);
                           final ValidationResult<TransactionInvalidReason> result =
-                              addTransaction(tx, isLocal, hasPriority, score);
+                              addTransaction(tx, isLocal, hasPriority, score).result();
                           return result.isValid() ? "OK" : result.getInvalidReason().name();
                         })
                     .collect(Collectors.groupingBy(Function.identity(), Collectors.counting()));

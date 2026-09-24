@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.web3j.protocol.core.methods.response.SilGetTransactionReceipt;
+import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
 import org.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class SilGetTransactionReceiptTransaction
@@ -37,7 +37,7 @@ public class SilGetTransactionReceiptTransaction
   @Override
   public Optional<TransactionReceipt> execute(final NodeRequests node) {
     try {
-      final SilGetTransactionReceipt result = node.sil().silGetTransactionReceipt(input).send();
+      final EthGetTransactionReceipt result = node.sil().ethGetTransactionReceipt(input).send();
       assertThat(result.hasError()).isFalse();
       return result.getTransactionReceipt();
     } catch (final IOException e) {

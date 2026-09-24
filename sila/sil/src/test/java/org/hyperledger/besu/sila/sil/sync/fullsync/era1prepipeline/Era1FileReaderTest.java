@@ -16,7 +16,7 @@ package org.hyperledger.besu.sila.sil.sync.fullsync.era1prepipeline;
 
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -34,7 +34,7 @@ public class Era1FileReaderTest {
   @BeforeEach
   public void beforeTest() {
     era1FileReader =
-        new Era1FileReader(new SilaMainnetBlockHeaderFunctions(), new DeterministicSilScheduler());
+        new Era1FileReader(new SilaMainnetBlockHeaderFunctions(), new DeterministicEthScheduler());
   }
 
   @Test
@@ -43,7 +43,7 @@ public class Era1FileReaderTest {
     final URI testFileUri =
         Era1FileSourceTest.class
             .getClassLoader()
-            .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+            .getResource("mainnet-00000-5ec1ffb8.era1")
             .toURI();
     CompletableFuture<List<Block>> result = era1FileReader.apply(testFileUri);
 
@@ -57,7 +57,7 @@ public class Era1FileReaderTest {
   @Test
   public void testApplyForHttpsUrl() throws ExecutionException, InterruptedException {
     final URI testFileUri =
-        URI.create("https://sila-mainnet.era1.nimbus.team/sila-mainnet-00000-5ec1ffb8.era1");
+        URI.create("https://mainnet.era1.nimbus.team/mainnet-00000-5ec1ffb8.era1");
     CompletableFuture<List<Block>> result = era1FileReader.apply(testFileUri);
 
     Assertions.assertTrue(result.isDone());

@@ -35,7 +35,7 @@ import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
 import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStoragePrefixedKeyBlockchainStorage;
 import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 
 import java.math.BigInteger;
@@ -60,7 +60,7 @@ public class ExecutionContextTestFixture {
       final KeyValueStorage variablesKeyValueStorage,
       final Optional<DataStorageFormat> dataStorageFormat) {
     final GenesisState genesisState =
-        GenesisState.fromConfig(genesisConfig, protocolSchedule, new PathBasedCodeCache());
+        GenesisState.fromConfig(genesisConfig, protocolSchedule, new BonsaiCodeCache());
     this.genesis = genesisState.getBlock();
     this.blockchainKeyValueStorage = blockchainKeyValueStorage;
     this.variablesKeyValueStorage = variablesKeyValueStorage;
@@ -88,7 +88,7 @@ public class ExecutionContextTestFixture {
   }
 
   public static ExecutionContextTestFixture create() {
-    return new Builder(GenesisConfig.sila - mainnet()).build();
+    return new Builder(GenesisConfig.silaMainnet()).build();
   }
 
   public static Builder builder(final GenesisConfig genesisConfig) {

@@ -130,7 +130,7 @@ public class TransactionReceiptEncodingConfigurationTest {
     input.enterList();
     final Bytes firstField = input.readBytes();
 
-    if (encodingOptions.isWithSil69Receipt()) {
+    if (encodingOptions.isWithEth69Receipt()) {
       assertThat(firstField)
           .as(
               "sil69 includes the tx type, and frontier type must be encoded as empty string (0x80)")

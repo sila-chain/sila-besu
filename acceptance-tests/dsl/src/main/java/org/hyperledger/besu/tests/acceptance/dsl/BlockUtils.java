@@ -27,7 +27,7 @@ import java.math.BigInteger;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
-import org.web3j.protocol.core.methods.response.SilBlock.Block;
+import org.web3j.protocol.core.methods.response.EthBlock.Block;
 
 public class BlockUtils {
 

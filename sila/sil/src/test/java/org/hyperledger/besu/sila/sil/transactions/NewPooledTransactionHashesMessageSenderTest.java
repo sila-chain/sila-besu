@@ -37,7 +37,7 @@ import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.messages.NewPooledTransactionHashesMessage;
 import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.Arrays;
 import java.util.HashSet;
@@ -52,7 +52,7 @@ import org.mockito.ArgumentCaptor;
 
 public class NewPooledTransactionHashesMessageSenderTest {
   private final SilPeers silPeers = mock(SilPeers.class);
-  private final SilScheduler silScheduler = new DeterministicSilScheduler();
+  private final SilScheduler silScheduler = new DeterministicEthScheduler();
 
   private final SilPeer peer1 = mock(SilPeer.class);
   private final SilPeer peer2 = mock(SilPeer.class);

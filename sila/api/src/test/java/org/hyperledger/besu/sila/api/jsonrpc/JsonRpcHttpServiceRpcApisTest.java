@@ -25,7 +25,7 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
@@ -63,7 +63,7 @@ import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -246,7 +246,7 @@ public class JsonRpcHttpServiceRpcApisTest {
                 mock(ApiConfiguration.class),
                 Optional.empty(),
                 mock(TransactionSimulator.class),
-                new DeterministicSilScheduler());
+                new DeterministicEthScheduler());
     final JsonRpcHttpService jsonRpcHttpService =
         new JsonRpcHttpService(
             vertx,
@@ -381,7 +381,7 @@ public class JsonRpcHttpServiceRpcApisTest {
                 mock(ApiConfiguration.class),
                 Optional.empty(),
                 mock(TransactionSimulator.class),
-                new DeterministicSilScheduler());
+                new DeterministicEthScheduler());
     final JsonRpcHttpService jsonRpcHttpService =
         new JsonRpcHttpService(
             vertx,

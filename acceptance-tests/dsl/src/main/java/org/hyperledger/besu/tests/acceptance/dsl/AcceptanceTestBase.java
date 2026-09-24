@@ -68,7 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Superlass for acceptance tests. For now (transition to junit5 is ongoing) this class supports
+ * Superclass for acceptance tests. For now (transition to junit5 is ongoing) this class supports
  * junit4 format.
  */
 @ExtendWith(AcceptanceTestBaseTestWatcher.class)
@@ -142,7 +142,8 @@ public class AcceptanceTestBase {
 
   @AfterEach
   public void tearDownAcceptanceTestBase() {
-    reportMemory();
+    // commented by default, since it is quite verbose, uncomment if needed for debugging
+    // reportMemory();
     cluster.close();
   }
 

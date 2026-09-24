@@ -184,7 +184,7 @@ public class Endpoint {
     }
     final int udpPort = in.readIntScalar();
 
-    // Some sila-mainnet packets have been shown to either not have the TCP port field at all,
+    // Some mainnet packets have been shown to either not have the TCP port field at all,
     // or to have an RLP NULL value for it.
     Optional<Integer> tcpPort = Optional.empty();
     if (fieldCount == 3) {

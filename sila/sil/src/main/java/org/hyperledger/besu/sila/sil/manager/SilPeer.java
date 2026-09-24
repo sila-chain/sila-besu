@@ -139,11 +139,11 @@ public class SilPeer implements Comparable<SilPeer> {
     this.requestManagers = new ConcurrentHashMap<>();
     this.localNodeId = localNodeId;
     this.id = connection.getPeer().getId();
-    initSilRequestManagers();
+    initEthRequestManagers();
     initSnapRequestManagers();
   }
 
-  private void initSilRequestManagers() {
+  private void initEthRequestManagers() {
     // sil protocol
     requestManagers.put(
         SilProtocol.NAME,
@@ -204,7 +204,9 @@ public class SilPeer implements Comparable<SilPeer> {
 
   public void recordRequestTimeout(final String protocolName, final int requestCode) {
     LOG.atDebug()
-        .setMessage("Timed out while waiting for response from peer {}")
+        .setMessage("Timed out while waiting for response to {}/{} from peer {}")
+        .addArgument(protocolName)
+        .addArgument(requestCode)
         .addArgument(this::getLoggableId)
         .log();
     LOG.trace("Timed out while waiting for response from peer {}", this);

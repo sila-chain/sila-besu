@@ -20,6 +20,7 @@ import static org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider.cre
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
 import static org.mockito.Mockito.doReturn;
+import static org.mockito.Mockito.never;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
@@ -29,11 +30,13 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.exception.StorageException;
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.BlockProcessingOutputs;
 import org.hyperledger.besu.sila.BlockProcessingResult;
 import org.hyperledger.besu.sila.BlockValidator;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.chain.BadBlockCause;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
@@ -42,7 +45,6 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.referencetests.ForestReferenceTestWorldState;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
@@ -66,10 +68,16 @@ import java.util.Collections;
 import java.util.List;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutionException;
+import java.util.concurrent.CopyOnWriteArrayList;
 import java.util.concurrent.TimeUnit;
 
 import jakarta.validation.constraints.NotNull;
+import org.apache.logging.log4j.Level;
+import org.apache.logging.log4j.LogManager;
+import org.apache.logging.log4j.core.LogEvent;
+import org.apache.logging.log4j.core.Logger;
+import org.apache.logging.log4j.core.appender.AbstractAppender;
+import org.apache.logging.log4j.core.config.Property;
 import org.apache.tuweni.bytes.Bytes;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -97,7 +105,6 @@ public class BackwardSyncContextTest {
   private BackwardSyncContext context;
 
   private MutableBlockchain remoteBlockchain;
-  private RespondingSilPeer peer;
   private MutableBlockchain localBlockchain;
   private static final BlockDataGenerator blockDataGenerator = new BlockDataGenerator();
 
@@ -117,6 +124,8 @@ public class BackwardSyncContextTest {
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   private ProtocolContext protocolContext;
+
+  private final BadBlockManager badBlockManager = new BadBlockManager();
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   private MetricsSystem metricsSystem;
@@ -158,15 +167,16 @@ public class BackwardSyncContextTest {
       }
     }
     when(protocolContext.getBlockchain()).thenReturn(localBlockchain);
+    when(protocolContext.getBadBlockManager()).thenReturn(badBlockManager);
     SilProtocolManager silProtocolManager =
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
             .setPeerTaskExecutor(peerTaskExecutor)
-            .setSilScheduler(new SilScheduler(1, 1, 1, metricsSystem))
+            .setEthScheduler(new SilScheduler(1, 1, 1, metricsSystem))
             .build();
 
-    peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager);
+    SilProtocolManagerTestUtil.createPeer(silProtocolManager);
     SilContext silContext = silProtocolManager.silContext();
 
     when(blockValidator.validateAndProcessBlock(any(), any(), any(), any()))
@@ -211,10 +221,61 @@ public class BackwardSyncContextTest {
 
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetHeadersFromPeerTask.class)))
         .thenAnswer(
-            new GetHeadersFromPeerTaskExecutorAnswer(remoteBlockchain, silContext.getSilPeers()));
+            new GetHeadersFromPeerTaskExecutorAnswer(remoteBlockchain, silContext.getEthPeers()));
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetBodiesFromPeerTask.class)))
         .thenAnswer(
-            new GetBodiesFromPeerTaskExecutorAnswer(remoteBlockchain, silContext.getSilPeers()));
+            new GetBodiesFromPeerTaskExecutorAnswer(remoteBlockchain, silContext.getEthPeers()));
+  }
+
+  @Test
+  public void shouldWarnOncePerBlockWhenParentWorldStateIsUnavailable() {
+    final Block block = remoteBlockchain.getBlockByNumber(LOCAL_HEIGHT + 1).orElseThrow();
+    final Block otherBlock = remoteBlockchain.getBlockByNumber(LOCAL_HEIGHT + 2).orElseThrow();
+    doReturn(blockValidator).when(context).getBlockValidatorForBlock(any());
+    doReturn(BlockProcessingResult.worldStateUnavailable("parent world state is not available"))
+        .when(blockValidator)
+        .validateAndProcessBlock(any(), any(), any(), any());
+
+    final List<LogEvent> events =
+        withLogCapture(
+            BackwardSyncContext.class,
+            () -> {
+              for (final Block attempted : List.of(block, block, block, otherBlock)) {
+                assertThatThrownBy(() -> context.saveBlock(attempted))
+                    .isInstanceOf(BackwardSyncException.class);
+              }
+            });
+
+    final List<String> warnings =
+        events.stream()
+            .filter(event -> Level.WARN.equals(event.getLevel()))
+            .map(event -> event.getMessage().getFormattedMessage())
+            .toList();
+    assertThat(warnings).hasSize(2);
+    assertThat(warnings.get(0)).contains(block.toLogString());
+    assertThat(warnings.get(1)).contains(otherBlock.toLogString());
+  }
+
+  @SuppressWarnings("BannedMethod")
+  private static List<LogEvent> withLogCapture(final Class<?> loggerClass, final Runnable action) {
+    final Logger logger = (Logger) LogManager.getLogger(loggerClass);
+    final List<LogEvent> events = new CopyOnWriteArrayList<>();
+    final AbstractAppender appender =
+        new AbstractAppender("test-capture", null, null, false, Property.EMPTY_ARRAY) {
+          @Override
+          public void append(final LogEvent event) {
+            events.add(event.toImmutable());
+          }
+        };
+    appender.start();
+    logger.addAppender(appender);
+    try {
+      action.run();
+    } finally {
+      logger.removeAppender(appender);
+      appender.stop();
+    }
+    return events;
   }
 
   private Block createUncle(final int i, final Hash parentHash) {
@@ -283,12 +344,12 @@ public class BackwardSyncContextTest {
             TEST_MAX_BAD_CHAIN_EVENT_ENTRIES);
 
     // with no peers, we are not ready
-    assertThat(silContextWithNoPeers.getSilPeers().peerCount()).isEqualTo(0);
+    assertThat(silContextWithNoPeers.getEthPeers().peerCount()).isEqualTo(0);
     assertThat(contextWithNoPeers.isReady()).isFalse();
 
     // add a peer
     SilProtocolManagerTestUtil.createPeer(silProtocolManagerWithNoPeers);
-    assertThat(silContextWithNoPeers.getSilPeers().peerCount()).isEqualTo(1);
+    assertThat(silContextWithNoPeers.getEthPeers().peerCount()).isEqualTo(1);
 
     // now we are ready
     assertThat(contextWithNoPeers.isReady()).isTrue();
@@ -310,17 +371,35 @@ public class BackwardSyncContextTest {
   }
 
   @Test
-  public void shouldNotSyncUntilHashWhenNotInSync() {
+  public void shouldQueueHashForSyncWhenNotReady() throws Exception {
     doReturn(false).when(context).isReady();
+    when(backwardSyncAlgorithmFactory.createBackwardSyncAlgorithm(context))
+        .thenReturn(backwardSyncAlgorithm);
+    when(backwardSyncAlgorithm.executeBackwardsSync(null))
+        .thenReturn(CompletableFuture.completedFuture(null));
+
     final Hash hash = getRemoteBlockByNumber(REMOTE_HEIGHT).getHash();
     final CompletableFuture<Void> future = context.syncBackwardsUntil(hash);
 
-    respondUntilFutureIsDone(future);
+    future.orTimeout(30, TimeUnit.SECONDS);
+    future.get();
 
-    assertThatThrownBy(future::get)
-        .isInstanceOf(ExecutionException.class)
-        .hasMessageContaining("Backward sync is not ready");
-    assertThat(backwardChain.getFirstHashToAppend()).isEmpty();
+    assertThat(backwardChain.getFirstHashToAppend()).contains(hash);
+  }
+
+  @Test
+  public void shouldKeepOnlyLatestHashQueuedWhileNotReady() {
+    doReturn(false).when(context).isReady();
+    when(backwardSyncAlgorithmFactory.createBackwardSyncAlgorithm(context))
+        .thenReturn(backwardSyncAlgorithm);
+    when(backwardSyncAlgorithm.executeBackwardsSync(null)).thenReturn(new CompletableFuture<>());
+
+    final Hash firstHash = getRemoteBlockByNumber(REMOTE_HEIGHT - 1).getHash();
+    final Hash latestHash = getRemoteBlockByNumber(REMOTE_HEIGHT).getHash();
+    context.syncBackwardsUntil(firstHash);
+    context.syncBackwardsUntil(latestHash);
+
+    assertThat(backwardChain.getHashesToAppend()).containsExactly(latestHash);
   }
 
   @Test
@@ -359,13 +438,6 @@ public class BackwardSyncContextTest {
 
     future.get();
     assertThat(backwardChain.getTrustedBlock(higherBlock.getHash())).isEqualTo(higherBlock);
-  }
-
-  private void respondUntilFutureIsDone(final CompletableFuture<Void> future) {
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(remoteBlockchain);
-
-    peer.respondWhileOtherThreadsWork(responder, () -> !future.isDone());
   }
 
   @NotNull
@@ -453,6 +525,8 @@ public class BackwardSyncContextTest {
 
     doReturn(blockValidator).when(context).getBlockValidatorForBlock(any());
     BlockProcessingResult result = new BlockProcessingResult("custom error");
+    // the validator records an invalid block as bad
+    badBlockManager.addBadBlock(block, BadBlockCause.fromValidationFailure("custom error"));
     doReturn(result).when(blockValidator).validateAndProcessBlock(any(), any(), any(), any());
 
     assertThatThrownBy(() -> context.saveBlock(block))
@@ -462,6 +536,30 @@ public class BackwardSyncContextTest {
     verify(badChainListener)
         .onBadChain(
             block, Collections.emptyList(), List.of(childBlockHeader, grandChildBlockHeader));
+  }
+
+  @Test
+  public void shouldNotEmitBadChainEventWhenFailedBlockIsNotRecordedAsBad() {
+    Block block = Mockito.mock(Block.class);
+    BlockHeader blockHeader = Mockito.mock(BlockHeader.class);
+    when(block.getHash()).thenReturn(Hash.fromHexStringLenient("0x42"));
+    when(blockHeader.getHash()).thenReturn(Hash.fromHexStringLenient("0x42"));
+    BadChainListener badChainListener = Mockito.mock(BadChainListener.class);
+    context.subscribeBadChainListener(badChainListener);
+
+    backwardChain.clear();
+    backwardChain.prependAncestorsHeader(
+        remoteBlockchain.getBlockByNumber(LOCAL_HEIGHT + 1).get().getHeader());
+    backwardChain.prependAncestorsHeader(blockHeader);
+
+    doReturn(blockValidator).when(context).getBlockValidatorForBlock(any());
+    BlockProcessingResult result =
+        new BlockProcessingResult(Optional.empty(), new StorageException("database bedlam"));
+    doReturn(result).when(blockValidator).validateAndProcessBlock(any(), any(), any(), any());
+
+    assertThatThrownBy(() -> context.saveBlock(block)).isInstanceOf(BackwardSyncException.class);
+
+    verify(badChainListener, never()).onBadChain(any(), any(), any());
   }
 
   @Test
@@ -483,6 +581,8 @@ public class BackwardSyncContextTest {
 
     doReturn(blockValidator).when(context).getBlockValidatorForBlock(any());
     BlockProcessingResult result = new BlockProcessingResult("custom error");
+    // the validator records an invalid block as bad
+    badBlockManager.addBadBlock(block, BadBlockCause.fromValidationFailure("custom error"));
     doReturn(result).when(blockValidator).validateAndProcessBlock(any(), any(), any(), any());
 
     assertThatThrownBy(() -> context.saveBlock(block))
@@ -518,6 +618,8 @@ public class BackwardSyncContextTest {
 
     doReturn(blockValidator).when(context).getBlockValidatorForBlock(any());
     BlockProcessingResult result = new BlockProcessingResult("custom error");
+    // the validator records an invalid block as bad
+    badBlockManager.addBadBlock(block, BadBlockCause.fromValidationFailure("custom error"));
     doReturn(result).when(blockValidator).validateAndProcessBlock(any(), any(), any(), any());
 
     assertThatThrownBy(() -> context.saveBlock(block))

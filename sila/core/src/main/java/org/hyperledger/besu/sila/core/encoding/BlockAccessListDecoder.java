@@ -17,7 +17,6 @@ package org.hyperledger.besu.sila.core.encoding;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.AccountChanges;
@@ -53,33 +52,33 @@ public final class BlockAccessListDecoder {
           acctIn.readList(
               scIn -> {
                 scIn.enterList();
-                StorageSlotKey slot = new StorageSlotKey(UInt256.fromBytes(scIn.readBytes()));
+                StorageSlotKey slot = new StorageSlotKey(scIn.readUInt256Scalar());
                 List<StorageChange> changes =
                     scIn.readList(
                         changeIn -> {
                           changeIn.enterList();
                           long txIndex = changeIn.readUnsignedIntScalar();
-                          UInt256 newVal = UInt256.fromBytes(changeIn.readBytes());
+                          UInt256 newVal = changeIn.readUInt256Scalar();
                           changeIn.leaveList();
                           return new StorageChange(txIndex, newVal);
                         });
-                if (changes.isEmpty()) {
-                  throw new RLPException(
-                      "Block access list slot changes must contain at least one storage change");
-                }
+                // An empty change list is well-formed RLP. The SIP-7928 "at least one storage
+                // change" rule is left to SilaMainnetBlockAccessListValidator, so the block comes
+                // back
+                // INVALID instead of engine_newPayload failing on invalid params.
                 scIn.leaveList();
                 return new SlotChanges(slot, changes);
               });
 
       List<SlotRead> reads =
-          acctIn.readList(r -> new SlotRead(new StorageSlotKey(UInt256.fromBytes(r.readBytes()))));
+          acctIn.readList(r -> new SlotRead(new StorageSlotKey(r.readUInt256Scalar())));
 
       List<BalanceChange> balances =
           acctIn.readList(
               bcIn -> {
                 bcIn.enterList();
                 long txIndex = bcIn.readUnsignedIntScalar();
-                Wei postBalance = Wei.of(UInt256.fromBytes(bcIn.readBytes()));
+                Wei postBalance = Wei.of(bcIn.readUInt256Scalar());
                 bcIn.leaveList();
                 return new BalanceChange(txIndex, postBalance);
               });

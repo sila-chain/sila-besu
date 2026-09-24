@@ -27,7 +27,6 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogLayer;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt256;
@@ -54,7 +53,7 @@ public class TrieLogFactoryTests {
           .addAccountChange(
               accountFixture,
               null,
-              new PmtStateTrieAccountValue(0, Wei.fromSil(1), Hash.EMPTY, Hash.EMPTY))
+              new PmtStateTrieAccountValue(0, Wei.fromEth(1), Hash.EMPTY, Hash.EMPTY))
           .addCodeChange(
               Address.ZERO,
               null,

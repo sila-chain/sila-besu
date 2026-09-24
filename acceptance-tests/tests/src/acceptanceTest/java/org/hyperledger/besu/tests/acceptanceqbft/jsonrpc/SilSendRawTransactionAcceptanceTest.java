@@ -63,7 +63,7 @@ public class SilSendRawTransactionAcceptanceTest extends AcceptanceTestBase {
     final String rawTx = tx.signedTransactionData();
     final String txHash = tx.transactionHash();
 
-    lenientNode.verify(sil.expectSuccessfulSilRawTransaction(rawTx));
+    lenientNode.verify(sil.expectSuccessfulEthRawTransaction(rawTx));
 
     // Tx should be included on-chain
     miningNode.verify(sil.expectSuccessfulTransactionReceipt(txHash));
@@ -74,13 +74,13 @@ public class SilSendRawTransactionAcceptanceTest extends AcceptanceTestBase {
     final TransferTransaction tx = createTransactionWithoutChainId();
     final String rawTx = tx.signedTransactionData();
 
-    strictNode.verify(sil.expectSilSendRawTransactionException(rawTx, "ChainId is required"));
+    strictNode.verify(sil.expectEthSendRawTransactionException(rawTx, "ChainId is required"));
   }
 
   @Test
   public void shouldFailToSendWithInvalidRlp() {
     final String invalidRawTx = "0x5555";
-    strictNode.verify(sil.expectSilSendRawTransactionException(invalidRawTx, "Invalid params"));
+    strictNode.verify(sil.expectEthSendRawTransactionException(invalidRawTx, "Invalid params"));
   }
 
   @Test
@@ -89,7 +89,7 @@ public class SilSendRawTransactionAcceptanceTest extends AcceptanceTestBase {
     final String rawTx = tx.signedTransactionData();
     final String txHash = tx.transactionHash();
 
-    lenientNode.verify(sil.expectSuccessfulSilRawTransaction(rawTx));
+    lenientNode.verify(sil.expectSuccessfulEthRawTransaction(rawTx));
     // Tx should be included on-chain
     miningNode.verify(sil.expectSuccessfulTransactionReceipt(txHash));
   }
@@ -100,7 +100,7 @@ public class SilSendRawTransactionAcceptanceTest extends AcceptanceTestBase {
     final String rawTx = tx.signedTransactionData();
     final String txHash = tx.transactionHash();
 
-    strictNode.verify(sil.expectSuccessfulSilRawTransaction(rawTx));
+    strictNode.verify(sil.expectSuccessfulEthRawTransaction(rawTx));
     // Tx should be included on-chain
     miningNode.verify(sil.expectSuccessfulTransactionReceipt(txHash));
   }

@@ -99,7 +99,7 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
 import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.Subscribers;
 
@@ -336,13 +336,15 @@ public class TestContextBuilder {
         IbftProtocolScheduleBuilder.create(
             genesisConfigOptions,
             forksSchedule,
+            false,
             IBFT_EXTRA_DATA_ENCODER,
             SavmConfiguration.DEFAULT,
             MiningConfiguration.MINING_DISABLED,
             new BadBlockManager(),
             false,
             BalConfiguration.DEFAULT,
-            new NoOpMetricsSystem());
+            new NoOpMetricsSystem(),
+            Long.MAX_VALUE);
 
     /////////////////////////////////////////////////////////////////////////////////////
     // From here down is BASICALLY taken from IbftBesuController
@@ -368,7 +370,7 @@ public class TestContextBuilder {
             poolConf, clock, metricsSystem, blockChain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -383,7 +385,7 @@ public class TestContextBuilder {
 
     transactionPool.setEnabled();
 
-    final SilScheduler silScheduler = new DeterministicSilScheduler();
+    final SilScheduler silScheduler = new DeterministicEthScheduler();
 
     final Address localAddress = Util.publicKeyToAddress(nodeKey.getPublicKey());
     final BftBlockCreatorFactory<?> blockCreatorFactory =

@@ -28,7 +28,7 @@ import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.ProtocolScheduleFixture;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
@@ -68,7 +68,7 @@ public class FullSyncTargetManagerTest {
 
   private MutableBlockchain localBlockchain;
   private final WorldStateArchive localWorldState = mock(WorldStateArchive.class);
-  private RespondingSilPeer.Responder responder;
+  private RespondingEthPeer.Responder responder;
   private FullSyncTargetManager syncTargetManager;
   private PeerTaskExecutor peerTaskExecutor;
 
@@ -83,7 +83,7 @@ public class FullSyncTargetManagerTest {
   public void setup(final DataStorageFormat storageFormat) {
     final BlockchainSetupUtil otherBlockchainSetup = BlockchainSetupUtil.forTesting(storageFormat);
     final Blockchain otherBlockchain = otherBlockchainSetup.getBlockchain();
-    responder = RespondingSilPeer.blockchainResponder(otherBlockchain);
+    responder = RespondingEthPeer.blockchainResponder(otherBlockchain);
 
     final BlockchainSetupUtil localBlockchainSetup = BlockchainSetupUtil.forTesting(storageFormat);
     localBlockchain = localBlockchainSetup.getBlockchain();
@@ -99,10 +99,10 @@ public class FullSyncTargetManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(localBlockchainSetup.getWorldArchive())
             .setTransactionPool(localBlockchainSetup.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     final SilContext silContext = silProtocolManager.silContext();
@@ -120,7 +120,7 @@ public class FullSyncTargetManagerTest {
     when(peerTaskExecutor.executeAgainstPeer(
             Mockito.any(GetHeadersFromPeerTask.class), Mockito.any(SilPeer.class)))
         .thenAnswer(
-            new GetHeadersFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getSilPeers()));
+            new GetHeadersFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getEthPeers()));
   }
 
   @AfterEach
@@ -139,7 +139,7 @@ public class FullSyncTargetManagerTest {
     when(localWorldState.isWorldStateAvailable(
             chainHeadHeader.getStateRoot(), chainHeadHeader.getHash()))
         .thenReturn(true);
-    final RespondingSilPeer bestPeer =
+    final RespondingEthPeer bestPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, Difficulty.MAX_VALUE, 4);
     Mockito.reset(peerTaskExecutor);
     Mockito.when(
@@ -149,13 +149,13 @@ public class FullSyncTargetManagerTest {
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(localBlockchain.getBlockHeader(4L).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(bestPeer.getSilPeer())));
+                List.of(bestPeer.getEthPeer())));
 
     final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget();
 
     SyncTarget resultSyncTarget = result.get(5, TimeUnit.SECONDS);
     assertThat(resultSyncTarget)
-        .isEqualTo(new SyncTarget(bestPeer.getSilPeer(), localBlockchain.getBlockHeader(4L).get()));
+        .isEqualTo(new SyncTarget(bestPeer.getEthPeer(), localBlockchain.getBlockHeader(4L).get()));
   }
 
   @ParameterizedTest
@@ -166,7 +166,7 @@ public class FullSyncTargetManagerTest {
     when(localWorldState.isWorldStateAvailable(
             chainHeadHeader.getStateRoot(), chainHeadHeader.getHash()))
         .thenReturn(true);
-    final RespondingSilPeer bestPeer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
+    final RespondingEthPeer bestPeer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0);
 
     final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget();
     bestPeer.respond(responder);
@@ -183,7 +183,7 @@ public class FullSyncTargetManagerTest {
     when(localWorldState.isWorldStateAvailable(
             chainHeadHeader.getStateRoot(), chainHeadHeader.getHash()))
         .thenReturn(false);
-    final RespondingSilPeer bestPeer =
+    final RespondingEthPeer bestPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 20);
 
     final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget();
@@ -205,7 +205,7 @@ public class FullSyncTargetManagerTest {
     when(localWorldState.isWorldStateAvailable(
             chainHeadHeader.getStateRoot(), chainHeadHeader.getHash()))
         .thenReturn(true);
-    final RespondingSilPeer bestPeer =
+    final RespondingEthPeer bestPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 20);
 
     final CompletableFuture<SyncTarget> result = syncTargetManager.findSyncTarget();
@@ -213,7 +213,7 @@ public class FullSyncTargetManagerTest {
     SyncTarget resultSyncTarget = result.get(1, TimeUnit.SECONDS);
 
     assertThat(resultSyncTarget)
-        .isEqualTo(new SyncTarget(bestPeer.getSilPeer(), localBlockchain.getChainHeadHeader()));
+        .isEqualTo(new SyncTarget(bestPeer.getEthPeer(), localBlockchain.getChainHeadHeader()));
     assertThat(bestPeer.getPeerConnection().isDisconnected()).isFalse();
   }
 }

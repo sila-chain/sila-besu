@@ -24,7 +24,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.SilGetBalance;
+import org.web3j.protocol.core.methods.response.EthGetBalance;
 
 public class SilGetBalanceTransaction implements Transaction<BigInteger> {
 
@@ -37,7 +37,7 @@ public class SilGetBalanceTransaction implements Transaction<BigInteger> {
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      final SilGetBalance result = node.sil().silGetBalance(account.getAddress(), LATEST).send();
+      final EthGetBalance result = node.sil().ethGetBalance(account.getAddress(), LATEST).send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
 

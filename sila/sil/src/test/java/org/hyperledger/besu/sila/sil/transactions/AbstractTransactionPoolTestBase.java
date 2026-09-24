@@ -79,7 +79,7 @@ import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.sila.util.TrustedSetupClassLoaderExtension;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -111,7 +111,7 @@ public abstract class AbstractTransactionPoolTestBase extends TrustedSetupClassL
   protected static final Wei BASE_FEE_FLOOR = Wei.of(7L);
   protected static final Wei DEFAULT_MIN_GAS_PRICE = Wei.of(50L);
 
-  protected final SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected final SilScheduler silScheduler = new DeterministicEthScheduler();
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   protected TransactionValidatorFactory transactionValidatorFactory;
@@ -243,7 +243,7 @@ public abstract class AbstractTransactionPoolTestBase extends TrustedSetupClassL
     peerTransactionTracker =
         new PeerTransactionTracker(
             TransactionPoolConfiguration.DEFAULT,
-            silContext.getSilPeers(),
+            silContext.getEthPeers(),
             silContext.getScheduler());
     transactionBroadcaster =
         spy(

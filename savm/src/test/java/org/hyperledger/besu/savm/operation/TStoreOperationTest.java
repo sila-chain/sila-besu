@@ -19,7 +19,7 @@ import static org.hyperledger.besu.savm.frame.ExceptionalHaltReason.INSUFFICIENT
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.frame.BlockValues;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
@@ -567,7 +567,7 @@ class TStoreOperationTest {
       final int numberOfIterations) {
 
     TestCodeExecutor codeExecutor =
-        new TestCodeExecutor(SilaMainnetSAVMs.cancun(SavmConfiguration.DEFAULT));
+        new TestCodeExecutor(SilaMainnetEVMs.cancun(SavmConfiguration.DEFAULT));
 
     // Pre-deploy the contract if it's specified
     WorldUpdater worldUpdater =

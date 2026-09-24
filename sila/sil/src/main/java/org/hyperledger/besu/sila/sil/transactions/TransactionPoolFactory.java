@@ -64,7 +64,7 @@ public class TransactionPoolFactory {
 
     final PeerTransactionTracker transactionTracker =
         new PeerTransactionTracker(
-            transactionPoolConfiguration, silContext.getSilPeers(), silContext.getScheduler());
+            transactionPoolConfiguration, silContext.getEthPeers(), silContext.getScheduler());
     final TransactionsMessageSender transactionsMessageSender =
         new TransactionsMessageSender(
             transactionTracker, silProtocolConfiguration.getMaxTransactionsMessageSize());
@@ -237,15 +237,15 @@ public class TransactionPoolFactory {
       final TransactionPool transactionPool,
       final TransactionsMessageHandler transactionsMessageHandler,
       final NewPooledTransactionHashesMessageHandler pooledTransactionsMessageHandler) {
-    silContext.getSilPeers().subscribeConnect(transactionTracker);
-    silContext.getSilPeers().subscribeDisconnect(transactionTracker);
+    silContext.getEthPeers().subscribeConnect(transactionTracker);
+    silContext.getEthPeers().subscribeDisconnect(transactionTracker);
     protocolContext.getBlockchain().observeBlockAdded(transactionPool);
     protocolContext.getBlockchain().observeBlockAdded(transactionTracker);
     silContext
-        .getSilMessages()
+        .getEthMessages()
         .subscribe(SilProtocolMessages.TRANSACTIONS, transactionsMessageHandler);
     silContext
-        .getSilMessages()
+        .getEthMessages()
         .subscribe(
             SilProtocolMessages.NEW_POOLED_TRANSACTION_HASHES, pooledTransactionsMessageHandler);
   }
@@ -382,6 +382,6 @@ public class TransactionPoolFactory {
     }
 
     return new LayeredPendingTransactions(
-        transactionPoolConfiguration, pendingTransactionsSorter, silScheduler);
+        protocolContext, transactionPoolConfiguration, pendingTransactionsSorter, silScheduler);
   }
 }

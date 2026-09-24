@@ -15,29 +15,27 @@
 package org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache;
 
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.PathBasedWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiSnapshotWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateLayerStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.PathBasedWorldStateProvider;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.cache.PathBasedWorldStateCacheManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.PathBasedWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig;
 
 import java.util.concurrent.ConcurrentHashMap;
 
 public class BonsaiWorldStateCacheManager extends PathBasedWorldStateCacheManager {
-  private final PathBasedCodeCache codeCache;
+  private final BonsaiCodeCache codeCache;
 
   public BonsaiWorldStateCacheManager(
       final BonsaiWorldStateProvider archive,
-      final PathBasedWorldStateKeyValueStorage worldStateKeyValueStorage,
+      final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage,
       final SavmConfiguration savmConfiguration,
       final WorldStateConfig worldStateConfig,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     super(
         archive,
         worldStateKeyValueStorage,
@@ -51,27 +49,25 @@ public class BonsaiWorldStateCacheManager extends PathBasedWorldStateCacheManage
   @Override
   public PathBasedWorldState createWorldState(
       final PathBasedWorldStateProvider archive,
-      final PathBasedWorldStateKeyValueStorage worldStateKeyValueStorage,
+      final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage,
       final SavmConfiguration savmConfiguration) {
     return new BonsaiWorldState(
         (BonsaiWorldStateProvider) archive,
-        (BonsaiWorldStateKeyValueStorage) worldStateKeyValueStorage,
+        worldStateKeyValueStorage,
         savmConfiguration,
         WorldStateConfig.newBuilder(worldStateConfig).build(),
         codeCache);
   }
 
   @Override
-  public PathBasedWorldStateKeyValueStorage createLayeredKeyValueStorage(
-      final PathBasedWorldStateKeyValueStorage worldStateKeyValueStorage) {
-    return new BonsaiWorldStateLayerStorage(
-        (BonsaiWorldStateKeyValueStorage) worldStateKeyValueStorage);
+  public BonsaiWorldStateKeyValueStorage createLayeredKeyValueStorage(
+      final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage) {
+    return new BonsaiWorldStateLayerStorage(worldStateKeyValueStorage);
   }
 
   @Override
-  public PathBasedWorldStateKeyValueStorage createSnapshotKeyValueStorage(
-      final PathBasedWorldStateKeyValueStorage worldStateKeyValueStorage) {
-    return new BonsaiSnapshotWorldStateKeyValueStorage(
-        (BonsaiWorldStateKeyValueStorage) worldStateKeyValueStorage);
+  public BonsaiWorldStateKeyValueStorage createSnapshotKeyValueStorage(
+      final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage) {
+    return new BonsaiSnapshotWorldStateKeyValueStorage(worldStateKeyValueStorage);
   }
 }

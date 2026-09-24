@@ -30,7 +30,7 @@ import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.Memo
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.OPTIONAL_TO_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.PAYLOAD_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.PENDING_TRANSACTION_SHALLOW_SIZE;
-import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.SIP1559_AND_SIP4844_SHALLOW_SIZE;
+import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.SIP1559_AND_EIP4844_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.calculateListShallowSize;
 
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
@@ -115,7 +115,7 @@ public class PendingTransactionEstimatedMemorySizeTest extends BaseTransactionPo
    * Field that points to constant values, for SIP-1559 and SIP-4844 pending transactions, and are
    * ignored during the calculation
    */
-  private static final Set<String> SIP1559_SIP4844_CONSTANT_FIELD_PATHS =
+  private static final Set<String> SIP1559_EIP4844_CONSTANT_FIELD_PATHS =
       Sets.union(COMMON_CONSTANT_FIELD_PATHS, Set.of(".gasPrice"));
 
   /**
@@ -490,10 +490,10 @@ public class PendingTransactionEstimatedMemorySizeTest extends BaseTransactionPo
   }
 
   @Test
-  public void baseSIP1559AndSIP4844TransactionMemorySize() {
-    Transaction txSip1559 = createSIP1559Transaction(1, KEYS1, 10);
-    assertThat(baseTransactionMemorySize(txSip1559, SIP1559_SIP4844_CONSTANT_FIELD_PATHS))
-        .isEqualTo(SIP1559_AND_SIP4844_SHALLOW_SIZE);
+  public void baseEIP1559AndEIP4844TransactionMemorySize() {
+    Transaction txEip1559 = createEIP1559Transaction(1, KEYS1, 10);
+    assertThat(baseTransactionMemorySize(txEip1559, SIP1559_EIP4844_CONSTANT_FIELD_PATHS))
+        .isEqualTo(SIP1559_AND_EIP4844_SHALLOW_SIZE);
   }
 
   @Test

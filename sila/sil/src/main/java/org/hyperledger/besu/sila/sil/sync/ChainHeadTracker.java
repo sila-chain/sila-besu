@@ -50,9 +50,9 @@ public class ChainHeadTracker {
       final Blockchain blockchain,
       final Supplier<TrailingPeerRequirements> trailingPeerRequirementsCalculator) {
     final TrailingPeerLimiter trailingPeerLimiter =
-        new TrailingPeerLimiter(silContext.getSilPeers(), trailingPeerRequirementsCalculator);
+        new TrailingPeerLimiter(silContext.getEthPeers(), trailingPeerRequirementsCalculator);
     final ChainHeadTracker tracker = new ChainHeadTracker(silContext, protocolSchedule);
-    silContext.getSilPeers().setChainHeadTracker(tracker);
+    silContext.getEthPeers().setChainHeadTracker(tracker);
     blockchain.observeBlockAdded(trailingPeerLimiter);
   }
 
