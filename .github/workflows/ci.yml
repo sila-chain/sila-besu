@@ -127,13 +127,6 @@ jobs:
               s = s.replace("eth65", "sil65")
               s = re.sub(r"\\bEthstats\\b", "Silstats", s)
               s = re.sub(r"\\bethstats\\b", "silstats", s)
-              # io.consensys.protocols:discovery is an external published dependency whose
-              # Java namespace is org.ethereum.beacon.discovery. It has no verified Sila
-              # counterpart, so shield it from generic Ethereum identity rewrites.
-              s = s.replace(
-                  "org.ethereum.beacon.discovery",
-                  "org.__SILA_KEEP_UPSTREAM_ETHEREUM__.beacon.discovery",
-              )
               repo_mappings = {
                   "github.com/besu-eth/besu": "github.com/sila-chain/sila-besu",
                   "github.com/hyperledger/besu": "github.com/sila-chain/sila-besu",
@@ -146,6 +139,7 @@ jobs:
                   "github.com/ethereum/pm": "github.com/sila-chain/sila-pm",
                   "github.com/ethereum/beacon-APIs": "github.com/sila-chain/beacon-APIs",
                   "github.com/ethereum/portal-network-specs": "github.com/sila-chain/sila-portal-network-specs",
+                  "github.com/ethereum/c-kzg-4844": "github.com/sila-chain/c-kzg-4844",
               }
               for old, new in repo_mappings.items():
                   s = s.replace(old, new)
@@ -207,10 +201,6 @@ jobs:
                   "github.com/__SILA_KEEP_UPSTREAM_ETHEREUM__/",
                   "github.com/ethereum/",
               )
-              s = s.replace(
-                  "org.__SILA_KEEP_UPSTREAM_ETHEREUM__.beacon.discovery",
-                  "org.ethereum.beacon.discovery",
-              )
               return s
 
           def path_transform(raw):
@@ -229,6 +219,9 @@ jobs:
                   elif part.startswith("mainnet."):
                       part = "sila-mainnet" + part[len("mainnet"):]
                   else:
+                      part = re.sub(r"Eth(?=[A-Z0-9])", "Sil", part)
+                      part = re.sub(r"eth(?=[A-Z0-9])", "sil", part)
+                      part = re.sub(r"(?i)^ethstats$", "silstats", part)
                       part = token_transform(part)
                   out.append(part)
               return "/".join(out)
@@ -251,36 +244,10 @@ jobs:
               except (UnicodeDecodeError, OSError):
                   continue
 
-              # Preserve independent Web3j API symbols used by the acceptance test suites.
-              # Their published Java names remain Eth*/eth* even though the local Besu-owned
-              # wrapper classes and packages are converted to Sila/Sil. Protect imported
-              # Web3j request/response types across acceptance-tests, but keep broad eth*
-              # method-call protection limited to the DSL so local Sila APIs still transform.
               protected = {}
-              if raw.startswith("acceptance-tests/") and "org.web3j" in text:
-                  external_symbols = set(
-                      re.findall(
-                          r"org\.web3j\.protocol\.core\.methods\.(?:request|response)\.([A-Z][A-Za-z0-9_]*)",
-                          text,
-                      )
-                  )
-                  if raw.startswith("acceptance-tests/dsl/"):
-                      external_symbols.update(
-                          re.findall(r"(?<=\.)(eth[A-Z][A-Za-z0-9_]*)(?=\s*\()", text)
-                      )
-                  if "org.web3j.utils.Convert" in text:
-                      external_symbols.add("ETHER")
-                  for symbol in sorted(external_symbols, key=len, reverse=True):
-                      marker = f"__W3J_KEEP_{len(protected)}__"
-                      pattern = rf"(?<![A-Za-z0-9_]){re.escape(symbol)}(?![A-Za-z0-9_])"
-                      text, replaced = re.subn(pattern, marker, text)
-                      if replaced:
-                          protected[marker] = symbol
-                  for literal in ("TransactionType.EIP1559", "Convert.Unit.ETHER"):
-                      if literal in text:
-                          marker = f"__W3J_KEEP_{len(protected)}__"
-                          text = text.replace(literal, marker)
-                          protected[marker] = literal
+              # No Ethereum-affiliated external API is protected here. If an upstream
+              # dependency has no verified Sila counterpart, the fail-closed identity
+              # gate below must stop generation rather than restore or invent an API.
 
               # Parser-safe package segments first.
               text = text.replace(".ethereum.", ".sila.")
@@ -350,13 +317,6 @@ jobs:
                   "LibGnarkSIP196": "LibGnarkEIP196",
                   "SIP196_": "EIP196_",
                   "sip196_": "eip196_",
-                  "sila.ckzg4844": "ethereum.ckzg4844",
-                  # Solidity is an external compiler authority, not a Sila-owned repository.
-                  # Keep its real release URL; never invent github.com/sila/solidity.
-                  "github.com/sila/solidity": "github.com/ethereum/solidity",
-                  # io.consensys.protocols:discovery owns this external Java API namespace.
-                  # Preserve the package published by that real dependency.
-                  "org.sila.beacon.discovery": "org.ethereum.beacon.discovery",
                   # Immutables generates this class from the renamed Sila interface.
                   "ImmutableEthProtocolConfiguration": "ImmutableSilProtocolConfiguration",
                   "ImmutableEthStatsConnectOptions": "ImmutableSilStatsConnectOptions",
@@ -368,28 +328,41 @@ jobs:
               for old, good in fixes.items():
                   new = new.replace(old, good)
 
-              # Published historical Besu artifacts and execution-spec fixtures are external
-              # compatibility authorities. Preserve their real Maven coordinates only in the
-              # dependency metadata/fixture declarations; Sila local module names stay native.
-              rel = path.as_posix()
-              if rel == "gradle/verification-metadata.xml":
-                  new = new.replace('name="besu-savm"', 'name="besu-evm"')
-                  new = new.replace('besu-savm-', 'besu-evm-')
-                  new = new.replace('name="besu-sila-rlp"', 'name="besu-ethereum-rlp"')
-                  new = new.replace('besu-sila-rlp-', 'besu-ethereum-rlp-')
-                  new = new.replace(
-                      'group="sila" name="execution-specs"',
-                      'group="ethereum" name="execution-specs"',
-                  )
-              elif rel == "sila/referencetests/build.gradle":
-                  new = new.replace(
-                      "group: 'sila', name: 'execution-specs'",
-                      "group: 'ethereum', name: 'execution-specs'",
-                  )
+              # Do not restore Ethereum-family Maven or fixture coordinates. Sila counterparts
+              # must be real and resolvable; missing counterparts are reported by the gate below.
 
               if new != text:
                   path.write_text(new, encoding="utf-8")
 
+          blockers = []
+          blocker_patterns = [
+              ("WEB3J_DEPENDENCY", re.compile(r"org\\.web3j(?=[:.])")),
+              ("ETHEREUM_JAVA_NAMESPACE", re.compile(r"org\\.ethereum(?=\\.)")),
+              ("ETHEREUM_GITHUB_AUTHORITY", re.compile(r"github\\.com/ethereum/")),
+              ("ETHEREUM_MAVEN_GROUP", re.compile(r"(?:group[:=]\\s*['\"]ethereum['\"]|group=\"ethereum\")")),
+              ("ETHEREUM_CKZG_NAMESPACE", re.compile(r"ethereum\\.ckzg4844")),
+          ]
+          for path in Path(".").rglob("*"):
+              if not path.is_file() or ".git" in path.parts:
+                  continue
+              # Workflow files contain the upstream-authority mapping logic itself and are
+              # restored from the PR head after generation; inspect the generated product tree.
+              if path.as_posix().startswith(".github/workflows/"):
+                  continue
+              try:
+                  body = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  continue
+              for label, pattern in blocker_patterns:
+                  if pattern.search(body):
+                      blockers.append((label, path.as_posix()))
+          if blockers:
+              print(f"SILA_IDENTITY_BLOCKER_COUNT={len(blockers)}")
+              for label, path in blockers[:200]:
+                  print(f"SILA_IDENTITY_BLOCKER {label} {path}")
+              raise SystemExit(3)
+
+          print("SILA_IDENTITY_DEPENDENCY_GATE=PASS")
           print("SAFE_SILA_GENERATION=PASS")
           PY
           git add -A
