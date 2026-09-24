@@ -251,20 +251,23 @@ jobs:
               except (UnicodeDecodeError, OSError):
                   continue
 
-              # Preserve independent Web3j API symbols used by the acceptance DSL.
+              # Preserve independent Web3j API symbols used by the acceptance test suites.
               # Their published Java names remain Eth*/eth* even though the local Besu-owned
-              # wrapper classes and packages are converted to Sila/Sil.
+              # wrapper classes and packages are converted to Sila/Sil. Protect imported
+              # Web3j request/response types across acceptance-tests, but keep broad eth*
+              # method-call protection limited to the DSL so local Sila APIs still transform.
               protected = {}
-              if raw.startswith("acceptance-tests/dsl/") and "org.web3j" in text:
+              if raw.startswith("acceptance-tests/") and "org.web3j" in text:
                   external_symbols = set(
                       re.findall(
-                          r"org\.web3j\.protocol\.core\.methods\.response\.([A-Z][A-Za-z0-9_]*)",
+                          r"org\.web3j\.protocol\.core\.methods\.(?:request|response)\.([A-Z][A-Za-z0-9_]*)",
                           text,
                       )
                   )
-                  external_symbols.update(
-                      re.findall(r"(?<=\.)(eth[A-Z][A-Za-z0-9_]*)(?=\s*\()", text)
-                  )
+                  if raw.startswith("acceptance-tests/dsl/"):
+                      external_symbols.update(
+                          re.findall(r"(?<=\.)(eth[A-Z][A-Za-z0-9_]*)(?=\s*\()", text)
+                      )
                   if "org.web3j.utils.Convert" in text:
                       external_symbols.add("ETHER")
                   for symbol in sorted(external_symbols, key=len, reverse=True):
