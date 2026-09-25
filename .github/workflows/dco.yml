@@ -179,7 +179,9 @@ jobs:
 
           grep -q '^sila/web3j/protocol/Web3j.class$' "$work/runtime.list"
           grep -q '^sila/web3j/codegen/SolidityFunctionWrapperGenerator.class$' "$work/runtime.list"
-          grep -q '^sila/beacon/discovery/schema/NodeRecord.class
+          grep -q '^sila/beacon/discovery/schema/NodeRecord.class$' "$work/discovery.list"
+          grep -q '^sila/ckzg4844/CKZG4844JNI.class$' "$work/kzg.list"
+          grep -q '^sila/web3j/solidity/gradle/plugin/SolidityPlugin.class$' "$work/solidity.list"
           grep -q '^sila/web3j/gradle/plugin/Web3jPlugin.class$' "$work/gradleplugin.list"
           grep -q '^META-INF/gradle-plugins/sila.web3j.properties$' "$work/gradleplugin.list"
 
@@ -193,125 +195,6 @@ jobs:
           fi
           if grep -q '^ethereum/ckzg4844/' "$work/kzg.list"; then
             echo "Unconverted Ethereum CKZG class found in Sila KZG artifact"
-            exit 1
-          fi
-          if grep -q '^org/web3j/' "$work/solidity.list"; then
-            echo "Unconverted Web3j class found in Sila Solidity artifact"
-            exit 1
-          fi
-          if grep -q '^org/web3j/' "$work/gradleplugin.list"; then
-            echo "Unconverted Web3j class found in Sila Gradle plugin artifact"
-            exit 1
-          fi
-
-          cd "$work/release"
-          sha256sum *.jar > SHA256SUMS
-      - name: Publish Sila Java authority release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          tag="sila-java-authorities-v1"
-          release_dir="build/sila-java-authorities/release"
-          if ! gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            gh release create "$tag" \
-              --repo "${{ github.repository }}" \
-              --target "${{ github.event.pull_request.head.sha }}" \
-              --title "Sila Java Authorities v1" \
-              --notes "Sila-converted Java runtime authorities for sila-besu closure."
-          fi
-          gh release upload "$tag" "$release_dir"/*.jar "$release_dir/SHA256SUMS" \
-            --repo "${{ github.repository }}" \
-            --clobber
- "$work/discovery.list"
-          grep -q '^sila/ckzg4844/CKZG4844JNI.class
-          grep -q '^sila/web3j/gradle/plugin/Web3jPlugin.class$' "$work/gradleplugin.list"
-          grep -q '^META-INF/gradle-plugins/sila.web3j.properties$' "$work/gradleplugin.list"
-
-          if grep -q '^org/web3j/' "$work/runtime.list"; then
-            echo "Unconverted Web3j class found in Sila runtime artifact"
-            exit 1
-          fi
-          if grep -q '^org/ethereum/beacon/discovery/' "$work/discovery.list"; then
-            echo "Unconverted discovery class found in Sila discovery artifact"
-            exit 1
-          fi
-          if grep -q '^org/web3j/' "$work/solidity.list"; then
-            echo "Unconverted Web3j class found in Sila Solidity artifact"
-            exit 1
-          fi
-          if grep -q '^org/web3j/' "$work/gradleplugin.list"; then
-            echo "Unconverted Web3j class found in Sila Gradle plugin artifact"
-            exit 1
-          fi
-
-          cd "$work/release"
-          sha256sum *.jar > SHA256SUMS
-      - name: Publish Sila Java authority release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          tag="sila-java-authorities-v1"
-          release_dir="build/sila-java-authorities/release"
-          if ! gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            gh release create "$tag" \
-              --repo "${{ github.repository }}" \
-              --target "${{ github.event.pull_request.head.sha }}" \
-              --title "Sila Java Authorities v1" \
-              --notes "Sila-converted Java runtime authorities for sila-besu closure."
-          fi
-          gh release upload "$tag" "$release_dir"/*.jar "$release_dir/SHA256SUMS" \
-            --repo "${{ github.repository }}" \
-            --clobber
- "$work/kzg.list"
-          grep -q '^sila/web3j/solidity/gradle/plugin/SolidityPlugin.class
-          grep -q '^sila/web3j/gradle/plugin/Web3jPlugin.class$' "$work/gradleplugin.list"
-          grep -q '^META-INF/gradle-plugins/sila.web3j.properties$' "$work/gradleplugin.list"
-
-          if grep -q '^org/web3j/' "$work/runtime.list"; then
-            echo "Unconverted Web3j class found in Sila runtime artifact"
-            exit 1
-          fi
-          if grep -q '^org/ethereum/beacon/discovery/' "$work/discovery.list"; then
-            echo "Unconverted discovery class found in Sila discovery artifact"
-            exit 1
-          fi
-          if grep -q '^org/web3j/' "$work/solidity.list"; then
-            echo "Unconverted Web3j class found in Sila Solidity artifact"
-            exit 1
-          fi
-          if grep -q '^org/web3j/' "$work/gradleplugin.list"; then
-            echo "Unconverted Web3j class found in Sila Gradle plugin artifact"
-            exit 1
-          fi
-
-          cd "$work/release"
-          sha256sum *.jar > SHA256SUMS
-      - name: Publish Sila Java authority release
-        env:
-          GH_TOKEN: ${{ github.token }}
-        run: |
-          tag="sila-java-authorities-v1"
-          release_dir="build/sila-java-authorities/release"
-          if ! gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1; then
-            gh release create "$tag" \
-              --repo "${{ github.repository }}" \
-              --target "${{ github.event.pull_request.head.sha }}" \
-              --title "Sila Java Authorities v1" \
-              --notes "Sila-converted Java runtime authorities for sila-besu closure."
-          fi
-          gh release upload "$tag" "$release_dir"/*.jar "$release_dir/SHA256SUMS" \
-            --repo "${{ github.repository }}" \
-            --clobber
- "$work/solidity.list"
-          grep -q '^sila/web3j/gradle/plugin/Web3jPlugin.class$' "$work/gradleplugin.list"
-          grep -q '^META-INF/gradle-plugins/sila.web3j.properties$' "$work/gradleplugin.list"
-
-          if grep -q '^org/web3j/' "$work/runtime.list"; then
-            echo "Unconverted Web3j class found in Sila runtime artifact"
-            exit 1
-          fi
-          if grep -q '^org/ethereum/beacon/discovery/' "$work/discovery.list"; then
-            echo "Unconverted discovery class found in Sila discovery artifact"
             exit 1
           fi
           if grep -q '^org/web3j/' "$work/solidity.list"; then
