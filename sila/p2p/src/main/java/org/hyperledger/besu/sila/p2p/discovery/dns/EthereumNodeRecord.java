@@ -29,9 +29,9 @@ import java.util.Optional;
 
 import com.google.common.base.MoreObjects;
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.schema.EnrField;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 /**
  * A modified implementation of Sila Node Record (ENR) that is used by DNSResolver. See <a

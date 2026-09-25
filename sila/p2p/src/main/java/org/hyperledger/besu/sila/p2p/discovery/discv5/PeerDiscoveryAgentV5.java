@@ -51,9 +51,9 @@ import java.util.stream.Stream;
 
 import com.google.common.annotations.VisibleForTesting;
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.MutableDiscoverySystem;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.storage.NodeRecordListener;
+import sila.beacon.discovery.MutableDiscoverySystem;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.storage.NodeRecordListener;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -80,7 +80,7 @@ public final class PeerDiscoveryAgentV5 implements PeerDiscoveryAgent {
 
   /**
    * Factory for creating a {@link MutableDiscoverySystem}. The default implementation uses {@link
-   * org.ethereum.beacon.discovery.DiscoverySystemBuilder}; tests can inject a mock.
+   * sila.beacon.discovery.DiscoverySystemBuilder}; tests can inject a mock.
    */
   @FunctionalInterface
   interface DiscoverySystemFactory {

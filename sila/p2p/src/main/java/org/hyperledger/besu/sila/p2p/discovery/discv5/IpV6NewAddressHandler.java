@@ -22,8 +22,8 @@ import java.net.InetSocketAddress;
 import java.util.Optional;
 
 import inet.ipaddr.ipv6.IPv6Address;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.storage.NewAddressHandler;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.storage.NewAddressHandler;
 
 /**
  * DiscV5 {@code newAddressHandler} that auto-discovers the local IPv6 advertised address from peer

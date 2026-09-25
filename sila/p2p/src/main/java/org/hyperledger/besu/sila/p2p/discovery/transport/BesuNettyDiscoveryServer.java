@@ -19,8 +19,8 @@ import java.net.StandardProtocolFamily;
 import java.util.concurrent.CompletableFuture;
 
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import org.ethereum.beacon.discovery.network.NettyDiscoveryServer;
-import org.ethereum.beacon.discovery.pipeline.Envelope;
+import sila.beacon.discovery.network.NettyDiscoveryServer;
+import sila.beacon.discovery.pipeline.Envelope;
 import org.reactivestreams.Publisher;
 
 /**

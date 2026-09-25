@@ -42,13 +42,13 @@ import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
-import org.ethereum.beacon.discovery.AddressAccessPolicy;
-import org.ethereum.beacon.discovery.DiscoverySystemBuilder;
-import org.ethereum.beacon.discovery.MutableDiscoverySystem;
-import org.ethereum.beacon.discovery.crypto.Signer;
-import org.ethereum.beacon.discovery.network.NettyDiscoveryServer;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.storage.NewAddressHandler;
+import sila.beacon.discovery.AddressAccessPolicy;
+import sila.beacon.discovery.DiscoverySystemBuilder;
+import sila.beacon.discovery.MutableDiscoverySystem;
+import sila.beacon.discovery.crypto.Signer;
+import sila.beacon.discovery.network.NettyDiscoveryServer;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.storage.NewAddressHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
