@@ -20,11 +20,11 @@ import java.io.IOException;
 import java.math.BigInteger;
 import java.util.Collections;
 
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
-import org.web3j.tx.RawTransactionManager;
+import sila.web3j.abi.FunctionEncoder;
+import sila.web3j.abi.datatypes.Function;
+import sila.web3j.crypto.Credentials;
+import sila.web3j.protocol.core.methods.response.EthSendTransaction;
+import sila.web3j.tx.RawTransactionManager;
 
 public class CallSmartContractFunction implements Transaction<EthSendTransaction> {
 
