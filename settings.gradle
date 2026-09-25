@@ -15,7 +15,25 @@
 
 pluginManagement {
   repositories {
+    ivy {
+      url = 'https://github.com/sila-chain/sila-besu/releases/download'
+      patternLayout {
+        artifact '/sila-java-authorities-v1/[artifact]-[revision].[ext]'
+      }
+      metadataSources { artifact() }
+      content { includeGroup('sila.java') }
+    }
     gradlePluginPortal()
+  }
+  resolutionStrategy {
+    eachPlugin {
+      if (requested.id.id == 'sila.web3j') {
+        useModule('sila.java:sila-web3j-gradle-plugin:5.0.2')
+      }
+      if (requested.id.id == 'sila.web3j.solidity') {
+        useModule('sila.java:sila-solidity-gradle:0.6.1')
+      }
+    }
   }
 }
 
