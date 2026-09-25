@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransacti
 
 import java.util.Optional;
 
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class ExpectSilGetTransactionReceiptIsAbsent implements Condition {
 
