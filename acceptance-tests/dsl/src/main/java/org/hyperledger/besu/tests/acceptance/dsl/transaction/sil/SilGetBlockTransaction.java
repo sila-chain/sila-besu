@@ -21,9 +21,9 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.io.IOException;
 
-import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.EthBlock;
-import org.web3j.protocol.core.methods.response.EthBlock.Block;
+import sila.web3j.protocol.core.DefaultBlockParameter;
+import sila.web3j.protocol.core.methods.response.EthBlock;
+import sila.web3j.protocol.core.methods.response.EthBlock.Block;
 
 public class SilGetBlockTransaction implements Transaction<Block> {
   private final DefaultBlockParameter blockParameter;
