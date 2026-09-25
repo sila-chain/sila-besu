@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.util.List;
 
-import org.web3j.protocol.core.methods.response.EthAccounts;
+import sila.web3j.protocol.core.methods.response.EthAccounts;
 
 public class SilAccountsTransaction implements Transaction<List<String>> {
 
