@@ -89,7 +89,7 @@ dependencies {
   testImplementation 'org.mockito:mockito-core'
   testImplementation 'org.mockito:mockito-junit-jupiter'
   testImplementation 'org.awaitility:awaitility'
-  testImplementation 'org.web3j:abi'
+  testImplementation 'sila.java:sila-web3j-runtime:5.0.3'
 
   integrationTestImplementation project(path: ':config', configuration: 'testSupportArtifacts')
   integrationTestImplementation project(':testutil')
