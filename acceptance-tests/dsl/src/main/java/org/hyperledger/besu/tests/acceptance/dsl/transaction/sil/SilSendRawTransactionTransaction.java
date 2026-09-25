@@ -22,7 +22,6 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFa
 
 import java.io.IOException;
 
-
 public class SilSendRawTransactionTransaction implements Transaction<String> {
 
   private final String transactionData;
