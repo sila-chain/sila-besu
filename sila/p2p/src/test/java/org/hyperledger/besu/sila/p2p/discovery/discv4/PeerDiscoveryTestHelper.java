@@ -29,9 +29,9 @@ import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.MockPeerDiscoveryAgent;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPackage;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
@@ -40,13 +40,13 @@ import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 
 import java.util.Arrays;
 import java.util.Collections;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.CompletableFuture;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
 

@@ -18,6 +18,7 @@ import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SECPSignature;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.Endpoint;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataFactory;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataRlpWriter;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrresponse.EnrResponsePacketDataFactory;
@@ -36,7 +37,6 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.NodeRecordValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.RequestHashValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.TargetValidator;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 
 import java.math.BigInteger;
 import java.time.Clock;
