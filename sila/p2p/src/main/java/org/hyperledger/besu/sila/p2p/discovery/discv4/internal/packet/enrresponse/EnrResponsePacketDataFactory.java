@@ -19,6 +19,7 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
+
 import org.apache.tuweni.bytes.Bytes;
 import sila.beacon.discovery.schema.NodeRecord;
 
