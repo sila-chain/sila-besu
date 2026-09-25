@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.EthFilter;
+import sila.web3j.protocol.core.methods.response.EthFilter;
 
 public class SilNewPendingTransactionFilterTransaction implements Transaction<BigInteger> {
   @Override
