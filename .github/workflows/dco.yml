@@ -40,7 +40,7 @@ jobs:
           root="$PWD"
           work="$PWD/build/sila-java-authorities"
           rm -rf "$work"
-          mkdir -p "$work/runtime" "$work/discovery" "$work/solidity"
+          mkdir -p "$work/runtime" "$work/discovery" "$work/solidity" "$work/gradleplugin/src/main/resources/META-INF/gradle-plugins"
           cat > "$work/settings.gradle" <<'GRADLE'
           pluginManagement {
             repositories {
@@ -49,7 +49,7 @@ jobs:
             }
           }
           rootProject.name = 'sila-java-authorities'
-          include 'runtime', 'discovery', 'solidity'
+          include 'runtime', 'discovery', 'solidity', 'gradleplugin'
           GRADLE
           cat > "$work/runtime/build.gradle" <<'GRADLE'
           plugins {
@@ -110,21 +110,132 @@ jobs:
             exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'module-info.class'
           }
           GRADLE
-          ./gradlew -p "$work" --no-daemon             :runtime:shadowJar             :discovery:shadowJar             :solidity:shadowJar
+          cat > "$work/gradleplugin/build.gradle" <<'GRADLE'
+          plugins {
+            id 'java'
+            id 'com.gradleup.shadow' version '9.2.2'
+          }
+          repositories {
+            mavenCentral()
+            maven { url = uri('https://plugins.gradle.org/m2/') }
+          }
+          dependencies {
+            implementation 'org.web3j:web3j-gradle-plugin:5.0.2'
+          }
+          tasks.named('shadowJar') {
+            archiveFileName = 'sila-web3j-gradle-plugin-5.0.2.jar'
+            relocate 'org.web3j', 'sila.web3j'
+            mergeServiceFiles()
+            exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'module-info.class'
+          }
+          GRADLE
+          cat > "$work/gradleplugin/src/main/resources/META-INF/gradle-plugins/sila.web3j.properties" <<'PROPS'
+          implementation-class=sila.web3j.gradle.plugin.Web3jPlugin
+          PROPS
+          ./gradlew -p "$work" --no-daemon             :runtime:shadowJar             :discovery:shadowJar             :solidity:shadowJar             :gradleplugin:shadowJar
 
           mkdir -p "$work/release"
           cp "$work/runtime/build/libs/sila-web3j-runtime-5.0.3.jar" "$work/release/"
           cp "$work/discovery/build/libs/sila-discovery-26.8.0.jar" "$work/release/"
           cp "$work/solidity/build/libs/sila-solidity-gradle-0.6.1.jar" "$work/release/"
+          cp "$work/gradleplugin/build/libs/sila-web3j-gradle-plugin-5.0.2.jar" "$work/release/"
 
           jar tf "$work/release/sila-web3j-runtime-5.0.3.jar" > "$work/runtime.list"
           jar tf "$work/release/sila-discovery-26.8.0.jar" > "$work/discovery.list"
           jar tf "$work/release/sila-solidity-gradle-0.6.1.jar" > "$work/solidity.list"
+          jar tf "$work/release/sila-web3j-gradle-plugin-5.0.2.jar" > "$work/gradleplugin.list"
 
           grep -q '^sila/web3j/protocol/Web3j.class$' "$work/runtime.list"
           grep -q '^sila/web3j/codegen/SolidityFunctionWrapperGenerator.class$' "$work/runtime.list"
           grep -q '^sila/beacon/discovery/schema/NodeRecord.class$' "$work/discovery.list"
-          grep -q '^sila/web3j/solidity/gradle/plugin/SolidityPlugin.class$' "$work/solidity.list"
+          grep -q '^sila/web3j/solidity/gradle/plugin/SolidityPlugin.class
+
+          if grep -q '^org/web3j/' "$work/runtime.list"; then
+            echo "Unconverted Web3j class found in Sila runtime artifact"
+            exit 1
+          fi
+          if grep -q '^org/ethereum/beacon/discovery/' "$work/discovery.list"; then
+            echo "Unconverted discovery class found in Sila discovery artifact"
+            exit 1
+          fi
+          if grep -q '^org/web3j/' "$work/solidity.list"; then
+            echo "Unconverted Web3j class found in Sila Solidity artifact"
+            exit 1
+          fi
+          if grep -q '^org/web3j/' "$work/gradleplugin.list"; then
+            echo "Unconverted Web3j class found in Sila Gradle plugin artifact"
+            exit 1
+          fi
+
+          cd "$work/release"
+          sha256sum *.jar > SHA256SUMS
+      - name: Publish Sila Java authority release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="sila-java-authorities-v1"
+          release_dir="build/sila-java-authorities/release"
+          if ! gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release create "$tag"               --repo "${{ github.repository }}"               --target "${{ github.event.pull_request.head.sha }}"               --title "Sila Java Authorities v1"               --notes "Sila-converted Java runtime authorities for sila-besu closure."
+          fi
+          gh release upload "$tag" "$release_dir"/*.jar "$release_dir/SHA256SUMS"             --repo "${{ github.repository }}"             --clobber
+ "$work/solidity.list"
+          grep -q '^sila/web3j/gradle/plugin/Web3jPlugin.class
+
+          if grep -q '^org/web3j/' "$work/runtime.list"; then
+            echo "Unconverted Web3j class found in Sila runtime artifact"
+            exit 1
+          fi
+          if grep -q '^org/ethereum/beacon/discovery/' "$work/discovery.list"; then
+            echo "Unconverted discovery class found in Sila discovery artifact"
+            exit 1
+          fi
+          if grep -q '^org/web3j/' "$work/solidity.list"; then
+            echo "Unconverted Web3j class found in Sila Solidity artifact"
+            exit 1
+          fi
+
+          cd "$work/release"
+          sha256sum *.jar > SHA256SUMS
+      - name: Publish Sila Java authority release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="sila-java-authorities-v1"
+          release_dir="build/sila-java-authorities/release"
+          if ! gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release create "$tag"               --repo "${{ github.repository }}"               --target "${{ github.event.pull_request.head.sha }}"               --title "Sila Java Authorities v1"               --notes "Sila-converted Java runtime authorities for sila-besu closure."
+          fi
+          gh release upload "$tag" "$release_dir"/*.jar "$release_dir/SHA256SUMS"             --repo "${{ github.repository }}"             --clobber
+ "$work/gradleplugin.list"
+          grep -q '^META-INF/gradle-plugins/sila.web3j.properties
+
+          if grep -q '^org/web3j/' "$work/runtime.list"; then
+            echo "Unconverted Web3j class found in Sila runtime artifact"
+            exit 1
+          fi
+          if grep -q '^org/ethereum/beacon/discovery/' "$work/discovery.list"; then
+            echo "Unconverted discovery class found in Sila discovery artifact"
+            exit 1
+          fi
+          if grep -q '^org/web3j/' "$work/solidity.list"; then
+            echo "Unconverted Web3j class found in Sila Solidity artifact"
+            exit 1
+          fi
+
+          cd "$work/release"
+          sha256sum *.jar > SHA256SUMS
+      - name: Publish Sila Java authority release
+        env:
+          GH_TOKEN: ${{ github.token }}
+        run: |
+          tag="sila-java-authorities-v1"
+          release_dir="build/sila-java-authorities/release"
+          if ! gh release view "$tag" --repo "${{ github.repository }}" >/dev/null 2>&1; then
+            gh release create "$tag"               --repo "${{ github.repository }}"               --target "${{ github.event.pull_request.head.sha }}"               --title "Sila Java Authorities v1"               --notes "Sila-converted Java runtime authorities for sila-besu closure."
+          fi
+          gh release upload "$tag" "$release_dir"/*.jar "$release_dir/SHA256SUMS"             --repo "${{ github.repository }}"             --clobber
+ "$work/gradleplugin.list"
 
           if grep -q '^org/web3j/' "$work/runtime.list"; then
             echo "Unconverted Web3j class found in Sila runtime artifact"
