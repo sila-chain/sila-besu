@@ -29,7 +29,6 @@ import org.hyperledger.besu.sila.rlp.RLPException;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import org.apache.tuweni.bytes.Bytes;
 import sila.beacon.discovery.util.DecodeException;
 
