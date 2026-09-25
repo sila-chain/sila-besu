@@ -36,18 +36,18 @@ import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 
 import java.lang.reflect.Field;
-import java.util.Optional;
 import java.util.concurrent.TimeUnit;
+import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.schema.EnrField;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 import org.junit.platform.commons.util.ReflectionUtils;
-import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mock;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.NodeRecord;
 
 /**
  * Covers {@link CompositePeerDiscoveryAgentFactory}'s {@link DiscoveryMode} resolution, masking-key

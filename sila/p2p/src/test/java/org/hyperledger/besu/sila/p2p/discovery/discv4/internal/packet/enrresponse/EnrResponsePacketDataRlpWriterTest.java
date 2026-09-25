@@ -20,11 +20,11 @@ import java.util.Map;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class EnrResponsePacketDataRlpWriterTest {
   private EnrResponsePacketDataRlpWriter writer;

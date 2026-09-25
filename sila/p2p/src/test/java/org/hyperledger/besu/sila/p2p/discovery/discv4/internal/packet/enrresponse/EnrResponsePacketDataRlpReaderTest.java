@@ -25,17 +25,17 @@ import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.rlp.EndOfRLPException;
 import org.apache.tuweni.rlp.InvalidRLPEncodingException;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
-import org.ethereum.beacon.discovery.util.DecodeException;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
+import org.mockito.junit.jupiter.MockitoExtension;
 import org.mockito.Mock;
 import org.mockito.Mockito;
-import org.mockito.junit.jupiter.MockitoExtension;
+import sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
+import sila.beacon.discovery.util.DecodeException;
 
 @ExtendWith(MockitoExtension.class)
 public class EnrResponsePacketDataRlpReaderTest {

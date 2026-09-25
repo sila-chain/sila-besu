@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation;
 
-import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class NodeRecordValidatorTest {
   private NodeRecordValidator validator;

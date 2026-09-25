@@ -18,7 +18,6 @@ import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SECPSignature;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.Endpoint;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataFactory;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataRlpWriter;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrresponse.EnrResponsePacketDataFactory;
@@ -37,6 +36,7 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.NodeRecordValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.RequestHashValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.TargetValidator;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 
 import java.math.BigInteger;
 import java.time.Clock;
@@ -47,13 +47,13 @@ import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.EnrField;
-import org.ethereum.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 public class PacketSerializerTest {
   final Clock clock = Clock.fixed(Instant.ofEpochSecond(123), ZoneId.of("UTC"));
