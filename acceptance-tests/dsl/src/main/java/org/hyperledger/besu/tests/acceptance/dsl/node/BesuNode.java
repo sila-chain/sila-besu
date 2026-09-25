@@ -81,13 +81,13 @@ import org.awaitility.core.ConditionTimeoutException;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.core.JsonRpc2_0Web3j;
-import org.web3j.protocol.http.HttpService;
-import org.web3j.protocol.websocket.WebSocketClient;
-import org.web3j.protocol.websocket.WebSocketListener;
-import org.web3j.protocol.websocket.WebSocketService;
-import org.web3j.utils.Async;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.core.JsonRpc2_0Web3j;
+import sila.web3j.protocol.http.HttpService;
+import sila.web3j.protocol.websocket.WebSocketClient;
+import sila.web3j.protocol.websocket.WebSocketListener;
+import sila.web3j.protocol.websocket.WebSocketService;
+import sila.web3j.utils.Async;
 
 public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable {
 
