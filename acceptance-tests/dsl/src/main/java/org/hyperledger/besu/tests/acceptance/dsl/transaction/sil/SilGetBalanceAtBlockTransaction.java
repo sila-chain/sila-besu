@@ -23,8 +23,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.methods.response.EthGetBalance;
+import sila.web3j.protocol.core.DefaultBlockParameter;
+import sila.web3j.protocol.core.methods.response.EthGetBalance;
 
 public class SilGetBalanceAtBlockTransaction implements Transaction<BigInteger> {
 
