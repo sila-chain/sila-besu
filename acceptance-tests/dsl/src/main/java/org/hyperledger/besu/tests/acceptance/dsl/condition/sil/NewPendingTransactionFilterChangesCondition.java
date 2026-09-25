@@ -23,7 +23,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilFilterChange
 
 import java.util.List;
 
-import org.web3j.protocol.core.methods.response.EthLog;
+import sila.web3j.protocol.core.methods.response.EthLog;
 
 public class NewPendingTransactionFilterChangesCondition implements Condition {
 
