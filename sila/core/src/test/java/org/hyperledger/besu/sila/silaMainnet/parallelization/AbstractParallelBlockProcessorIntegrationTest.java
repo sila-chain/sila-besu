@@ -60,10 +60,10 @@ import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt256;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.generated.Uint256;
+import sila.web3j.abi.FunctionEncoder;
+import sila.web3j.abi.datatypes.Function;
+import sila.web3j.abi.datatypes.Type;
+import sila.web3j.abi.datatypes.generated.Uint256;
 
 /**
  * Abstract base class for parallel block processor integration tests. Provides common utilities for
@@ -523,7 +523,7 @@ public abstract class AbstractParallelBlockProcessorIntegrationTest {
       final String toAddress,
       final long value) {
     final List<Type> inputParameters =
-        Arrays.asList(new org.web3j.abi.datatypes.Address(toAddress), new Uint256(value));
+        Arrays.asList(new sila.web3j.abi.datatypes.Address(toAddress), new Uint256(value));
     final Function function = new Function(methodName, inputParameters, List.of());
     final Bytes payload = Bytes.fromHexString(FunctionEncoder.encode(function));
     return Transaction.builder()
