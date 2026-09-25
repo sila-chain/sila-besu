@@ -15,7 +15,7 @@
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
+import static sila.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
@@ -24,7 +24,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.web3j.protocol.core.methods.response.EthGetCode;
+import sila.web3j.protocol.core.methods.response.EthGetCode;
 
 public class SilGetCodeTransaction implements Transaction<Bytes> {
 
