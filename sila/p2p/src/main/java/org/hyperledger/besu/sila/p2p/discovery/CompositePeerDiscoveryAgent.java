@@ -14,10 +14,6 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery;
 
-import org.hyperledger.besu.sila.p2p.discovery.transport.SharedDiscoveryTransport;
-import org.hyperledger.besu.sila.p2p.peers.Peer;
-import org.hyperledger.besu.sila.p2p.peers.PeerId;
-
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
 import java.util.List;
@@ -26,10 +22,12 @@ import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.stream.Collectors;
 import java.util.stream.Stream;
-
-import sila.beacon.discovery.schema.NodeRecord;
+import org.hyperledger.besu.sila.p2p.discovery.transport.SharedDiscoveryTransport;
+import org.hyperledger.besu.sila.p2p.peers.Peer;
+import org.hyperledger.besu.sila.p2p.peers.PeerId;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sila.beacon.discovery.schema.NodeRecord;
 
 /**
  * A {@link PeerDiscoveryAgent} that fans out to a V4 agent and/or a V5 agent, sharing a single UDP

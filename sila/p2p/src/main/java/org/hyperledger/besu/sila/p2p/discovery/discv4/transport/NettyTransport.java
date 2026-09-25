@@ -14,24 +14,6 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv4.transport;
 
-import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryServiceException;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryAgentV4;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.Transport;
-import org.hyperledger.besu.sila.p2p.discovery.transport.SharedDiscoveryTransport;
-
-import java.io.IOException;
-import java.net.BindException;
-import java.net.Inet6Address;
-import java.net.InetSocketAddress;
-import java.net.SocketException;
-import java.net.StandardProtocolFamily;
-import java.nio.channels.UnsupportedAddressTypeException;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicBoolean;
-
 import com.google.common.annotations.VisibleForTesting;
 import io.netty.bootstrap.Bootstrap;
 import io.netty.buffer.Unpooled;
@@ -50,10 +32,26 @@ import io.netty.channel.socket.nio.NioDatagramChannel;
 import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
+import java.io.IOException;
+import java.net.BindException;
+import java.net.Inet6Address;
+import java.net.InetSocketAddress;
+import java.net.SocketException;
+import java.net.StandardProtocolFamily;
+import java.nio.channels.UnsupportedAddressTypeException;
+import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.TimeUnit;
+import java.util.concurrent.atomic.AtomicBoolean;
 import org.apache.tuweni.bytes.Bytes;
-import sila.beacon.discovery.util.DecodeException;
+import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryServiceException;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryAgentV4;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.Transport;
+import org.hyperledger.besu.sila.p2p.discovery.transport.SharedDiscoveryTransport;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sila.beacon.discovery.util.DecodeException;
 
 /**
  * Netty-backed {@link Transport}. Two construction modes:
