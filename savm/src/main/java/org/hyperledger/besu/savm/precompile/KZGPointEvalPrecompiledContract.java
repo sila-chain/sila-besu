@@ -85,7 +85,7 @@ public class KZGPointEvalPrecompiledContract implements PrecompiledContract {
   public static void init() {
     if (loaded.compareAndSet(false, true)) {
       loadLib();
-      final String trustedSetupResourceName = "/kzg-trusted-setups/mainnet.txt";
+      final String trustedSetupResourceName = "/kzg-trusted-setups/sila-mainnet.txt";
       LOG.info(
           "Loading network trusted setup from classpath resource {}", trustedSetupResourceName);
       CKZG4844JNI.loadTrustedSetupFromResource(
