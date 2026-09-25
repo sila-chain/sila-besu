@@ -54,9 +54,7 @@ dependencies {
   implementation 'org.java-websocket:Java-WebSocket'
   implementation 'com.fasterxml.jackson.core:jackson-annotations'
   implementation 'com.fasterxml.jackson.core:jackson-databind'
-  implementation 'org.web3j:abi'
-  implementation 'org.web3j:besu'
-  implementation 'org.web3j:crypto'
+  implementation 'sila.java:sila-web3j-runtime:5.0.3'
 
   implementation 'org.junit.jupiter:junit-jupiter'
 }
