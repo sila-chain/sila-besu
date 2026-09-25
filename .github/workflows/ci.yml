@@ -92,7 +92,7 @@ jobs:
           fetch-depth: 0
       - name: Verify pinned upstream Besu authority is still current
         run: |
-          expected="cf89071f9d6dddf7997f35e09929fe059f82ecd1"
+          expected="accdae0061952615b23f3bc521ebcd82efd097d4"
           actual="$(git ls-remote https://github.com/besu-eth/besu.git refs/heads/main | awk '{print $1}')"
           echo "EXPECTED_UPSTREAM=$expected"
           echo "ACTUAL_UPSTREAM=$actual"
