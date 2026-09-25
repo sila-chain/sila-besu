@@ -66,10 +66,10 @@ import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.MethodSource;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.generated.Uint256;
+import sila.web3j.abi.FunctionEncoder;
+import sila.web3j.abi.datatypes.Function;
+import sila.web3j.abi.datatypes.Type;
+import sila.web3j.abi.datatypes.generated.Uint256;
 
 @SuppressWarnings("rawtypes")
 class AbstractBlockProcessorIntegrationTest {
@@ -1199,7 +1199,7 @@ class AbstractBlockProcessorIntegrationTest {
   }
 
   private Bytes encodeFunctionCall(final String methodSignature, final String address) {
-    List<Type> inputParameters = Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(address));
+    List<Type> inputParameters = Arrays.<Type>asList(new sila.web3j.abi.datatypes.Address(address));
     Function function = new Function(methodSignature, inputParameters, List.of());
     return Bytes.fromHexString(FunctionEncoder.encode(function));
   }
@@ -1207,7 +1207,7 @@ class AbstractBlockProcessorIntegrationTest {
   private Bytes encodeFunctionCall(
       final String methodSignature, final String address, final long value) {
     List<Type> inputParameters =
-        Arrays.<Type>asList(new org.web3j.abi.datatypes.Address(address), new Uint256(value));
+        Arrays.<Type>asList(new sila.web3j.abi.datatypes.Address(address), new Uint256(value));
     Function function = new Function(methodSignature, inputParameters, List.of());
     return Bytes.fromHexString(FunctionEncoder.encode(function));
   }
