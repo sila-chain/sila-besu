@@ -23,9 +23,9 @@ import javax.inject.Singleton;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.rlp.RLPException;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
-import org.ethereum.beacon.discovery.util.DecodeException;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
+import sila.beacon.discovery.util.DecodeException;
 
 @Singleton
 public class EnrResponsePacketDataRlpReader

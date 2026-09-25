@@ -46,7 +46,7 @@ import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.network.NettyDiscoveryServer;
+import sila.beacon.discovery.network.NettyDiscoveryServer;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

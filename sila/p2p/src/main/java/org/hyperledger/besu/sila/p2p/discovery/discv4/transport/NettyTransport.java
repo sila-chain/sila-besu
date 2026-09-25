@@ -51,7 +51,7 @@ import io.netty.handler.logging.LogLevel;
 import io.netty.handler.logging.LoggingHandler;
 import io.netty.util.concurrent.Future;
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.util.DecodeException;
+import sila.beacon.discovery.util.DecodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

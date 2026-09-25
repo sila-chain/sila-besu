@@ -21,7 +21,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 
 @Singleton
 public class EnrResponsePacketDataFactory {
