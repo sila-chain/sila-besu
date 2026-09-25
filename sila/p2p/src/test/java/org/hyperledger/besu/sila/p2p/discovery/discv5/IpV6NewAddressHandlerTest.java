@@ -32,11 +32,11 @@ import java.net.InetSocketAddress;
 import java.net.UnknownHostException;
 import java.util.Optional;
 
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
-import org.mockito.Mock;
+import org.junit.jupiter.api.Test;
 import org.mockito.junit.jupiter.MockitoExtension;
+import org.mockito.Mock;
+import sila.beacon.discovery.schema.NodeRecord;
 
 @ExtendWith(MockitoExtension.class)
 class IpV6NewAddressHandlerTest {
