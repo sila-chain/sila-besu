@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
-import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
-import static org.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
+import static sila.web3j.protocol.core.DefaultBlockParameterName.LATEST;
+import static sila.web3j.tx.gas.DefaultGasProvider.GAS_LIMIT;
 
 import org.hyperledger.besu.tests.acceptance.dsl.account.Accounts;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
@@ -24,8 +24,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.core.methods.response.EthCall;
+import sila.web3j.crypto.Credentials;
+import sila.web3j.protocol.core.methods.response.EthCall;
 
 public class SilCallTransaction implements Transaction<EthCall> {
   private final String contractAddress;
@@ -57,7 +57,7 @@ public class SilCallTransaction implements Transaction<EthCall> {
               .getTransactionCount();
 
       var transaction =
-          new org.web3j.protocol.core.methods.request.Transaction(
+          new sila.web3j.protocol.core.methods.request.Transaction(
               benefactorOneAddress,
               transactionCount,
               BigInteger.ZERO,
