@@ -78,9 +78,9 @@ import io.vertx.core.Future;
 import io.vertx.core.ThreadingModel;
 import io.vertx.core.Vertx;
 import org.apache.tuweni.bytes.Bytes;
-import sila.beacon.discovery.schema.NodeRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sila.beacon.discovery.schema.NodeRecord;
 
 /**
  * The peer network service (defunct PeerNetworkingService) is the entrypoint to the peer-to-peer
