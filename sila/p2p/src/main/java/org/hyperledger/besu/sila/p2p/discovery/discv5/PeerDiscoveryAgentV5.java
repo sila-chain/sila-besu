@@ -14,11 +14,28 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv5;
 
+import com.google.common.annotations.VisibleForTesting;
+import java.net.InetSocketAddress;
+import java.util.Collection;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicReference;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.Future;
+import java.util.concurrent.RejectedExecutionException;
+import java.util.concurrent.ScheduledExecutorService;
+import java.util.concurrent.TimeoutException;
+import java.util.concurrent.TimeUnit;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import java.util.stream.Stream;
+import org.apache.tuweni.bytes.Bytes;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.Histogram;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
@@ -32,30 +49,11 @@ import org.hyperledger.besu.sila.p2p.peers.PeerId;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.ConnectSource;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-
-import java.net.InetSocketAddress;
-import java.util.Collection;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.Executors;
-import java.util.concurrent.Future;
-import java.util.concurrent.RejectedExecutionException;
-import java.util.concurrent.ScheduledExecutorService;
-import java.util.concurrent.TimeUnit;
-import java.util.concurrent.TimeoutException;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicReference;
-import java.util.stream.Stream;
-
-import com.google.common.annotations.VisibleForTesting;
-import org.apache.tuweni.bytes.Bytes;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import sila.beacon.discovery.MutableDiscoverySystem;
 import sila.beacon.discovery.schema.NodeRecord;
 import sila.beacon.discovery.storage.NodeRecordListener;
-import org.slf4j.Logger;
-import org.slf4j.LoggerFactory;
 
 /**
  * DiscV5 implementation of {@link PeerDiscoveryAgent} that actively drives peer discovery and

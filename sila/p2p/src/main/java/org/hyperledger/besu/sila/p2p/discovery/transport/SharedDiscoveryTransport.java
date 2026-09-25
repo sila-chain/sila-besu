@@ -14,27 +14,6 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.transport;
 
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
-import org.hyperledger.besu.util.NetworkUtility;
-
-import java.net.InetAddress;
-import java.net.InetSocketAddress;
-import java.net.StandardProtocolFamily;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.ExecutorService;
-import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.function.BiConsumer;
-import java.util.function.Consumer;
-
 import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.InetAddresses;
 import io.netty.bootstrap.Bootstrap;
@@ -45,17 +24,36 @@ import io.netty.channel.EventLoopGroup;
 import io.netty.channel.MultiThreadIoEventLoopGroup;
 import io.netty.channel.nio.NioIoHandler;
 import io.netty.channel.socket.DatagramPacket;
-import io.netty.channel.socket.SocketProtocolFamily;
 import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.handler.logging.LogLevel;
+import io.netty.channel.socket.SocketProtocolFamily;
 import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.logging.LogLevel;
+import java.net.InetAddress;
+import java.net.InetSocketAddress;
+import java.net.StandardProtocolFamily;
+import java.util.ArrayList;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ExecutorService;
+import java.util.concurrent.ThreadFactory;
+import java.util.function.BiConsumer;
+import java.util.function.Consumer;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
 import org.apache.tuweni.bytes.Bytes;
-import sila.beacon.discovery.pipeline.Envelope;
-import sila.beacon.discovery.pipeline.Field;
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.util.NetworkUtility;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import reactor.core.publisher.Sinks;
+import sila.beacon.discovery.pipeline.Envelope;
+import sila.beacon.discovery.pipeline.Field;
 
 /**
  * Shared UDP transport that owns one (or two, for dual-stack) {@link NioDatagramChannel} instances
