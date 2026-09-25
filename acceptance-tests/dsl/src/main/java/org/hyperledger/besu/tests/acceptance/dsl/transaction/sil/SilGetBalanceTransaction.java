@@ -15,13 +15,13 @@
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
+
 import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.io.IOException;
 import java.math.BigInteger;
-
 
 public class SilGetBalanceTransaction implements Transaction<BigInteger> {
 
