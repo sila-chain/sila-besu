@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.p2p.discovery;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.peers.PeerId;
 
-import java.util.concurrent.CompletableFuture;
 import java.util.Optional;
+import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import sila.beacon.discovery.schema.NodeRecord;
