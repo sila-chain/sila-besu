@@ -23,9 +23,9 @@ import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldStat
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.NoOpBonsaiCachedMerkleTrieLoader;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache.NoOpBonsaiWorldStateCacheManager;
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.internal.EvmConfiguration;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.EvmConfiguration;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.Test;
