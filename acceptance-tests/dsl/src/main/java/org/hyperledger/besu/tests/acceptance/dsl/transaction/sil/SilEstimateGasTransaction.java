@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
-import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
+import static sila.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.EthEstimateGas;
+import sila.web3j.protocol.core.methods.response.EthEstimateGas;
 
 public class SilEstimateGasTransaction implements Transaction<EthEstimateGas> {
   private final String contractAddress;
@@ -42,7 +42,7 @@ public class SilEstimateGasTransaction implements Transaction<EthEstimateGas> {
 
       return node.sil()
           .ethEstimateGas(
-              new org.web3j.protocol.core.methods.request.Transaction(
+              new sila.web3j.protocol.core.methods.request.Transaction(
                   from,
                   nonce,
                   null,
