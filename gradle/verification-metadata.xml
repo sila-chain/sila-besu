@@ -13713,5 +13713,15 @@
             <sha256 value="2ed5797349fcb955899259f209d75ee838e9ac6df93d9d3ef7713c8291590377" origin="Sila Java Authorities v1"/>
          </artifact>
       </component>
+      <component group="sila.java" name="sila-solidity-gradle" version="0.6.1">
+         <artifact name="sila-solidity-gradle-0.6.1.jar">
+            <sha256 value="ca092504d7dee08b5141e7f1128ca7e25deb21978738e40f1e36a45b8e4b0ebe" origin="Sila Java Authorities v1"/>
+         </artifact>
+      </component>
+      <component group="sila.java" name="sila-web3j-gradle-plugin" version="5.0.2">
+         <artifact name="sila-web3j-gradle-plugin-5.0.2.jar">
+            <sha256 value="123abc3faad04fe6cf05b71f3d0af550cbe85bcba4d08a3e0f53a5badb493303" origin="Sila Java Authorities v1"/>
+         </artifact>
+      </component>
    </components>
 </verification-metadata>
