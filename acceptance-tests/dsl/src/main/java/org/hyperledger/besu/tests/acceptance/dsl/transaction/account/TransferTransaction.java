@@ -29,10 +29,10 @@ import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
 
-import org.web3j.crypto.RawTransaction;
-import org.web3j.utils.Convert;
-import org.web3j.utils.Convert.Unit;
-import org.web3j.utils.Numeric;
+import sila.web3j.crypto.RawTransaction;
+import sila.web3j.utils.Convert;
+import sila.web3j.utils.Convert.Unit;
+import sila.web3j.utils.Numeric;
 
 public class TransferTransaction implements Transaction<Hash> {
 
@@ -92,7 +92,7 @@ public class TransferTransaction implements Transaction<Hash> {
 
   public String transactionHash() {
     final byte[] signedTx = createSignedTransactionData();
-    final byte[] txHash = org.web3j.crypto.Hash.sha3(signedTx);
+    final byte[] txHash = sila.web3j.crypto.Hash.sha3(signedTx);
     return Numeric.toHexString(txHash);
   }
 
