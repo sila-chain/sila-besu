@@ -31,16 +31,16 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
 import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.forkid.ForkId;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper.AgentBuilder;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.MockPeerDiscoveryAgent;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.MockPeerDiscoveryAgent.IncomingPacket;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.DaggerPacketPackage;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPackage;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.findneighbors.FindNeighborsPacketData;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.neighbors.NeighborsPacketData;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPackage;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper.AgentBuilder;
 import org.hyperledger.besu.sila.p2p.peers.DefaultPeer;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
@@ -58,9 +58,9 @@ import java.util.stream.Collectors;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class PeerDiscoveryAgentV4Test {
 

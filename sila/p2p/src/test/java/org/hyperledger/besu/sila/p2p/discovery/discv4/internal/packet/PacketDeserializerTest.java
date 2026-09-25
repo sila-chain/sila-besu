@@ -17,9 +17,7 @@ package org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet;
 import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SECPSignature;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
-import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.Endpoint;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketData;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataFactory;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataRlpReader;
@@ -50,6 +48,8 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.NodeRecordValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.RequestHashValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.TargetValidator;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
+import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 
 import java.math.BigInteger;
 import java.time.Clock;
@@ -59,11 +59,11 @@ import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 public class PacketDeserializerTest {
   private final Clock clock = Clock.fixed(Instant.ofEpochSecond(123), ZoneId.of("UTC"));

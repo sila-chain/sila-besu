@@ -25,21 +25,21 @@ import static org.mockito.Mockito.verify;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.metrics.StubMetricsSystem;
 import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
-import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PeerDiscoveryController;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.DaggerPacketPackage;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPackage;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.ping.PingPacketData;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PeerDiscoveryController;
+import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
@@ -51,23 +51,23 @@ import java.net.InetSocketAddress;
 import java.net.SocketException;
 import java.nio.channels.UnsupportedAddressTypeException;
 import java.util.Collections;
-import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.Executor;
 import java.util.concurrent.TimeUnit;
-import java.util.concurrent.atomic.AtomicInteger;
+import java.util.Optional;
 import java.util.stream.Stream;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
-import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.junit.jupiter.api.Test;
 import org.junit.jupiter.params.ParameterizedTest;
 import org.junit.jupiter.params.provider.MethodSource;
 import org.mockito.junit.jupiter.MockitoExtension;
+import sila.beacon.discovery.schema.NodeRecord;
 
 @ExtendWith(MockitoExtension.class)
 class NettyPeerDiscoveryAgentTest {

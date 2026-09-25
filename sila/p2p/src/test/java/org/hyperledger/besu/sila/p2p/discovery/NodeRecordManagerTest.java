@@ -30,16 +30,16 @@ import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 
-import java.util.Optional;
 import java.util.concurrent.atomic.AtomicBoolean;
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.concurrent.atomic.AtomicReference;
+import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.schema.EnrField;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.NodeRecord;
 
 class NodeRecordManagerTest {
 
