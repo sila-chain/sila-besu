@@ -28,6 +28,8 @@ public class CustomRequestFactory {
 
   public static class NetServicesResponse extends Response<Map<String, Map<String, String>>> {}
 
+  public static class SilGetBalanceResponse extends Response<String> {}
+
   public static class TransactionReceiptWithRevertReason extends TransactionReceipt {
     private String revertReason;
 
@@ -92,6 +94,14 @@ public class CustomRequestFactory {
   public Request<?, NetServicesResponse> netServices() {
     return new Request<>(
         "net_services", Collections.emptyList(), web3jService, NetServicesResponse.class);
+  }
+
+  public Request<?, SilGetBalanceResponse> silGetBalance(final String address) {
+    return new Request<>(
+        "sil_getBalance",
+        Arrays.asList(address, "latest"),
+        web3jService,
+        SilGetBalanceResponse.class);
   }
 
   public Request<?, SilGetTransactionReceiptWithRevertReasonResponse>
