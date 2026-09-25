@@ -14,13 +14,6 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv5;
 
-import java.net.InetSocketAddress;
-import java.net.StandardProtocolFamily;
-import java.util.ArrayList;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import org.apache.tuweni.bytes.Bytes;
 import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SECP256K1;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
@@ -33,17 +26,26 @@ import org.hyperledger.besu.sila.p2p.config.DiscoveryMode;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryModeResolver;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.CompositePeerDiscoveryAgent;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.NettyPeerDiscoveryAgent;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.transport.NettyTransport;
 import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryAgent;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryAgentFactory;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.NettyPeerDiscoveryAgent;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.transport.NettyTransport;
 import org.hyperledger.besu.sila.p2p.discovery.transport.BesuNettyDiscoveryServer;
 import org.hyperledger.besu.sila.p2p.discovery.transport.SharedDiscoveryTransport;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.util.NetworkUtility;
+
+import java.net.InetSocketAddress;
+import java.net.StandardProtocolFamily;
+import java.util.ArrayList;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.tuweni.bytes.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sila.beacon.discovery.network.NettyDiscoveryServer;

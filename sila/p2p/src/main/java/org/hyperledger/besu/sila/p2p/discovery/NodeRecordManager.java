@@ -14,15 +14,6 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery;
 
-import com.google.common.net.InetAddresses;
-import java.util.ArrayList;
-import java.util.Collections;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
-import java.util.List;
-import java.util.Optional;
-import org.apache.tuweni.bytes.Bytes;
-import org.apache.tuweni.units.bigints.UInt64;
 import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
@@ -34,6 +25,17 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.util.NetworkUtility;
+
+import java.util.ArrayList;
+import java.util.Collections;
+import java.util.List;
+import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
+
+import com.google.common.net.InetAddresses;
+import org.apache.tuweni.bytes.Bytes;
+import org.apache.tuweni.units.bigints.UInt64;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sila.beacon.discovery.schema.EnrField;
