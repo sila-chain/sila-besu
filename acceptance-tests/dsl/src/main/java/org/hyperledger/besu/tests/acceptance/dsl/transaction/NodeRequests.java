@@ -26,9 +26,9 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.txpool.TxPoolReques
 
 import java.util.Optional;
 
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.websocket.WebSocketService;
+import sila.web3j.protocol.Web3j;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.websocket.WebSocketService;
 
 public class NodeRequests {
   private final Web3jService web3jService;
