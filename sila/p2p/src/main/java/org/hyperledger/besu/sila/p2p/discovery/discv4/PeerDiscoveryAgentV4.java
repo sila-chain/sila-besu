@@ -16,21 +16,6 @@ package org.hyperledger.besu.sila.p2p.discovery.discv4;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.net.InetAddresses;
-import java.net.InetSocketAddress;
-import java.util.concurrent.atomic.AtomicBoolean;
-import java.util.concurrent.atomic.AtomicInteger;
-import java.util.concurrent.atomic.AtomicLong;
-import java.util.concurrent.CompletableFuture;
-import java.util.concurrent.CopyOnWriteArrayList;
-import java.util.concurrent.Executor;
-import java.util.List;
-import java.util.Optional;
-import java.util.stream.Collectors;
-import java.util.stream.Stream;
-import org.apache.tuweni.bytes.Bytes;
-import org.apache.tuweni.rlp.RLPException;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
@@ -58,6 +43,23 @@ import org.hyperledger.besu.sila.p2p.peers.PeerId;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.util.NetworkUtility;
+
+import java.net.InetSocketAddress;
+import java.util.concurrent.atomic.AtomicBoolean;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
+import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.CopyOnWriteArrayList;
+import java.util.concurrent.Executor;
+import java.util.List;
+import java.util.Optional;
+import java.util.stream.Collectors;
+import java.util.stream.Stream;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.net.InetAddresses;
+import org.apache.tuweni.bytes.Bytes;
+import org.apache.tuweni.rlp.RLPException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sila.beacon.discovery.schema.NodeRecord;

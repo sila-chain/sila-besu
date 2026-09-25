@@ -14,20 +14,12 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.transport;
 
-import com.google.common.annotations.VisibleForTesting;
-import com.google.common.net.InetAddresses;
-import io.netty.bootstrap.Bootstrap;
-import io.netty.channel.ChannelFactory;
-import io.netty.channel.ChannelFuture;
-import io.netty.channel.ChannelInitializer;
-import io.netty.channel.EventLoopGroup;
-import io.netty.channel.MultiThreadIoEventLoopGroup;
-import io.netty.channel.nio.NioIoHandler;
-import io.netty.channel.socket.DatagramPacket;
-import io.netty.channel.socket.nio.NioDatagramChannel;
-import io.netty.channel.socket.SocketProtocolFamily;
-import io.netty.handler.logging.LoggingHandler;
-import io.netty.handler.logging.LogLevel;
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.util.NetworkUtility;
+
 import java.net.InetAddress;
 import java.net.InetSocketAddress;
 import java.net.StandardProtocolFamily;
@@ -42,12 +34,22 @@ import java.util.function.Consumer;
 import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
+
+import com.google.common.annotations.VisibleForTesting;
+import com.google.common.net.InetAddresses;
+import io.netty.bootstrap.Bootstrap;
+import io.netty.channel.ChannelFactory;
+import io.netty.channel.ChannelFuture;
+import io.netty.channel.ChannelInitializer;
+import io.netty.channel.EventLoopGroup;
+import io.netty.channel.MultiThreadIoEventLoopGroup;
+import io.netty.channel.nio.NioIoHandler;
+import io.netty.channel.socket.DatagramPacket;
+import io.netty.channel.socket.nio.NioDatagramChannel;
+import io.netty.channel.socket.SocketProtocolFamily;
+import io.netty.handler.logging.LoggingHandler;
+import io.netty.handler.logging.LogLevel;
 import org.apache.tuweni.bytes.Bytes;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.util.NetworkUtility;
 import org.reactivestreams.Publisher;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

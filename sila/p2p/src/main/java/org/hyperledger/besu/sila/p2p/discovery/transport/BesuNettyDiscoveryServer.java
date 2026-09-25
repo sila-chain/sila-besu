@@ -14,10 +14,11 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.transport;
 
-import io.netty.channel.socket.nio.NioDatagramChannel;
 import java.net.InetSocketAddress;
 import java.net.StandardProtocolFamily;
 import java.util.concurrent.CompletableFuture;
+
+import io.netty.channel.socket.nio.NioDatagramChannel;
 import org.reactivestreams.Publisher;
 import sila.beacon.discovery.network.NettyDiscoveryServer;
 import sila.beacon.discovery.pipeline.Envelope;
