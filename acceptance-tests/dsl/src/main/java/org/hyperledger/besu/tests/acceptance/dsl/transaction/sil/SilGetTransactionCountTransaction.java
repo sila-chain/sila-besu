@@ -22,8 +22,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.DefaultBlockParameterName;
-import org.web3j.protocol.core.methods.response.EthGetTransactionCount;
+import sila.web3j.protocol.core.DefaultBlockParameterName;
+import sila.web3j.protocol.core.methods.response.EthGetTransactionCount;
 
 public class SilGetTransactionCountTransaction implements Transaction<BigInteger> {
 
