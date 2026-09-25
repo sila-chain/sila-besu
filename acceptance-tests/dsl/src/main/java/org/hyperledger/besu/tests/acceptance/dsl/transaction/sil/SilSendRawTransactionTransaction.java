@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFactory.SilSendRawTransactionResponse;
 
 import java.io.IOException;
 
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
 
 public class SilSendRawTransactionTransaction implements Transaction<String> {
 
@@ -34,12 +34,13 @@ public class SilSendRawTransactionTransaction implements Transaction<String> {
   @Override
   public String execute(final NodeRequests node) {
     try {
-      EthSendTransaction response = node.sil().ethSendRawTransaction(transactionData).send();
+      SilSendRawTransactionResponse response =
+          node.custom().silSendRawTransaction(transactionData).send();
       assertThat(response).isNotNull();
       if (response.hasError()) {
         throw new RuntimeException(response.getError().getMessage());
       }
-      return response.getTransactionHash();
+      return response.getResult();
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }

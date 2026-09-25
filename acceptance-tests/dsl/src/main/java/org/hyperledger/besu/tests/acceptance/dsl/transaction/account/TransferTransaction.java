@@ -22,6 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.blockchain.Amount;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.SignUtil;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFactory.SilSendRawTransactionResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
@@ -29,7 +30,6 @@ import java.math.BigInteger;
 import java.util.Optional;
 
 import org.web3j.crypto.RawTransaction;
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
 import org.web3j.utils.Convert;
 import org.web3j.utils.Convert.Unit;
 import org.web3j.utils.Numeric;
@@ -106,13 +106,13 @@ public class TransferTransaction implements Transaction<Hash> {
 
   private Hash sendRawTransaction(final NodeRequests node, final String signedTransactionData) {
     try {
-      final EthSendTransaction transaction =
-          node.sil().ethSendRawTransaction(signedTransactionData).send();
+      final SilSendRawTransactionResponse transaction =
+          node.custom().silSendRawTransaction(signedTransactionData).send();
       if (transaction.getResult() == null && transaction.getError() != null) {
         throw new RuntimeException(
             "Error sending transaction: " + transaction.getError().getMessage());
       }
-      return Hash.fromHexString(transaction.getTransactionHash());
+      return Hash.fromHexString(transaction.getResult());
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }

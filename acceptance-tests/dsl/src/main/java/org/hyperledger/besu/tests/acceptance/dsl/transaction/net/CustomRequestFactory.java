@@ -30,6 +30,8 @@ public class CustomRequestFactory {
 
   public static class SilGetBalanceResponse extends Response<String> {}
 
+  public static class SilSendRawTransactionResponse extends Response<String> {}
+
   public static class TransactionReceiptWithRevertReason extends TransactionReceipt {
     private String revertReason;
 
@@ -102,6 +104,15 @@ public class CustomRequestFactory {
         Arrays.asList(address, "latest"),
         web3jService,
         SilGetBalanceResponse.class);
+  }
+
+  public Request<?, SilSendRawTransactionResponse> silSendRawTransaction(
+      final String transactionData) {
+    return new Request<>(
+        "sil_sendRawTransaction",
+        Collections.singletonList(transactionData),
+        web3jService,
+        SilSendRawTransactionResponse.class);
   }
 
   public Request<?, SilGetTransactionReceiptWithRevertReasonResponse>
