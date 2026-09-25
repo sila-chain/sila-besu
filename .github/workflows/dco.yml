@@ -40,7 +40,7 @@ jobs:
         run: |
           work="$PWD/build/sila-java-authorities"
           rm -rf "$work"
-          mkdir -p "$work/runtime" "$work/discovery" "$work/kzg" "$work/solidity" "$work/gradleplugin/src/main/resources/META-INF/gradle-plugins"
+          mkdir -p "$work/runtime" "$work/discovery" "$work/kzg" "$work/solidity/src/main/resources/META-INF/gradle-plugins" "$work/gradleplugin/src/main/resources/META-INF/gradle-plugins"
           cat > "$work/settings.gradle" <<'GRADLE'
           pluginManagement {
             repositories {
@@ -130,8 +130,13 @@ jobs:
             relocate 'org.web3j', 'sila.web3j'
             mergeServiceFiles()
             exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'module-info.class'
+            exclude 'META-INF/gradle-plugins/org.web3j.solidity.properties'
           }
           GRADLE
+
+          cat > "$work/solidity/src/main/resources/META-INF/gradle-plugins/sila.web3j.solidity.properties" <<'PROPS'
+          implementation-class=sila.web3j.solidity.gradle.plugin.SolidityPlugin
+          PROPS
 
           cat > "$work/gradleplugin/build.gradle" <<'GRADLE'
           plugins {
@@ -150,6 +155,7 @@ jobs:
             relocate 'org.web3j', 'sila.web3j'
             mergeServiceFiles()
             exclude 'META-INF/*.SF', 'META-INF/*.DSA', 'META-INF/*.RSA', 'module-info.class'
+            exclude 'META-INF/gradle-plugins/org.web3j.properties'
           }
           GRADLE
 
@@ -182,6 +188,7 @@ jobs:
           grep -q '^sila/beacon/discovery/schema/NodeRecord.class$' "$work/discovery.list"
           grep -q '^sila/ckzg4844/CKZG4844JNI.class$' "$work/kzg.list"
           grep -q '^sila/web3j/solidity/gradle/plugin/SolidityPlugin.class$' "$work/solidity.list"
+          grep -q '^META-INF/gradle-plugins/sila.web3j.solidity.properties$' "$work/solidity.list"
           grep -q '^sila/web3j/gradle/plugin/Web3jPlugin.class$' "$work/gradleplugin.list"
           grep -q '^META-INF/gradle-plugins/sila.web3j.properties$' "$work/gradleplugin.list"
 
@@ -197,12 +204,12 @@ jobs:
             echo "Unconverted Ethereum CKZG class found in Sila KZG artifact"
             exit 1
           fi
-          if grep -q '^org/web3j/' "$work/solidity.list"; then
-            echo "Unconverted Web3j class found in Sila Solidity artifact"
+          if grep -q '^org/web3j/' "$work/solidity.list" || grep -q '^META-INF/gradle-plugins/org.web3j.solidity.properties$' "$work/solidity.list"; then
+            echo "Unconverted Web3j identity found in Sila Solidity artifact"
             exit 1
           fi
-          if grep -q '^org/web3j/' "$work/gradleplugin.list"; then
-            echo "Unconverted Web3j class found in Sila Gradle plugin artifact"
+          if grep -q '^org/web3j/' "$work/gradleplugin.list" || grep -q '^META-INF/gradle-plugins/org.web3j.properties$' "$work/gradleplugin.list"; then
+            echo "Unconverted Web3j identity found in Sila Gradle plugin artifact"
             exit 1
           fi
 
