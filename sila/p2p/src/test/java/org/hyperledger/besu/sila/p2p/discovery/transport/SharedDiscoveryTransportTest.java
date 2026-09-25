@@ -46,11 +46,11 @@ import java.util.concurrent.CountDownLatch;
 import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
-
-import com.google.common.net.InetAddresses;
 import javax.crypto.Cipher;
 import javax.crypto.spec.IvParameterSpec;
 import javax.crypto.spec.SecretKeySpec;
+
+import com.google.common.net.InetAddresses;
 import org.apache.tuweni.bytes.Bytes;
 import org.awaitility.Awaitility;
 import org.junit.jupiter.api.AfterEach;
