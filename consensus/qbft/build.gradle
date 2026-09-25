@@ -48,7 +48,7 @@ dependencies {
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'io.consensys.tuweni:tuweni-bytes'
   implementation 'io.consensys.tuweni:tuweni-units'
-  implementation 'org.web3j:abi'
+  implementation 'sila.java:sila-web3j-runtime:5.0.3'
 
   integrationTestImplementation project(path: ':config', configuration: 'testSupportArtifacts')
   integrationTestImplementation project(path: ':sila:core', configuration: 'testSupportArtifacts')
