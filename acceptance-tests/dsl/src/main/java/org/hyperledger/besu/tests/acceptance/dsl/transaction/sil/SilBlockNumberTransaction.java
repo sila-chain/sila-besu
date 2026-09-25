@@ -29,7 +29,7 @@ public class SilBlockNumberTransaction implements Transaction<BigInteger> {
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      final org.web3j.protocol.core.methods.response.EthBlockNumber result =
+      final sila.web3j.protocol.core.methods.response.EthBlockNumber result =
           node.sil().ethBlockNumber().send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
