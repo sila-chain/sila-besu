@@ -22,8 +22,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.EthGetTransactionReceipt;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class SilGetTransactionReceiptTransaction
     implements Transaction<Optional<TransactionReceipt>> {
