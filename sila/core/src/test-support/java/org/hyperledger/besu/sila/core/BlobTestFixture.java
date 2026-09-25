@@ -28,7 +28,7 @@ import org.hyperledger.besu.sila.core.kzg.KZGProof;
 import java.util.ArrayList;
 import java.util.List;
 
-import ethereum.ckzg4844.CKZG4844JNI;
+import sila.ckzg4844.CKZG4844JNI;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.Bytes48;

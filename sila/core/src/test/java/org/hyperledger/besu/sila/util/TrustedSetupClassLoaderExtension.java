@@ -18,8 +18,8 @@ import static org.junit.jupiter.api.Assertions.fail;
 
 import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
 
-import ethereum.ckzg4844.CKZG4844JNI;
-import ethereum.ckzg4844.CKZGException;
+import sila.ckzg4844.CKZG4844JNI;
+import sila.ckzg4844.CKZGException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
