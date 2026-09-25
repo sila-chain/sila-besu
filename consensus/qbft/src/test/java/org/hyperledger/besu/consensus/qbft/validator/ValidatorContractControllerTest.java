@@ -42,10 +42,10 @@ import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.Function;
+import sila.web3j.abi.FunctionEncoder;
+import sila.web3j.abi.TypeReference;
+import sila.web3j.abi.datatypes.DynamicArray;
+import sila.web3j.abi.datatypes.Function;
 
 public class ValidatorContractControllerTest {
   private static final String GET_VALIDATORS_FUNCTION_RESULT =
@@ -71,7 +71,7 @@ public class ValidatorContractControllerTest {
         new Function(
             GET_VALIDATORS,
             List.of(),
-            List.of(new TypeReference<DynamicArray<org.web3j.abi.datatypes.Address>>() {}));
+            List.of(new TypeReference<DynamicArray<sila.web3j.abi.datatypes.Address>>() {}));
     final Bytes payload = Bytes.fromHexString(FunctionEncoder.encode(getValidatorsFunction));
     callParameter = ImmutableCallParameter.builder().to(CONTRACT_ADDRESS).input(payload).build();
     final MutableQbftConfigOptions qbftConfigOptions =
