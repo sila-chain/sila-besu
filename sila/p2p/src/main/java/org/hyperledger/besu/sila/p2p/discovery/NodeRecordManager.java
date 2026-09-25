@@ -28,10 +28,10 @@ import org.hyperledger.besu.util.NetworkUtility;
 
 import java.util.ArrayList;
 import java.util.Collections;
-import java.util.concurrent.locks.ReentrantLock;
-import java.util.function.Supplier;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.locks.ReentrantLock;
+import java.util.function.Supplier;
 
 import com.google.common.net.InetAddresses;
 import org.apache.tuweni.bytes.Bytes;
