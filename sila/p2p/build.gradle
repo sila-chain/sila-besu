@@ -63,7 +63,7 @@ dependencies {
   annotationProcessor "org.immutables:value"
   implementation "org.immutables:value-annotations"
   implementation 'io.projectreactor:reactor-core'
-  implementation 'io.consensys.protocols:discovery'
+  implementation 'sila.java:sila-discovery:26.8.0'
 
   // test dependencies.
   testImplementation project(path: ':sila:core', configuration: 'testArtifacts')
