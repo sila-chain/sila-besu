@@ -23,7 +23,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransacti
 
 import java.nio.charset.StandardCharsets;
 
-import org.web3j.utils.Numeric;
+import sila.web3j.utils.Numeric;
 
 public class ExpectSuccessfulSilGetTransactionReceiptWithReason implements Condition {
 
