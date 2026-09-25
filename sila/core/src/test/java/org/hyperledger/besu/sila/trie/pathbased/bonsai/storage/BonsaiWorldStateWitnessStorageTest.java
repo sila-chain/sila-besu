@@ -17,7 +17,7 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.storage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.savm.internal.EvmConfiguration;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.NoOpTrieLogManager;
@@ -55,9 +55,9 @@ class BonsaiWorldStateWitnessStorageTest {
             witnessStorage,
             new NoOpBonsaiCachedMerkleTrieLoader(),
             new NoOpBonsaiWorldStateCacheManager(
-                witnessStorage, EvmConfiguration.DEFAULT, codeCache),
+                witnessStorage, SavmConfiguration.DEFAULT, codeCache),
             new NoOpTrieLogManager(),
-            EvmConfiguration.DEFAULT,
+            SavmConfiguration.DEFAULT,
             WorldStateConfig.createStatefulConfigWithTrie(),
             codeCache)
         .close();
