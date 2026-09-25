@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.EthGasPrice;
+import sila.web3j.protocol.core.methods.response.EthGasPrice;
 
 public class MinerGetMinGasPriceTransaction implements Transaction<BigInteger> {
 
