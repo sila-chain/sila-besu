@@ -18,10 +18,10 @@ import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 
 import java.time.Clock;
-import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
+import javax.inject.Singleton;
 import sila.beacon.discovery.schema.NodeRecordFactory;
 
 @Module

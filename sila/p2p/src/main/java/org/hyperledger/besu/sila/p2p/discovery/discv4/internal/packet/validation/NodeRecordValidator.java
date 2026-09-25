@@ -18,7 +18,6 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import javax.inject.Inject;
 import javax.inject.Singleton;
-
 import sila.beacon.discovery.schema.NodeRecord;
 
 @Singleton
