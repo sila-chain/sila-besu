@@ -21,7 +21,7 @@ import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
-import org.ethereum.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 
 /** Service interface for peer discovery in a P2P network. */
 public interface PeerDiscoveryAgent {

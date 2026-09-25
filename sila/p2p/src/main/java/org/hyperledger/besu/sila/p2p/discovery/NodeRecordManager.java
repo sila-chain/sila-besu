@@ -36,10 +36,10 @@ import java.util.function.Supplier;
 import com.google.common.net.InetAddresses;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.ethereum.beacon.discovery.schema.EnrField;
-import org.ethereum.beacon.discovery.schema.IdentitySchema;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.schema.NodeRecordFactory;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.IdentitySchema;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

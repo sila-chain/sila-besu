@@ -75,7 +75,7 @@ import com.google.common.cache.Cache;
 import com.google.common.cache.CacheBuilder;
 import inet.ipaddr.IPAddressString;
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

@@ -60,8 +60,8 @@ import com.google.common.annotations.VisibleForTesting;
 import com.google.common.net.InetAddresses;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.rlp.RLPException;
-import org.ethereum.beacon.discovery.schema.NodeRecord;
-import org.ethereum.beacon.discovery.util.DecodeException;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.util.DecodeException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 

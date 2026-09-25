@@ -31,7 +31,7 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.ethereum.beacon.discovery.util.DecodeException;
+import sila.beacon.discovery.util.DecodeException;
 
 @Singleton
 public class PacketDeserializer {
