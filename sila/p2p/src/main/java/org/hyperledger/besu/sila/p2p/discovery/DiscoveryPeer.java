@@ -20,7 +20,7 @@ import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 
 import java.util.Optional;
 
-import org.ethereum.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class DiscoveryPeer extends DefaultPeer {
   private long lastAttemptedConnection = 0;

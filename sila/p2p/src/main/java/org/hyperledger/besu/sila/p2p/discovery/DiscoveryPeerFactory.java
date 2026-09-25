@@ -18,7 +18,7 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 
-import org.ethereum.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class DiscoveryPeerFactory {
 

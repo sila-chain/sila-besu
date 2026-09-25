@@ -188,6 +188,19 @@ configure(allprojects - project(':platform')) {
 
     mavenCentral()
 
+    // Sila-owned Java authorities converted from upstream Ethereum-affiliated dependencies.
+    def silaJavaAuthoritiesRepo = ivy {
+      url = 'https://github.com/sila-chain/sila-besu/releases/download'
+      patternLayout {
+        artifact '/sila-java-authorities-v1/[artifact]-[revision].[ext]'
+      }
+      metadataSources { artifact() }
+    }
+    exclusiveContent {
+      forRepositories(silaJavaAuthoritiesRepo)
+      filter { includeGroup('sila.java') }
+    }
+
     // sila execution spec tests fixtures. Exclusively for sila submodule to run ref tests
     def silExecSpecTestsRepo = ivy {
       url = 'https://github.com'
