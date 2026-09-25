@@ -45,7 +45,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
   private static final String GENESIS_FILE = "/dev/dev_prague.json";
   private static final SECP256K1 secp256k1 = new SECP256K1();
 
-  public static final Address SEND_ALL_ETH_CONTRACT_ADDRESS =
+  public static final Address SEND_ALL_SIL_CONTRACT_ADDRESS =
       Address.fromHexStringStrict("0000000000000000000000000000000000009999");
 
   public static final Address ALWAYS_REVERT_CONTRACT_ADDRESS =
@@ -89,13 +89,13 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
    * balance should be 180000 SIL minus the transaction costs.
    */
   @Test
-  public void shouldTransferAllEthOfAuthorizerToSponsor() throws IOException {
+  public void shouldTransferAllSilOfAuthorizerToSponsor() throws IOException {
 
     // 7702 transaction
     final CodeDelegation codeDelegation =
         org.hyperledger.besu.sila.core.CodeDelegation.builder()
             .chainId(BigInteger.valueOf(20211))
-            .address(SEND_ALL_ETH_CONTRACT_ADDRESS)
+            .address(SEND_ALL_SIL_CONTRACT_ADDRESS)
             .nonce(0)
             .signAndBuild(
                 secp256k1.createKeyPair(
@@ -162,7 +162,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
             .nonce(
                 1L) // nonce is 1, but because it is validated before the nonce increase, it should
             // be 0
-            .address(SEND_ALL_ETH_CONTRACT_ADDRESS)
+            .address(SEND_ALL_SIL_CONTRACT_ADDRESS)
             .signAndBuild(
                 secp256k1.createKeyPair(
                     secp256k1.createPrivateKey(AUTHORIZER_PRIVATE_KEY.toUnsignedBigInteger())));
@@ -232,7 +232,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
 
     cluster.verify(otherAccount.balanceEquals(Amount.wei(otherAccountBalanceAfterFirstTx)));
 
-    final Transaction txSendEthToOtherAccount =
+    final Transaction txSendSilToOtherAccount =
         Transaction.builder()
             .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
@@ -247,9 +247,9 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
                 secp256k1.createKeyPair(
                     secp256k1.createPrivateKey(AUTHORIZER_PRIVATE_KEY.toUnsignedBigInteger())));
 
-    final String txSendEthToOtherAccountHash =
+    final String txSendSilToOtherAccountHash =
         besuNode.execute(
-            silTransactions.sendRawTransaction(txSendEthToOtherAccount.encoded().toHexString()));
+            silTransactions.sendRawTransaction(txSendSilToOtherAccount.encoded().toHexString()));
     testHelper.buildNewBlock();
 
     // Wait for second transaction receipt to be available with retry logic
@@ -259,7 +259,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
         60,
         () -> {
           maybeSecondTransactionReceiptHolder.set(
-              besuNode.execute(silTransactions.getTransactionReceipt(txSendEthToOtherAccountHash)));
+              besuNode.execute(silTransactions.getTransactionReceipt(txSendSilToOtherAccountHash)));
           assertThat(maybeSecondTransactionReceiptHolder.get()).isPresent();
         });
 
@@ -293,12 +293,12 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
         besuNode.execute(silTransactions.getCode(authorizer));
     assertThat(authorizerCodeBeforeCodeDelegation).isEqualTo(Bytes.EMPTY);
 
-    // valid 7702 code delegation to SEND_ALL_ETH_CONTRACT_ADDRESS
+    // valid 7702 code delegation to SEND_ALL_SIL_CONTRACT_ADDRESS
     final CodeDelegation codeDelegation =
         org.hyperledger.besu.sila.core.CodeDelegation.builder()
             .chainId(BigInteger.valueOf(20211))
             .nonce(0L)
-            .address(SEND_ALL_ETH_CONTRACT_ADDRESS)
+            .address(SEND_ALL_SIL_CONTRACT_ADDRESS)
             .signAndBuild(
                 secp256k1.createKeyPair(
                     secp256k1.createPrivateKey(AUTHORIZER_PRIVATE_KEY.toUnsignedBigInteger())));
@@ -343,7 +343,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
 
     // Wait for code to be queryable with retry logic
     final Bytes expectedCode =
-        Bytes.concatenate(Bytes.fromHexString("ef0100"), SEND_ALL_ETH_CONTRACT_ADDRESS.getBytes());
+        Bytes.concatenate(Bytes.fromHexString("ef0100"), SEND_ALL_SIL_CONTRACT_ADDRESS.getBytes());
     final AtomicReference<Bytes> authorizerCodeHolder = new AtomicReference<>();
     WaitUtils.waitFor(
         30,
@@ -367,12 +367,12 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
         besuNode.execute(silTransactions.getCode(authorizer));
     assertThat(authorizerCodeBeforeCodeDelegation).isEqualTo(Bytes.EMPTY);
 
-    // valid 7702 code delegation to SEND_ALL_ETH_CONTRACT_ADDRESS
+    // valid 7702 code delegation to SEND_ALL_SIL_CONTRACT_ADDRESS
     final CodeDelegation codeDelegation =
         org.hyperledger.besu.sila.core.CodeDelegation.builder()
             .chainId(BigInteger.valueOf(20211))
             .nonce(1L)
-            .address(SEND_ALL_ETH_CONTRACT_ADDRESS)
+            .address(SEND_ALL_SIL_CONTRACT_ADDRESS)
             .signAndBuild(
                 secp256k1.createKeyPair(
                     secp256k1.createPrivateKey(AUTHORIZER_PRIVATE_KEY.toUnsignedBigInteger())));
@@ -416,7 +416,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
 
     // Wait for code to be queryable with retry logic
     final Bytes expectedCode =
-        Bytes.concatenate(Bytes.fromHexString("ef0100"), SEND_ALL_ETH_CONTRACT_ADDRESS.getBytes());
+        Bytes.concatenate(Bytes.fromHexString("ef0100"), SEND_ALL_SIL_CONTRACT_ADDRESS.getBytes());
     final AtomicReference<Bytes> authorizerCodeHolder = new AtomicReference<>();
     WaitUtils.waitFor(
         30,

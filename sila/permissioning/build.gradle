@@ -61,7 +61,6 @@ dependencies {
   implementation 'io.consensys.tuweni:tuweni-toml'
   implementation 'io.consensys.tuweni:tuweni-units'
   implementation 'javax.inject:javax.inject'
-  implementation 'org.web3j:abi'
 
   compileOnlyApi 'org.jspecify:jspecify'
 
