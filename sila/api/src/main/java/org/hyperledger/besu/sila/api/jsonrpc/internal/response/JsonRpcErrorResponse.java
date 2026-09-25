@@ -28,11 +28,11 @@ import com.fasterxml.jackson.annotation.JsonIgnore;
 import com.fasterxml.jackson.annotation.JsonPropertyOrder;
 import com.google.common.base.MoreObjects;
 import org.apache.tuweni.bytes.Bytes;
-import org.web3j.abi.FunctionReturnDecoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.AbiTypes;
-import org.web3j.abi.datatypes.Type;
-import org.web3j.abi.datatypes.Utf8String;
+import sila.web3j.abi.FunctionReturnDecoder;
+import sila.web3j.abi.TypeReference;
+import sila.web3j.abi.datatypes.AbiTypes;
+import sila.web3j.abi.datatypes.Type;
+import sila.web3j.abi.datatypes.Utf8String;
 
 @JsonPropertyOrder({"jsonrpc", "id", "error"})
 public class JsonRpcErrorResponse implements JsonRpcResponse {
