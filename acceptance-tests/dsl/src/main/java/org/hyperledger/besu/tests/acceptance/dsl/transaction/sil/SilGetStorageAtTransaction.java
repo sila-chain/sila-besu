@@ -15,7 +15,7 @@
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
+import static sila.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
@@ -24,7 +24,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.EthGetStorageAt;
+import sila.web3j.protocol.core.methods.response.EthGetStorageAt;
 
 public class SilGetStorageAtTransaction implements Transaction<String> {
 
