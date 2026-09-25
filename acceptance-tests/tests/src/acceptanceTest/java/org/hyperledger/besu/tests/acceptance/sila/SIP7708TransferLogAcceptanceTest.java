@@ -98,7 +98,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
 
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -159,7 +159,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
   public void shouldNotEmitTransferLogForZeroValueTransfer() throws IOException {
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -211,7 +211,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
 
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -288,7 +288,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
 
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -352,7 +352,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
     // No calldata needed - contract selfdestructs to itself
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -409,7 +409,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
     // Call destroyer contract to trigger all three selfdestructs
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -459,7 +459,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
 
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -517,7 +517,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
 
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))

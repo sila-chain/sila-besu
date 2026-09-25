@@ -88,7 +88,7 @@ public class SIP7778GasAccountingAcceptanceTest extends AcceptanceTestBase {
 
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -132,7 +132,7 @@ public class SIP7778GasAccountingAcceptanceTest extends AcceptanceTestBase {
     // Call the contract which clears storage slot 0, generating a refund
     final Transaction tx =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -177,7 +177,7 @@ public class SIP7778GasAccountingAcceptanceTest extends AcceptanceTestBase {
     // First transaction
     final Transaction tx1 =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
@@ -193,7 +193,7 @@ public class SIP7778GasAccountingAcceptanceTest extends AcceptanceTestBase {
     // Second transaction
     final Transaction tx2 =
         Transaction.builder()
-            .type(TransactionType.EIP1559)
+            .type(TransactionType.SIP1559)
             .chainId(BigInteger.valueOf(20211))
             .nonce(1)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))

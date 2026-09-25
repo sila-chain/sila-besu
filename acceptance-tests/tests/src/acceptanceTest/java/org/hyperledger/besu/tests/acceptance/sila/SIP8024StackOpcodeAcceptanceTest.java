@@ -201,7 +201,7 @@ public class SIP8024StackOpcodeAcceptanceTest extends AcceptanceTestBase {
   private Transaction createContractCallTransaction(final Address contractAddress, final int nonce)
       throws IOException {
     return Transaction.builder()
-        .type(TransactionType.EIP1559)
+        .type(TransactionType.SIP1559)
         .chainId(BigInteger.valueOf(20211))
         .nonce(nonce)
         .maxPriorityFeePerGas(Wei.of(1_000_000_000))
