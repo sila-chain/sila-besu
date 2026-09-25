@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.tests.acceptance.dsl.blockchain;
 
-import static org.web3j.utils.Convert.Unit.ETHER;
-import static org.web3j.utils.Convert.Unit.WEI;
+import static sila.web3j.utils.Convert.Unit.ETHER;
+import static sila.web3j.utils.Convert.Unit.WEI;
 
 import java.math.BigDecimal;
 import java.math.BigInteger;
 
-import org.web3j.utils.Convert;
-import org.web3j.utils.Convert.Unit;
+import sila.web3j.utils.Convert;
+import sila.web3j.utils.Convert.Unit;
 
 public class Amount {
 
