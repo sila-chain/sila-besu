@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrresponse;
 
-import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketDataDeserializer;
+import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 
 import javax.inject.Inject;

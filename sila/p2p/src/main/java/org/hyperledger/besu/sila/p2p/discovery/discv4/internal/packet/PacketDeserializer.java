@@ -16,14 +16,14 @@ package org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet;
 
 import static org.hyperledger.besu.util.Preconditions.checkGuard;
 
-import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrequest.EnrRequestPacketDataRlpReader;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrresponse.EnrResponsePacketDataRlpReader;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.findneighbors.FindNeighborsPacketDataRlpReader;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.neighbors.NeighborsPacketDataRlpReader;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.ping.PingPacketDataRlpReader;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.pong.PongPacketDataRlpReader;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
+import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPException;
 
