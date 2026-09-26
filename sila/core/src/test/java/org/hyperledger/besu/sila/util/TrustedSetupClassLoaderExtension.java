@@ -14,12 +14,14 @@
  */
 package org.hyperledger.besu.sila.util;
 
+import static org.junit.jupiter.api.Assertions.fail;
+
 import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
+
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sila.ckzg4844.CKZG4844JNI;
 import sila.ckzg4844.CKZGException;
-import static org.junit.jupiter.api.Assertions.fail;
 
 public class TrustedSetupClassLoaderExtension {
   private static final Logger LOG = LoggerFactory.getLogger(TrustedSetupClassLoaderExtension.class);

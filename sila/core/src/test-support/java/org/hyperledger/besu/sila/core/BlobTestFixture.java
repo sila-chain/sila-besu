@@ -14,12 +14,9 @@
  */
 package org.hyperledger.besu.sila.core;
 
-import java.util.ArrayList;
-import java.util.List;
-import org.apache.tuweni.bytes.Bytes;
-import org.apache.tuweni.bytes.Bytes32;
-import org.apache.tuweni.bytes.Bytes48;
-import org.bouncycastle.crypto.digests.SHA256Digest;
+import static org.hyperledger.besu.sila.core.kzg.CKZG4844Helper.computeBlobKzgProof;
+import static org.hyperledger.besu.sila.core.kzg.CKZG4844Helper.computeBlobKzgProofs;
+
 import org.hyperledger.besu.datatypes.BlobType;
 import org.hyperledger.besu.datatypes.VersionedHash;
 import org.hyperledger.besu.sila.core.kzg.Blob;
@@ -27,9 +24,15 @@ import org.hyperledger.besu.sila.core.kzg.BlobProofBundle;
 import org.hyperledger.besu.sila.core.kzg.BlobsWithCommitments;
 import org.hyperledger.besu.sila.core.kzg.KZGCommitment;
 import org.hyperledger.besu.sila.core.kzg.KZGProof;
+
+import java.util.ArrayList;
+import java.util.List;
+
+import org.apache.tuweni.bytes.Bytes32;
+import org.apache.tuweni.bytes.Bytes48;
+import org.apache.tuweni.bytes.Bytes;
+import org.bouncycastle.crypto.digests.SHA256Digest;
 import sila.ckzg4844.CKZG4844JNI;
-import static org.hyperledger.besu.sila.core.kzg.CKZG4844Helper.computeBlobKzgProof;
-import static org.hyperledger.besu.sila.core.kzg.CKZG4844Helper.computeBlobKzgProofs;
 
 /**
  * A utility class for creating blobs and their associated cryptographic artifacts (KZG commitments,
