@@ -61,6 +61,14 @@ def apiBaselineJar = configurations.detachedConfiguration(
 def apiBaselineClasspath = configurations.detachedConfiguration(
   dependencies.create("org.hyperledger.besu:besu-plugin-api:${apiBaselineVersion}"))
 
+[apiBaselineJar, apiBaselineClasspath].each { cfg ->
+  cfg.resolutionStrategy.dependencySubstitution {
+    substitute module('io.consensys.protocols:jc-kzg-4844') using module('sila.java:sila-ckzg4844:2.1.8')
+    substitute module('io.consensys.protocols:discovery') using module('sila.java:sila-discovery:26.8.0')
+    substitute module('sila.web3j:core') using module('sila.java:sila-web3j-runtime:5.0.3')
+  }
+}
+
 tasks.register('checkAPICompatibility', me.champeau.gradle.japicmp.JapicmpTask) {
   description = "Checks that the Plugin API remains binary and source compatible with the last released version, allowing only additions"
   group = 'verification'
