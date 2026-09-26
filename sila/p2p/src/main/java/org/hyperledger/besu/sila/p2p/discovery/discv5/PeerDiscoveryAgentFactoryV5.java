@@ -14,12 +14,6 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv5;
 
-import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-import org.apache.tuweni.bytes.Bytes;
-import org.apache.tuweni.bytes.Bytes32;
 import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
@@ -31,21 +25,29 @@ import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeer;
 import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeerFactory;
-import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryAgent;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryAgentFactory;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.DefaultPeerId;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.sila.storage.StorageProvider;
+
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+
+import org.apache.tuweni.bytes.Bytes32;
+import org.apache.tuweni.bytes.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sila.beacon.discovery.AddressAccessPolicy;
-import sila.beacon.discovery.crypto.Signer;
 import sila.beacon.discovery.DiscoverySystemBuilder;
 import sila.beacon.discovery.MutableDiscoverySystem;
+import sila.beacon.discovery.crypto.Signer;
 import sila.beacon.discovery.network.NettyDiscoveryServer;
 import sila.beacon.discovery.schema.NodeRecord;
 import sila.beacon.discovery.storage.NewAddressHandler;
