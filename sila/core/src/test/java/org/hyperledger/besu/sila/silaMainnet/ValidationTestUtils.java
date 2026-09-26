@@ -31,12 +31,15 @@ import org.apache.tuweni.bytes.Bytes;
 
 public final class ValidationTestUtils {
 
+  private static final String BLOCK_RESOURCE =
+      "/org/hyperledger/besu/sila/sila-mainnet/block_%d.blocks";
+
   public static BlockHeader readHeader(final long num) throws IOException {
     final RLPInput input =
         new BytesValueRLPInput(
             Bytes.wrap(
                 Resources.toByteArray(
-                    ValidationTestUtils.class.getResource(String.format("/org/hyperledger/besu/sila/sila-mainnet/block_%d.blocks", num)))),
+                    ValidationTestUtils.class.getResource(String.format(BLOCK_RESOURCE, num)))),
             false);
     input.enterList();
     return BlockHeader.readFrom(input, new SilaMainnetBlockHeaderFunctions());
@@ -47,7 +50,7 @@ public final class ValidationTestUtils {
         new BytesValueRLPInput(
             Bytes.wrap(
                 Resources.toByteArray(
-                    ValidationTestUtils.class.getResource(String.format("/org/hyperledger/besu/sila/sila-mainnet/block_%d.blocks", num)))),
+                    ValidationTestUtils.class.getResource(String.format(BLOCK_RESOURCE, num)))),
             false);
     input.enterList();
     input.skipNext();
@@ -66,7 +69,7 @@ public final class ValidationTestUtils {
         new BytesValueRLPInput(
             Bytes.wrap(
                 Resources.toByteArray(
-                    ValidationTestUtils.class.getResource(String.format("/org/hyperledger/besu/sila/sila-mainnet/block_%d.blocks", num)))),
+                    ValidationTestUtils.class.getResource(String.format(BLOCK_RESOURCE, num)))),
             false);
     return Block.readFrom(input, new SilaMainnetBlockHeaderFunctions());
   }
