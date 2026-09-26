@@ -136,6 +136,35 @@ licenseReport {
   ]
 }
 
+// The Sila Web3j runtime authority is intentionally distributed as a self-contained JAR.
+// Its bundled Netty classes must not enter Besu's runtime classpath because Besu/Vert.x use
+// the platform-pinned Netty line. Repack the same verified Sila authority at build time,
+// removing only embedded Netty implementation classes/resources; no binary is committed.
+def silaWeb3jRuntimeAuthority = configurations.create('silaWeb3jRuntimeAuthority') {
+  canBeConsumed = false
+  canBeResolved = true
+  transitive = false
+}
+dependencies {
+  silaWeb3jRuntimeAuthority 'sila.java:sila-web3j-runtime:5.0.3'
+}
+def sanitizeSilaWeb3jRuntime = tasks.register('sanitizeSilaWeb3jRuntime', Zip) {
+  archiveFileName = 'sila-web3j-runtime-5.0.3-sanitized.jar'
+  destinationDirectory = layout.buildDirectory.dir('sila-authorities')
+  duplicatesStrategy = DuplicatesStrategy.EXCLUDE
+  from {
+    silaWeb3jRuntimeAuthority.collect { zipTree(it) }
+  }
+  exclude 'io/netty/**'
+  exclude 'META-INF/versions/**/io/netty/**'
+  exclude 'META-INF/native/*netty*'
+  exclude 'META-INF/services/io.netty.*'
+  exclude 'META-INF/*.SF'
+  exclude 'META-INF/*.RSA'
+  exclude 'META-INF/*.DSA'
+}
+ext.silaWeb3jRuntimeSanitized = files(sanitizeSilaWeb3jRuntime)
+
 configure(allprojects - project(':platform')) {
   apply plugin: 'java-library'
   apply plugin: 'jacoco'

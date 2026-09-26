@@ -54,7 +54,7 @@ dependencies {
   implementation 'org.java-websocket:Java-WebSocket:1.5.6'
   implementation 'com.fasterxml.jackson.core:jackson-annotations'
   implementation 'com.fasterxml.jackson.core:jackson-databind'
-  implementation 'sila.java:sila-web3j-runtime:5.0.3'
+  implementation rootProject.ext.silaWeb3jRuntimeSanitized
 
   implementation 'org.junit.jupiter:junit-jupiter'
 }
