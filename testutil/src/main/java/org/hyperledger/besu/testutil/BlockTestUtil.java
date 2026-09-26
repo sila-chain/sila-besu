@@ -210,7 +210,7 @@ public final class BlockTestUtil {
   private static ChainResources supplyMainnetChainResources() {
     final URL genesisURL =
         ensureFileUrl(
-            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/mainnet.json"));
+            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/sila-mainnet.json"));
     final URL blocksURL =
         ensureFileUrl(BlockTestUtil.class.getClassLoader().getResource("mainnet-data/1000.blocks"));
     return new ChainResources(genesisURL, blocksURL);
@@ -219,7 +219,7 @@ public final class BlockTestUtil {
   private static ChainResources supplyBadPowChainResources() {
     final URL genesisURL =
         ensureFileUrl(
-            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/mainnet.json"));
+            BlockTestUtil.class.getClassLoader().getResource("mainnet-data/sila-mainnet.json"));
     final URL blocksURL =
         ensureFileUrl(
             BlockTestUtil.class.getClassLoader().getResource("mainnet-data/badpow.blocks"));

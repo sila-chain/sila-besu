@@ -25,7 +25,7 @@ import sila.ckzg4844.CKZGException;
 
 public class TrustedSetupClassLoaderExtension {
   private static final Logger LOG = LoggerFactory.getLogger(TrustedSetupClassLoaderExtension.class);
-  private static final String TRUSTED_SETUP_RESOURCE = "/kzg-trusted-setups/mainnet.txt";
+  private static final String TRUSTED_SETUP_RESOURCE = "/kzg-trusted-setups/sila-mainnet.txt";
 
   static {
     try {
