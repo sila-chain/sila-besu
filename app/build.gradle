@@ -91,7 +91,7 @@ dependencies {
   implementation 'org.rocksdb:rocksdbjni'
   implementation 'org.springframework.security:spring-security-crypto'
   implementation 'org.xerial.snappy:snappy-java'
-  implementation 'io.consensys.protocols:jc-kzg-4844'
+  implementation 'sila.java:sila-ckzg4844'
 
   runtimeOnly 'org.apache.logging.log4j:log4j-jul'
   runtimeOnly 'com.splunk.logging:splunk-library-javalogging'
@@ -113,7 +113,7 @@ dependencies {
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'org.junit.jupiter:junit-jupiter'
   testImplementation 'org.mockito:mockito-core'
-  testImplementation 'io.consensys.protocols:discovery'
+  testImplementation 'sila.java:sila-discovery'
   testImplementation 'com.google.dagger:dagger'
 
   annotationProcessor 'com.google.dagger:dagger-compiler'

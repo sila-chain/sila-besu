@@ -256,6 +256,13 @@ configure(allprojects - project(':platform')) {
 
     // discovery library coordinates moved to io.consensys.protocols
     exclude group: 'tech.pegasys.discovery', module: 'discovery'
+
+    // Resolve Ethereum-affiliated/transformed coordinates to the real Sila Java authority artifacts.
+    resolutionStrategy.dependencySubstitution {
+      substitute module('io.consensys.protocols:jc-kzg-4844') using module('sila.java:sila-ckzg4844:2.1.8')
+      substitute module('io.consensys.protocols:discovery') using module('sila.java:sila-discovery:26.8.0')
+      substitute module('sila.web3j:core') using module('sila.java:sila-web3j-runtime:5.0.3')
+    }
   }
 
 
@@ -521,6 +528,11 @@ ext.forEachProjectSourceArtifact = { Project proj, Closure action ->
           attribute(DocsType.DOCS_TYPE_ATTRIBUTE, proj.objects.named(DocsType, DocsType.SOURCES))
         }
         lenient(true)
+        // Sila Java authorities are release-pinned binary artifacts and intentionally publish no
+        // documentation/source variant; their binary SHA-256 values remain verified separately.
+        componentFilter { id ->
+          !(id instanceof ModuleComponentIdentifier && id.group == 'sila.java')
+        }
       }
       view.artifacts.each { artifact -> guardedAction(artifact.id.componentIdentifier, artifact) }
     } catch (Exception e) {
@@ -541,7 +553,9 @@ ext.forEachProjectSourceArtifact = { Project proj, Closure action ->
       logger.info("Could not resolve ${proj.path} config '${cfg.name}': ${e.message}")
     }
   }
-  def externalIds = componentIds.findAll { it instanceof ModuleComponentIdentifier }
+  def externalIds = componentIds.findAll {
+    it instanceof ModuleComponentIdentifier && it.group != 'sila.java'
+  }
   try {
     def result = proj.dependencies.createArtifactResolutionQuery()
       .forComponents(externalIds)
@@ -610,7 +624,9 @@ ext.forEachBuildscriptSourceArtifact = { Closure action ->
         c.id
       }
     }
-    .findAll { it instanceof ModuleComponentIdentifier }
+    .findAll {
+      it instanceof ModuleComponentIdentifier && it.group != 'sila.java'
+    }
 
   def result = buildscript.dependencies.createArtifactResolutionQuery()
     .forComponents(componentIds)
