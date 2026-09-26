@@ -14,6 +14,12 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv5;
 
+import java.net.InetSocketAddress;
+import java.util.List;
+import java.util.Objects;
+import java.util.Optional;
+import org.apache.tuweni.bytes.Bytes32;
+import org.apache.tuweni.bytes.Bytes;
 import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
@@ -34,14 +40,6 @@ import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-
-import java.net.InetSocketAddress;
-import java.util.List;
-import java.util.Objects;
-import java.util.Optional;
-
-import org.apache.tuweni.bytes.Bytes32;
-import org.apache.tuweni.bytes.Bytes;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import sila.beacon.discovery.AddressAccessPolicy;
