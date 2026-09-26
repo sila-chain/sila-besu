@@ -23,7 +23,7 @@ import org.hyperledger.besu.tests.web3j.generated.RevertReason;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.EthSendTransaction;
+import sila.web3j.protocol.core.methods.response.EthSendTransaction;
 
 public class RevertReasonAcceptanceTest extends AcceptanceTestBase {
 

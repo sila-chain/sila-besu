@@ -28,8 +28,8 @@ import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.request.EthFilter;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.request.EthFilter;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 /*
  * This class is based around the EventEmitter solidity contract

@@ -32,7 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.web3j.protocol.core.methods.response.EthBlock;
+import sila.web3j.protocol.core.methods.response.EthBlock;
 
 public class SilaPragueAcceptanceTestHelper {
   protected static final MediaType MEDIA_TYPE_JSON =
