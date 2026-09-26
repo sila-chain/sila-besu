@@ -2654,6 +2654,9 @@
          <artifact name="sila-ckzg4844-2.1.8.jar">
             <sha256 value="cb62fe427b14e4c440a8846999e18254603c3341b332c189b7cc7c866604a929" origin="sila-chain/c-kzg-4844 sila-v2.1.8"/>
          </artifact>
+         <artifact name="sila-ckzg4844-2.1.8-sources.jar">
+            <sha256 value="cb62fe427b14e4c440a8846999e18254603c3341b332c189b7cc7c866604a929" origin="sila-chain/c-kzg-4844 sila-v2.1.8"/>
+         </artifact>
          <artifact name="sila-ckzg4844-jni-v2.1.8.jar">
             <sha256 value="cb62fe427b14e4c440a8846999e18254603c3341b332c189b7cc7c866604a929" origin="sila-chain/c-kzg-4844 sila-v2.1.8"/>
          </artifact>
