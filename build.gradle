@@ -123,7 +123,9 @@ licenseReport {
     'org.checkerframework:dataflow-errorprone',
     // exclude Kotlin multiplatform dependencies container, they have the same license of what they contain
     'com.squareup.okio:okio',
-    'org.jetbrains.kotlinx:kotlinx-coroutines-core'
+    'org.jetbrains.kotlinx:kotlinx-coroutines-core',
+    // Sila KZG is Apache-2.0 at sila-chain/c-kzg-4844; the GitHub Release Ivy artifact has no POM/Ivy license metadata.
+    'sila.java:sila-ckzg4844'
   ]
 
   // If set to true, then all boms will be excluded from the report
