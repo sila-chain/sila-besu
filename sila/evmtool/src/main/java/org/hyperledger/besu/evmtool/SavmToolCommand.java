@@ -198,7 +198,7 @@ public class SavmToolCommand implements Runnable {
   final Boolean showJsonAlloc = false;
 
   @Option(
-      names = {"--noeip-3155", "--trace.noeip-3155"},
+      names = {"--nosip-3155", "--trace.nosip-3155"},
       description = "Produce a trace with types strictly compatible with SIP-3155.",
       scope = INHERIT,
       negatable = true)
