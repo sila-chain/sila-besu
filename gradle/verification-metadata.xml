@@ -2650,9 +2650,9 @@
       </component>
 
 
-<component group="sila.java" name="sila-ckzg4844" version="2.1.8">
-         <artifact name="sila-ckzg4844-2.1.8.jar">
-            <sha256 value="c9d8541b665f5a8714eda101d0a0c28050867f773f52030e839ab63274c812c9" origin="Sila Java Authorities v1"/>
+<component group="sila.kzg" name="sila-ckzg4844" version="2.1.8">
+         <artifact name="sila-ckzg4844-jni-v2.1.8.jar">
+            <sha256 value="cb62fe427b14e4c440a8846999e18254603c3341b332c189b7cc7c866604a929" origin="sila-chain/c-kzg-4844 sila-v2.1.8"/>
          </artifact>
       </component>
       <component group="io.consensys.tuweni" name="tuweni-bytes" version="2.7.0">

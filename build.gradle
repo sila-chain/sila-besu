@@ -125,7 +125,7 @@ licenseReport {
     'com.squareup.okio:okio',
     'org.jetbrains.kotlinx:kotlinx-coroutines-core',
     // Sila KZG is Apache-2.0 at sila-chain/c-kzg-4844; the GitHub Release Ivy artifact has no POM/Ivy license metadata.
-    'sila.java:sila-ckzg4844'
+    'sila.kzg:sila-ckzg4844'
   ]
 
   // If set to true, then all boms will be excluded from the report
@@ -249,6 +249,19 @@ configure(allprojects - project(':platform')) {
 
     mavenCentral()
 
+    // Sila KZG is published by the real sila-chain/c-kzg-4844 authority.
+    def silaKzgAuthorityRepo = ivy {
+      url = 'https://github.com/sila-chain/c-kzg-4844/releases/download'
+      patternLayout {
+        artifact '/sila-v[revision]/[artifact]-jni-v[revision].[ext]'
+      }
+      metadataSources { artifact() }
+    }
+    exclusiveContent {
+      forRepositories(silaKzgAuthorityRepo)
+      filter { includeModule('sila.kzg', 'sila-ckzg4844') }
+    }
+
     // Sila-owned Java authorities converted from upstream Ethereum-affiliated dependencies.
     def silaJavaAuthoritiesRepo = ivy {
       url = 'https://github.com/sila-chain/sila-besu/releases/download'
@@ -318,7 +331,7 @@ configure(allprojects - project(':platform')) {
 
     // Resolve Ethereum-affiliated/transformed coordinates to the real Sila Java authority artifacts.
     resolutionStrategy.dependencySubstitution {
-      substitute module('io.consensys.protocols:jc-kzg-4844') using module('sila.java:sila-ckzg4844:2.1.8')
+      substitute module('io.consensys.protocols:jc-kzg-4844') using module('sila.kzg:sila-ckzg4844:2.1.8')
       substitute module('io.consensys.protocols:discovery') using module('sila.java:sila-discovery:26.8.0')
       substitute module('sila.web3j:core') using module('sila.java:sila-web3j-runtime:5.0.3')
     }
