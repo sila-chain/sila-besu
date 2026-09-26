@@ -101,6 +101,7 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
   private static final String LOCALHOST = "127.0.0.1";
   private static final Logger LOG = LoggerFactory.getLogger(BesuNode.class);
 
+  @SuppressWarnings("rawtypes")
   private static final class SilaNamespaceWeb3jService implements Web3jService {
     private final Web3jService delegate;
 
