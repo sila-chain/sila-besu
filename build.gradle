@@ -146,7 +146,7 @@ def silaWeb3jRuntimeAuthority = configurations.create('silaWeb3jRuntimeAuthority
   transitive = false
 }
 dependencies {
-  silaWeb3jRuntimeAuthority 'sila.java:sila-web3j-runtime:5.0.3'
+  add(silaWeb3jRuntimeAuthority.name, 'sila.java:sila-web3j-runtime:5.0.3')
 }
 def sanitizeSilaWeb3jRuntime = tasks.register('sanitizeSilaWeb3jRuntime', Zip) {
   archiveFileName = 'sila-web3j-runtime-5.0.3-sanitized.jar'
