@@ -201,20 +201,20 @@ configure(allprojects - project(':platform')) {
       filter { includeGroup('sila.java') }
     }
 
-    // sila execution spec tests fixtures. Exclusively for sila submodule to run ref tests
-    def silExecSpecTestsRepo = ivy {
-      url = 'https://github.com'
+    // Sila-owned execution-spec fixture authorities mirrored with pinned SHA-256 digests.
+    def silaBuildAuthoritiesRepo = ivy {
+      url = 'https://github.com/sila-chain/sila-besu/releases/download'
       patternLayout {
-        artifact '/[organisation]/[module]/releases/download/[revision]/[classifier].[ext]'
+        artifact '/sila-build-authorities-v1/[artifact]-[revision]-[classifier].[ext]'
       }
       metadataSources {
         artifact()
       }
     }
     exclusiveContent {
-      forRepositories(silExecSpecTestsRepo)
+      forRepositories(silaBuildAuthoritiesRepo)
       filter {
-        includeModule('sila', 'execution-specs')
+        includeModule('sila.build', 'execution-specs')
       }
     }
   }
@@ -1699,8 +1699,8 @@ ext.registerSolcDownload = { String version ->
     // Match sokt's own behaviour: select the solc asset by OS only (there are no arm64
     // static builds for the old pinned versions, and CI runs on linux x64).
     def os = System.getProperty('os.name').toLowerCase()
-    def asset = os.contains('win') ? 'solc-windows.exe' : os.contains('mac') ? 'solc-macos' : 'solc-static-linux'
-    def url = "https://github.com/ethereum/solidity/releases/download/v${version}/${asset}"
+    def asset = os.contains('win') ? "solc-${version}-windows-amd64.exe" : os.contains('mac') ? "solc-${version}-macosx-amd64" : "solc-${version}-linux-amd64"
+    def url = "https://github.com/sila-chain/sila-besu/releases/download/sila-build-authorities-v1/${asset}"
     outputs.file(target)
     onlyIf { !target.exists() }
     doLast {
