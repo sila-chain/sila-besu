@@ -33,9 +33,9 @@ import java.util.Optional;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Disabled;
 import org.junit.jupiter.api.Test;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.utils.Convert;
-import org.web3j.utils.Numeric;
+import sila.web3j.crypto.RawTransaction;
+import sila.web3j.utils.Convert;
+import sila.web3j.utils.Numeric;
 
 public class PermissioningPluginTest extends AcceptanceTestBase {
   private BesuNode minerNode;

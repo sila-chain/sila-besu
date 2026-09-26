@@ -43,7 +43,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.EthBlock;
+import sila.web3j.protocol.core.methods.response.EthBlock;
 
 public class CliqueToPoSTest extends AcceptanceTestBase {
 

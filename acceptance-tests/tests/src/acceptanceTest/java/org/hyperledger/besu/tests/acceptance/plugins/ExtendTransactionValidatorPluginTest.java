@@ -32,10 +32,10 @@ import java.util.Optional;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.protocol.core.methods.response.EthBlock;
-import org.web3j.tx.gas.DefaultGasProvider;
-import org.web3j.utils.Numeric;
+import sila.web3j.crypto.RawTransaction;
+import sila.web3j.protocol.core.methods.response.EthBlock;
+import sila.web3j.tx.gas.DefaultGasProvider;
+import sila.web3j.utils.Numeric;
 
 public class ExtendTransactionValidatorPluginTest extends AcceptanceTestBase {
   private BesuNode minerNode, minerNode2, minerNode3;
