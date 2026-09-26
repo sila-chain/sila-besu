@@ -1674,7 +1674,7 @@ artifactoryPublish.mustRunAfter(distTar)
 artifactoryPublish.mustRunAfter(distZip)
 artifactoryPublish.mustRunAfter(javadocJar)
 
-// The org.web3j.solidity plugin resolves solc through web3j-sokt, which parses an upstream
+// The Sila Solidity plugin resolves solc through Sila Solidity resolver, which parses an upstream
 // release index with a strict JSON reader that rejects keys its model does not know; a newer
 // index added such a key, breaking every compileSolidity task, and there is no sokt release
 // that tolerates it. We sidestep the resolver via the plugin's `executable` option:
@@ -1694,7 +1694,7 @@ ext.registerSolcDownload = { String version ->
   }
   return rootProject.tasks.register(taskName) {
     group = 'build setup'
-    description = "Downloads solc ${version} (bypasses the broken web3j-sokt release index)"
+    description = "Downloads solc ${version} (bypasses the broken Sila Solidity resolver release index)"
     def target = rootProject.solcExecutable(version)
     // Match sokt's own behaviour: select the solc asset by OS only (there are no arm64
     // static builds for the old pinned versions, and CI runs on linux x64).
