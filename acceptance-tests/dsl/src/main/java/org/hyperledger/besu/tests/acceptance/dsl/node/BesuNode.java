@@ -77,12 +77,12 @@ import java.util.zip.ZipInputStream;
 import com.google.common.base.MoreObjects;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
+import io.reactivex.Flowable;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import io.reactivex.Flowable;
 import sila.web3j.protocol.Web3jService;
 import sila.web3j.protocol.core.BatchRequest;
 import sila.web3j.protocol.core.BatchResponse;
@@ -159,6 +159,7 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
       delegate.close();
     }
   }
+
   public static final String HTTP = "http://";
   public static final String HTTPS = "https://";
   public static final String WS = "ws://";
