@@ -462,6 +462,9 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
 
   @Test
   public void silGetUncleCountByBlockNumberPendingNoData() throws Exception {
+    when(blockchainQueries.headBlockNumber()).thenReturn(0L);
+    when(blockchainQueries.getOmmerCount(eq(0L))).thenReturn(Optional.of(0));
+
     final String id = "123";
     final String params = "\"params\": [\"pending\"]";
     final RequestBody body =
@@ -1062,6 +1065,9 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
     final BlockWithMetadata<TransactionWithMetadata, Hash> blockWithMetadata =
         blockWithMetadata(block);
     when(blockchainQueries.blockByNumber(eq(0L))).thenReturn(Optional.of(blockWithMetadata));
+    when(blockchainQueries.headBlockNumber()).thenReturn(0L);
+    when(blockchainQueries.headBlockHeader()).thenReturn(block.getHeader());
+    when(synchronizer.getSyncStatus()).thenReturn(Optional.empty());
     WorldStateArchive state = mock(WorldStateArchive.class);
     when(state.isWorldStateAvailable(any(Hash.class), any(Hash.class))).thenReturn(true);
     when(blockchainQueries.getWorldStateArchive()).thenReturn(state);
@@ -1093,7 +1099,9 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
     final BlockWithMetadata<TransactionWithMetadata, Hash> blockWithMetadata =
         blockWithMetadata(block);
     when(blockchainQueries.blockByNumber(eq(0L))).thenReturn(Optional.of(blockWithMetadata));
+    when(blockchainQueries.headBlockNumber()).thenReturn(0L);
     when(blockchainQueries.headBlockHeader()).thenReturn(block.getHeader());
+    when(synchronizer.getSyncStatus()).thenReturn(Optional.empty());
     WorldStateArchive state = mock(WorldStateArchive.class);
     when(state.isWorldStateAvailable(any(Hash.class), any(Hash.class))).thenReturn(true);
     when(blockchainQueries.getWorldStateArchive()).thenReturn(state);

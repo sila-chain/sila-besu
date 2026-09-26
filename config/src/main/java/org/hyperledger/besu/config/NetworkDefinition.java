@@ -209,6 +209,12 @@ public enum NetworkDefinition {
    * @return the string
    */
   public String normalize() {
+    if (this == SILA_MAINNET) {
+      return "SilaMainnet";
+    }
+    if (this == SEPOLIA) {
+      return "SilaSepolia";
+    }
     String n = name().toLowerCase(Locale.ROOT);
     return n.substring(0, 1).toUpperCase(Locale.ROOT) + n.substring(1);
   }
