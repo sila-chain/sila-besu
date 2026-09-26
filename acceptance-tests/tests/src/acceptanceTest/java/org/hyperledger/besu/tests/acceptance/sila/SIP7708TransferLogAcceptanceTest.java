@@ -37,8 +37,8 @@ import org.apache.tuweni.bytes.Bytes32;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.Log;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.Log;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 /**
  * Acceptance tests for SIP-7708: SIL transfers emit a log.
