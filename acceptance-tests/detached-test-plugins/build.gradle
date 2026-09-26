@@ -8,6 +8,18 @@ allprojects {
     mavenLocal()
     mavenCentral()
 
+    def silaKzgAuthorityRepo = ivy {
+      url = uri('https://github.com/sila-chain/c-kzg-4844/releases/download')
+      patternLayout {
+        artifact '/sila-v[revision]/[artifact]-jni-v[revision].[ext]'
+      }
+      metadataSources { artifact() }
+    }
+    exclusiveContent {
+      forRepositories(silaKzgAuthorityRepo)
+      filter { includeModule('sila.kzg', 'sila-ckzg4844') }
+    }
+
     def silaJavaAuthoritiesRepo = ivy {
       url = uri('https://github.com/sila-chain/sila-besu/releases/download')
       patternLayout {
