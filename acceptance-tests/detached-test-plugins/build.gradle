@@ -3,6 +3,25 @@ plugins {
   id 'com.diffplug.spotless' version '7.0.3'
 }
 
+allprojects {
+  repositories {
+    mavenLocal()
+    mavenCentral()
+
+    def silaJavaAuthoritiesRepo = ivy {
+      url = uri('https://github.com/sila-chain/sila-besu/releases/download')
+      patternLayout {
+        artifact '/sila-java-authorities-v1/[artifact]-[revision].[ext]'
+      }
+      metadataSources { artifact() }
+    }
+    exclusiveContent {
+      forRepositories(silaJavaAuthoritiesRepo)
+      filter { includeGroup('sila.java') }
+    }
+  }
+}
+
 group = 'org.hyperledger.besu.tests'
 ext.besuVersion = getBesuVersion()
 version = besuVersion
