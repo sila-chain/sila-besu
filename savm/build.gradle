@@ -52,7 +52,7 @@ dependencies {
   implementation 'org.hyperledger.besu:gnark'
   implementation 'org.hyperledger.besu:secp256k1'
   implementation 'org.hyperledger.besu:boringssl'
-  implementation 'sila.java:sila-ckzg4844'
+  implementation 'sila.kzg:sila-ckzg4844:2.1.8'
 
   compileOnly 'com.fasterxml.jackson.core:jackson-databind'
   compileOnly 'org.jspecify:jspecify'
