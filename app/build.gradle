@@ -91,7 +91,7 @@ dependencies {
   implementation 'org.rocksdb:rocksdbjni'
   implementation 'org.springframework.security:spring-security-crypto'
   implementation 'org.xerial.snappy:snappy-java'
-  implementation 'sila.java:sila-ckzg4844'
+  implementation 'sila.kzg:sila-ckzg4844:2.1.8'
 
   runtimeOnly 'org.apache.logging.log4j:log4j-jul'
   runtimeOnly 'com.splunk.logging:splunk-library-javalogging'
