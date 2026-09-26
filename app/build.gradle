@@ -113,7 +113,7 @@ dependencies {
   testImplementation 'org.awaitility:awaitility'
   testImplementation 'org.junit.jupiter:junit-jupiter'
   testImplementation 'org.mockito:mockito-core'
-  testImplementation 'sila.java:sila-discovery'
+  testImplementation rootProject.ext.silaDiscoverySanitized
   testImplementation 'com.google.dagger:dagger'
 
   annotationProcessor 'com.google.dagger:dagger-compiler'
