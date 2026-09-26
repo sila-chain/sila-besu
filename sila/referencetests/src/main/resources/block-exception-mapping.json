@@ -133,7 +133,7 @@
     "InvalidNumber":                                            "Header validation failed|World State Root does not match expected value",
     "TR_FeeCapLessThanBlocks":                                  "transaction invalid gasPrice is less than the current BaseFee",
     "InvalidStateRoot":                                         "World State Root does not match expected value",
-    "InvalidGasUsed":                                           "failed to validate output of imported block",
+    "InvalidGasUsed":                                           "failed to validate output of imported block|World State Root does not match expected value",
     "InvalidUncleParentHash":                                   "World State Root does not match expected value",
     "InvalidDifficulty":                                        "World State Root does not match expected value",
     "UncleIsAncestor":                                          "World State Root does not match expected value",
