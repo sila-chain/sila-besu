@@ -14,16 +14,14 @@
  */
 package org.hyperledger.besu.sila.core.kzg;
 
-import org.hyperledger.besu.datatypes.BlobType;
-
 import java.util.ArrayList;
 import java.util.List;
 import java.util.stream.Collectors;
-
-import sila.ckzg4844.CKZG4844JNI;
-import sila.ckzg4844.CellsAndProofs;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes48;
+import org.hyperledger.besu.datatypes.BlobType;
+import sila.ckzg4844.CellsAndProofs;
+import sila.ckzg4844.CKZG4844JNI;
 
 /**
  * Utility class for handling KZG-related operations, including converting BlobsWithCommitments to
