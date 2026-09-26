@@ -235,7 +235,7 @@ jobs:
 
   sila_build_authorities:
     name: Publish Sila build authorities
-    if: \${{ github.head_ref == 'sila/besu-close-20260923' }}
+    if: ${{ github.head_ref == 'sila/besu-close-20260923' }}
     runs-on: ubuntu-latest
     permissions:
       contents: write
@@ -243,12 +243,12 @@ jobs:
       - name: Publish verified Sila build authority assets
         shell: bash
         env:
-          GH_TOKEN: \${{ github.token }}
+          GH_TOKEN: ${{ github.token }}
         run: |
           set -u
           tag="sila-build-authorities-v1"
-          repo="\${{ github.repository }}"
-          target="\${{ github.event.pull_request.head.sha }}"
+          repo="${{ github.repository }}"
+          target="${{ github.event.pull_request.head.sha }}"
           work="$RUNNER_TEMP/sila-build-authorities"
           mkdir -p "$work"
 
