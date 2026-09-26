@@ -23,11 +23,18 @@ import org.hyperledger.besu.savmtool.exception.UnsupportedForkException;
 import java.io.ByteArrayInputStream;
 import java.io.ByteArrayOutputStream;
 import java.io.PrintWriter;
+import java.net.URL;
 
 import org.junit.jupiter.api.Test;
 import picocli.CommandLine;
 
 class StateTestSubCommandTest {
+
+  private static final String TEST_RESOURCE_ROOT = "/org/hyperledger/besu/evmtool/";
+
+  private static URL resource(final String name) {
+    return StateTestSubCommandTest.class.getResource(TEST_RESOURCE_ROOT + name);
+  }
 
   @Test
   void shouldDetectUnsupportedFork() {
@@ -37,7 +44,7 @@ class StateTestSubCommandTest {
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
     cmd.parseArgs(
-        StateTestSubCommandTest.class.getResource("unsupported-fork-state-test.json").getPath());
+        resource("unsupported-fork-state-test.json").getPath());
     assertThatThrownBy(stateTestSubCommand::run)
         .hasMessageContaining("Fork 'UnknownFork' not supported")
         .isInstanceOf(UnsupportedForkException.class);
@@ -61,7 +68,7 @@ class StateTestSubCommandTest {
         .parseArgs(
             "--test-name",
             "noSuchTest",
-            StateTestSubCommandTest.class.getResource("access-list.json").getPath());
+            resource("access-list.json").getPath());
     stateTestSubCommand.run();
     assertThat(stateTestSubCommand.getExitCode()).isEqualTo(1);
     assertThat(baos.toString(UTF_8))
@@ -97,7 +104,7 @@ class StateTestSubCommandTest {
     new CommandLine(parentCommand).parseArgs("--json", "--notime");
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     new CommandLine(stateTestSubCommand)
-        .parseArgs(StateTestSubCommandTest.class.getResource("access-list.json").getPath());
+        .parseArgs(resource("access-list.json").getPath());
 
     stateTestSubCommand.run();
 
@@ -127,7 +134,7 @@ class StateTestSubCommandTest {
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final String[] resolved = args.clone();
     resolved[resolved.length - 1] =
-        StateTestSubCommandTest.class.getResource(resolved[resolved.length - 1]).getPath();
+        resource(resolved[resolved.length - 1]).getPath();
     new CommandLine(stateTestSubCommand).parseArgs(resolved);
     stateTestSubCommand.run();
     return baos.toString(UTF_8);
@@ -140,7 +147,7 @@ class StateTestSubCommandTest {
         new SavmToolCommand(System.in, new PrintWriter(baos, true, UTF_8));
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
-    cmd.parseArgs(StateTestSubCommandTest.class.getResource("valid-state-test.json").getPath());
+    cmd.parseArgs(resource("valid-state-test.json").getPath());
     stateTestSubCommand.run();
   }
 
@@ -151,7 +158,7 @@ class StateTestSubCommandTest {
         new SavmToolCommand(System.in, new PrintWriter(baos, true, UTF_8));
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
-    cmd.parseArgs(StateTestSubCommandTest.class.getResource("access-list.json").getPath());
+    cmd.parseArgs(resource("access-list.json").getPath());
     stateTestSubCommand.run();
   }
 
@@ -164,7 +171,7 @@ class StateTestSubCommandTest {
     parentCmd.parseArgs("--json=false");
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
-    cmd.parseArgs(StateTestSubCommandTest.class.getResource("access-list.json").getPath());
+    cmd.parseArgs(resource("access-list.json").getPath());
     stateTestSubCommand.run();
     assertThat(baos.toString(UTF_8)).doesNotContain("\"pc\"");
   }
@@ -215,7 +222,7 @@ class StateTestSubCommandTest {
     final ByteArrayOutputStream baos = new ByteArrayOutputStream();
     final ByteArrayInputStream bais =
         new ByteArrayInputStream(
-            StateTestSubCommandTest.class.getResource("bogus-test.json").getPath().getBytes(UTF_8));
+            resource("bogus-test.json").getPath().getBytes(UTF_8));
     final StateTestSubCommand stateTestSubCommand =
         new StateTestSubCommand(new SavmToolCommand(bais, new PrintWriter(baos, true, UTF_8)));
     stateTestSubCommand.run();
@@ -231,7 +238,7 @@ class StateTestSubCommandTest {
         new SavmToolCommand(System.in, new PrintWriter(baos, true, UTF_8));
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
-    cmd.parseArgs(StateTestSubCommandTest.class.getResource("HighGasPrice.json").getPath());
+    cmd.parseArgs(resource("HighGasPrice.json").getPath());
     stateTestSubCommand.run();
 
     final String output = baos.toString(UTF_8);
@@ -257,7 +264,7 @@ class StateTestSubCommandTest {
         new SavmToolCommand(System.in, new PrintWriter(baos, true, UTF_8));
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
-    cmd.parseArgs(StateTestSubCommandTest.class.getResource("excess-blob-gas.json").getPath());
+    cmd.parseArgs(resource("excess-blob-gas.json").getPath());
     stateTestSubCommand.run();
 
     final String output = baos.toString(UTF_8);
@@ -280,7 +287,7 @@ class StateTestSubCommandTest {
     final StateTestSubCommand stateTestSubCommand = new StateTestSubCommand(parentCommand);
     final CommandLine cmd = new CommandLine(stateTestSubCommand);
     cmd.parseArgs(
-        StateTestSubCommandTest.class.getResource("sip6780-failed-create.json").getPath());
+        resource("sip6780-failed-create.json").getPath());
     stateTestSubCommand.run();
 
     final String output = baos.toString(UTF_8);

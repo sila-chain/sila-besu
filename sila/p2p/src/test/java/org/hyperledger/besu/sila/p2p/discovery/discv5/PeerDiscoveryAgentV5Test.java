@@ -357,7 +357,6 @@ class PeerDiscoveryAgentV5Test {
     when(mockSystem.start()).thenReturn(CompletableFuture.completedFuture(null));
     when(mockSystem.searchForNewPeers())
         .thenReturn(CompletableFuture.completedFuture(List.of(peerRecord)));
-    when(forkIdManager.peerCheck(any(ForkId.class))).thenReturn(true);
 
     // Agent with NOOP permissions (the default setUp agent) — permissions should not interfere
     agent.start(1234);
@@ -381,7 +380,6 @@ class PeerDiscoveryAgentV5Test {
     when(mockSystem.start()).thenReturn(CompletableFuture.completedFuture(null));
     when(mockSystem.searchForNewPeers()).thenReturn(CompletableFuture.completedFuture(List.of()));
     when(mockSystem.streamLiveNodes()).thenAnswer(invocation -> Stream.of(liveRecord));
-    when(forkIdManager.peerCheck(any(ForkId.class))).thenReturn(true);
     when(rlpxAgent.isConnectingOrConnected(any())).thenReturn(true);
 
     agent.start(1234);
@@ -405,7 +403,6 @@ class PeerDiscoveryAgentV5Test {
     when(mockSystem.start()).thenReturn(CompletableFuture.completedFuture(null));
     when(mockSystem.searchForNewPeers()).thenReturn(CompletableFuture.completedFuture(List.of()));
     when(mockSystem.streamLiveNodes()).thenAnswer(invocation -> Stream.of(liveRecord));
-    when(forkIdManager.peerCheck(any(ForkId.class))).thenReturn(true);
 
     agent.start(1234);
 

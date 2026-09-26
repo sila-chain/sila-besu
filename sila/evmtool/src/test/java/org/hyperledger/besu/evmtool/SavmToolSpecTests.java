@@ -52,6 +52,7 @@ public class SavmToolSpecTests {
 
   static final ObjectMapper objectMapper = new ObjectMapper();
   static final ObjectReader specReader = objectMapper.reader();
+  private static final String TEST_RESOURCE_ROOT = "/org/hyperledger/besu/evmtool/";
 
   public static Object[][] b11rTests() {
     return findSpecFiles(new String[] {"b11r"});
@@ -73,7 +74,7 @@ public class SavmToolSpecTests {
       final String[] subDirectoryPaths, final String... exceptions) {
     final List<Object[]> specFiles = new ArrayList<>();
     for (final String path : subDirectoryPaths) {
-      final URL url = SavmToolSpecTests.class.getResource(path);
+      final URL url = SavmToolSpecTests.class.getResource(TEST_RESOURCE_ROOT + path);
       checkState(url != null, "Cannot find test directory " + path);
       final Path dir;
       try {

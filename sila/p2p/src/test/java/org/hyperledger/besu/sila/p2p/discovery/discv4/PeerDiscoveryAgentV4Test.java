@@ -120,7 +120,7 @@ public class PeerDiscoveryAgentV4Test {
             Collections.singletonList(new ForkId(Bytes.EMPTY, Bytes.EMPTY).getForkIdAsBytesList()));
     assertThat(nodeRecord.asEnr())
         .isEqualTo(
-            "enr:-JG4QF0FFhEXDu_G-1LD5lkWh5-cbnw8vJ00NvO8vGnAf85JMwLiP-Qo49DL2xYMzX3zg_d5VXhegmoVTFJRWgZAtCYBg2V0aMPCgICCaWSCdjSCaXCEfwAAAYlzZWNwMjU2azGhA8pjTK4NSay0Adikxrb-jFW3DRFb9AB2nMFADzJYzTE4g3RjcAKDdWRwgnZf");
+            "enr:-JG4QPbQK8QCksih2gB0KbOjF8VK6stt4VJ5ZG5Fb4ZVnoVVSDoUKubcsHPgbazYkKd7iBPApDH_bN1exCy52l1fdMsBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQPKY0yuDUmstAHYpMa2_oxVtw0RW_QAdpzBQA8yWM0xOINzaWzDwoCAg3RjcAKDdWRwgnZf");
   }
 
   @Test

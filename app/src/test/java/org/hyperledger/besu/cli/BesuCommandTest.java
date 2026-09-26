@@ -188,11 +188,7 @@ public class BesuCommandTest extends CommandTestAbstract {
   private static final long DEFAULT_TARGET_GAS_LIMIT = 60_000_000L;
   private static final long DEFAULT_TARGET_GAS_LIMIT_TESTNET = 60_000_000L;
   private static final long CUSTOM_TARGET_GAS_LIMIT = 50_000_000L;
-  private static final String NETWORK_MAINNET_CONFIG_LOG =
-      String.format(
-          "%s%s",
-          SILA_MAINNET.name().charAt(0),
-          SILA_MAINNET.name().substring(1).toLowerCase(Locale.getDefault()));
+  private static final String NETWORK_MAINNET_CONFIG_LOG = SILA_MAINNET.normalize();
   private static final String NETWORK_HOODI_CONFIG_LOG =
       String.format(
           "%s%s",
