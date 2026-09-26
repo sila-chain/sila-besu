@@ -28,7 +28,6 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.metrics.StubMetricsSystem;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
