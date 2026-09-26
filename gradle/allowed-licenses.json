@@ -75,6 +75,11 @@
       "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
       "moduleVersion": "2.1.8",
       "moduleName": "sila.java:sila-ckzg4844"
+    },
+    {
+      "moduleLicense": "",
+      "moduleVersion": "2.1.8",
+      "moduleName": "sila.java:sila-ckzg4844"
     }
   ]
 }
