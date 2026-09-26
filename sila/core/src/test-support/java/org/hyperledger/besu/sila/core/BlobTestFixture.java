@@ -28,9 +28,9 @@ import org.hyperledger.besu.sila.core.kzg.KZGProof;
 import java.util.ArrayList;
 import java.util.List;
 
+import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.Bytes48;
-import org.apache.tuweni.bytes.Bytes;
 import org.bouncycastle.crypto.digests.SHA256Digest;
 import sila.ckzg4844.CKZG4844JNI;
 
