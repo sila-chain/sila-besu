@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.sil.sync;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
@@ -26,8 +27,7 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.sync.range.RangeHeaders;
 import org.hyperledger.besu.sila.sil.sync.range.SyncTargetRange;
 import org.hyperledger.besu.sila.sil.sync.tasks.DownloadHeaderSequenceTask;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.util.FutureUtils;
 
 import java.util.ArrayList;

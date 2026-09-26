@@ -19,12 +19,13 @@ import org.hyperledger.besu.consensus.common.bft.BftExtraDataCodec;
 import org.hyperledger.besu.consensus.common.bft.queries.BftQueryServiceImpl;
 import org.hyperledger.besu.consensus.common.validator.ValidatorProvider;
 import org.hyperledger.besu.cryptoservices.NodeKey;
-import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.plugin.services.query.BftQueryService;
 import org.hyperledger.besu.plugin.services.query.PoaQueryService;
 import org.hyperledger.besu.services.BesuPluginContextImpl;
+import org.hyperledger.besu.sila.chain.Blockchain;
 
 /** Bft query plugin service factory which is a concrete implementation of PluginServiceFactory. */
+@SuppressWarnings("removal")
 public class BftQueryPluginServiceFactory implements PluginServiceFactory {
 
   private final Blockchain blockchain;

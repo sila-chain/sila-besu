@@ -26,8 +26,11 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 
-import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.SyncStatus;
+import org.hyperledger.besu.plugin.services.BesuEvents.InitialSyncCompletionListener;
+import org.hyperledger.besu.plugin.services.BesuEvents.SyncStatusListener;
+import org.hyperledger.besu.plugin.services.BesuEvents.TTDReachedListener;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
@@ -39,23 +42,20 @@ import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.core.Synchronizer.InSyncListener;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.ChainHeadEstimate;
 import org.hyperledger.besu.sila.sil.manager.ChainState;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
 import org.hyperledger.besu.sila.sil.sync.common.checkpoint.ImmutableCheckpoint;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.plugin.data.SyncStatus;
-import org.hyperledger.besu.plugin.services.BesuEvents.InitialSyncCompletionListener;
-import org.hyperledger.besu.plugin.services.BesuEvents.SyncStatusListener;
-import org.hyperledger.besu.plugin.services.BesuEvents.TTDReachedListener;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -92,8 +92,8 @@ public class SyncStateTest {
 
   private SilProtocolManager silProtocolManager;
   private SilPeers silPeers;
-  private RespondingSilPeer syncTargetPeer;
-  private RespondingSilPeer otherPeer;
+  private RespondingEthPeer syncTargetPeer;
+  private RespondingEthPeer otherPeer;
   private SyncState syncState;
 
   @BeforeEach
@@ -103,7 +103,7 @@ public class SyncStateTest {
             .setBlockchain(blockchain)
             .setWorldStateArchive(mock(WorldStateArchive.class))
             .build();
-    silPeers = spy(silProtocolManager.silContext().getSilPeers());
+    silPeers = spy(silProtocolManager.silContext().getEthPeers());
     syncTargetPeer = createPeer(TARGET_CHAIN_HEIGHT);
     otherPeer = createPeer(0);
 
@@ -126,8 +126,8 @@ public class SyncStateTest {
   @Test
   public void isInSync_singlePeerWithWorseChainBetterHeight() {
     updateChainState(
-        otherPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, OUR_CHAIN_DIFFICULTY.subtract(1L));
-    final SilPeer peer = mockWorseChain(otherPeer.getSilPeer());
+        otherPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, OUR_CHAIN_DIFFICULTY.subtract(1L));
+    final SilPeer peer = mockWorseChain(otherPeer.getEthPeer());
     doReturn(Optional.of(peer)).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.syncTarget()).isEmpty(); // Sanity check
@@ -138,8 +138,8 @@ public class SyncStateTest {
   @Test
   public void isInSync_singlePeerWithWorseChainWorseHeight() {
     updateChainState(
-        otherPeer.getSilPeer(), OUR_CHAIN_HEAD_NUMBER - 1L, OUR_CHAIN_DIFFICULTY.subtract(1L));
-    final SilPeer peer = mockWorseChain(otherPeer.getSilPeer());
+        otherPeer.getEthPeer(), OUR_CHAIN_HEAD_NUMBER - 1L, OUR_CHAIN_DIFFICULTY.subtract(1L));
+    final SilPeer peer = mockWorseChain(otherPeer.getEthPeer());
     doReturn(Optional.of(peer)).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.syncTarget()).isEmpty(); // Sanity check
@@ -149,8 +149,8 @@ public class SyncStateTest {
 
   @Test
   public void isInSync_singlePeerWithBetterChainWorseHeight() {
-    updateChainState(otherPeer.getSilPeer(), OUR_CHAIN_HEAD_NUMBER - 1L, TARGET_DIFFICULTY);
-    final SilPeer peer = mockBetterChain(otherPeer.getSilPeer());
+    updateChainState(otherPeer.getEthPeer(), OUR_CHAIN_HEAD_NUMBER - 1L, TARGET_DIFFICULTY);
+    final SilPeer peer = mockBetterChain(otherPeer.getEthPeer());
     doReturn(Optional.of(peer)).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.syncTarget()).isEmpty(); // Sanity check
@@ -160,8 +160,8 @@ public class SyncStateTest {
 
   @Test
   public void isInSync_singlePeerWithBetterChainBetterHeight() {
-    updateChainState(otherPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
-    final SilPeer peer = mockBetterChain(otherPeer.getSilPeer());
+    updateChainState(otherPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
+    final SilPeer peer = mockBetterChain(otherPeer.getEthPeer());
     doReturn(Optional.of(peer)).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.syncTarget()).isEmpty(); // Sanity check
@@ -198,8 +198,8 @@ public class SyncStateTest {
   @Test
   public void isInSync_outOfSyncWithTargetAndOutOfSyncWithBestPeer() {
     setupOutOfSyncState();
-    updateChainState(otherPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
-    doReturn(Optional.of(otherPeer.getSilPeer())).when(silPeers).bestPeerWithHeightEstimate();
+    updateChainState(otherPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
+    doReturn(Optional.of(otherPeer.getEthPeer())).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.isInSync()).isFalse();
     assertThat(syncState.isInSync(0)).isFalse();
@@ -214,10 +214,10 @@ public class SyncStateTest {
     advanceLocalChain(TARGET_CHAIN_HEIGHT);
     final long heightDifference = 20L;
     updateChainState(
-        otherPeer.getSilPeer(),
+        otherPeer.getEthPeer(),
         TARGET_CHAIN_HEIGHT + heightDifference,
         TARGET_DIFFICULTY.add(heightDifference));
-    doReturn(Optional.of(otherPeer.getSilPeer())).when(silPeers).bestPeerWithHeightEstimate();
+    doReturn(Optional.of(otherPeer.getEthPeer())).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.isInSync()).isFalse();
     assertThat(syncState.isInSync(0)).isFalse();
@@ -230,8 +230,8 @@ public class SyncStateTest {
   public void isInSync_inSyncWithTargetInSyncWithBestPeer() {
     setupOutOfSyncState();
     advanceLocalChain(TARGET_CHAIN_HEIGHT);
-    updateChainState(otherPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
-    doReturn(Optional.of(otherPeer.getSilPeer())).when(silPeers).bestPeerWithHeightEstimate();
+    updateChainState(otherPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
+    doReturn(Optional.of(otherPeer.getEthPeer())).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.isInSync()).isTrue();
     assertThat(syncState.isInSync(0)).isTrue();
@@ -295,7 +295,7 @@ public class SyncStateTest {
 
     // Fall out of sync
     updateChainState(
-        syncTargetPeer.getSilPeer(),
+        syncTargetPeer.getEthPeer(),
         TARGET_CHAIN_HEIGHT + Synchronizer.DEFAULT_IN_SYNC_TOLERANCE + 1L,
         TARGET_DIFFICULTY.add(10L));
 
@@ -321,7 +321,7 @@ public class SyncStateTest {
     verify(newListener, never()).onInSyncStatusChange(true);
     // Fall out of sync
     updateChainState(
-        syncTargetPeer.getSilPeer(),
+        syncTargetPeer.getEthPeer(),
         TARGET_CHAIN_HEIGHT + Synchronizer.DEFAULT_IN_SYNC_TOLERANCE + 1L,
         TARGET_DIFFICULTY.add(10L));
     verify(newListener).onInSyncStatusChange(false);
@@ -354,7 +354,7 @@ public class SyncStateTest {
 
     // Fall out of sync
     updateChainState(
-        syncTargetPeer.getSilPeer(),
+        syncTargetPeer.getEthPeer(),
         TARGET_CHAIN_HEIGHT + syncTolerance + 1L,
         TARGET_DIFFICULTY.add(10L));
 
@@ -388,7 +388,7 @@ public class SyncStateTest {
 
     // Fall out of sync
     updateChainState(
-        syncTargetPeer.getSilPeer(),
+        syncTargetPeer.getEthPeer(),
         TARGET_CHAIN_HEIGHT + syncTolerance + 1L,
         TARGET_DIFFICULTY.add(10L));
 
@@ -432,7 +432,7 @@ public class SyncStateTest {
 
     // Fall out of sync
     updateChainState(
-        syncTargetPeer.getSilPeer(),
+        syncTargetPeer.getEthPeer(),
         TARGET_CHAIN_HEIGHT + syncTolerance + 1L,
         TARGET_DIFFICULTY.add(10L));
 
@@ -454,7 +454,7 @@ public class SyncStateTest {
 
   @Test
   public void syncStatusListener_receivesEventWhenSyncTargetSet() {
-    syncState.setSyncTarget(syncTargetPeer.getSilPeer(), blockchain.getBlockHeader(3L).get());
+    syncState.setSyncTarget(syncTargetPeer.getEthPeer(), blockchain.getBlockHeader(3L).get());
 
     verify(syncStatusListener).onSyncStatusChanged(syncStatusCaptor.capture());
 
@@ -469,7 +469,7 @@ public class SyncStateTest {
 
   @Test
   public void syncStatusListener_receivesEventWhenSyncTargetCleared() {
-    syncState.setSyncTarget(syncTargetPeer.getSilPeer(), blockchain.getBlockHeader(3L).get());
+    syncState.setSyncTarget(syncTargetPeer.getEthPeer(), blockchain.getBlockHeader(3L).get());
     syncState.clearSyncTarget();
 
     verify(syncStatusListener, times(2)).onSyncStatusChanged(syncStatusCaptor.capture());
@@ -492,8 +492,8 @@ public class SyncStateTest {
   @Test
   public void syncStatusListener_ignoreNoopChangesToSyncTarget() {
     syncState.clearSyncTarget();
-    syncState.setSyncTarget(syncTargetPeer.getSilPeer(), blockchain.getBlockHeader(3L).get());
-    syncState.setSyncTarget(syncTargetPeer.getSilPeer(), blockchain.getBlockHeader(3L).get());
+    syncState.setSyncTarget(syncTargetPeer.getEthPeer(), blockchain.getBlockHeader(3L).get());
+    syncState.setSyncTarget(syncTargetPeer.getEthPeer(), blockchain.getBlockHeader(3L).get());
     syncState.clearSyncTarget();
     syncState.clearSyncTarget();
 
@@ -516,8 +516,8 @@ public class SyncStateTest {
 
   @Test
   public void bestChainHeight_usesPeerEstimateBeforeAnyPayload() {
-    updateChainState(otherPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
-    doReturn(Optional.of(otherPeer.getSilPeer())).when(silPeers).bestPeerWithHeightEstimate();
+    updateChainState(otherPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
+    doReturn(Optional.of(otherPeer.getEthPeer())).when(silPeers).bestPeerWithHeightEstimate();
 
     assertThat(syncState.bestChainHeight()).isEqualTo(TARGET_CHAIN_HEIGHT);
   }
@@ -525,9 +525,9 @@ public class SyncStateTest {
   @Test
   public void bestChainHeight_usesPayloadHeightAfterNewPayload() {
     // A peer reports a higher estimate, which must be ignored once a payload is received.
-    updateChainState(otherPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
+    updateChainState(otherPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
     lenient()
-        .doReturn(Optional.of(otherPeer.getSilPeer()))
+        .doReturn(Optional.of(otherPeer.getEthPeer()))
         .when(silPeers)
         .bestPeerWithHeightEstimate();
 
@@ -546,7 +546,7 @@ public class SyncStateTest {
     assertThat(syncState.bestChainHeight()).isEqualTo(998L);
   }
 
-  private RespondingSilPeer createPeer(final long blockHeight) {
+  private RespondingEthPeer createPeer(final long blockHeight) {
     return SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockHeight);
   }
 
@@ -571,9 +571,25 @@ public class SyncStateTest {
   }
 
   private void setupOutOfSyncState() {
-    syncState.setSyncTarget(syncTargetPeer.getSilPeer(), blockchain.getGenesisBlock().getHeader());
+    syncState.setSyncTarget(syncTargetPeer.getEthPeer(), blockchain.getGenesisBlock().getHeader());
     verify(inSyncListener).onInSyncStatusChange(false);
     verify(inSyncListenerExact).onInSyncStatusChange(false);
+  }
+
+  @Test
+  public void inSyncCheckDrivenByABlockImportDoesNotTakeTheSyncStateMonitor() {
+    final List<Boolean> heldMonitorDuringCallback = new ArrayList<>();
+    syncState.subscribeInSync(
+        _ -> heldMonitorDuringCallback.add(Thread.holdsLock(syncState)),
+        Synchronizer.DEFAULT_IN_SYNC_TOLERANCE);
+
+    // Fires the block-added observer and therefore calls checkInSync() on this thread.
+    advanceLocalChain(blockchain.getChainHeadBlockNumber() + 1);
+
+    assertThat(heldMonitorDuringCallback)
+        .withFailMessage("a block import called checkInSync() while holding the sync state monitor")
+        .isNotEmpty()
+        .containsOnly(false);
   }
 
   private void advanceLocalChain(final long newChainHeight) {
@@ -739,20 +755,6 @@ public class SyncStateTest {
   }
 
   @Test
-  public void shouldTrackAccountToRepair() {
-    assertThat(syncState.getAccountToRepair()).isEmpty();
-
-    Address testAddress = Address.fromHexString("0x1234567890123456789012345678901234567890");
-    syncState.markAccountToRepair(Optional.of(testAddress));
-
-    assertThat(syncState.getAccountToRepair()).isPresent();
-    assertThat(syncState.getAccountToRepair().get()).isEqualTo(testAddress);
-
-    syncState.markAccountToRepair(Optional.empty());
-    assertThat(syncState.getAccountToRepair()).isEmpty();
-  }
-
-  @Test
   public void shouldReturnFalseForTTDBeforeInitialSyncComplete() {
     SyncState syncStateWithPhase = new SyncState(blockchain, silPeers, true, Optional.empty());
 
@@ -800,8 +802,8 @@ public class SyncStateTest {
 
   @Test
   public void shouldReturnBestPeerChainHead() {
-    updateChainState(syncTargetPeer.getSilPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
-    doReturn(Optional.of(syncTargetPeer.getSilPeer())).when(silPeers).bestPeerWithHeightEstimate();
+    updateChainState(syncTargetPeer.getEthPeer(), TARGET_CHAIN_HEIGHT, TARGET_DIFFICULTY);
+    doReturn(Optional.of(syncTargetPeer.getEthPeer())).when(silPeers).bestPeerWithHeightEstimate();
 
     Optional<ChainHeadEstimate> bestPeer = syncState.getBestPeerChainHead();
 

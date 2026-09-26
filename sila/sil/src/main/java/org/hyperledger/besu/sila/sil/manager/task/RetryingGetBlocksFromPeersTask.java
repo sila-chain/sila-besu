@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.exceptions.IncompleteResultsException;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerTask.PeerTaskResult;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.List;
 import java.util.Objects;
@@ -64,7 +64,7 @@ public class RetryingGetBlocksFromPeersTask
       final SilPeer currentPeer) {
     final GetBodiesFromPeerTask getBodiesTask =
         GetBodiesFromPeerTask.forHeaders(
-            protocolSchedule, getSilContext(), headers, getMetricsSystem());
+            protocolSchedule, getEthContext(), headers, getMetricsSystem());
     getBodiesTask.assignPeer(currentPeer);
 
     return executeSubTask(getBodiesTask::run)

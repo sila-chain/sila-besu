@@ -16,24 +16,24 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.archive;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier.TRIE_BRANCH_STORAGE;
-import static org.hyperledger.besu.sila.trie.pathbased.common.storage.PathBasedWorldStateKeyValueStorage.WORLD_BLOCK_HASH_KEY;
+import static org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage.WORLD_BLOCK_HASH_KEY;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.flat.BonsaiFullFlatDbStrategy;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
 import org.hyperledger.besu.sila.worldstate.ImmutableDataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.sila.worldstate.ImmutableExtraStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 
 import java.util.Optional;
 
@@ -197,10 +197,8 @@ public class BonsaiArchiveWorldStateProviderTest {
     final var config =
         ImmutableDataStorageConfiguration.builder()
             .dataStorageFormat(DataStorageFormat.X_BONSAI_ARCHIVE)
-            .pathBasedExtraStorageConfiguration(
-                ImmutablePathBasedExtraStorageConfiguration.builder()
-                    .maxLayersToLoad(MAX_LAYERS)
-                    .build())
+            .extraStorageConfiguration(
+                ImmutableExtraStorageConfiguration.builder().maxLayersToLoad(MAX_LAYERS).build())
             .build();
     final BonsaiWorldStateKeyValueStorage worldStateStorage =
         new BonsaiWorldStateKeyValueStorage(
@@ -225,8 +223,7 @@ public class BonsaiArchiveWorldStateProviderTest {
         null,
         null,
         SavmConfiguration.DEFAULT,
-        () -> null,
-        new PathBasedCodeCache(),
+        new BonsaiCodeCache(),
         new NoOpMetricsSystem());
   }
 }

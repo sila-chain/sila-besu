@@ -18,9 +18,9 @@ import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.Trace;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.MiningBeneficiaryCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.MiningBeneficiaryCalculator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -14,30 +14,30 @@
  */
 package org.hyperledger.besu.sila.referencetests;
 
-import static org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig.createStatefulConfigWithTrie;
+import static org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig.createStatefulConfigWithTrie;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiPreImageProxy;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiWorldStateUpdateAccumulator;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache.NoOpBonsaiWorldStateCacheManager;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogAddedEvent;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.accumulator.PathBasedWorldStateUpdateAccumulator;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.cache.PathBasedWorldStateCacheManager;
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.services.trielogs.TrieLog;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
+import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiPreImageProxy;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogAddedEvent;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.PathBasedWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.BonsaiWorldStateUpdateAccumulator;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.PathBasedWorldStateUpdateAccumulator;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache.NoOpBonsaiWorldStateCacheManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache.PathBasedWorldStateCacheManager;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -57,6 +57,8 @@ public class BonsaiReferenceTestWorldState extends BonsaiWorldState
     implements ReferenceTestWorldState {
 
   private static final Logger LOG = LoggerFactory.getLogger(BonsaiReferenceTestWorldState.class);
+  private static final ReferenceTestStateRootCommitter REFERENCE_TEST_STATE_ROOT_COMMITTER =
+      new ReferenceTestStateRootCommitter();
 
   private final BonsaiReferenceTestWorldStateStorage refTestStorage;
   private final BonsaiPreImageProxy preImageProxy;
@@ -77,7 +79,7 @@ public class BonsaiReferenceTestWorldState extends BonsaiWorldState
         trieLogManager,
         savmConfiguration,
         createStatefulConfigWithTrie(),
-        new PathBasedCodeCache());
+        new BonsaiCodeCache());
     this.refTestStorage = worldStateKeyValueStorage;
     this.preImageProxy = preImageProxy;
     this.savmConfiguration = savmConfiguration;
@@ -116,6 +118,11 @@ public class BonsaiReferenceTestWorldState extends BonsaiWorldState
   @Override
   protected void verifyWorldStateRoot(final Hash calculatedStateRoot, final BlockHeader header) {
     // The test harness validates the root hash, no need to validate in-line for reference test
+  }
+
+  @Override
+  public void persist(final BlockHeader blockHeader) {
+    persist(blockHeader, REFERENCE_TEST_STATE_ROOT_COMMITTER);
   }
 
   @Override
@@ -243,7 +250,7 @@ public class BonsaiReferenceTestWorldState extends BonsaiWorldState
 
     final NoOpBonsaiWorldStateCacheManager noOpCachedWorldStorageManager =
         new NoOpBonsaiWorldStateCacheManager(
-            bonsaiWorldStateKeyValueStorage, SavmConfiguration.DEFAULT, new PathBasedCodeCache());
+            bonsaiWorldStateKeyValueStorage, SavmConfiguration.DEFAULT, new BonsaiCodeCache());
 
     final BonsaiReferenceTestWorldState worldState =
         new BonsaiReferenceTestWorldState(
@@ -303,7 +310,7 @@ public class BonsaiReferenceTestWorldState extends BonsaiWorldState
   }
 
   @Override
-  protected Hash hashAndSavePreImage(final Bytes value) {
+  public Hash hashAndSavePreImage(final Bytes value) {
     // by default do not save has preImages
     return preImageProxy.hashAndSavePreImage(value);
   }

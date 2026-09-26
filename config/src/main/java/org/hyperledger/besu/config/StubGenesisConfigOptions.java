@@ -57,8 +57,8 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   private OptionalLong bpo5Time = OptionalLong.empty();
   private OptionalLong amsterdamTime = OptionalLong.empty();
 
-  private OptionalLong futureSipsTime = OptionalLong.empty();
-  private OptionalLong experimentalSipsTime = OptionalLong.empty();
+  private OptionalLong futureEipsTime = OptionalLong.empty();
+  private OptionalLong experimentalEipsTime = OptionalLong.empty();
   private OptionalLong terminalBlockNumber = OptionalLong.empty();
   private Optional<Hash> terminalBlockHash = Optional.empty();
   private Optional<UInt256> terminalTotalDifficulty = Optional.empty();
@@ -74,6 +74,8 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   private static final DiscoveryOptions DISCOVERY_OPTIONS = DiscoveryOptions.DEFAULT;
   private boolean zeroBaseFee = false;
   private boolean fixedBaseFee = false;
+
+  private Optional<BlobScheduleOptions> blobScheduleOptions = Optional.empty();
 
   /** Default constructor. */
   public StubGenesisConfigOptions() {
@@ -91,11 +93,11 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
 
   @Override
   public String getConsensusEngine() {
-    return "silash";
+    return "ethash";
   }
 
   @Override
-  public boolean isSilHash() {
+  public boolean isEthHash() {
     return true;
   }
 
@@ -235,22 +237,22 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   }
 
   @Override
-  public OptionalLong getSilaShanghaiTime() {
+  public OptionalLong getShanghaiTime() {
     return shanghaiTime;
   }
 
   @Override
-  public OptionalLong getSilaCancunTime() {
+  public OptionalLong getCancunTime() {
     return cancunTime;
   }
 
   @Override
-  public OptionalLong getSilaPragueTime() {
+  public OptionalLong getPragueTime() {
     return pragueTime;
   }
 
   @Override
-  public OptionalLong getSilaOsakaTime() {
+  public OptionalLong getOsakaTime() {
     return osakaTime;
   }
 
@@ -280,18 +282,18 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   }
 
   @Override
-  public OptionalLong getSilaAmsterdamTime() {
+  public OptionalLong getAmsterdamTime() {
     return amsterdamTime;
   }
 
   @Override
-  public OptionalLong getFutureSipsTime() {
-    return futureSipsTime;
+  public OptionalLong getFutureEipsTime() {
+    return futureEipsTime;
   }
 
   @Override
-  public OptionalLong getExperimentalSipsTime() {
-    return experimentalSipsTime;
+  public OptionalLong getExperimentalEipsTime() {
+    return experimentalEipsTime;
   }
 
   @Override
@@ -320,7 +322,7 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   }
 
   @Override
-  public OptionalInt getSavmStackSize() {
+  public OptionalInt getEvmStackSize() {
     return stackSizeLimit;
   }
 
@@ -334,7 +336,7 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
     final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
     getChainId().ifPresent(id -> builder.put("chainId", id));
 
-    // sila-mainnet fork blocks
+    // mainnet fork blocks
     getHomesteadBlockNumber().ifPresent(l -> builder.put("homesteadBlock", l));
     getDaoForkBlock().ifPresent(l -> builder.put("daoForkBlock", l));
     getTangerineWhistleBlockNumber().ifPresent(l -> builder.put("sip150Block", l));
@@ -349,29 +351,29 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
     getArrowGlacierBlockNumber().ifPresent(l -> builder.put("arrowGlacierBlock", l));
     getGrayGlacierBlockNumber().ifPresent(l -> builder.put("grayGlacierBlock", l));
     getMergeNetSplitBlockNumber().ifPresent(l -> builder.put("mergeNetSplitBlock", l));
-    getSilaShanghaiTime().ifPresent(l -> builder.put("shanghaiTime", l));
-    getSilaCancunTime().ifPresent(l -> builder.put("cancunTime", l));
-    getSilaPragueTime().ifPresent(l -> builder.put("pragueTime", l));
-    getSilaOsakaTime().ifPresent(l -> builder.put("osakaTime", l));
+    getShanghaiTime().ifPresent(l -> builder.put("shanghaiTime", l));
+    getCancunTime().ifPresent(l -> builder.put("cancunTime", l));
+    getPragueTime().ifPresent(l -> builder.put("pragueTime", l));
+    getOsakaTime().ifPresent(l -> builder.put("osakaTime", l));
     getBpo1Time().ifPresent(l -> builder.put("bpo1Time", l));
     getBpo2Time().ifPresent(l -> builder.put("bpo2Time", l));
     getBpo3Time().ifPresent(l -> builder.put("bpo3Time", l));
     getBpo4Time().ifPresent(l -> builder.put("bpo4Time", l));
     getBpo5Time().ifPresent(l -> builder.put("bpo5Time", l));
-    getSilaAmsterdamTime().ifPresent(l -> builder.put("amsterdamTime", l));
-    getFutureSipsTime().ifPresent(l -> builder.put("futureSipsTime", l));
-    getExperimentalSipsTime().ifPresent(l -> builder.put("experimentalSipsTime", l));
+    getAmsterdamTime().ifPresent(l -> builder.put("amsterdamTime", l));
+    getFutureEipsTime().ifPresent(l -> builder.put("futureEipsTime", l));
+    getExperimentalEipsTime().ifPresent(l -> builder.put("experimentalEipsTime", l));
     getTerminalBlockNumber().ifPresent(l -> builder.put("terminalBlockNumber", l));
     getTerminalBlockHash().ifPresent(h -> builder.put("terminalBlockHash", h));
 
     getContractSizeLimit().ifPresent(l -> builder.put("contractSizeLimit", l));
-    getSavmStackSize().ifPresent(l -> builder.put("savmStackSize", l));
+    getEvmStackSize().ifPresent(l -> builder.put("savmStackSize", l));
     getDepositContractAddress().ifPresent(l -> builder.put("depositContractAddress", l));
     if (isClique()) {
       builder.put("clique", getCliqueConfigOptions().asMap());
     }
-    if (isSilHash()) {
-      builder.put("silash", getFixedDifficultyConfigOptions().asMap());
+    if (isEthHash()) {
+      builder.put("ethash", getFixedDifficultyConfigOptions().asMap());
     }
     if (isIbftLegacy()) {
       builder.put("ibft", getIbftLegacyConfigOptions().asMap());
@@ -429,7 +431,19 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
 
   @Override
   public Optional<BlobScheduleOptions> getBlobScheduleOptions() {
-    return Optional.empty();
+    return blobScheduleOptions;
+  }
+
+  /**
+   * Blob schedule stub genesis config options.
+   *
+   * @param blobScheduleOptions the blob schedule options
+   * @return the stub genesis config options
+   */
+  public StubGenesisConfigOptions blobScheduleOptions(
+      final BlobScheduleOptions blobScheduleOptions) {
+    this.blobScheduleOptions = Optional.of(blobScheduleOptions);
+    return this;
   }
 
   /**
@@ -455,7 +469,7 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   }
 
   /**
-   * Sip 150 block stub genesis config options.
+   * Eip 150 block stub genesis config options.
    *
    * @param blockNumber the block number
    * @return the stub genesis config options
@@ -466,7 +480,7 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
   }
 
   /**
-   * Sip 158 block stub genesis config options.
+   * Eip 158 block stub genesis config options.
    *
    * @param blockNumber the block number
    * @return the stub genesis config options
@@ -702,8 +716,8 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
    * @param timestamp the block timestamp
    * @return the stub genesis config options
    */
-  public StubGenesisConfigOptions futureSipsTime(final long timestamp) {
-    futureSipsTime = OptionalLong.of(timestamp);
+  public StubGenesisConfigOptions futureEipsTime(final long timestamp) {
+    futureEipsTime = OptionalLong.of(timestamp);
     return this;
   }
 
@@ -713,8 +727,8 @@ public class StubGenesisConfigOptions implements GenesisConfigOptions, Cloneable
    * @param timestamp the block timestamp
    * @return the stub genesis config options
    */
-  public StubGenesisConfigOptions experimentalSipsTime(final long timestamp) {
-    experimentalSipsTime = OptionalLong.of(timestamp);
+  public StubGenesisConfigOptions experimentalEipsTime(final long timestamp) {
+    experimentalEipsTime = OptionalLong.of(timestamp);
     return this;
   }
 

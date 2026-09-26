@@ -21,7 +21,6 @@ import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.Memo
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.BLOB_PROOF_BUNDLE_SIZE_V0;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.BLOB_PROOF_BUNDLE_SIZE_V1;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.CODE_DELEGATION_ENTRY_SIZE;
-import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.SIP1559_AND_SIP4844_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.FRONTIER_AND_ACCESS_LIST_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.KZG_PROOF_CONTAINER_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.KZG_PROOF_SIZE;
@@ -32,6 +31,7 @@ import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.Memo
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.OPTIONAL_TO_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.PAYLOAD_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.PENDING_TRANSACTION_SHALLOW_SIZE;
+import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.SIP1559_AND_EIP4844_SHALLOW_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MemorySize.calculateListShallowSize;
 
 import org.hyperledger.besu.datatypes.AccessListEntry;
@@ -157,7 +157,7 @@ public abstract class PendingTransaction
     return switch (transaction.getType()) {
           case FRONTIER -> computeFrontierMemorySize();
           case ACCESS_LIST -> computeAccessListMemorySize();
-          case SIP1559 -> computeSIP1559MemorySize();
+          case SIP1559 -> computeEIP1559MemorySize();
           case BLOB -> computeBlobMemorySize();
           case DELEGATE_CODE -> computeDelegateCodeMemorySize();
         }
@@ -179,8 +179,8 @@ public abstract class PendingTransaction
         + computeAccessListEntriesMemorySize();
   }
 
-  private int computeSIP1559MemorySize() {
-    return SIP1559_AND_SIP4844_SHALLOW_SIZE
+  private int computeEIP1559MemorySize() {
+    return SIP1559_AND_EIP4844_SHALLOW_SIZE
         + computePayloadMemorySize()
         + computeToMemorySize()
         + computeChainIdMemorySize()
@@ -188,13 +188,13 @@ public abstract class PendingTransaction
   }
 
   private int computeBlobMemorySize() {
-    return computeSIP1559MemorySize()
+    return computeEIP1559MemorySize()
         + OPTIONAL_SHALLOW_SIZE // for the versionedHashes field
         + computeBlobWithCommitmentsMemorySize();
   }
 
   private int computeDelegateCodeMemorySize() {
-    return computeSIP1559MemorySize() + computeCodeDelegationListMemorySize();
+    return computeEIP1559MemorySize() + computeCodeDelegationListMemorySize();
   }
 
   private int computeBlobWithCommitmentsMemorySize() {
@@ -441,7 +441,7 @@ public abstract class PendingTransaction
    */
   public interface MemorySize {
     int FRONTIER_AND_ACCESS_LIST_SHALLOW_SIZE = 896;
-    int SIP1559_AND_SIP4844_SHALLOW_SIZE = 1008;
+    int SIP1559_AND_EIP4844_SHALLOW_SIZE = 1008;
     int OPTIONAL_TO_SIZE = 104;
     int OPTIONAL_CHAIN_ID_SIZE = 80;
     int PAYLOAD_SHALLOW_SIZE = 32;

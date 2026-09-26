@@ -16,7 +16,7 @@ package org.hyperledger.besu.consensus.clique;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.DifficultyCalculator;
+import org.hyperledger.besu.sila.silaMainnet.DifficultyCalculator;
 
 import java.math.BigInteger;
 

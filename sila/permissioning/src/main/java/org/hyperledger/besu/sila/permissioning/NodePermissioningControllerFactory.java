@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.permissioning;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
 import org.hyperledger.besu.sila.permissioning.node.NodePermissioningController;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 
 import java.util.ArrayList;
 import java.util.Collection;

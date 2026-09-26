@@ -119,7 +119,7 @@ public class RocksDBStats {
   };
 
   /** The constant HISTOGRAM_TYPES. */
-  // Histograms - treated as promsileus summaries
+  // Histograms - treated as prometheus summaries
   static final HistogramType[] HISTOGRAM_TYPES = {
     HistogramType.DB_GET,
     HistogramType.DB_WRITE,

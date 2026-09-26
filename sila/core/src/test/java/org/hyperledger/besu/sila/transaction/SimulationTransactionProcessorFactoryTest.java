@@ -25,16 +25,16 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.StateOverride;
 import org.hyperledger.besu.datatypes.StateOverrideMap;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallError;
-import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallException;
 import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
 import org.hyperledger.besu.savm.precompile.PrecompiledContract;
 import org.hyperledger.besu.savm.processor.MessageCallProcessor;
 import org.hyperledger.besu.savm.processor.SimulationMessageCallProcessor;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallError;
+import org.hyperledger.besu.sila.transaction.exceptions.BlockStateCallException;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -71,12 +71,12 @@ public class SimulationTransactionProcessorFactoryTest {
     when(protocolSchedule.getByBlockHeader(any())).thenReturn(protocolSpec);
     PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
     precompileContractRegistry.put(originalPrecompileAddress, mock(PrecompiledContract.class));
-    SilaMainnetTransactionProcessor sila-mainnetTransactionProcessor =
+    SilaMainnetTransactionProcessor mainnetTransactionProcessor =
         SilaMainnetTransactionProcessor.builder()
             .messageCallProcessor(
                 new MessageCallProcessor(mock(SAVM.class), precompileContractRegistry))
             .build();
-    when(protocolSpec.getTransactionProcessor()).thenReturn(sila-mainnetTransactionProcessor);
+    when(protocolSpec.getTransactionProcessor()).thenReturn(mainnetTransactionProcessor);
     factory = new SimulationTransactionProcessorFactory(protocolSchedule);
 
     originalPrecompiledContract = mock(PrecompiledContract.class);

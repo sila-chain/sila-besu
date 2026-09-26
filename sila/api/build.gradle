@@ -81,7 +81,7 @@ dependencies {
   implementation 'com.fasterxml.jackson.core:jackson-databind'
   implementation 'io.consensys.tuweni:tuweni-bytes'
   implementation 'io.consensys.tuweni:tuweni-units'
-  implementation 'org.web3j:abi'
+  implementation rootProject.ext.silaWeb3jRuntimeSanitized
   implementation 'com.github.ben-manes.caffeine:caffeine'
 
   annotationProcessor "org.immutables:value"

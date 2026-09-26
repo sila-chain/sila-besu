@@ -22,13 +22,13 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.SilFilter;
+import sila.web3j.protocol.core.methods.response.EthFilter;
 
 public class SilNewPendingTransactionFilterTransaction implements Transaction<BigInteger> {
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      final SilFilter response = node.sil().silNewPendingTransactionFilter().send();
+      final EthFilter response = node.sil().ethNewPendingTransactionFilter().send();
       assertThat(response.getFilterId()).isNotNull();
       return response.getFilterId();
     } catch (final IOException e) {

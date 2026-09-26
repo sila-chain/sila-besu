@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila.sil.sync;
 
+import org.hyperledger.besu.services.pipeline.Pipeline;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
-import org.hyperledger.besu.services.pipeline.Pipeline;
 
 import java.util.concurrent.CompletionStage;
 

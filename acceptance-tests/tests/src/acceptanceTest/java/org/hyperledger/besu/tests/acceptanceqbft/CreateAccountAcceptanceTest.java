@@ -36,7 +36,7 @@ public class CreateAccountAcceptanceTest extends AcceptanceTestBase {
   @Test
   public void shouldCreateAnAccount() {
     final Account account = accounts.createAccount("account-one");
-    final Amount balance = Amount.siler(20);
+    final Amount balance = Amount.sila(20);
 
     final Hash transactionHash =
         minerNode.execute(accountTransactions.createTransfer(account, balance));

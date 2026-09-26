@@ -29,6 +29,9 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.consensus.merge.ForkchoiceEvent;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
@@ -42,20 +45,28 @@ import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.ProtocolScheduleFixture;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
+import org.hyperledger.besu.sila.forkid.ForkId;
+import org.hyperledger.besu.sila.forkid.ForkIdManager;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.sil.ImmutableSilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocolVersion;
-import org.hyperledger.besu.sila.sil.ImmutableSilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.core.Utils;
 import org.hyperledger.besu.sila.sil.manager.MockPeerConnection.PeerSendHandler;
 import org.hyperledger.besu.sila.sil.messages.BlockBodiesMessage;
 import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
-import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.sil.messages.GetBlockBodiesMessage;
 import org.hyperledger.besu.sila.sil.messages.GetBlockHeadersMessage;
 import org.hyperledger.besu.sila.sil.messages.GetReceiptsMessage;
 import org.hyperledger.besu.sila.sil.messages.NewBlockMessage;
 import org.hyperledger.besu.sila.sil.messages.ReceiptsMessage;
+import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.sil.messages.StatusMessage;
 import org.hyperledger.besu.sila.sil.messages.TransactionsMessage;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
@@ -65,20 +76,9 @@ import org.hyperledger.besu.sila.sil.transactions.BlobCache;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolFactory;
-import org.hyperledger.besu.sila.forkid.ForkId;
-import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.math.BigInteger;
@@ -137,10 +137,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // Create a RawMessage with invalid compressed data that will throw FramingException
       final MessageData messageData =
@@ -159,10 +159,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // this is a non-request id message, but we'll be processing it with sil66, make sure we
       // disconnect the peer gracefully
@@ -179,10 +179,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData messageData =
           BlockHeadersMessage.create(Collections.singletonList(blockchain.getBlockHeader(1).get()));
@@ -198,10 +198,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData messageData =
           BlockHeadersMessage.create(Collections.singletonList(blockchain.getBlockHeader(1).get()));
@@ -218,10 +218,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData messageData =
           BlockHeadersMessage.create(Collections.singletonList(blockchain.getBlockHeader(1).get()));
@@ -259,7 +259,7 @@ public final class SilProtocolManagerTest {
             .setBlockchain(blockchain)
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setMergePeerFilter(Optional.of(mergePeerFilter))
             .build()) {
 
@@ -310,17 +310,17 @@ public final class SilProtocolManagerTest {
   }
 
   @Test
-  public void disconnectOnMissingBlockRangeWhenSil69() {
+  public void disconnectOnMissingBlockRangeWhenEth69() {
     try (final SilProtocolManager silManager =
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(
+            .setEthereumWireProtocolConfiguration(
                 ImmutableSilProtocolConfiguration.builder()
-                    .maxSilCapability(SilProtocolVersion.V69)
+                    .maxEthCapability(SilProtocolVersion.V69)
                     .build())
             .build()) {
 
@@ -351,10 +351,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData messageData = mock(MessageData.class);
       when(messageData.getSize()).thenReturn(SilProtocolConfiguration.DEFAULT_MAX_MESSAGE_SIZE);
@@ -372,10 +372,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData messageData =
           BlockHeadersMessage.create(Collections.singletonList(blockchain.getBlockHeader(1).get()));
@@ -409,10 +409,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData messageData =
           GetBlockBodiesMessage.create(Collections.singletonList(gen.hash()))
@@ -432,10 +432,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData malformedMessageData =
           new RawMessage(SilProtocolMessages.GET_BLOCK_ACCESS_LISTS, Bytes.fromHexString("0xc1ff"));
@@ -453,10 +453,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // 0xc1ff is a valid RLP list containing one invalid-length element (not a 32-byte hash)
       final MessageData malformedMessageData =
@@ -477,10 +477,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final MessageData malformedMessageData =
           new RawMessage(
@@ -501,10 +501,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // 0xc1ff is a valid RLP list containing one invalid-length element (not a 32-byte hash)
       final MessageData malformedMessageData =
@@ -526,10 +526,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       final long startBlock = 5L;
       final int blockCount = 5;
@@ -569,10 +569,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(config)
+            .setEthereumWireProtocolConfiguration(config)
             .build()) {
       final long startBlock = 5L;
       final int blockCount = 10;
@@ -609,10 +609,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       final long endBlock = 10L;
@@ -650,10 +650,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       final long startBlock = 5L;
@@ -693,10 +693,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       final long endBlock = 10L;
@@ -749,7 +749,7 @@ public final class SilProtocolManagerTest {
             .forkId(forkId)
             .apply(
                 builder -> {
-                  if (SilProtocol.isSil69Compatible(capability)) {
+                  if (SilProtocol.isEth69Compatible(capability)) {
                     builder.blockRange(
                         new StatusMessage.BlockRange(10L, blockchain.getChainHeadBlockNumber()));
                   } else {
@@ -758,9 +758,9 @@ public final class SilProtocolManagerTest {
                 })
             .build();
     silManager.processMessage(capability, new DefaultMessage(peerConnection, statusMessage));
-    final SilPeers silPeers = silManager.silContext().getSilPeers();
+    final SilPeers silPeers = silManager.silContext().getEthPeers();
     final SilPeer silPeer = silPeers.peer(peerConnection);
-    silPeers.addPeerToSilPeers(silPeer);
+    silPeers.addPeerToEthPeers(silPeer);
     return peerConnection;
   }
 
@@ -786,10 +786,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       final long startBlock = blockchain.getChainHeadBlockNumber() - 1L;
@@ -827,10 +827,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       final long startBlock = blockchain.getChainHeadBlockNumber() + 1;
@@ -865,10 +865,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       // Setup blocks query
@@ -921,10 +921,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(config)
+            .setEthereumWireProtocolConfiguration(config)
             .build()) {
       // Setup blocks query
       final int blockCount = 10;
@@ -973,10 +973,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // Setup blocks query
       final long expectedBlockNumber = blockchain.getChainHeadBlockNumber() - 1;
@@ -1019,10 +1019,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // Setup blocks query
       final long startBlock = blockchain.getChainHeadBlockNumber() - 5;
@@ -1073,10 +1073,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(config)
+            .setEthereumWireProtocolConfiguration(config)
             .build()) {
       // Setup blocks query
       final int blockCount = 10;
@@ -1124,10 +1124,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // Setup blocks query
       final long blockNumber = blockchain.getChainHeadBlockNumber() - 5;
@@ -1169,10 +1169,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
       // Define handler to validate response
       final PeerSendHandler onSend = mock(PeerSendHandler.class);
@@ -1241,10 +1241,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       final long startBlock = 1L;
@@ -1318,10 +1318,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(silScheduler)
+            .setEthScheduler(silScheduler)
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(silProtocolConfiguration)
+            .setEthereumWireProtocolConfiguration(silProtocolConfiguration)
             .build()) {
       // Create a transaction pool.  This has a side effect of registering a listener for the
       // transactions message.
@@ -1331,7 +1331,7 @@ public final class SilProtocolManagerTest {
               silManager.silContext(),
               TestClock.system(ZoneId.systemDefault()),
               metricsSystem,
-              new SyncState(blockchain, silManager.silContext().getSilPeers()),
+              new SyncState(blockchain, silManager.silContext().getEthPeers()),
               TransactionPoolConfiguration.DEFAULT,
               silProtocolConfiguration,
               new BlobCache(),
@@ -1363,7 +1363,7 @@ public final class SilProtocolManagerTest {
     // Test with max capability = 65. should respect flag
     final SilProtocolConfiguration configuration =
         ImmutableSilProtocolConfiguration.builder()
-            .maxSilCapability(SilProtocolVersion.V68)
+            .maxEthCapability(SilProtocolVersion.V68)
             .build();
 
     assertHighestCapability(SyncMode.SNAP, SilProtocol.SIL68, configuration);
@@ -1376,10 +1376,10 @@ public final class SilProtocolManagerTest {
     // If min cap = v67, should not contain v66
     final SilProtocolConfiguration configuration =
         ImmutableSilProtocolConfiguration.builder()
-            .minSilCapability(SilProtocolVersion.V69)
+            .minEthCapability(SilProtocolVersion.V69)
             .build();
 
-    final SilProtocolManager silManager = createSilManager(SyncMode.SNAP, configuration);
+    final SilProtocolManager silManager = createEthManager(SyncMode.SNAP, configuration);
 
     assertThat(silManager.getSupportedCapabilities()).contains(SilProtocol.SIL69);
     assertThat(silManager.getSupportedCapabilities()).doesNotContain(SilProtocol.SIL68);
@@ -1391,7 +1391,7 @@ public final class SilProtocolManagerTest {
     // Test with max capability = 68. should respect protocol
     final SilProtocolConfiguration configuration =
         ImmutableSilProtocolConfiguration.builder()
-            .maxSilCapability(SilProtocolVersion.V68)
+            .maxEthCapability(SilProtocolVersion.V68)
             .build();
 
     assertHighestCapability(SyncMode.SNAP, SilProtocol.SIL68, configuration);
@@ -1402,11 +1402,11 @@ public final class SilProtocolManagerTest {
   public void shouldThrowExceptionWhenNoCapabilities() {
     final SilProtocolConfiguration configuration =
         ImmutableSilProtocolConfiguration.builder()
-            .minSilCapability(SilProtocolVersion.V69)
-            .maxSilCapability(SilProtocolVersion.V68)
+            .minEthCapability(SilProtocolVersion.V69)
+            .maxEthCapability(SilProtocolVersion.V68)
             .build();
 
-    assertThatThrownBy(() -> createSilManager(SyncMode.SNAP, configuration))
+    assertThatThrownBy(() -> createEthManager(SyncMode.SNAP, configuration))
         .isInstanceOf(IllegalStateException.class)
         .hasMessageContaining(
             "No supported Sil protocol capabilities found. Check the configuration for min and max Sil protocol versions.");
@@ -1421,17 +1421,17 @@ public final class SilProtocolManagerTest {
       final Capability capability,
       final SilProtocolConfiguration silProtocolConfiguration) {
 
-    final SilProtocolManager silManager = createSilManager(syncMode, silProtocolConfiguration);
+    final SilProtocolManager silManager = createEthManager(syncMode, silProtocolConfiguration);
 
     assertThat(capability.getVersion()).isEqualTo(silManager.getHighestProtocolVersion());
   }
 
-  private SilProtocolManager createSilManager(
+  private SilProtocolManager createEthManager(
       final SyncMode syncMode, final SilProtocolConfiguration silProtocolConfiguration) {
     final SynchronizerConfiguration syncConfig = mock(SynchronizerConfiguration.class);
     when(syncConfig.getSyncMode()).thenReturn(syncMode);
     SilContext silContext = mock(SilContext.class);
-    when(silContext.getSilMessages()).thenReturn(mock(SilMessages.class));
+    when(silContext.getEthMessages()).thenReturn(mock(SilMessages.class));
     when(silContext.getScheduler()).thenReturn(mock(SilScheduler.class));
     try (final SilProtocolManager silManager =
         new SilProtocolManager(
@@ -1454,7 +1454,7 @@ public final class SilProtocolManagerTest {
   }
 
   @Test
-  public void shouldSendEarliestBlockToPeerWhenCapabilitySil69() {
+  public void shouldSendEarliestBlockToPeerWhenCapabilityEth69() {
     long expectedEarliestBlock = 10L;
     Blockchain blockChainMock = spy(blockchain);
     when(blockChainMock.getEarliestBlockNumber()).thenReturn(Optional.of(expectedEarliestBlock));
@@ -1462,10 +1462,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockChainMock)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       setupPeerWithoutStatusExchange(
@@ -1489,10 +1489,10 @@ public final class SilProtocolManagerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockChainMock)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build()) {
 
       setupPeerWithoutStatusExchange(

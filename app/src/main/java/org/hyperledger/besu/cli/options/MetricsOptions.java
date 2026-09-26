@@ -20,14 +20,14 @@ import static org.hyperledger.besu.cli.DefaultCommandValues.MANDATORY_HOST_FORMA
 import static org.hyperledger.besu.cli.DefaultCommandValues.MANDATORY_INTEGER_FORMAT_HELP;
 import static org.hyperledger.besu.cli.DefaultCommandValues.MANDATORY_PORT_FORMAT_HELP;
 import static org.hyperledger.besu.metrics.BesuMetricCategory.DEFAULT_METRIC_CATEGORIES;
-import static org.hyperledger.besu.metrics.MetricsProtocol.PROMSILEUS;
-import static org.hyperledger.besu.metrics.promsileus.MetricsConfiguration.DEFAULT_METRICS_PORT;
-import static org.hyperledger.besu.metrics.promsileus.MetricsConfiguration.DEFAULT_METRICS_PUSH_PORT;
+import static org.hyperledger.besu.metrics.MetricsProtocol.PROMETHEUS;
+import static org.hyperledger.besu.metrics.prometheus.MetricsConfiguration.DEFAULT_METRICS_PORT;
+import static org.hyperledger.besu.metrics.prometheus.MetricsConfiguration.DEFAULT_METRICS_PUSH_PORT;
 
 import org.hyperledger.besu.cli.util.CommandLineUtils;
 import org.hyperledger.besu.metrics.MetricCategoryRegistryImpl;
 import org.hyperledger.besu.metrics.MetricsProtocol;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.plugin.services.metrics.MetricCategory;
 
 import java.util.List;
@@ -60,7 +60,7 @@ public class MetricsOptions implements CLIOptions<MetricsConfiguration.Builder> 
         .pushHost(getMetricsPushHost())
         .pushPort(getMetricsPushPort())
         .pushInterval(getMetricsPushInterval())
-        .promsileusJob(getMetricsPromsileusJob());
+        .prometheusJob(getMetricsPrometheusJob());
     return builder;
   }
 
@@ -83,7 +83,7 @@ public class MetricsOptions implements CLIOptions<MetricsConfiguration.Builder> 
         config.getMetricCategories().stream()
             .map(MetricCategory::getName)
             .collect(toUnmodifiableSet());
-    metricsOptions.metricsPromsileusJob = config.getPromsileusJob();
+    metricsOptions.metricsPrometheusJob = config.getPrometheusJob();
     metricsOptions.isMetricsPushEnabled = config.isPushEnabled();
     metricsOptions.metricsPushHost = config.getPushHost();
     metricsOptions.metricsPushPort = config.getPushPort();
@@ -106,8 +106,8 @@ public class MetricsOptions implements CLIOptions<MetricsConfiguration.Builder> 
   @CommandLine.Option(
       names = {"--metrics-protocol"},
       description =
-          "Metrics protocol, one of PROMSILEUS, OPENTELEMETRY or NONE. (default: ${DEFAULT-VALUE})")
-  private MetricsProtocol metricsProtocol = PROMSILEUS;
+          "Metrics protocol, one of PROMETHEUS, OPENTELEMETRY or NONE. (default: ${DEFAULT-VALUE})")
+  private MetricsProtocol metricsProtocol = PROMETHEUS;
 
   @SuppressWarnings({"FieldCanBeFinal", "FieldMayBeFinal"}) // PicoCLI requires non-final Strings.
   @CommandLine.Option(
@@ -141,13 +141,13 @@ public class MetricsOptions implements CLIOptions<MetricsConfiguration.Builder> 
   @CommandLine.Option(
       names = {"--metrics-push-host"},
       paramLabel = MANDATORY_HOST_FORMAT_HELP,
-      description = "Host of the Promsileus Push Gateway for push mode (default: ${DEFAULT-VALUE})")
+      description = "Host of the Prometheus Push Gateway for push mode (default: ${DEFAULT-VALUE})")
   private String metricsPushHost = MetricsConfiguration.DEFAULT_METRICS_PUSH_HOST;
 
   @CommandLine.Option(
       names = {"--metrics-push-port"},
       paramLabel = MANDATORY_PORT_FORMAT_HELP,
-      description = "Port of the Promsileus Push Gateway for push mode (default: ${DEFAULT-VALUE})")
+      description = "Port of the Prometheus Push Gateway for push mode (default: ${DEFAULT-VALUE})")
   private Integer metricsPushPort = DEFAULT_METRICS_PUSH_PORT;
 
   @CommandLine.Option(
@@ -159,9 +159,9 @@ public class MetricsOptions implements CLIOptions<MetricsConfiguration.Builder> 
 
   @SuppressWarnings({"FieldCanBeFinal", "FieldMayBeFinal"}) // PicoCLI requires non-final Strings.
   @CommandLine.Option(
-      names = {"--metrics-push-promsileus-job"},
+      names = {"--metrics-push-prometheus-job"},
       description = "Job name to use when in push mode (default: ${DEFAULT-VALUE})")
-  private String metricsPromsileusJob = "besu-client";
+  private String metricsPrometheusJob = "besu-client";
 
   /**
    * Returns a newly created {@link MetricsOptions} with default values.
@@ -262,12 +262,12 @@ public class MetricsOptions implements CLIOptions<MetricsConfiguration.Builder> 
   }
 
   /**
-   * Returns the metrics promsileus job.
+   * Returns the metrics prometheus job.
    *
-   * @return the metrics promsileus job
+   * @return the metrics prometheus job
    */
-  public String getMetricsPromsileusJob() {
-    return metricsPromsileusJob;
+  public String getMetricsPrometheusJob() {
+    return metricsPrometheusJob;
   }
 
   /**

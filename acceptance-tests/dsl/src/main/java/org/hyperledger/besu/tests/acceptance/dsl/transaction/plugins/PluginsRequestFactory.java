@@ -17,9 +17,9 @@ package org.hyperledger.besu.tests.acceptance.dsl.transaction.plugins;
 import java.util.Collections;
 import java.util.Optional;
 
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.core.Request;
-import org.web3j.protocol.core.Response;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.core.Request;
+import sila.web3j.protocol.core.Response;
 
 public class PluginsRequestFactory {
 

@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.sil.sync.snapsync;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.core.TrieGenerator;
 import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
@@ -24,7 +25,6 @@ import org.hyperledger.besu.sila.trie.TrieIterator;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.util.ArrayList;
 import java.util.List;

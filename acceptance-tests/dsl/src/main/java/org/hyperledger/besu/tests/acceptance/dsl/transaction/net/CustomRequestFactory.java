@@ -18,15 +18,19 @@ import java.util.Arrays;
 import java.util.Collections;
 import java.util.Map;
 
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.core.Request;
-import org.web3j.protocol.core.Response;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.core.Request;
+import sila.web3j.protocol.core.Response;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class CustomRequestFactory {
   private final Web3jService web3jService;
 
   public static class NetServicesResponse extends Response<Map<String, Map<String, String>>> {}
+
+  public static class SilGetBalanceResponse extends Response<String> {}
+
+  public static class SilSendRawTransactionResponse extends Response<String> {}
 
   public static class TransactionReceiptWithRevertReason extends TransactionReceipt {
     private String revertReason;
@@ -92,6 +96,23 @@ public class CustomRequestFactory {
   public Request<?, NetServicesResponse> netServices() {
     return new Request<>(
         "net_services", Collections.emptyList(), web3jService, NetServicesResponse.class);
+  }
+
+  public Request<?, SilGetBalanceResponse> silGetBalance(final String address) {
+    return new Request<>(
+        "sil_getBalance",
+        Arrays.asList(address, "latest"),
+        web3jService,
+        SilGetBalanceResponse.class);
+  }
+
+  public Request<?, SilSendRawTransactionResponse> silSendRawTransaction(
+      final String transactionData) {
+    return new Request<>(
+        "sil_sendRawTransaction",
+        Collections.singletonList(transactionData),
+        web3jService,
+        SilSendRawTransactionResponse.class);
   }
 
   public Request<?, SilGetTransactionReceiptWithRevertReasonResponse>

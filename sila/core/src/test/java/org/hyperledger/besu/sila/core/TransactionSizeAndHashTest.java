@@ -75,7 +75,7 @@ public class TransactionSizeAndHashTest {
   }
 
   @Test
-  public void returnsRightSizeForSip1559Tx() {
+  public void returnsRightSizeForEip1559Tx() {
     final Transaction transaction = build1559Transaction();
     final Bytes bytes =
         TransactionEncoder.encodeOpaqueBytes(transaction, EncodingContext.BLOCK_BODY);

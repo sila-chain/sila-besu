@@ -20,9 +20,9 @@ import org.hyperledger.besu.consensus.common.bft.BftExtraData;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.query.BftQueryService;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.plugin.services.query.BftQueryService;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -30,6 +30,7 @@ import java.util.Collections;
 import org.apache.tuweni.bytes.Bytes32;
 
 /** The Ibft query service. */
+@SuppressWarnings("removal")
 public class IbftQueryServiceImpl extends PoaQueryServiceImpl implements BftQueryService {
 
   private final BftBlockInterface blockInterface;

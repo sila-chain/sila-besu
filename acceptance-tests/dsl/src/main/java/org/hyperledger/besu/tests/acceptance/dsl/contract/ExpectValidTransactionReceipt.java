@@ -21,8 +21,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 import java.math.BigInteger;
 import java.util.Optional;
 
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
-import org.web3j.tx.Contract;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.tx.Contract;
 
 public class ExpectValidTransactionReceipt {
 

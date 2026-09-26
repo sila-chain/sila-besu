@@ -24,6 +24,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.SyncBlock;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
@@ -32,10 +33,9 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetSyncBlockBodiesFromPeerTask;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.time.Duration;
 import java.util.ArrayList;
@@ -62,7 +62,7 @@ public class DownloadSyncBodiesStepTest {
     when(protocolSpec.isPoS()).thenReturn(false);
     when(protocolSchedule.getByBlockHeader(any())).thenReturn(protocolSpec);
     silContext = mock(SilContext.class);
-    when(silContext.getScheduler()).thenReturn(new DeterministicSilScheduler(() -> false));
+    when(silContext.getScheduler()).thenReturn(new DeterministicEthScheduler(() -> false));
     when(silContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
   }
 
@@ -196,13 +196,13 @@ public class DownloadSyncBodiesStepTest {
   @Test
   public void shouldTimeoutAfterConfiguredDuration() throws Exception {
     final SilScheduler realScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
-    final SilContext realSilContext = mock(SilContext.class);
-    when(realSilContext.getScheduler()).thenReturn(realScheduler);
-    when(realSilContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
+    final SilContext realEthContext = mock(SilContext.class);
+    when(realEthContext.getScheduler()).thenReturn(realScheduler);
+    when(realEthContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
 
     try {
       final DownloadSyncBodiesStep step =
-          new DownloadSyncBodiesStep(protocolSchedule, realSilContext, Duration.ofMillis(100));
+          new DownloadSyncBodiesStep(protocolSchedule, realEthContext, Duration.ofMillis(100));
 
       when(peerTaskExecutor.execute(any(GetSyncBlockBodiesFromPeerTask.class)))
           .thenReturn(failure(PeerTaskExecutorResponseCode.TIMEOUT));
@@ -226,13 +226,13 @@ public class DownloadSyncBodiesStepTest {
     // When the retry eventually runs it must observe cancelled=true and exit without
     // making a second peer request.
     final SilScheduler realScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
-    final SilContext realSilContext = mock(SilContext.class);
-    when(realSilContext.getScheduler()).thenReturn(realScheduler);
-    when(realSilContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
+    final SilContext realEthContext = mock(SilContext.class);
+    when(realEthContext.getScheduler()).thenReturn(realScheduler);
+    when(realEthContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
 
     try {
       final DownloadSyncBodiesStep step =
-          new DownloadSyncBodiesStep(protocolSchedule, realSilContext, Duration.ofMillis(500));
+          new DownloadSyncBodiesStep(protocolSchedule, realEthContext, Duration.ofMillis(500));
 
       when(peerTaskExecutor.execute(any(GetSyncBlockBodiesFromPeerTask.class)))
           .thenReturn(failure(PeerTaskExecutorResponseCode.NO_PEER_AVAILABLE));

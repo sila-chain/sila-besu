@@ -80,7 +80,7 @@ public class AccountLocalConfigPermissioningAcceptanceTest extends AcceptanceTes
     TransferTransaction transfer =
         accountTransactions.createTransfer(sender, beneficiary, 1, nonce);
     node.verify(
-        sil.expectSilSendRawTransactionException(
+        sil.expectEthSendRawTransactionException(
             transfer.signedTransactionData(),
             "Sender account not authorized to send transactions"));
   }

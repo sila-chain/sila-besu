@@ -15,15 +15,15 @@
 package org.hyperledger.besu.services;
 
 import org.hyperledger.besu.datatypes.p2p.MessageData;
-import org.hyperledger.besu.sila.sil.manager.SilPeers;
+import org.hyperledger.besu.plugin.data.p2p.Peer;
+import org.hyperledger.besu.plugin.data.p2p.PeerConnection;
+import org.hyperledger.besu.plugin.services.p2p.P2PService;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.p2p.peers.DefaultPeerId;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.plugin.data.p2p.Peer;
-import org.hyperledger.besu.plugin.data.p2p.PeerConnection;
-import org.hyperledger.besu.plugin.services.p2p.P2PService;
+import org.hyperledger.besu.sila.sil.manager.SilPeers;
 
 import java.util.Collection;
 

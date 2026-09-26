@@ -41,7 +41,7 @@ public abstract class AbstractDebugOperationTracer implements OperationTracer {
 
   /**
    * If {@code true}, gas cost for CALL operations includes gas granted to the child call (Parity
-   * style, {@code trace_} RPCs). If {@code false}, only the operation cost is reported (Gsil style,
+   * style, {@code trace_} RPCs). If {@code false}, only the operation cost is reported (Geth style,
    * {@code debug_} RPCs).
    */
   protected final boolean recordChildCallGas;
@@ -72,10 +72,16 @@ public abstract class AbstractDebugOperationTracer implements OperationTracer {
     this.recordChildCallGas = recordChildCallGas;
   }
 
+  public static boolean isSyntheticEmptyCodeStop(
+      final boolean virtualOperation, final String opcode, final int codeSize) {
+    return virtualOperation && "STOP".equals(opcode) && codeSize == 0;
+  }
+
   @Override
   public void tracePreExecution(final MessageFrame frame) {
     final Operation currentOperation = frame.getCurrentOperation();
-    if (!(traceOpcode = shouldTraceOpcode(currentOperation))) {
+    traceOpcode = shouldTraceOpcode(currentOperation);
+    if (!traceOpcode) {
       return;
     }
     preExecutionStack = captureStack(frame);

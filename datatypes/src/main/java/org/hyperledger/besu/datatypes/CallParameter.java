@@ -102,7 +102,7 @@ public interface CallParameter {
   Optional<Wei> getGasPrice();
 
   /**
-   * Returns the value (amount of Siler) to be transferred with the transaction.
+   * Returns the value (amount of Sila) to be transferred with the transaction.
    *
    * @return an {@link Optional} containing the transaction value, or empty if not specified
    */

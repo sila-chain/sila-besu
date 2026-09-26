@@ -19,7 +19,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.util.Map;
 
-import org.web3j.protocol.core.Request;
+import sila.web3j.protocol.core.Request;
 
 public class NetServicesTransaction implements Transaction<Map<String, Map<String, String>>> {
 

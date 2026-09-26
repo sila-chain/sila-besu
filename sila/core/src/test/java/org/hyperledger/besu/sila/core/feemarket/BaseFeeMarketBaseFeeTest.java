@@ -18,8 +18,8 @@ import static com.google.common.base.Preconditions.checkState;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.net.URL;
 import java.nio.charset.StandardCharsets;

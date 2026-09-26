@@ -28,6 +28,10 @@ import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.blockcreation.BlockCreator.BlockCreationResult;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
@@ -51,23 +55,19 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.sorter.AbstractPendingTransactionsSorter;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.ImmutableBalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolScheduleBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecAdapters;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidator;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidatorFactory;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.AccountChanges;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListFactory;
+import org.hyperledger.besu.sila.silaMainnet.ImmutableBalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolScheduleBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidator;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidatorFactory;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.AccountChanges;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListFactory;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.time.Clock;
@@ -100,7 +100,7 @@ class TestingBuildBlockIntegrationTest {
   protected final List<GenesisAccount> accounts =
       genesisConfig.streamAllocations().filter(ga -> ga.privateKey() != null).toList();
 
-  protected SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected SilScheduler silScheduler = new DeterministicEthScheduler();
 
   @Test
   void shouldCreateBlockWithBAL() {
@@ -114,7 +114,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -168,7 +168,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -238,7 +238,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -280,7 +280,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient1.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -289,7 +289,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient2.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce() + 1)
             .createTransaction(keyPair);
@@ -324,7 +324,7 @@ class TestingBuildBlockIntegrationTest {
         new TransactionTestFixture()
             .sender(sender.address())
             .to(Optional.of(recipient.address()))
-            .value(Wei.fromSil(1))
+            .value(Wei.fromEth(1))
             .gasLimit(21_000L)
             .nonce(sender.nonce())
             .createTransaction(keyPair);
@@ -410,7 +410,7 @@ class TestingBuildBlockIntegrationTest {
             Suppliers.ofInstance(parentHeader));
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(

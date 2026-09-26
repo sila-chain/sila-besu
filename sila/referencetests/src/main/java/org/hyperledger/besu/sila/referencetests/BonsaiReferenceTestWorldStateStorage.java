@@ -16,14 +16,14 @@ package org.hyperledger.besu.sila.referencetests;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.account.AccountStorageEntry;
+import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.account.BonsaiAccount;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiPreImageProxy;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateLayerStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.worldview.PathBasedWorldView;
-import org.hyperledger.besu.savm.account.AccountStorageEntry;
-import org.hyperledger.besu.savm.worldstate.WorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldView;
 
 import java.util.Comparator;
 import java.util.Map;
@@ -66,7 +66,7 @@ public class BonsaiReferenceTestWorldStateStorage extends BonsaiWorldStateLayerS
   }
 
   public Stream<WorldState.StreamableAccount> streamAccounts(
-      final PathBasedWorldView context, final Bytes32 startKeyHash, final int limit) {
+      final BonsaiWorldView context, final Bytes32 startKeyHash, final int limit) {
     return streamFlatAccounts(startKeyHash, UInt256.MAX_VALUE, limit)
         .entrySet()
         // map back to addresses using preImage provider:
@@ -84,7 +84,7 @@ public class BonsaiReferenceTestWorldStateStorage extends BonsaiWorldStateLayerS
                                     address,
                                     entry.getValue(),
                                     false,
-                                    new PathBasedCodeCache()))))
+                                    new BonsaiCodeCache()))))
         .filter(Optional::isPresent)
         .map(Optional::get)
         .filter(acct -> context.updater().getAccount(acct.getAddress().orElse(null)) != null)

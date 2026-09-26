@@ -47,7 +47,7 @@ public class BlobScheduleOptions {
    *
    * @return the cancun blob schedule
    */
-  public Optional<BlobSchedule> getSilaCancun() {
+  public Optional<BlobSchedule> getCancun() {
     return getBlobSchedule(CANCUN_KEY);
   }
 
@@ -56,7 +56,7 @@ public class BlobScheduleOptions {
    *
    * @return the prague blob schedule
    */
-  public Optional<BlobSchedule> getSilaPrague() {
+  public Optional<BlobSchedule> getPrague() {
     return getBlobSchedule(PRAGUE_KEY);
   }
 
@@ -116,14 +116,27 @@ public class BlobScheduleOptions {
   }
 
   /**
+   * The config root this instance was built from.
+   *
+   * <p>Carries every fork key the config supplied, including any this class exposes no getter for.
+   * {@link #asMap()} enumerates only the known keys and so cannot be used to tell two blob
+   * schedules apart; this can. Treat the returned node as read-only.
+   *
+   * @return the blob schedule config root
+   */
+  public ObjectNode getConfigRoot() {
+    return blobScheduleOptionsConfigRoot;
+  }
+
+  /**
    * As map.
    *
    * @return the map
    */
   public Map<String, Object> asMap() {
     final ImmutableMap.Builder<String, Object> builder = ImmutableMap.builder();
-    getSilaCancun().ifPresent(bs -> builder.put(CANCUN_KEY, bs.asMap()));
-    getSilaPrague().ifPresent(bs -> builder.put(PRAGUE_KEY, bs.asMap()));
+    getCancun().ifPresent(bs -> builder.put(CANCUN_KEY, bs.asMap()));
+    getPrague().ifPresent(bs -> builder.put(PRAGUE_KEY, bs.asMap()));
     getBpo1().ifPresent(bs -> builder.put(BPO1_KEY, bs.asMap()));
     getBpo2().ifPresent(bs -> builder.put(BPO2_KEY, bs.asMap()));
     getBpo3().ifPresent(bs -> builder.put(BPO3_KEY, bs.asMap()));

@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.savm.precompile;
 
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP2537;
 
 import java.util.concurrent.TimeUnit;
 
@@ -25,7 +25,7 @@ import org.apache.tuweni.bytes.Bytes;
 public class BLS12G1MultiExpPrecompiledContract extends AbstractBLS12PrecompiledContract {
 
   private static final int PARAMETER_LENGTH = 160;
-  private static final Cache<Integer, PrecompileInputResultTuple> g1MSMCache =
+  private static final Cache<Bytes, PrecompileInputResultTuple> g1MSMCache =
       AbstractPrecompiledContract.resultCacheBuilder()
           .expireAfterWrite(15, TimeUnit.MINUTES) // Evict 15 minutes after each entry is written
           .build();
@@ -34,7 +34,7 @@ public class BLS12G1MultiExpPrecompiledContract extends AbstractBLS12Precompiled
   BLS12G1MultiExpPrecompiledContract() {
     super(
         "BLS12_G1MSM",
-        LibGnarkSIP2537.BLS12_G1MULTIEXP_OPERATION_SHIM_VALUE,
+        LibGnarkEIP2537.BLS12_G1MULTIEXP_OPERATION_SHIM_VALUE,
         Integer.MAX_VALUE / PARAMETER_LENGTH * PARAMETER_LENGTH);
   }
 
@@ -45,7 +45,7 @@ public class BLS12G1MultiExpPrecompiledContract extends AbstractBLS12Precompiled
   }
 
   @Override
-  protected Cache<Integer, PrecompileInputResultTuple> getCache() {
+  protected Cache<Bytes, PrecompileInputResultTuple> getCache() {
     return g1MSMCache;
   }
 }

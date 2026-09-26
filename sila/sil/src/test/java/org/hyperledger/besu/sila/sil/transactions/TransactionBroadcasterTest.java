@@ -30,14 +30,14 @@ import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.sil.manager.ChainState;
+import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.PeerReputation;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -80,7 +80,7 @@ public class TransactionBroadcasterTest {
     sendTaskCapture = ArgumentCaptor.forClass(Runnable.class);
     doNothing().when(silScheduler).scheduleSyncWorkerTask(sendTaskCapture.capture());
 
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(silContext.getScheduler()).thenReturn(silScheduler);
 
     // we use the fixed random seed to have a predictable shuffle of peers

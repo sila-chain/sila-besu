@@ -31,7 +31,7 @@ public class PeerValidatorRunner {
     this.silContext = silContext;
     this.peerValidator = peerValidator;
 
-    silContext.getSilPeers().subscribeConnect(this::checkPeer);
+    silContext.getEthPeers().subscribeConnect(this::checkPeer);
   }
 
   public static void runValidator(final SilContext silContext, final PeerValidator peerValidator) {

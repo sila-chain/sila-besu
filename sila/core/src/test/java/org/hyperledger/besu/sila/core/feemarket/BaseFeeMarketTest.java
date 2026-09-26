@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.core.feemarket;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import org.junit.jupiter.api.Test;
 

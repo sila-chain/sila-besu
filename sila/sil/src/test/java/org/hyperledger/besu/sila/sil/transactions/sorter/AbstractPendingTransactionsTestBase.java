@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.sil.transactions.sorter;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hyperledger.besu.plugin.data.TransactionSelectionResult.SELECTED;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MAX_SCORE;
 import static org.hyperledger.besu.sila.sil.transactions.TransactionAddedResult.ADDED;
 import static org.hyperledger.besu.sila.sil.transactions.TransactionAddedResult.ALREADY_KNOWN;
@@ -23,7 +24,6 @@ import static org.hyperledger.besu.sila.sil.transactions.sorter.SequencedRemoval
 import static org.hyperledger.besu.sila.sil.transactions.sorter.SequencedRemovalReason.INVALID;
 import static org.hyperledger.besu.sila.sil.transactions.sorter.SequencedRemovalReason.REPLACED;
 import static org.hyperledger.besu.sila.sil.transactions.sorter.SequencedRemovalReason.TIMED_EVICTION;
-import static org.hyperledger.besu.plugin.data.TransactionSelectionResult.SELECTED;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
@@ -36,6 +36,9 @@ import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.StubMetricsSystem;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
@@ -47,9 +50,6 @@ import org.hyperledger.besu.sila.sil.transactions.PendingTransactionDroppedListe
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.number.Fraction;
 
@@ -418,7 +418,8 @@ public abstract class AbstractPendingTransactionsTestBase {
                         Function.identity(),
                         pt ->
                             TransactionSelectionResult.invalid(
-                                TransactionInvalidReason.UPFRONT_COST_EXCEEDS_BALANCE.name()))));
+                                TransactionInvalidReason.UPFRONT_GAS_COST_EXCEEDS_BALANCE
+                                    .name()))));
 
     assertThat(transactions.size()).isZero();
   }

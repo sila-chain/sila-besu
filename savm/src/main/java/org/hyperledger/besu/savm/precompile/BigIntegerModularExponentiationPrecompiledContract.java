@@ -19,10 +19,10 @@ import static org.hyperledger.besu.savm.internal.Words.clampedMultiply;
 import static org.hyperledger.besu.savm.internal.Words.clampedToInt;
 import static org.hyperledger.besu.savm.internal.Words.clampedToLong;
 
+import org.hyperledger.besu.nativelib.arithmetic.LibArithmetic;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.nativelib.arithmetic.LibArithmetic;
 
 import java.math.BigInteger;
 import java.util.Optional;

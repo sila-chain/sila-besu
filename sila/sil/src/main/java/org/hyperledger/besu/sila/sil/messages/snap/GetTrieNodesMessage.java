@@ -36,7 +36,7 @@ public final class GetTrieNodesMessage extends AbstractSnapMessageData {
 
   // Compact-encoded Keccak256 hash is at most 33 bytes (1 metadata + 32 data)
   static final int MAX_PATH_SIZE = 33;
-  // Maximum total paths decoded across all groups, matches gsil's maxTrieNodeLookups
+  // Maximum total paths decoded across all groups, matches geth's maxTrieNodeLookups
   static final int MAX_TOTAL_PATHS = 1024;
 
   public GetTrieNodesMessage(final Bytes data) {

@@ -9,8 +9,8 @@
       "moduleLicenseUrl": "https://opensource.org/licenses/0BSD"
     },
     {
-      "moduleLicense" : "The 2-Clause BSD License",
-      "moduleLicenseUrl" : "https://opensource.org/licenses/BSD-2-Clause"
+      "moduleLicense": "The 2-Clause BSD License",
+      "moduleLicenseUrl": "https://opensource.org/licenses/BSD-2-Clause"
     },
     {
       "moduleLicense": "The 3-Clause BSD License",
@@ -25,8 +25,8 @@
       "moduleLicenseUrl": "https://oss.oracle.com/licenses/CDDL"
     },
     {
-      "moduleLicense" : "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1",
-      "moduleLicenseUrl" : "https://oss.oracle.com/licenses/CDDL-1.1"
+      "moduleLicense": "COMMON DEVELOPMENT AND DISTRIBUTION LICENSE (CDDL) Version 1.1",
+      "moduleLicenseUrl": "https://oss.oracle.com/licenses/CDDL-1.1"
     },
     {
       "moduleLicense": "Eclipse Distribution License - v 1.0",
@@ -69,6 +69,17 @@
     {
       "moduleName": "org.jetbrains.kotlin:kotlin-stdlib-common",
       "moduleVersion": "1.9.22"
+    },
+    {
+      "moduleLicense": "Apache License, Version 2.0",
+      "moduleLicenseUrl": "https://www.apache.org/licenses/LICENSE-2.0",
+      "moduleVersion": "2.1.8",
+      "moduleName": "sila.java:sila-ckzg4844"
+    },
+    {
+      "moduleLicense": "",
+      "moduleVersion": "2.1.8",
+      "moduleName": "sila.java:sila-ckzg4844"
     }
   ]
 }

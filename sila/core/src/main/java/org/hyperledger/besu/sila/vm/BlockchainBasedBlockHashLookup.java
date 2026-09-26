@@ -17,12 +17,14 @@ package org.hyperledger.besu.sila.vm;
 import static org.hyperledger.besu.datatypes.Hash.ZERO;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.operation.BlockHashOperation;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 
+import java.util.Collections;
+import java.util.Map;
 import java.util.concurrent.ConcurrentHashMap;
 import java.util.concurrent.ConcurrentMap;
 
@@ -59,12 +61,19 @@ public class BlockchainBasedBlockHashLookup implements BlockHashLookup {
     this.searchStartHeader = currentBlock;
     this.blockchain = blockchain;
     this.hashByNumber = hashByNumber;
-    hashByNumber.putIfAbsent(currentBlock.getNumber() - 1, currentBlock.getParentHash());
+    if (currentBlock.getNumber() > 0) {
+      hashByNumber.putIfAbsent(currentBlock.getNumber() - 1, currentBlock.getParentHash());
+    }
   }
 
   @Override
   public BlockHashLookup forkForParallelWorker() {
     return new BlockchainBasedBlockHashLookup(anchorHeader, blockchain, hashByNumber);
+  }
+
+  @Override
+  public Map<Long, Hash> getAccessedAncestors() {
+    return Collections.unmodifiableMap(hashByNumber);
   }
 
   @Override

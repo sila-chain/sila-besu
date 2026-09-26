@@ -18,6 +18,15 @@ import static org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataReques
 import static org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest.createAccountTrieNodeDataRequest;
 import static org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator.applyForStrategy;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.services.tasks.InMemoryTaskQueue;
+import org.hyperledger.besu.services.tasks.InMemoryTasksPriorityQueues;
+import org.hyperledger.besu.services.tasks.Task;
+import org.hyperledger.besu.services.tasks.TaskCollection;
 import org.hyperledger.besu.sila.chain.BlockAddedObserver;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
@@ -31,20 +40,12 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.StorageRangeDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.AccountFlatDatabaseHealingRangeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.StorageFlatDatabaseHealingRangeRequest;
+import org.hyperledger.besu.sila.sil.sync.worldstate.StalledDownloadException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldDownloadState;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.services.tasks.InMemoryTaskQueue;
-import org.hyperledger.besu.services.tasks.InMemoryTasksPriorityQueues;
-import org.hyperledger.besu.services.tasks.Task;
-import org.hyperledger.besu.services.tasks.TaskCollection;
 
 import java.time.Clock;
 import java.util.Collections;
@@ -159,7 +160,12 @@ public class SnapWorldDownloadState extends WorldDownloadState<SnapDataRequest>
 
   @Override
   protected synchronized void markAsStalled(final int maxNodeRequestRetries) {
-    // TODO retry when mark as stalled
+    final String message =
+        "Snap sync world state download stalled — peers stopped serving data after "
+            + maxNodeRequestRetries
+            + " requests without progress.";
+    LOG.warn(message);
+    internalFuture.completeExceptionally(new StalledDownloadException(message));
   }
 
   @Override
@@ -472,6 +478,7 @@ public class SnapWorldDownloadState extends WorldDownloadState<SnapDataRequest>
                   pivotBlockSelector.check(
                       (____, isNewPivotBlock) -> {
                         if (isNewPivotBlock) {
+                          resetProgressTracking();
                           foundNewPivotBlock.set(true);
                         }
                       });

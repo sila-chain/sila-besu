@@ -32,11 +32,11 @@ import org.hyperledger.besu.chainimport.Era1BlockImporter;
 import org.hyperledger.besu.chainimport.JsonBlockImporter;
 import org.hyperledger.besu.chainimport.RlpBlockImporter;
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
-import org.hyperledger.besu.cli.options.SilProtocolOptions;
-import org.hyperledger.besu.cli.options.SilstatsOptions;
 import org.hyperledger.besu.cli.options.MiningOptions;
 import org.hyperledger.besu.cli.options.NetworkingOptions;
 import org.hyperledger.besu.cli.options.P2PDiscoveryOptions;
+import org.hyperledger.besu.cli.options.SilProtocolOptions;
+import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.cli.options.SynchronizerOptions;
 import org.hyperledger.besu.cli.options.TransactionPoolOptions;
 import org.hyperledger.besu.cli.options.storage.DataStorageOptions;
@@ -51,26 +51,9 @@ import org.hyperledger.besu.crypto.KeyPairUtil;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
-import org.hyperledger.besu.sila.ProtocolContext;
-import org.hyperledger.besu.sila.api.ApiConfiguration;
-import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
-import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
-import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.chain.MutableBlockchain;
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
-import org.hyperledger.besu.sila.sil.sync.BlockBroadcaster;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
-import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
+import org.hyperledger.besu.cryptoservices.pluginadapter.SecurityModuleServiceImpl;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.PicoCLIOptions;
 import org.hyperledger.besu.plugin.services.StorageService;
@@ -79,15 +62,32 @@ import org.hyperledger.besu.plugin.services.securitymodule.SecurityModule;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.services.BesuConfigurationImpl;
 import org.hyperledger.besu.services.BesuPluginContextImpl;
-import org.hyperledger.besu.services.BlockchainServiceImpl;
-import org.hyperledger.besu.services.PermissioningServiceImpl;
-import org.hyperledger.besu.services.RpcEndpointServiceImpl;
-import org.hyperledger.besu.services.SecurityModuleServiceImpl;
 import org.hyperledger.besu.services.StorageServiceImpl;
-import org.hyperledger.besu.services.TransactionPoolValidatorServiceImpl;
-import org.hyperledger.besu.services.TransactionSelectionServiceImpl;
-import org.hyperledger.besu.services.TransactionSimulationServiceImpl;
-import org.hyperledger.besu.services.TransactionValidatorServiceImpl;
+import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.api.ApiConfiguration;
+import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
+import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
+import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
+import org.hyperledger.besu.sila.api.pluginadapter.RpcEndpointServiceImpl;
+import org.hyperledger.besu.sila.blockcreation.pluginadapter.TransactionSelectionServiceImpl;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.MutableBlockchain;
+import org.hyperledger.besu.sila.chain.pluginadapter.BlockchainServiceImpl;
+import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
+import org.hyperledger.besu.sila.permissioning.pluginadapter.PermissioningServiceImpl;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
+import org.hyperledger.besu.sila.sil.sync.BlockBroadcaster;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.pluginadapter.TransactionPoolValidatorServiceImpl;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
+import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.transaction.pluginadapter.TransactionSimulationServiceImpl;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 
 import java.io.ByteArrayOutputStream;
 import java.io.File;
@@ -208,7 +208,7 @@ public abstract class CommandTestAbstract {
   protected BesuControllerBuilder mockControllerBuilder;
 
   @Mock(lenient = true)
-  protected SilProtocolManager mockSilProtocolManager;
+  protected SilProtocolManager mockEthProtocolManager;
 
   @Mock protected ProtocolSchedule mockProtocolSchedule;
 
@@ -270,15 +270,18 @@ public abstract class CommandTestAbstract {
   @Captor protected ArgumentCaptor<TransactionPoolConfiguration> transactionPoolConfigCaptor;
   @Captor protected ArgumentCaptor<ApiConfiguration> apiConfigurationCaptor;
 
-  @Captor protected ArgumentCaptor<SilstatsOptions> silstatsOptionsArgumentCaptor;
+  @Captor protected ArgumentCaptor<SilStatsOptions> silStatsOptionsArgumentCaptor;
   @Captor protected ArgumentCaptor<List<IPAddress>> allowedSubnetsArgumentCaptor;
 
   @BeforeEach
   public void initMocks() throws Exception {
-    when(mockControllerBuilderFactory.fromSilNetworkConfig(any(), any()))
+    lenient()
+        .when(mockControllerBuilderFactory.checkpoint(any()))
+        .thenReturn(mockControllerBuilderFactory);
+    when(mockControllerBuilderFactory.fromEthNetworkConfig(any(), any()))
         .thenReturn(mockControllerBuilder);
     when(mockControllerBuilder.build()).thenReturn(mockController);
-    lenient().when(mockController.getProtocolManager()).thenReturn(mockSilProtocolManager);
+    lenient().when(mockController.getProtocolManager()).thenReturn(mockEthProtocolManager);
     lenient().when(mockController.getProtocolSchedule()).thenReturn(mockProtocolSchedule);
     lenient().when(mockController.getProtocolContext()).thenReturn(mockProtocolContext);
     lenient()
@@ -286,7 +289,7 @@ public abstract class CommandTestAbstract {
         .thenReturn(new NoopPluginServiceFactory());
     lenient().when(mockController.getNodeKey()).thenReturn(nodeKey);
 
-    when(mockSilProtocolManager.getBlockBroadcaster()).thenReturn(mockBlockBroadcaster);
+    when(mockEthProtocolManager.getBlockBroadcaster()).thenReturn(mockBlockBroadcaster);
 
     when(mockProtocolContext.getBlockchain()).thenReturn(mockMutableBlockchain);
     lenient().when(mockProtocolContext.getWorldStateArchive()).thenReturn(mockWorldStateArchive);
@@ -433,50 +436,50 @@ public abstract class CommandTestAbstract {
   }
 
   private TestBesuCommand getTestBesuCommand(final TestType testType) {
-    switch (testType) {
-      case REQUIRED_OPTION:
-        return new TestBesuCommandWithRequiredOption(
-            () -> rlpBlockImporter,
-            this::jsonBlockImporterFactory,
-            () -> era1BlockImporter,
-            (blockchain) -> rlpBlockExporter,
-            (blockchain, networkName) -> era1BlockExporter,
-            mockRunnerBuilder,
-            mockControllerBuilderFactory,
-            getBesuPluginContext(),
-            environment,
-            storageService,
-            securityModuleService,
-            mockLogger);
-      case PORT_CHECK:
-        return new TestBesuCommand(
-            () -> rlpBlockImporter,
-            this::jsonBlockImporterFactory,
-            () -> era1BlockImporter,
-            (blockchain) -> rlpBlockExporter,
-            (blockchain, networkName) -> era1BlockExporter,
-            mockRunnerBuilder,
-            mockControllerBuilderFactory,
-            getBesuPluginContext(),
-            environment,
-            storageService,
-            securityModuleService,
-            mockLogger);
-      default:
-        return new TestBesuCommandWithoutPortCheck(
-            () -> rlpBlockImporter,
-            this::jsonBlockImporterFactory,
-            () -> era1BlockImporter,
-            (blockchain) -> rlpBlockExporter,
-            (blockchain, networkName) -> era1BlockExporter,
-            mockRunnerBuilder,
-            mockControllerBuilderFactory,
-            getBesuPluginContext(),
-            environment,
-            storageService,
-            securityModuleService,
-            mockLogger);
-    }
+    return switch (testType) {
+      case REQUIRED_OPTION ->
+          new TestBesuCommandWithRequiredOption(
+              () -> rlpBlockImporter,
+              this::jsonBlockImporterFactory,
+              () -> era1BlockImporter,
+              (blockchain) -> rlpBlockExporter,
+              (blockchain, networkName) -> era1BlockExporter,
+              mockRunnerBuilder,
+              mockControllerBuilderFactory,
+              getBesuPluginContext(),
+              environment,
+              storageService,
+              securityModuleService,
+              mockLogger);
+      case PORT_CHECK ->
+          new TestBesuCommand(
+              () -> rlpBlockImporter,
+              this::jsonBlockImporterFactory,
+              () -> era1BlockImporter,
+              (blockchain) -> rlpBlockExporter,
+              (blockchain, networkName) -> era1BlockExporter,
+              mockRunnerBuilder,
+              mockControllerBuilderFactory,
+              getBesuPluginContext(),
+              environment,
+              storageService,
+              securityModuleService,
+              mockLogger);
+      default ->
+          new TestBesuCommandWithoutPortCheck(
+              () -> rlpBlockImporter,
+              this::jsonBlockImporterFactory,
+              () -> era1BlockImporter,
+              (blockchain) -> rlpBlockExporter,
+              (blockchain, networkName) -> era1BlockExporter,
+              mockRunnerBuilder,
+              mockControllerBuilderFactory,
+              getBesuPluginContext(),
+              environment,
+              storageService,
+              securityModuleService,
+              mockLogger);
+    };
   }
 
   protected Path createTempFile(final String filename, final byte[] contents) throws IOException {
@@ -567,12 +570,16 @@ public abstract class CommandTestAbstract {
       return unstableNetworkingOptions;
     }
 
+    public P2PDiscoveryOptions getP2PDiscoveryOptions() {
+      return p2PDiscoveryOptions;
+    }
+
     public SynchronizerOptions getSynchronizerOptions() {
       return unstableSynchronizerOptions;
     }
 
-    public SilProtocolOptions getSilProtocolOptions() {
-      return unstableSilProtocolOptions;
+    public SilProtocolOptions getEthProtocolOptions() {
+      return unstableEthProtocolOptions;
     }
 
     public MiningOptions getMiningOptions() {
@@ -590,7 +597,7 @@ public abstract class CommandTestAbstract {
     public void close() {
       if (vertx != null) {
         final AtomicBoolean closed = new AtomicBoolean(false);
-        vertx.close(event -> closed.set(true));
+        vertx.close().onComplete(event -> closed.set(true));
         Awaitility.waitAtMost(30, TimeUnit.SECONDS).until(closed::get);
       }
     }

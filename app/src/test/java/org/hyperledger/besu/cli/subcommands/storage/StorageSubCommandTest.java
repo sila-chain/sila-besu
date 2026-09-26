@@ -28,10 +28,10 @@ import static org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifi
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.cli.CommandTestAbstract;
-import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
 import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.services.kvstore.SegmentedInMemoryKeyValueStorage;
 import org.hyperledger.besu.services.kvstore.SegmentedKeyValueStorageAdapter;
+import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
 
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;

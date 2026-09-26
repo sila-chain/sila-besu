@@ -18,13 +18,13 @@ import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
 import static org.hyperledger.besu.sila.sil.sync.backwardsync.ChainForTestCreator.prepareChain;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.nio.charset.StandardCharsets;
 import java.util.List;

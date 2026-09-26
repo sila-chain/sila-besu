@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.permissioning;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Transaction;
-import org.hyperledger.besu.sila.permissioning.AllowlistPersistor.ALLOWLIST_TYPE;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.permissioning.TransactionPermissioningProvider;
+import org.hyperledger.besu.sila.permissioning.AllowlistPersistor.ALLOWLIST_TYPE;
 
 import java.io.IOException;
 import java.util.ArrayList;
@@ -29,6 +29,7 @@ import java.util.Collection;
 import java.util.Collections;
 import java.util.HashSet;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -53,7 +54,12 @@ public class AccountLocalConfigPermissioningController implements TransactionPer
       final LocalPermissioningConfiguration configuration, final MetricsSystem metricsSystem) {
     this(
         configuration,
-        new AllowlistPersistor(configuration.getAccountPermissioningConfigFilePath()),
+        new AllowlistPersistor(
+            Optional.ofNullable(configuration.getAccountPermissioningConfigFilePath())
+                .orElseThrow(
+                    () ->
+                        new IllegalStateException(
+                            "Account permissioning config file path is required when account permissioning is enabled"))),
         metricsSystem);
   }
 

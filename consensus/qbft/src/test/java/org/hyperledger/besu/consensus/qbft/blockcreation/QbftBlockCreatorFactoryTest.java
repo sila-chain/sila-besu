@@ -34,8 +34,8 @@ import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitValues;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.Optional;
 
@@ -74,7 +74,7 @@ public class QbftBlockCreatorFactoryTest {
             miningParams,
             mock(Address.class),
             extraDataCodec,
-            new DeterministicSilScheduler());
+            new DeterministicEthScheduler());
   }
 
   @Test

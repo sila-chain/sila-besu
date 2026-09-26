@@ -73,8 +73,8 @@ public class TransactionReceiptEncoder {
       final TransactionReceiptEncodingConfiguration options) {
 
     // Check if the encoding options require Sil69 receipt format
-    if (options.isWithSil69Receipt()) {
-      writeSil69Receipt(receipt, rlpOutput, options);
+    if (options.isWithEth69Receipt()) {
+      writeEth69Receipt(receipt, rlpOutput, options);
       return;
     }
 
@@ -160,12 +160,12 @@ public class TransactionReceiptEncoder {
    * @param output the RLP output
    * @param options the encoding options
    */
-  private static void writeSil69Receipt(
+  private static void writeEth69Receipt(
       final TransactionReceipt receipt,
       final RLPOutput output,
       final TransactionReceiptEncodingConfiguration options) {
     output.startList();
-    output.writeLongScalar(Byte.toUnsignedInt(receipt.getTransactionType().getSilSerializedType()));
+    output.writeLongScalar(Byte.toUnsignedInt(receipt.getTransactionType().getEthSerializedType()));
     writeStatusOrStateRoot(receipt, output);
     output.writeLongScalar(receipt.getCumulativeGasUsed());
     writeLogs(receipt, output, options);

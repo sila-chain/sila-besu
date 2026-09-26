@@ -18,8 +18,8 @@ import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.DefaultBlockParameter;
-import org.web3j.protocol.core.DefaultBlockParameterName;
+import sila.web3j.protocol.core.DefaultBlockParameter;
+import sila.web3j.protocol.core.DefaultBlockParameterName;
 
 public class SilTransactions {
 

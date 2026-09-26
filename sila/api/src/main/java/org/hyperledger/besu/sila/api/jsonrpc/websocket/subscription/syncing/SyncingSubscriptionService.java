@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.syncing;
 
+import org.hyperledger.besu.plugin.data.SyncStatus;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.JsonRpcResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.SyncingResult;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.Subscription;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.SubscriptionManager;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscriptionType;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.plugin.data.SyncStatus;
 
 import java.util.Optional;
 

@@ -15,13 +15,13 @@
 package org.hyperledger.besu.sila.sil.sync;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.snap.GetAccountRangeFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerTask;
 import org.hyperledger.besu.sila.sil.messages.snap.AccountRangeMessage;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.concurrent.CompletableFuture;
 
@@ -44,7 +44,7 @@ public class SnapServerChecker {
   public static void createAndSetSnapServerChecker(
       final SilContext silContext, final MetricsSystem metricsSystem) {
     final SnapServerChecker checker = new SnapServerChecker(silContext, metricsSystem);
-    silContext.getSilPeers().setSnapServerChecker(checker);
+    silContext.getEthPeers().setSnapServerChecker(checker);
   }
 
   public CompletableFuture<Boolean> check(final SilPeer peer, final BlockHeader peersHeadHeader) {

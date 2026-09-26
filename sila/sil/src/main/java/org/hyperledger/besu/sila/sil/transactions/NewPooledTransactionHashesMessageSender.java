@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.sil.transactions;
 import static org.hyperledger.besu.sila.core.Transaction.toHashList;
 
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.messages.NewPooledTransactionHashesMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 
 import java.util.ArrayList;
 import java.util.List;

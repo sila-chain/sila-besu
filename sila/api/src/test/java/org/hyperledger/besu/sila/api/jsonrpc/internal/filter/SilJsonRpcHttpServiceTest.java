@@ -17,11 +17,11 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.filter;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.api.jsonrpc.AbstractJsonRpcHttpServiceTest;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 
 import java.io.IOException;
 

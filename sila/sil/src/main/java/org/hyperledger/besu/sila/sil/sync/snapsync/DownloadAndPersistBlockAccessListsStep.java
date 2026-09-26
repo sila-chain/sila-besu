@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.sil.sync.snapsync;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.chain.BlockchainStorage;
 import org.hyperledger.besu.sila.chain.DefaultBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.SyncBlockAccessList;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.snap.RetryingGetBlockAccessListsFromPeerTask;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.time.Duration;
 import java.util.List;

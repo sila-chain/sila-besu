@@ -26,5 +26,5 @@ public interface DNSDaemonListener {
    * @param seq the update identifier of the records
    * @param records the records stored on the server
    */
-  void newRecords(long seq, List<SilaNodeRecord> records);
+  void newRecords(long seq, List<EthereumNodeRecord> records);
 }

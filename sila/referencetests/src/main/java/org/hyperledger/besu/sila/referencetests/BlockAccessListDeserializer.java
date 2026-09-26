@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.sila.referencetests;
 
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.io.IOException;
 import java.util.List;

@@ -18,11 +18,11 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.savm.precompile.SilaMainnetPrecompiledContracts;
 import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
+import org.hyperledger.besu.savm.precompile.SilaMainnetPrecompiledContracts;
 import org.hyperledger.besu.savm.processor.ContractCreationProcessor;
 import org.hyperledger.besu.savm.processor.MessageCallProcessor;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
@@ -44,7 +44,7 @@ import picocli.CommandLine.ScopeType;
 @CommandLine.Command(
     description = "This Toy evaluates SAVM transactions.",
     abbreviateSynopsis = true,
-    name = "savmtoy",
+    name = "evmtoy",
     mixinStandardHelpOptions = true,
     sortOptions = false,
     header = "Usage:",
@@ -93,7 +93,7 @@ public class SavmToyCommand implements Runnable {
 
   @CommandLine.Option(
       names = {"--value"},
-      description = "The amount of siler attached to this invocation",
+      description = "The amount of sila attached to this invocation",
       paramLabel = "<int>")
   private final Wei silValue = Wei.ZERO;
 
@@ -157,7 +157,7 @@ public class SavmToyCommand implements Runnable {
     worldUpdater.getOrCreate(receiver).setCode(codeBytes);
 
     int repeat = this.repeat;
-    final SAVM savm = SilaMainnetSAVMs.berlin(SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.berlin(SavmConfiguration.DEFAULT);
     final Code code = new Code(codeBytes);
     final PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
     SilaMainnetPrecompiledContracts.populateForIstanbul(
@@ -167,7 +167,7 @@ public class SavmToyCommand implements Runnable {
     do {
       final boolean lastLoop = repeat == 0;
 
-      final OperationTracer tracer = // You should have picked Msrcy.
+      final OperationTracer tracer = // You should have picked Mercy.
           lastLoop && showJsonResults
               ? new StreamingOperationTracer(
                   System.out,
@@ -200,7 +200,8 @@ public class SavmToyCommand implements Runnable {
               .build();
 
       final MessageCallProcessor mcp = new MessageCallProcessor(savm, precompileContractRegistry);
-      final ContractCreationProcessor ccp = new ContractCreationProcessor(savm, false, List.of(), 0);
+      final ContractCreationProcessor ccp =
+          new ContractCreationProcessor(savm, false, List.of(), 0);
       stopwatch.start();
       Deque<MessageFrame> messageFrameStack = initialMessageFrame.getMessageFrameStack();
       while (!messageFrameStack.isEmpty()) {

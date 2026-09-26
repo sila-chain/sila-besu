@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.bonsai;
 
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.api.jsonrpc.AbstractJsonRpcHttpBySpecTest;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 
 public class SilConfigBySpecTest extends AbstractJsonRpcHttpBySpecTest {
 
@@ -35,7 +35,7 @@ public class SilConfigBySpecTest extends AbstractJsonRpcHttpBySpecTest {
   @Override
   protected BlockchainSetupUtil getBlockchainSetupUtil(final DataStorageFormat storageFormat) {
     return createBlockchainSetupUtil(
-        "sil/config/chain-data/sila-mainnet-plus-future.json",
+        "sil/config/chain-data/mainnet-plus-future.json",
         "sil/simulateV1/chain-data/blocks.bin",
         storageFormat);
   }

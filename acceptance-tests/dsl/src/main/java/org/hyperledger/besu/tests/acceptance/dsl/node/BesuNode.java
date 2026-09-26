@@ -22,6 +22,8 @@ import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.KeyPairUtil;
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.InProcessRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
@@ -30,13 +32,11 @@ import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Util;
 import org.hyperledger.besu.sila.core.plugins.PluginConfiguration;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.NodeConfiguration;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.genesis.GenesisConfigurationProvider;
@@ -81,13 +81,13 @@ import org.awaitility.core.ConditionTimeoutException;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.core.JsonRpc2_0Web3j;
-import org.web3j.protocol.http.HttpService;
-import org.web3j.protocol.websocket.WebSocketClient;
-import org.web3j.protocol.websocket.WebSocketListener;
-import org.web3j.protocol.websocket.WebSocketService;
-import org.web3j.utils.Async;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.core.JsonRpc2_0Web3j;
+import sila.web3j.protocol.http.HttpService;
+import sila.web3j.protocol.websocket.WebSocketClient;
+import sila.web3j.protocol.websocket.WebSocketListener;
+import sila.web3j.protocol.websocket.WebSocketService;
+import sila.web3j.utils.Async;
 
 public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable {
 
@@ -139,7 +139,7 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
   private final List<String> extraCLIOptions;
   private final List<String> staticNodes;
   private boolean isDnsEnabled = false;
-  private Optional<Integer> exitCode = Optional.empty();
+  private volatile Optional<Integer> exitCode = Optional.empty();
   private final boolean isStrictTxReplayProtectionEnabled;
   private final Map<String, String> environment;
   private SynchronizerConfiguration synchronizerConfiguration;
@@ -758,11 +758,6 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
   public void setBootnodes(final List<String> bootnodes) {
     this.bootnodes.clear();
     this.bootnodes.addAll(bootnodes);
-  }
-
-  @Override
-  public boolean isDiscoveryV5Enabled() {
-    return networkingConfiguration.discoveryConfiguration().isDiscoveryV5Enabled();
   }
 
   @Override

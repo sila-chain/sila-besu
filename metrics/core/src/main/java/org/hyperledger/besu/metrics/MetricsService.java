@@ -16,10 +16,10 @@ package org.hyperledger.besu.metrics;
 
 import org.hyperledger.besu.metrics.opentelemetry.MetricsOtelPushService;
 import org.hyperledger.besu.metrics.opentelemetry.OpenTelemetrySystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.metrics.promsileus.MetricsHttpService;
-import org.hyperledger.besu.metrics.promsileus.MetricsPushGatewayService;
-import org.hyperledger.besu.metrics.promsileus.PromsileusMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsHttpService;
+import org.hyperledger.besu.metrics.prometheus.MetricsPushGatewayService;
+import org.hyperledger.besu.metrics.prometheus.PrometheusMetricsSystem;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Optional;
@@ -44,13 +44,13 @@ public interface MetricsService {
       final MetricsConfiguration configuration, final MetricsSystem metricsSystem) {
     LoggerFactory.getLogger(MetricsService.class)
         .trace("Creating metrics service {}", configuration.getProtocol());
-    if (configuration.getProtocol() == MetricsProtocol.PROMSILEUS) {
+    if (configuration.getProtocol() == MetricsProtocol.PROMETHEUS) {
       if (configuration.isEnabled()) {
         return Optional.of(
-            new MetricsHttpService(configuration, (PromsileusMetricsSystem) metricsSystem));
+            new MetricsHttpService(configuration, (PrometheusMetricsSystem) metricsSystem));
       } else if (configuration.isPushEnabled()) {
         return Optional.of(
-            new MetricsPushGatewayService(configuration, (PromsileusMetricsSystem) metricsSystem));
+            new MetricsPushGatewayService(configuration, (PrometheusMetricsSystem) metricsSystem));
       } else {
         return Optional.empty();
       }

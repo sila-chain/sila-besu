@@ -19,7 +19,7 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.sila-mainnet.ValidationResult.valid;
+import static org.hyperledger.besu.sila.silaMainnet.ValidationResult.valid;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.ArgumentMatchers.eq;
@@ -37,6 +37,13 @@ import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.TransactionPoolValidatorService;
+import org.hyperledger.besu.plugin.services.txvalidator.PluginTransactionPoolValidator;
+import org.hyperledger.besu.plugin.services.txvalidator.PluginTransactionPoolValidatorFactory;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
@@ -60,26 +67,19 @@ import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.transactions.layered.LayeredTransactionPoolBaseFeeTest;
 import org.hyperledger.besu.sila.sil.transactions.layered.SenderBalanceChecker;
 import org.hyperledger.besu.sila.sil.transactions.sorter.LegacyTransactionPoolBaseFeeTest;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolScheduleBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecAdapters;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidatorFactory;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolScheduleBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidatorFactory;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.sila.util.TrustedSetupClassLoaderExtension;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.TransactionPoolValidatorService;
-import org.hyperledger.besu.plugin.services.txvalidator.PluginTransactionPoolValidator;
-import org.hyperledger.besu.plugin.services.txvalidator.PluginTransactionPoolValidatorFactory;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -111,7 +111,7 @@ public abstract class AbstractTransactionPoolTestBase extends TrustedSetupClassL
   protected static final Wei BASE_FEE_FLOOR = Wei.of(7L);
   protected static final Wei DEFAULT_MIN_GAS_PRICE = Wei.of(50L);
 
-  protected final SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected final SilScheduler silScheduler = new DeterministicEthScheduler();
 
   @Mock(answer = Answers.RETURNS_DEEP_STUBS)
   protected TransactionValidatorFactory transactionValidatorFactory;
@@ -243,7 +243,7 @@ public abstract class AbstractTransactionPoolTestBase extends TrustedSetupClassL
     peerTransactionTracker =
         new PeerTransactionTracker(
             TransactionPoolConfiguration.DEFAULT,
-            silContext.getSilPeers(),
+            silContext.getEthPeers(),
             silContext.getScheduler());
     transactionBroadcaster =
         spy(

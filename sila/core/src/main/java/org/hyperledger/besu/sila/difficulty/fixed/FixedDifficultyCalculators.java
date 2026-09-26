@@ -15,7 +15,7 @@
 package org.hyperledger.besu.sila.difficulty.fixed;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
-import org.hyperledger.besu.sila.sila-mainnet.DifficultyCalculator;
+import org.hyperledger.besu.sila.silaMainnet.DifficultyCalculator;
 
 import java.math.BigInteger;
 

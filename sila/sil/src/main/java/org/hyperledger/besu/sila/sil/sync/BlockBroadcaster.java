@@ -16,16 +16,17 @@ package org.hyperledger.besu.sila.sil.sync;
 
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.Difficulty;
+import org.hyperledger.besu.sila.core.PropagatedBlockSource;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.messages.NewBlockMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.util.Subscribers;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-public class BlockBroadcaster {
+public class BlockBroadcaster implements PropagatedBlockSource {
   private static final Logger LOG = LoggerFactory.getLogger(BlockBroadcaster.class);
 
   private final SilContext silContext;
@@ -46,6 +47,16 @@ public class BlockBroadcaster {
     blockPropagatedSubscribers.unsubscribe(id);
   }
 
+  @Override
+  public long subscribe(final PropagatedBlockListener listener) {
+    return subscribePropagateNewBlocks(listener::onBlockPropagated);
+  }
+
+  @Override
+  public boolean unsubscribe(final long subscriptionId) {
+    return blockPropagatedSubscribers.unsubscribe(subscriptionId);
+  }
+
   public void propagate(final Block block, final Difficulty totalDifficulty) {
     blockPropagatedSubscribers.forEach(listener -> listener.accept(block, totalDifficulty));
     final NewBlockMessage newBlockMessage;
@@ -56,7 +67,7 @@ public class BlockBroadcaster {
       return;
     }
     silContext
-        .getSilPeers()
+        .getEthPeers()
         .streamAvailablePeers()
         .map(SilPeerImmutableAttributes::silPeer)
         .filter(silPeer -> !silPeer.hasSeenBlock(block.getHash()))

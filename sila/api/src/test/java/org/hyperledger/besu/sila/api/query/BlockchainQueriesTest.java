@@ -24,6 +24,9 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
@@ -34,13 +37,10 @@ import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListFactory;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListFactory;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.worldstate.WorldState;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -604,8 +604,8 @@ public class BlockchainQueriesTest {
 
     // Mock the protocol schedule
     final ProtocolSchedule protocolSchedule = mock(ProtocolSchedule.class);
-    final ProtocolSpec preSilaAmsterdamSpec = mock(ProtocolSpec.class);
-    final ProtocolSpec postSilaAmsterdamSpec = mock(ProtocolSpec.class);
+    final ProtocolSpec preAmsterdamSpec = mock(ProtocolSpec.class);
+    final ProtocolSpec postAmsterdamSpec = mock(ProtocolSpec.class);
     final BlockAccessListFactory blockAccessListFactory = mock(BlockAccessListFactory.class);
 
     // First 3 blocks don't support block access list
@@ -613,18 +613,18 @@ public class BlockchainQueriesTest {
     final BlockHeader header1 = data.blockData.get(1).block.getHeader();
     final BlockHeader header2 = data.blockData.get(2).block.getHeader();
 
-    when(protocolSchedule.getByBlockHeader(header0)).thenReturn(preSilaAmsterdamSpec);
-    when(protocolSchedule.getByBlockHeader(header1)).thenReturn(preSilaAmsterdamSpec);
-    when(protocolSchedule.getByBlockHeader(header2)).thenReturn(preSilaAmsterdamSpec);
-    when(preSilaAmsterdamSpec.getBlockAccessListFactory()).thenReturn(Optional.empty());
+    when(protocolSchedule.getByBlockHeader(header0)).thenReturn(preAmsterdamSpec);
+    when(protocolSchedule.getByBlockHeader(header1)).thenReturn(preAmsterdamSpec);
+    when(protocolSchedule.getByBlockHeader(header2)).thenReturn(preAmsterdamSpec);
+    when(preAmsterdamSpec.getBlockAccessListFactory()).thenReturn(Optional.empty());
 
     // Last 2 blocks support block access list
     final BlockHeader header3 = data.blockData.get(3).block.getHeader();
     final BlockHeader header4 = data.blockData.get(4).block.getHeader();
 
-    when(protocolSchedule.getByBlockHeader(header3)).thenReturn(postSilaAmsterdamSpec);
-    when(protocolSchedule.getByBlockHeader(header4)).thenReturn(postSilaAmsterdamSpec);
-    when(postSilaAmsterdamSpec.getBlockAccessListFactory())
+    when(protocolSchedule.getByBlockHeader(header3)).thenReturn(postAmsterdamSpec);
+    when(protocolSchedule.getByBlockHeader(header4)).thenReturn(postAmsterdamSpec);
+    when(postAmsterdamSpec.getBlockAccessListFactory())
         .thenReturn(Optional.of(blockAccessListFactory));
 
     final BlockchainQueries queriesWithMockedSchedule =

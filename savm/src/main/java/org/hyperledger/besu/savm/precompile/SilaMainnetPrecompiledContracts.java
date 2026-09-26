@@ -19,7 +19,7 @@ import static org.hyperledger.besu.datatypes.Address.P256_VERIFY;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 
-/** Provides the various precompiled contracts used on sila-mainnet hard forks. */
+/** Provides the various precompiled contracts used on mainnet hard forks. */
 public interface SilaMainnetPrecompiledContracts {
 
   /**
@@ -126,7 +126,7 @@ public interface SilaMainnetPrecompiledContracts {
    */
   static PrecompileContractRegistry cancun(final GasCalculator gasCalculator) {
     PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
-    populateForSilaCancun(precompileContractRegistry, gasCalculator);
+    populateForCancun(precompileContractRegistry, gasCalculator);
     return precompileContractRegistry;
   }
 
@@ -136,7 +136,7 @@ public interface SilaMainnetPrecompiledContracts {
    * @param registry the registry
    * @param gasCalculator the gas calculator
    */
-  static void populateForSilaCancun(
+  static void populateForCancun(
       final PrecompileContractRegistry registry, final GasCalculator gasCalculator) {
     populateForIstanbul(registry, gasCalculator);
 
@@ -152,7 +152,7 @@ public interface SilaMainnetPrecompiledContracts {
    */
   static PrecompileContractRegistry prague(final GasCalculator gasCalculator) {
     PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
-    populateForSilaPrague(precompileContractRegistry, gasCalculator);
+    populateForPrague(precompileContractRegistry, gasCalculator);
     return precompileContractRegistry;
   }
 
@@ -162,9 +162,9 @@ public interface SilaMainnetPrecompiledContracts {
    * @param registry the registry
    * @param gasCalculator the gas calculator
    */
-  static void populateForSilaPrague(
+  static void populateForPrague(
       final PrecompileContractRegistry registry, final GasCalculator gasCalculator) {
-    populateForSilaCancun(registry, gasCalculator);
+    populateForCancun(registry, gasCalculator);
 
     // SIP-2537 - BLS12-381 curve operations
     registry.put(Address.BLS12_G1ADD, new BLS12G1AddPrecompiledContract());
@@ -184,7 +184,7 @@ public interface SilaMainnetPrecompiledContracts {
    */
   static PrecompileContractRegistry osaka(final GasCalculator gasCalculator) {
     PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
-    populateForSilaOsaka(precompileContractRegistry, gasCalculator);
+    populateForOsaka(precompileContractRegistry, gasCalculator);
     return precompileContractRegistry;
   }
 
@@ -194,9 +194,9 @@ public interface SilaMainnetPrecompiledContracts {
    * @param registry the registry
    * @param gasCalculator the gas calculator
    */
-  static void populateForSilaOsaka(
+  static void populateForOsaka(
       final PrecompileContractRegistry registry, final GasCalculator gasCalculator) {
-    populateForSilaPrague(registry, gasCalculator);
+    populateForPrague(registry, gasCalculator);
 
     // SIP-7823 - Set upper bounds for MODEXP
     registry.put(
@@ -207,14 +207,14 @@ public interface SilaMainnetPrecompiledContracts {
   }
 
   /**
-   * FutureSIPs precompile contract registry.
+   * FutureEIPs precompile contract registry.
    *
    * @param gasCalculator the gas calculator
    * @return the precompile contract registry
    */
-  static PrecompileContractRegistry futureSIPs(final GasCalculator gasCalculator) {
+  static PrecompileContractRegistry futureEIPs(final GasCalculator gasCalculator) {
     PrecompileContractRegistry precompileContractRegistry = new PrecompileContractRegistry();
-    populateForFutureSIPs(precompileContractRegistry, gasCalculator);
+    populateForFutureEIPs(precompileContractRegistry, gasCalculator);
     return precompileContractRegistry;
   }
 
@@ -224,8 +224,8 @@ public interface SilaMainnetPrecompiledContracts {
    * @param registry the registry
    * @param gasCalculator the gas calculator
    */
-  static void populateForFutureSIPs(
+  static void populateForFutureEIPs(
       final PrecompileContractRegistry registry, final GasCalculator gasCalculator) {
-    populateForSilaCancun(registry, gasCalculator);
+    populateForCancun(registry, gasCalculator);
   }
 }

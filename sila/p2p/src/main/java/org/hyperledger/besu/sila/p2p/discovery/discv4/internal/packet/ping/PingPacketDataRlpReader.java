@@ -47,7 +47,7 @@ public class PingPacketDataRlpReader implements PacketDataDeserializer<PingPacke
     Optional<Endpoint> to = Optional.empty();
     if (in.nextIsList()) {
       to = Endpoint.maybeDecodeStandalone(in);
-      // https://github.com/sila-chain/devp2p/blob/master/discv4.md#ping-packet-0x01
+      // https://github.com/sila/devp2p/blob/master/discv4.md#ping-packet-0x01
       if (in.nextIsList()) { // if there are two, the first is the from address, next is the to
         // address
         from = to;

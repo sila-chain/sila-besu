@@ -51,7 +51,7 @@ public class JsonRpcRequestId {
 
   /**
    * The JSON spec says "The use of Null as a value for the id member in a Request object is
-   * discouraged" Both gsil and parity accept null values, so we decided to support them as well.
+   * discouraged" Both geth and parity accept null values, so we decided to support them as well.
    */
   private boolean isNotNull(final Object id) {
     return id != null;

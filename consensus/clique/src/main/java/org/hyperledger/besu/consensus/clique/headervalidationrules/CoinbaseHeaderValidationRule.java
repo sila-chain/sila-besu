@@ -17,7 +17,7 @@ package org.hyperledger.besu.consensus.clique.headervalidationrules;
 import org.hyperledger.besu.consensus.clique.CliqueBlockInterface;
 import org.hyperledger.besu.consensus.common.EpochManager;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.DetachedBlockHeaderValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.DetachedBlockHeaderValidationRule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

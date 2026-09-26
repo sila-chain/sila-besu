@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.api.jsonrpc;
 
 import static com.google.common.base.Preconditions.checkArgument;
+import static org.hyperledger.besu.sila.api.ApiConfiguration.DEFAULT_MAX_FILTER_COUNT;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.argThat;
 import static org.mockito.Mockito.mock;
@@ -23,6 +24,10 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
@@ -43,20 +48,16 @@ import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitVa
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.testutil.BlockTestUtil.ChainResources;
 
 import java.math.BigInteger;
@@ -125,7 +126,7 @@ public abstract class AbstractJsonRpcHttpServiceTest {
     final URL blocksURL = AbstractJsonRpcHttpServiceTest.class.getResource(blocksPath);
     checkArgument(genesisURL != null, "Unable to locate genesis file: " + genesisPath);
     checkArgument(blocksURL != null, "Unable to locate blocks file: " + blocksPath);
-    return BlockchainSetupUtil.createForSilashChain(
+    return BlockchainSetupUtil.createForEthashChain(
         new ChainResources(genesisURL, blocksURL), storageFormat);
   }
 
@@ -183,7 +184,7 @@ public abstract class AbstractJsonRpcHttpServiceTest {
             blockchainSetupUtil.getWorldArchive(),
             miningConfiguration);
     final FilterIdGenerator filterIdGenerator = mock(FilterIdGenerator.class);
-    final FilterRepository filterRepository = new FilterRepository();
+    final FilterRepository filterRepository = new FilterRepository(DEFAULT_MAX_FILTER_COUNT);
     when(filterIdGenerator.nextId()).thenReturn("0x1");
     filterManager =
         new FilterManagerBuilder()

@@ -17,9 +17,9 @@ package org.hyperledger.besu.sila.forkid;
 import static com.google.common.base.Preconditions.checkNotNull;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.rlp.RLPInput;
-import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.util.EndianUtils;
 
 import java.util.ArrayList;

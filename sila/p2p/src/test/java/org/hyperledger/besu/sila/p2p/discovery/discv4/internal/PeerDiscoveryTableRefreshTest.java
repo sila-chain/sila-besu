@@ -25,6 +25,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.DaggerPacketPackage;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
@@ -32,8 +33,8 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPack
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.findneighbors.FindNeighborsPacketData;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.ping.PingPacketData;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.pong.PongPacketData;
+import org.hyperledger.besu.sila.p2p.rlpx.ConnectSource;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.ArrayList;
 import java.util.HashSet;
@@ -72,7 +73,7 @@ public class PeerDiscoveryTableRefreshTest {
     final MockTimerUtil timer = new MockTimerUtil();
 
     final RlpxAgent rlpxAgent = mock(RlpxAgent.class);
-    when(rlpxAgent.connect(any()))
+    when(rlpxAgent.connect(any(), any(ConnectSource.class)))
         .thenReturn(CompletableFuture.failedFuture(new RuntimeException()));
     final PeerDiscoveryController controller =
         spy(

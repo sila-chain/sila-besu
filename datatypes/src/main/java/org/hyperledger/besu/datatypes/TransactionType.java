@@ -24,11 +24,11 @@ public enum TransactionType {
   FRONTIER(0xf8, 0x00),
   /** Access list transaction type. */
   ACCESS_LIST(0x01),
-  /** Sip1559 transaction type. */
+  /** Eip1559 transaction type. */
   SIP1559(0x02),
   /** Blob transaction type. */
   BLOB(0x03),
-  /** Sip7702 transaction type. */
+  /** Eip7702 transaction type. */
   DELEGATE_CODE(0x04);
 
   private static final Set<TransactionType> ACCESS_LIST_SUPPORTED_TRANSACTION_TYPES =
@@ -51,7 +51,7 @@ public enum TransactionType {
   private static final TransactionType[] transactionTypeByOpaqueByte =
       new TransactionType[Byte.toUnsignedInt(MAX_LEGACY_TX_OPAQUE_BYTE) + 1];
 
-  private static final TransactionType[] transactionTypeBySilSerializedType =
+  private static final TransactionType[] transactionTypeByEthSerializedType =
       new TransactionType[values().length];
 
   static {
@@ -72,7 +72,7 @@ public enum TransactionType {
               } else {
                 transactionTypeByOpaqueByte[tt.getSerializedType()] = tt;
               }
-              transactionTypeBySilSerializedType[tt.getSilSerializedType()] = tt;
+              transactionTypeByEthSerializedType[tt.getEthSerializedType()] = tt;
             });
   }
 
@@ -109,7 +109,7 @@ public enum TransactionType {
    *
    * @return the serialized type
    */
-  public byte getSilSerializedType() {
+  public byte getEthSerializedType() {
     return serializedType;
   }
 
@@ -133,9 +133,9 @@ public enum TransactionType {
    * @param silSerializedType the opaque byte from serialized bytes
    * @return the transaction type
    */
-  public static Optional<TransactionType> fromSilSerializedType(final byte silSerializedType) {
+  public static Optional<TransactionType> fromEthSerializedType(final byte silSerializedType) {
     try {
-      return Optional.ofNullable(transactionTypeBySilSerializedType[silSerializedType]);
+      return Optional.ofNullable(transactionTypeByEthSerializedType[silSerializedType]);
     } catch (final ArrayIndexOutOfBoundsException e) {
       return Optional.empty();
     }

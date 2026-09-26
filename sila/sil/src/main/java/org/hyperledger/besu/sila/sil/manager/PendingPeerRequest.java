@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila.sil.manager;
 
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
 import org.hyperledger.besu.sila.sil.manager.RequestManager.ResponseStream;
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.PeerDisconnectedException;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
 
 import java.util.Optional;
 import java.util.concurrent.CancellationException;
@@ -86,7 +86,7 @@ public class PendingPeerRequest {
         : silPeers
             .streamAvailablePeers()
             .filter(peer -> peer.estimatedChainHeight() >= minimumBlockNumber)
-            .filter(request::isSilPeerSuitable)
+            .filter(request::isEthPeerSuitable)
             .min(SilPeers.LEAST_TO_MOST_BUSY)
             .map(SilPeerImmutableAttributes::silPeer);
   }

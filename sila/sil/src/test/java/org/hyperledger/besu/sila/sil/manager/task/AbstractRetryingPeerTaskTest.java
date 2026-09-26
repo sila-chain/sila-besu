@@ -19,15 +19,15 @@ import static org.assertj.core.api.Assertions.failBecauseExceptionWasNotThrown;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.sil.manager.ChainState;
+import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
-import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.manager.exceptions.MaxRetriesReachedException;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Objects;
 import java.util.Optional;

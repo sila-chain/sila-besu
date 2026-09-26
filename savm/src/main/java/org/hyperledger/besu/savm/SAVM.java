@@ -23,9 +23,9 @@ import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.frame.MessageFrame.State;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.savm.internal.JumpDestOnlyCodeCache;
 import org.hyperledger.besu.savm.internal.OverflowException;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.savm.internal.UnderflowException;
 import org.hyperledger.besu.savm.operation.AddModOperation;
 import org.hyperledger.besu.savm.operation.AddModOperationOptimized;
@@ -87,6 +87,7 @@ import org.hyperledger.besu.savm.operation.VirtualOperation;
 import org.hyperledger.besu.savm.operation.XorOperation;
 import org.hyperledger.besu.savm.operation.XorOperationOptimized;
 import org.hyperledger.besu.savm.tracing.OperationTracer;
+import org.hyperledger.besu.savm.v2.operation.AddModOperationV2;
 import org.hyperledger.besu.savm.v2.operation.AddOperationV2;
 import org.hyperledger.besu.savm.v2.operation.DivOperationV2;
 import org.hyperledger.besu.savm.v2.operation.ModOperationV2;
@@ -127,9 +128,9 @@ public class SAVM {
 
   // Optimized operation flags
   private final boolean enableConstantinople;
-  private final boolean enableSilaShanghai;
-  private final boolean enableSilaAmsterdam;
-  private final boolean enableSilaOsaka;
+  private final boolean enableShanghai;
+  private final boolean enableAmsterdam;
+  private final boolean enableOsaka;
 
   private final JumpDestOnlyCodeCache jumpDestOnlyCodeCache;
 
@@ -154,9 +155,9 @@ public class SAVM {
     this.jumpDestOnlyCodeCache = new JumpDestOnlyCodeCache(savmConfiguration);
 
     enableConstantinople = SavmSpecVersion.CONSTANTINOPLE.ordinal() <= savmSpecVersion.ordinal();
-    enableSilaShanghai = SavmSpecVersion.SHANGHAI.ordinal() <= savmSpecVersion.ordinal();
-    enableSilaAmsterdam = SavmSpecVersion.AMSTERDAM.ordinal() <= savmSpecVersion.ordinal();
-    enableSilaOsaka = SavmSpecVersion.OSAKA.ordinal() <= savmSpecVersion.ordinal();
+    enableShanghai = SavmSpecVersion.SHANGHAI.ordinal() <= savmSpecVersion.ordinal();
+    enableAmsterdam = SavmSpecVersion.AMSTERDAM.ordinal() <= savmSpecVersion.ordinal();
+    enableOsaka = SavmSpecVersion.OSAKA.ordinal() <= savmSpecVersion.ordinal();
   }
 
   /**
@@ -191,7 +192,7 @@ public class SAVM {
    *
    * @return the SAVM configuration.
    */
-  public SavmConfiguration getSavmConfiguration() {
+  public SavmConfiguration getEvmConfiguration() {
     return savmConfiguration;
   }
 
@@ -200,7 +201,7 @@ public class SAVM {
    *
    * @return the savm spec version
    */
-  public SavmSpecVersion getSavmVersion() {
+  public SavmSpecVersion getEvmVersion() {
     return savmSpecVersion;
   }
 
@@ -235,7 +236,7 @@ public class SAVM {
     // optimization purposes
     assert operationTracer.isEnabled() || operationTracer == OperationTracer.NO_TRACING;
 
-    if (savmConfiguration.enableSavmV2()) {
+    if (savmConfiguration.enableEvmV2()) {
       runToHaltV2(frame, operationTracer);
       return;
     }
@@ -345,7 +346,7 @@ public class SAVM {
                           SarOperationOptimized::staticOperation)
                       : InvalidOperation.invalidOperationResult(opcode);
               case 0x1e ->
-                  enableSilaOsaka
+                  enableOsaka
                       ? CountLeadingZerosOperation.staticOperation(frame)
                       : InvalidOperation.invalidOperationResult(opcode);
               case 0x50 -> PopOperation.staticOperation(frame);
@@ -353,7 +354,7 @@ public class SAVM {
               case 0x57 -> JumpiOperation.staticOperation(frame);
               case 0x5b -> JumpDestOperation.JUMPDEST_SUCCESS;
               case 0x5f ->
-                  enableSilaShanghai
+                  enableShanghai
                       ? Push0Operation.staticOperation(frame)
                       : InvalidOperation.invalidOperationResult(opcode);
               case 0x60, // PUSH1-32
@@ -424,15 +425,15 @@ public class SAVM {
                   0x9f ->
                   SwapOperation.staticOperation(frame, opcode - SWAP_BASE);
               case 0xe6 -> // DUPN (SIP-8024)
-                  enableSilaAmsterdam
+                  enableAmsterdam
                       ? DupNOperation.staticOperation(frame, code, pc)
                       : InvalidOperation.invalidOperationResult(opcode);
               case 0xe7 -> // SWAPN (SIP-8024)
-                  enableSilaAmsterdam
+                  enableAmsterdam
                       ? SwapNOperation.staticOperation(frame, code, pc)
                       : InvalidOperation.invalidOperationResult(opcode);
               case 0xe8 -> // EXCHANGE (SIP-8024)
-                  enableSilaAmsterdam
+                  enableAmsterdam
                       ? ExchangeOperation.staticOperation(frame, code, pc)
                       : InvalidOperation.invalidOperationResult(opcode);
               default -> { // unoptimized operations
@@ -499,6 +500,7 @@ public class SAVM {
               case 0x05 -> SDivOperationV2.staticOperation(frame);
               case 0x06 -> ModOperationV2.staticOperation(frame);
               case 0x07 -> SModOperationV2.staticOperation(frame);
+              case 0x08 -> AddModOperationV2.staticOperation(frame);
               case 0x09 -> MulModOperationV2.staticOperation(frame);
               case 0x1b ->
                   enableConstantinople
@@ -512,7 +514,7 @@ public class SAVM {
                   enableConstantinople
                       ? SarOperationV2.staticOperation(frame)
                       : InvalidOperation.invalidOperationResult(opcode);
-              // TODO SAVMv2: implement remaining opcodes in v2; until then fall through to v1
+              // TODO EVMv2: implement remaining opcodes in v2; until then fall through to v1
               default -> {
                 frame.setCurrentOperation(currentOperation);
                 yield currentOperation.execute(frame, this);

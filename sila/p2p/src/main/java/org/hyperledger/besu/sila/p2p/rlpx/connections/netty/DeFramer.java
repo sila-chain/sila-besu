@@ -14,6 +14,10 @@
  */
 package org.hyperledger.besu.sila.p2p.rlpx.connections.netty;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.sila.p2p.network.exceptions.BreachOfProtocolException;
 import org.hyperledger.besu.sila.p2p.network.exceptions.IncompatiblePeerException;
 import org.hyperledger.besu.sila.p2p.network.exceptions.PeerChannelClosedException;
@@ -37,10 +41,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.HelloMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.WireMessageCodes;
 import org.hyperledger.besu.sila.rlp.RLPException;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 
 import java.io.IOException;
 import java.net.InetSocketAddress;
@@ -130,11 +130,13 @@ final class DeFramer extends ByteToMessageDecoder {
       if (hellosExchanged) {
 
         if (message.getSize() > maxMessageSize) {
-          LOG.debug(
-              "Oversized message received ({} bytes > {} max), disconnecting peer {}",
-              message.getSize(),
-              maxMessageSize,
-              expectedPeer.map(Peer::getEnodeURLString).orElse("unknown"));
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                "Oversized message received ({} bytes > {} max), disconnecting peer {}",
+                message.getSize(),
+                maxMessageSize,
+                expectedPeer.map(Peer::getEnodeURLString).orElse("unknown"));
+          }
           if (connectFuture.isDone() && !connectFuture.isCompletedExceptionally()) {
             connectFuture
                 .join()
@@ -152,11 +154,13 @@ final class DeFramer extends ByteToMessageDecoder {
       } else if (message.getCode() == WireMessageCodes.HELLO) {
 
         if (message.getSize() > MAX_HELLO_MESSAGE_SIZE) {
-          LOG.debug(
-              "Oversized HELLO message received ({} bytes > {} max), disconnecting peer {}",
-              message.getSize(),
-              MAX_HELLO_MESSAGE_SIZE,
-              expectedPeer.map(Peer::getEnodeURLString).orElse("unknown"));
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                "Oversized HELLO message received ({} bytes > {} max), disconnecting peer {}",
+                message.getSize(),
+                MAX_HELLO_MESSAGE_SIZE,
+                expectedPeer.map(Peer::getEnodeURLString).orElse("unknown"));
+          }
           connectFuture.completeExceptionally(
               new BreachOfProtocolException("Oversized HELLO message"));
           ctx.close();
@@ -252,10 +256,12 @@ final class DeFramer extends ByteToMessageDecoder {
       } else if (message.getCode() == WireMessageCodes.DISCONNECT) {
 
         final DisconnectMessage disconnectMessage = DisconnectMessage.readFrom(message);
-        LOG.debug(
-            "Peer {} disconnected before sending HELLO.  Reason: {}",
-            expectedPeer.map(Peer::getEnodeURLString).orElse("unknown"),
-            disconnectMessage.getReason());
+        if (LOG.isDebugEnabled()) {
+          LOG.debug(
+              "Peer {} disconnected before sending HELLO.  Reason: {}",
+              expectedPeer.map(Peer::getEnodeURLString).orElse("unknown"),
+              disconnectMessage.getReason());
+        }
         ctx.close();
         connectFuture.completeExceptionally(
             new PeerDisconnectedException(disconnectMessage.getReason()));

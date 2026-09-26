@@ -21,20 +21,20 @@ import static org.hyperledger.besu.sila.trie.RangeManager.getRangeCount;
 import static org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator.applyForStrategy;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.snapsync.StackTrie;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.v2.SnapV2DataRequest;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.NodeUpdater;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import kotlin.collections.ArrayDeque;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 
-/** Snap/2 storage range data request. Commits all trie nodes including incomplete ones. */
+/** snap/2 storage range data request. Commits all trie nodes including incomplete ones. */
 public class SnapV2StorageRangeRequest extends SnapV2DataRequest {
 
   private final Hash accountHash;

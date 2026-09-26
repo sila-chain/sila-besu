@@ -20,7 +20,7 @@ import org.hyperledger.besu.consensus.common.bft.BftContext;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.AttachedBlockHeaderValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.AttachedBlockHeaderValidationRule;
 
 import java.util.ArrayList;
 import java.util.Collection;

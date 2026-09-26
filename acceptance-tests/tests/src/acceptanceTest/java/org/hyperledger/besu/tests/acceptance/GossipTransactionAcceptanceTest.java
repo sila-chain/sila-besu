@@ -37,7 +37,7 @@ public class GossipTransactionAcceptanceTest extends AcceptanceTestBase {
   @Test
   public void shouldGossipATransaction() {
     final Account account = accounts.createAccount("account-one");
-    final Amount balance = Amount.siler(20);
+    final Amount balance = Amount.sila(20);
 
     TransferTransaction tx = accountTransactions.createTransfer(account, balance);
 

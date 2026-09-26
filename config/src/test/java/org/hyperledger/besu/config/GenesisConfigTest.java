@@ -41,15 +41,15 @@ import org.junit.jupiter.api.Test;
 
 class GenesisConfigTest {
 
-  private static final BigInteger SILA_MAINNET_CHAIN_ID = BigInteger.ONE;
+  private static final BigInteger MAINNET_CHAIN_ID = BigInteger.ONE;
   private static final BigInteger DEVELOPMENT_CHAIN_ID = BigInteger.valueOf(1337);
   private static final GenesisConfig EMPTY_CONFIG = fromConfig("{}");
 
   @Test
-  void shouldLoadSilaMainnetConfigFile() {
-    final GenesisConfig config = GenesisConfig.sila-mainnet();
-    // Sanity check some basic properties to confirm this is the sila-mainnet file.
-    assertThat(config.getConfigOptions().getChainId()).hasValue(SILA_MAINNET_CHAIN_ID);
+  void shouldLoadMainnetConfigFile() {
+    final GenesisConfig config = GenesisConfig.silaMainnet();
+    // Sanity check some basic properties to confirm this is the mainnet file.
+    assertThat(config.getConfigOptions().getChainId()).hasValue(MAINNET_CHAIN_ID);
     assertThat(
             config
                 .streamAllocations()
@@ -205,7 +205,7 @@ class GenesisConfigTest {
   }
 
   @Test
-  void assertSilaSepoliaTerminalTotalDifficulty() {
+  void assertSepoliaTerminalTotalDifficulty() {
     GenesisConfigOptions sepoliaOptions =
         GenesisConfig.fromResource("/sepolia.json").getConfigOptions();
 
@@ -215,13 +215,13 @@ class GenesisConfigTest {
   }
 
   @Test
-  void assertSilaMainnetTerminalTotalDifficulty() {
-    GenesisConfigOptions sila-mainnetOptions =
+  void assertMainnetTerminalTotalDifficulty() {
+    GenesisConfigOptions mainnetOptions =
         GenesisConfig.fromResource("/sila-mainnet.json").getConfigOptions();
 
-    assertThat(sila-mainnetOptions.getTerminalTotalDifficulty()).isPresent();
+    assertThat(mainnetOptions.getTerminalTotalDifficulty()).isPresent();
     // tentative as of 2022-08-11:
-    assertThat(sila-mainnetOptions.getTerminalTotalDifficulty())
+    assertThat(mainnetOptions.getTerminalTotalDifficulty())
         .contains(UInt256.valueOf(new BigInteger("58750000000000000000000")));
   }
 
@@ -255,17 +255,17 @@ class GenesisConfigTest {
   }
 
   @Test
-  void assertSilaMainnetDepositContractAddress() {
-    GenesisConfigOptions sila-mainnetOptions =
+  void assertMainnetDepositContractAddress() {
+    GenesisConfigOptions mainnetOptions =
         GenesisConfig.fromResource("/sila-mainnet.json").getConfigOptions();
 
-    assertThat(sila-mainnetOptions.getDepositContractAddress()).isPresent();
-    assertThat(sila-mainnetOptions.getDepositContractAddress().get())
+    assertThat(mainnetOptions.getDepositContractAddress()).isPresent();
+    assertThat(mainnetOptions.getDepositContractAddress().get())
         .isEqualTo(Address.fromHexString("0x00000000219ab540356cbb839cbe05303d7705fa"));
   }
 
   @Test
-  void assertSilaSepoliaDepositContractAddress() {
+  void assertSepoliaDepositContractAddress() {
     GenesisConfigOptions sepoliaOptions =
         GenesisConfig.fromResource("/sepolia.json").getConfigOptions();
 
@@ -464,7 +464,7 @@ class GenesisConfigTest {
     assertThat(config.getConfigOptions().getIstanbulBlockNumber()).isNotPresent();
     assertThat(config.getConfigOptions().getChainId()).hasValue(BigInteger.valueOf(1337));
     assertThat(config.getConfigOptions().getContractSizeLimit()).hasValue(2147483647);
-    assertThat(config.getConfigOptions().getSavmStackSize()).isNotPresent();
+    assertThat(config.getConfigOptions().getEvmStackSize()).isNotPresent();
   }
 
   @Test

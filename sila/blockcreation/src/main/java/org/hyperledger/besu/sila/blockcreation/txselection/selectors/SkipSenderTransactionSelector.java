@@ -15,14 +15,15 @@
 package org.hyperledger.besu.sila.blockcreation.txselection.selectors;
 
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionEvaluationContext;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 
 import java.util.HashMap;
 import java.util.Map;
 
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -60,7 +61,7 @@ public class SkipSenderTransactionSelector extends AbstractTransactionSelector {
   }
 
   private static boolean nonceGap(
-      final TransactionEvaluationContext evaluationContext, final Long skippedNonce) {
+      final TransactionEvaluationContext evaluationContext, final @Nullable Long skippedNonce) {
     return skippedNonce != null && evaluationContext.getTransaction().getNonce() > skippedNonce;
   }
 

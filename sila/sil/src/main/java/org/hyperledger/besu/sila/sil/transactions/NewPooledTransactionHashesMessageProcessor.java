@@ -16,12 +16,12 @@ package org.hyperledger.besu.sila.sil.transactions;
 
 import static java.time.Instant.now;
 
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.task.BufferedGetPooledTransactionsFromPeerFetcher;
 import org.hyperledger.besu.sila.sil.messages.NewPooledTransactionHashesMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.sila.rlp.RLPException;
 
 import java.time.Duration;
 import java.time.Instant;

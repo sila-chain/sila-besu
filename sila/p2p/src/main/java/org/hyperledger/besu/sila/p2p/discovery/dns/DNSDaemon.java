@@ -97,12 +97,12 @@ public class DNSDaemon extends AbstractVerticle {
   void refreshENRRecords(final Long taskId) {
     LOG.debug("Refreshing DNS records");
     final long startTime = System.nanoTime();
-    final List<SilaNodeRecord> silaNodeRecords = dnsResolver.collectAll();
+    final List<EthereumNodeRecord> ethereumNodeRecords = dnsResolver.collectAll();
     final long durationMs = (System.nanoTime() - startTime) / 1_000_000;
     LOG.debug(
         "Refreshed ENR DNS records: collected {} record(s) in {} ms",
-        silaNodeRecords.size(),
+        ethereumNodeRecords.size(),
         durationMs);
-    listener.ifPresent(it -> it.newRecords(dnsResolver.sequence(), silaNodeRecords));
+    listener.ifPresent(it -> it.newRecords(dnsResolver.sequence(), ethereumNodeRecords));
   }
 }

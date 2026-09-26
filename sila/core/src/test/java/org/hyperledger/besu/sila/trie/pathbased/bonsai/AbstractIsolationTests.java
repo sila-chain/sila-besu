@@ -15,7 +15,6 @@
 package org.hyperledger.besu.sila.trie.pathbased.bonsai;
 
 import static org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider.createInMemoryBlockchain;
-import static org.hyperledger.besu.sila.core.WorldStateHealerHelper.throwingWorldStateHealerSupplier;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.mock;
@@ -29,6 +28,15 @@ import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.BesuConfiguration;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBKeyValueStorageFactory;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBMetricsFactory;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBFactoryConfiguration;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.BlockProcessingResult;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.blockcreation.AbstractBlockCreator;
@@ -61,28 +69,19 @@ import org.hyperledger.besu.sila.sil.transactions.layered.EndLayer;
 import org.hyperledger.besu.sila.sil.transactions.layered.GasPricePrioritizedTransactions;
 import org.hyperledger.besu.sila.sil.transactions.layered.LayeredPendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.layered.SenderBalanceChecker;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProviderBuilder;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.BesuConfiguration;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBKeyValueStorageFactory;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBMetricsFactory;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBFactoryConfiguration;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.worldstate.ImmutableExtraStorageConfiguration;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.nio.file.Path;
 import java.util.Arrays;
@@ -102,7 +101,7 @@ public abstract class AbstractIsolationTests {
   protected WorldStateKeyValueStorage worldStateKeyValueStorage;
   protected ProtocolContext protocolContext;
   protected SilContext silContext;
-  protected SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected SilScheduler silScheduler = new DeterministicEthScheduler();
   final Function<Bytes32, KeyPair> asKeyPair =
       key ->
           SignatureAlgorithmFactory.getInstance()
@@ -117,7 +116,7 @@ public abstract class AbstractIsolationTests {
           new NoOpMetricsSystem());
   protected final GenesisState genesisState =
       GenesisState.fromConfig(
-          GenesisConfig.fromResource("/dev.json"), protocolSchedule, new PathBasedCodeCache());
+          GenesisConfig.fromResource("/dev.json"), protocolSchedule, new BonsaiCodeCache());
   protected final MutableBlockchain blockchain = createInMemoryBlockchain(genesisState.getBlock());
 
   protected final TransactionPoolConfiguration poolConfiguration =
@@ -138,19 +137,7 @@ public abstract class AbstractIsolationTests {
 
   protected SenderBalanceChecker senderBalanceChecker = new SenderBalanceChecker.NoOpChecker();
 
-  protected final PendingTransactions sorter =
-      new LayeredPendingTransactions(
-          poolConfiguration,
-          new GasPricePrioritizedTransactions(
-              poolConfiguration,
-              silScheduler,
-              new EndLayer(txPoolMetrics),
-              txPoolMetrics,
-              transactionReplacementTester,
-              new BlobCache(),
-              MiningConfiguration.newDefault(),
-              senderBalanceChecker),
-          silScheduler);
+  protected PendingTransactions sorter;
 
   protected final List<GenesisAccount> accounts =
       GenesisConfig.fromResource("/dev.json")
@@ -175,12 +162,11 @@ public abstract class AbstractIsolationTests {
         new BonsaiWorldStateProvider(
             (BonsaiWorldStateKeyValueStorage) worldStateKeyValueStorage,
             blockchain,
-            ImmutablePathBasedExtraStorageConfiguration.builder().maxLayersToLoad(16L).build(),
+            ImmutableExtraStorageConfiguration.builder().maxLayersToLoad(16L).build(),
             new BonsaiCachedMerkleTrieLoader(new NoOpMetricsSystem()),
             null,
             SavmConfiguration.DEFAULT,
-            throwingWorldStateHealerSupplier(),
-            new PathBasedCodeCache());
+            new BonsaiCodeCache());
     var ws = archive.getWorldState();
     genesisState.writeStateTo(ws);
     protocolContext =
@@ -189,7 +175,23 @@ public abstract class AbstractIsolationTests {
             .withWorldStateArchive(archive)
             .build();
     silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
+
+    sorter =
+        new LayeredPendingTransactions(
+            protocolContext,
+            poolConfiguration,
+            new GasPricePrioritizedTransactions(
+                poolConfiguration,
+                silScheduler,
+                new EndLayer(txPoolMetrics),
+                txPoolMetrics,
+                transactionReplacementTester,
+                new BlobCache(),
+                MiningConfiguration.newDefault(),
+                senderBalanceChecker),
+            silScheduler);
+
     transactionPool =
         new TransactionPool(
             () -> sorter,

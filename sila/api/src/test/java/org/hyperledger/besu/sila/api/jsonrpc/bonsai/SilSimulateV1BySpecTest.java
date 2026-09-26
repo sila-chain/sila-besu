@@ -16,12 +16,12 @@ package org.hyperledger.besu.sila.api.jsonrpc.bonsai;
 
 import static org.hyperledger.besu.sila.api.ApiConfiguration.DEFAULT_GAS_CAP;
 
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.AbstractJsonRpcHttpBySpecTest;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 
 /**
  * This class is a test runner for the Bonsai test suite. It runs the tests defined in the Bonsai

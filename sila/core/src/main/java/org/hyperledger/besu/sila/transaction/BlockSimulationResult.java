@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.transaction;
 
-import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.core.LogWithMetadata;
-import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.plugin.data.BlockBody;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.services.trielogs.TrieLog;
+import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.core.LogWithMetadata;
+import org.hyperledger.besu.sila.core.TransactionReceipt;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -93,7 +93,7 @@ public class BlockSimulationResult {
               false);
       allLogs.addAll(txLogs);
       // Advance offset by at least 1 per transaction so that failed transactions (0 logs)
-      // still increment the log index, matching gsil's sil_simulateV1 behaviour.
+      // still increment the log index, matching geth's sil_simulateV1 behaviour.
       logIndexOffset += Math.max(1, transactionSimulation.logs().size());
     }
     return allLogs;

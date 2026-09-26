@@ -45,7 +45,7 @@ public class SilEstimateGasZeroToleranceAcceptanceTest extends AcceptanceTestBas
     deployContract.setGasPrice(GAS_PRICE);
     final TestDepth testDepth = node.execute(deployContract);
 
-    // taken from gsil
+    // taken from geth
     testCase.add(new SimpleEntry<>(1, 45554L));
     testCase.add(new SimpleEntry<>(2, 47387L));
     testCase.add(new SimpleEntry<>(3, 49249L));

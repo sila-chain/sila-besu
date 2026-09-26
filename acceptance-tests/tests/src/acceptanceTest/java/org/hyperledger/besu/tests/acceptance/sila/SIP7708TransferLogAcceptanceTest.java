@@ -37,8 +37,8 @@ import org.apache.tuweni.bytes.Bytes32;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.Log;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.Log;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 /**
  * Acceptance tests for SIP-7708: SIL transfers emit a log.
@@ -53,12 +53,10 @@ import org.web3j.protocol.core.methods.response.TransactionReceipt;
  *   <li>data: amount in Wei (big-endian uint256)
  * </ul>
  *
- * <p>Additionally, SELFDESTRUCT operations emit different logs depending on the beneficiary:
- *
- * <ul>
- *   <li>SELFDESTRUCT to different address: Transfer log (LOG3) with 3 topics
- *   <li>SELFDESTRUCT to self: Burn log (LOG2) with 2 topics
- * </ul>
+ * <p>Additionally, SELFDESTRUCT to a different address emits a Transfer log (LOG3) with 3 topics.
+ * Pre-SIP-8246 a SELFDESTRUCT to self burned the balance and emitted a Burn log (LOG2); under
+ * SIP-8246 (active from SilaAmsterdam) the balance is preserved instead of burned, so no Burn log
+ * is emitted.
  */
 public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
   private static final String GENESIS_FILE = "/dev/dev_amsterdam.json";
@@ -95,7 +93,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
   }
 
   @Test
-  public void shouldEmitTransferLogForSimpleSilTransfer() throws IOException {
+  public void shouldEmitTransferLogForSimpleEthTransfer() throws IOException {
     final Wei transferAmount = Wei.of(1_000_000_000_000_000L); // 0.001 SIL
 
     final Transaction tx =
@@ -105,7 +103,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
             .nonce(0)
             .maxPriorityFeePerGas(Wei.of(1_000_000_000))
             .maxFeePerGas(Wei.fromHexString("0x02540BE400"))
-            .gasLimit(21_000)
+            .gasLimit(300_000)
             .to(Address.fromHexStringStrict(recipient.getAddress()))
             .value(transferAmount)
             .payload(Bytes.EMPTY)
@@ -343,8 +341,8 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
    * effectively a no-op - the contract is NOT destroyed and retains its balance.
    *
    * <p>Per SIP-7708, since no actual destruction or value transfer occurs, no log should be
-   * emitted. This is different from pre-SilaCancun behavior where the contract would be destroyed and a
-   * Burn log would be emitted.
+   * emitted. This is different from pre-SilaCancun behavior where the contract would be destroyed
+   * and a Burn log would be emitted.
    */
   @Test
   public void shouldNotEmitLogForPreExistingContractSelfDestructToSelf() throws IOException {
@@ -497,7 +495,7 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
   }
 
   /**
-   * Test that SELFDESTRUCT to SELF for a same-tx-created contract DOES emit a Burn log.
+   * Test that SELFDESTRUCT to SELF for a same-tx-created contract emits NO Burn log under SIP-8246.
    *
    * <p>This test calls a factory contract (0x7710) that:
    *
@@ -508,16 +506,14 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
    * </ol>
    *
    * <p>Under SIP-6780, contracts created in the same transaction CAN be destroyed by SELFDESTRUCT.
-   * Per SIP-7708, when a same-tx-created contract selfdestructs to itself, a Burn log (LOG2) should
-   * be emitted with the destroyed balance.
+   * Pre-SIP-8246 the balance would be burned and a Burn log (LOG2) emitted. Under SIP-8246 (active
+   * from SilaAmsterdam) the balance is preserved instead of burned, so no Burn log is emitted. Only
+   * the Transfer log (LOG3) for the CREATE value transfer (factory -&gt; child) remains.
    */
   @Test
-  public void shouldEmitSelfdestructLogForSameTxCreatedContractSelfDestructToSelf()
-      throws IOException {
+  public void shouldNotEmitBurnLogForSameTxCreatedContractSelfDestructToSelf() throws IOException {
     final Address factoryContract =
         Address.fromHexStringStrict("0x0000000000000000000000000000000000007710");
-    // Factory has 1 SIL balance which it sends to the created contract
-    final Wei contractBalance = Wei.of(1_000_000_000_000_000_000L);
 
     final Transaction tx =
         Transaction.builder()
@@ -552,24 +548,19 @@ public class SIP7708TransferLogAcceptanceTest extends AcceptanceTestBase {
 
     final List<Log> logs = receipt.getLogs();
 
-    // Should have at least one Burn log (LOG2 with 2 topics)
-    final List<Log> selfdestructLogs =
+    // SIP-8246: the balance is preserved instead of burned, so no Burn log (LOG2) is emitted.
+    final List<Log> burnLogs =
         logs.stream()
             .filter(log -> log.getTopics().size() == 2)
             .filter(log -> log.getTopics().get(0).equalsIgnoreCase(BURN_TOPIC))
             .toList();
 
-    assertThat(selfdestructLogs)
-        .as("Same-tx-created contract SELFDESTRUCT to self SHOULD emit a Burn log")
-        .isNotEmpty();
+    assertThat(burnLogs)
+        .as(
+            "Under SIP-8246 a same-tx-created contract SELFDESTRUCT to self should NOT emit a Burn log")
+        .isEmpty();
 
-    // Verify the Burn log has the correct balance
-    final Log selfdestructLog = selfdestructLogs.getFirst();
-    assertThat(selfdestructLog.getAddress()).isEqualToIgnoringCase(SIP7708_SYSTEM_ADDRESS);
-    assertThat(selfdestructLog.getData())
-        .isEqualToIgnoringCase(Bytes32.leftPad(contractBalance).toHexString());
-
-    // There should also be a Transfer log for the CREATE value transfer (factory -> child)
+    // The CREATE value transfer (factory -> child) still emits a Transfer log (LOG3).
     final boolean hasTransferLog =
         logs.stream()
             .anyMatch(

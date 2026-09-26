@@ -15,11 +15,15 @@
 package org.hyperledger.besu.sila.vm.operations;
 
 import org.hyperledger.besu.savm.frame.MessageFrame;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.operation.Operation;
 import org.hyperledger.besu.savm.operation.SwapNOperation;
 
+import org.openjdk.jmh.infra.BenchmarkParams;
+
 /** JMH benchmark for the SWAPN operation (SIP-8024). */
-public class SwapNOperationBenchmark extends ImmediateByteOperationBenchmark {
+public class SwapNOperationBenchmark extends ImmediateByteOperationBenchmark
+    implements GasCostBenchmark {
 
   @Override
   protected int getOpcode() {
@@ -28,8 +32,8 @@ public class SwapNOperationBenchmark extends ImmediateByteOperationBenchmark {
 
   @Override
   protected byte getImmediate() {
-    // Immediate 0x00 decodes to n=17 (swap top with 18th stack item)
-    return 0x00;
+    // Immediate 0x80 decodes to n=17 (swap top with 18th stack item)
+    return (byte) 0x80;
   }
 
   @Override
@@ -42,5 +46,10 @@ public class SwapNOperationBenchmark extends ImmediateByteOperationBenchmark {
   protected int getStackDelta() {
     // SWAPN does not change stack size
     return 0;
+  }
+
+  @Override
+  public long getGasCost(final BenchmarkParams params, final GasCalculator calc) {
+    return new SwapNOperation(calc).getGasCost();
   }
 }

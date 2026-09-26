@@ -16,6 +16,8 @@ package org.hyperledger.besu.tests.acceptance.dsl.node.configuration;
 
 import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.crypto.KeyPair;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.InProcessRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
@@ -23,13 +25,11 @@ import org.hyperledger.besu.sila.api.jsonrpc.ipc.JsonRpcIpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.plugins.PluginConfiguration;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.genesis.GenesisConfigurationProvider;
 
 import java.nio.file.Path;

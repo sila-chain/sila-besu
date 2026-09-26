@@ -20,20 +20,22 @@ import static java.time.Instant.now;
 import static java.util.Arrays.asList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.mockito.ArgumentMatchers.any;
+import static org.mockito.Mockito.doThrow;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.StubMetricsSystem;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.sil.messages.TransactionsMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -160,6 +162,20 @@ public class TransactionsMessageProcessorTest {
     verify(peer1).disconnect(DisconnectReason.BREACH_OF_PROTOCOL_MALFORMED_MESSAGE_RECEIVED);
     verifyNoInteractions(transactionPool);
     verifyNoInteractions(transactionTracker);
+  }
+
+  @Test
+  public void shouldDisconnectPeerWhenAddRemoteTransactionsThrowsRuntimeException() {
+    when(transactionTracker.receivedTransactions(peer1, asList(transaction1, transaction2)))
+        .thenReturn(asList(transaction1, transaction2));
+    doThrow(new RuntimeException("simulated unexpected error"))
+        .when(transactionPool)
+        .addRemoteTransactions(any());
+
+    messageHandler.processTransactionsMessage(
+        peer1, TransactionsMessage.create(asList(transaction1, transaction2)), now(), ofMinutes(1));
+
+    verify(peer1).disconnect(DisconnectReason.BREACH_OF_PROTOCOL_MALFORMED_MESSAGE_RECEIVED);
   }
 
   @Test

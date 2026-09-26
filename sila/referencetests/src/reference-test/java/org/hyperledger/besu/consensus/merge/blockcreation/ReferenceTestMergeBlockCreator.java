@@ -23,7 +23,7 @@ import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.Withdrawal;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.List;
 import java.util.Optional;

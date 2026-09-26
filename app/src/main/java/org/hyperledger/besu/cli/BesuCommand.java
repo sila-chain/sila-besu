@@ -34,10 +34,11 @@ import org.hyperledger.besu.chainexport.RlpBlockExporter;
 import org.hyperledger.besu.chainimport.Era1BlockImporter;
 import org.hyperledger.besu.chainimport.JsonBlockImporter;
 import org.hyperledger.besu.chainimport.RlpBlockImporter;
-import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.cli.config.NativeRequirement;
 import org.hyperledger.besu.cli.config.NativeRequirement.NativeRequirementResult;
 import org.hyperledger.besu.cli.config.ProfilesCompletionCandidates;
+import org.hyperledger.besu.cli.config.SilNetworkConfig;
+import org.hyperledger.besu.cli.converter.CheckpointConverter;
 import org.hyperledger.besu.cli.custom.JsonRPCAllowlistHostsProperty;
 import org.hyperledger.besu.cli.error.BesuExecutionExceptionHandler;
 import org.hyperledger.besu.cli.error.BesuParameterExceptionHandler;
@@ -47,13 +48,11 @@ import org.hyperledger.besu.cli.options.ChainPruningOptions;
 import org.hyperledger.besu.cli.options.DnsOptions;
 import org.hyperledger.besu.cli.options.EngineRPCConfiguration;
 import org.hyperledger.besu.cli.options.EngineRPCOptions;
-import org.hyperledger.besu.cli.options.SilProtocolOptions;
-import org.hyperledger.besu.cli.options.SilstatsOptions;
-import org.hyperledger.besu.cli.options.SavmOptions;
 import org.hyperledger.besu.cli.options.GraphQlOptions;
 import org.hyperledger.besu.cli.options.InProcessRpcOptions;
 import org.hyperledger.besu.cli.options.IpcOptions;
 import org.hyperledger.besu.cli.options.JsonRpcHttpOptions;
+import org.hyperledger.besu.cli.options.LoggingFormat;
 import org.hyperledger.besu.cli.options.LoggingLevelOption;
 import org.hyperledger.besu.cli.options.MetricsOptions;
 import org.hyperledger.besu.cli.options.MiningOptions;
@@ -66,10 +65,13 @@ import org.hyperledger.besu.cli.options.PermissionsOptions;
 import org.hyperledger.besu.cli.options.PluginsConfigurationOptions;
 import org.hyperledger.besu.cli.options.RPCOptions;
 import org.hyperledger.besu.cli.options.RpcWebsocketOptions;
+import org.hyperledger.besu.cli.options.SavmOptions;
+import org.hyperledger.besu.cli.options.SilProtocolOptions;
+import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.cli.options.SynchronizerOptions;
 import org.hyperledger.besu.cli.options.TransactionPoolOptions;
 import org.hyperledger.besu.cli.options.storage.DataStorageOptions;
-import org.hyperledger.besu.cli.options.storage.PathBasedExtraStorageOptions;
+import org.hyperledger.besu.cli.options.storage.ExtraStorageOptions;
 import org.hyperledger.besu.cli.options.unstable.QBFTOptions;
 import org.hyperledger.besu.cli.options.unstable.UnstableBftOptions;
 import org.hyperledger.besu.cli.presynctasks.PreSynchronizationTaskRunner;
@@ -89,7 +91,6 @@ import org.hyperledger.besu.cli.util.ConfigDefaultValueProviderStrategy;
 import org.hyperledger.besu.cli.util.VersionProvider;
 import org.hyperledger.besu.components.BesuComponent;
 import org.hyperledger.besu.config.CheckpointConfigOptions;
-import org.hyperledger.besu.config.DiscoveryOptions;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.config.JsonUtil;
@@ -105,58 +106,20 @@ import org.hyperledger.besu.crypto.SECP256R1;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.KeyPairSecurityModule;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.cryptoservices.pluginadapter.SecurityModuleServiceImpl;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.api.ApiConfiguration;
-import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
-import org.hyperledger.besu.sila.api.jsonrpc.InProcessRpcConfiguration;
-import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
-import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
-import org.hyperledger.besu.sila.api.jsonrpc.authentication.JwtAlgorithm;
-import org.hyperledger.besu.sila.api.jsonrpc.ipc.JsonRpcIpcConfiguration;
-import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.chain.ChainDataPruner.ChainPruningStrategy;
-import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.core.MiningParametersMetrics;
-import org.hyperledger.besu.sila.core.VersionMetadata;
-import org.hyperledger.besu.sila.sil.sync.SyncMode;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.ImmutableTransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
-import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
-import org.hyperledger.besu.sila.p2p.discovery.P2PDiscoveryConfiguration;
-import org.hyperledger.besu.sila.p2p.discovery.dns.SilaNodeRecord;
-import org.hyperledger.besu.sila.p2p.peers.EnodeDnsConfiguration;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
-import org.hyperledger.besu.sila.p2p.peers.StaticNodesParser;
-import org.hyperledger.besu.sila.permissioning.LocalPermissioningConfiguration;
-import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
-import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
-import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProvider;
-import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProviderBuilder;
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutableDataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.savm.precompile.AbstractAltBnPrecompiledContract;
-import org.hyperledger.besu.savm.precompile.AbstractBLS12PrecompiledContract;
-import org.hyperledger.besu.savm.precompile.AbstractPrecompiledContract;
-import org.hyperledger.besu.savm.precompile.BigIntegerModularExponentiationPrecompiledContract;
-import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
-import org.hyperledger.besu.savm.precompile.P256VerifyPrecompiledContract;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.metrics.MetricCategoryRegistryImpl;
 import org.hyperledger.besu.metrics.MetricsProtocol;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.metrics.StandardMetricCategory;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.metrics.vertx.VertxMetricsAdapterFactory;
 import org.hyperledger.besu.nat.NatMethod;
+import org.hyperledger.besu.plugin.CoreConfiguration;
+import org.hyperledger.besu.plugin.rpc.RpcConfiguration;
 import org.hyperledger.besu.plugin.services.BesuConfiguration;
 import org.hyperledger.besu.plugin.services.HealthCheckService;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
@@ -167,20 +130,64 @@ import org.hyperledger.besu.plugin.services.health.ReadinessCheckPlugin;
 import org.hyperledger.besu.plugin.services.securitymodule.SecurityModule;
 import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBPlugin;
+import org.hyperledger.besu.plugin.storage.StorageConfiguration;
+import org.hyperledger.besu.savm.precompile.AbstractAltBnPrecompiledContract;
+import org.hyperledger.besu.savm.precompile.AbstractBLS12PrecompiledContract;
+import org.hyperledger.besu.savm.precompile.AbstractPrecompiledContract;
+import org.hyperledger.besu.savm.precompile.BigIntegerModularExponentiationPrecompiledContract;
+import org.hyperledger.besu.savm.precompile.KZGPointEvalPrecompiledContract;
+import org.hyperledger.besu.savm.precompile.P256VerifyPrecompiledContract;
 import org.hyperledger.besu.services.BesuConfigurationImpl;
 import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.services.BesuPluginServiceRegistrar;
-import org.hyperledger.besu.services.BlockchainServiceImpl;
-import org.hyperledger.besu.services.PermissioningServiceImpl;
 import org.hyperledger.besu.services.PicoCLIOptionsImpl;
-import org.hyperledger.besu.services.RpcEndpointServiceImpl;
-import org.hyperledger.besu.services.SecurityModuleServiceImpl;
 import org.hyperledger.besu.services.StorageServiceImpl;
-import org.hyperledger.besu.services.TransactionPoolValidatorServiceImpl;
-import org.hyperledger.besu.services.TransactionSelectionServiceImpl;
-import org.hyperledger.besu.services.TransactionSimulationServiceImpl;
-import org.hyperledger.besu.services.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.services.kvstore.InMemoryStoragePlugin;
+import org.hyperledger.besu.sila.api.ApiConfiguration;
+import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
+import org.hyperledger.besu.sila.api.jsonrpc.InProcessRpcConfiguration;
+import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
+import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
+import org.hyperledger.besu.sila.api.jsonrpc.authentication.JwtAlgorithm;
+import org.hyperledger.besu.sila.api.jsonrpc.ipc.JsonRpcIpcConfiguration;
+import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
+import org.hyperledger.besu.sila.api.pluginadapter.RpcEndpointServiceImpl;
+import org.hyperledger.besu.sila.blockcreation.pluginadapter.TransactionSelectionServiceImpl;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.ChainDataPruner.ChainPruningStrategy;
+import org.hyperledger.besu.sila.chain.pluginadapter.BlockchainServiceImpl;
+import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.core.MiningParametersMetrics;
+import org.hyperledger.besu.sila.core.VersionMetadata;
+import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
+import org.hyperledger.besu.sila.p2p.config.DiscoveryMode;
+import org.hyperledger.besu.sila.p2p.config.DiscoveryModeResolver;
+import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
+import org.hyperledger.besu.sila.p2p.discovery.P2PDiscoveryConfiguration;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
+import org.hyperledger.besu.sila.p2p.peers.EnodeDnsConfiguration;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.p2p.peers.StaticNodesParser;
+import org.hyperledger.besu.sila.permissioning.LocalPermissioningConfiguration;
+import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
+import org.hyperledger.besu.sila.permissioning.pluginadapter.PermissioningServiceImpl;
+import org.hyperledger.besu.sila.sil.sync.SyncMode;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
+import org.hyperledger.besu.sila.sil.transactions.ImmutableTransactionPoolConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.pluginadapter.TransactionPoolValidatorServiceImpl;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
+import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
+import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProvider;
+import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProviderBuilder;
+import org.hyperledger.besu.sila.transaction.pluginadapter.TransactionSimulationServiceImpl;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ExtraStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ImmutableDataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ImmutableExtraStorageConfiguration;
 import org.hyperledger.besu.util.BesuVersionUtils;
 import org.hyperledger.besu.util.EphemeryGenesisUpdater;
 import org.hyperledger.besu.util.InvalidConfigurationException;
@@ -225,6 +232,7 @@ import java.util.function.Function;
 import java.util.function.Predicate;
 import java.util.function.Supplier;
 import java.util.stream.Collectors;
+import java.util.stream.Stream;
 
 import com.fasterxml.jackson.core.StreamReadConstraints;
 import com.fasterxml.jackson.databind.ObjectMapper;
@@ -241,7 +249,9 @@ import io.vertx.core.json.jackson.DatabindCodec;
 import org.apache.logging.log4j.Level;
 import org.apache.logging.log4j.LogManager;
 import org.apache.logging.log4j.core.LoggerContext;
+import org.apache.logging.log4j.core.appender.ConsoleAppender;
 import org.apache.logging.log4j.core.impl.Log4jContextFactory;
+import org.apache.logging.log4j.core.layout.PatternLayout;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt256;
 import org.slf4j.Logger;
@@ -273,7 +283,7 @@ import picocli.CommandLine.ParseResult;
     footerHeading = "%nBesu is licensed under the Apache License 2.0%n",
     footer = {
       "%n%n@|fg(cyan) To get started quickly, just choose a network to sync and a profile to run with suggested defaults:|@",
-      "%n@|fg(cyan) for SilaMainnet|@ --network=sila-mainnet --profile=[minimalist_staker|staker]",
+      "%n@|fg(cyan) for SilaMainnet|@ --network=mainnet --profile=[minimalist_staker|staker]",
       "%nMore info and other profiles at https://besu.hyperledger.org%n"
     })
 public class BesuCommand implements DefaultCommandValues, Runnable {
@@ -293,12 +303,12 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   // Unstable CLI options
   final NetworkingOptions unstableNetworkingOptions = NetworkingOptions.create();
   final SynchronizerOptions unstableSynchronizerOptions = SynchronizerOptions.create();
-  final SilProtocolOptions unstableSilProtocolOptions = SilProtocolOptions.create();
+  final SilProtocolOptions unstableEthProtocolOptions = SilProtocolOptions.create();
   private final DnsOptions unstableDnsOptions = DnsOptions.create();
   private final NatOptions unstableNatOptions = NatOptions.create();
   private final NativeLibraryOptions unstableNativeLibraryOptions = NativeLibraryOptions.create();
   private final RPCOptions unstableRPCOptions = RPCOptions.create();
-  private final SavmOptions unstableSavmOptions = SavmOptions.create();
+  private final SavmOptions unstableEvmOptions = SavmOptions.create();
   private final IpcOptions unstableIpcOptions = IpcOptions.create();
   private final ChainPruningOptions unstableChainPruningOptions = ChainPruningOptions.create();
   private final QBFTOptions unstableQbftOptions = QBFTOptions.create();
@@ -306,7 +316,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
   // stable CLI options
   final DataStorageOptions dataStorageOptions = DataStorageOptions.create();
-  private final SilstatsOptions silstatsOptions = SilstatsOptions.create();
+  private final SilStatsOptions silStatsOptions = SilStatsOptions.create();
   private final NodePrivateKeyFileOption nodePrivateKeyFileOption =
       NodePrivateKeyFileOption.create();
   private final LoggingLevelOption loggingLevelOption = LoggingLevelOption.create();
@@ -332,7 +342,20 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   private final PreSynchronizationTaskRunner preSynchronizationTaskRunner =
       new PreSynchronizationTaskRunner();
 
-  private final Set<Integer> allocatedPorts = new HashSet<>();
+  private final Set<PortBinding> allocatedPorts = new HashSet<>();
+
+  enum Transport {
+    TCP,
+    UDP
+  }
+
+  record PortBinding(Integer port, Transport transport) {
+    @Override
+    public String toString() {
+      return port + "/" + transport;
+    }
+  }
+
   private Supplier<GenesisConfig> genesisConfigSupplier =
       Suppliers.memoize(this::readGenesisConfig);
 
@@ -372,7 +395,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
   // Genesis file path with null default option.
   // This default is handled by Runner
-  // to use sila-mainnet json file from resources as indicated in the
+  // to use mainnet json file from resources as indicated in the
   // default network option
   // Then we ignore genesis default value here.
   @CommandLine.Option(
@@ -580,6 +603,16 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
       split = ",")
   private final Map<Long, Hash> requiredBlocks = new HashMap<>();
 
+  @Option(
+      names = {"--checkpoint"},
+      paramLabel = "<blockHash>:<blockNumber>:<totalDifficulty>",
+      description =
+          "A trusted checkpoint to anchor sync to, overriding any checkpoint configured in the "
+              + "genesis file. Total difficulty may be decimal or 0x-prefixed hex "
+              + "(e.g. 0x<hash>:12345678:58750003716598352816469).",
+      converter = CheckpointConverter.class)
+  private final Checkpoint checkpointOverride = null;
+
   @SuppressWarnings({"FieldCanBeFinal", "FieldMayBeFinal"}) // PicoCLI requires non-final Strings.
   @Option(
       names = {"--key-value-storage"},
@@ -674,6 +707,8 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   private Collection<EnodeURLImpl> staticNodes;
   private BesuController besuController;
   private BesuConfigurationImpl pluginCommonConfiguration;
+
+  private Optional<Checkpoint> checkpoint = Optional.empty();
 
   private Vertx vertx;
   private Runner runner;
@@ -793,6 +828,9 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     } else {
       this.pluginCommonConfiguration = new BesuConfigurationImpl();
       besuPluginContext.addService(BesuConfiguration.class, this.pluginCommonConfiguration);
+      besuPluginContext.addService(CoreConfiguration.class, this.pluginCommonConfiguration);
+      besuPluginContext.addService(StorageConfiguration.class, this.pluginCommonConfiguration);
+      besuPluginContext.addService(RpcConfiguration.class, this.pluginCommonConfiguration);
     }
     this.rpcEndpointServiceImpl = rpcEndpointServiceImpl;
     this.transactionSelectionServiceImpl = transactionSelectionServiceImpl;
@@ -916,6 +954,30 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     }
   }
 
+  /**
+   * Whether the active Log4j2 console appender uses a {@link PatternLayout}. This reflects the
+   * actual runtime configuration rather than the {@code --logging-format} CLI value, so it is still
+   * correct when a user-supplied {@code LOG4J_CONFIGURATION_FILE} overrides the bundled
+   * configuration selected by {@code --logging-format}. The console appender is identified by type
+   * (not by the conventional "Console" name our own bundled configs use), so a custom configuration
+   * that names its console appender differently is still handled correctly.
+   *
+   * @return true if a framed, human-readable overview should be logged; false if the active layout
+   *     is structured (e.g. JSON) and a single-line rendering should be used instead
+   */
+  private boolean isPatternLayoutActive() {
+    return LoggerContext.getContext(false)
+        .getConfiguration()
+        .getRootLogger()
+        .getAppenders()
+        .values()
+        .stream()
+        .filter(ConsoleAppender.class::isInstance)
+        .findFirst()
+        .map(appender -> appender.getLayout() instanceof PatternLayout)
+        .orElse(true);
+  }
+
   private IExecutionStrategy createDefaultValueProviderTask(final IExecutionStrategy nextStep) {
     return new ConfigDefaultValueProviderStrategy(nextStep, environment);
   }
@@ -964,7 +1026,12 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   @Override
   public void run() {
     if (network != null && network.isDeprecated()) {
-      logger.warn(NetworkDeprecationMessage.generate(network));
+      logger.warn(NetworkDeprecationMessage.generate(network, isPatternLayoutActive()));
+      if (network.isRemoved()) {
+        throw new ParameterException(
+            this.commandLine,
+            "--network=" + network.name().toLowerCase(Locale.ROOT) + " is no longer supported.");
+      }
     }
     try {
       configureLogging(true);
@@ -1041,7 +1108,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     setReleaseMetrics();
     preSynchronization();
 
-    runner.startSilaMainLoop();
+    runner.startEthereumMainLoop();
 
     besuPluginContext.afterExternalServicesMainLoop();
   }
@@ -1248,7 +1315,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   private void handleStableOptions() {
-    commandLine.addMixin("Silstats", silstatsOptions);
+    commandLine.addMixin("SilStats", silStatsOptions);
     commandLine.addMixin("Private key file", nodePrivateKeyFileOption);
     commandLine.addMixin("Logging level", loggingLevelOption);
     commandLine.addMixin("Data Storage Options", dataStorageOptions);
@@ -1259,14 +1326,14 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     final ImmutableMap.Builder<String, Object> unstableOptionsBuild = ImmutableMap.builder();
     final ImmutableMap<String, Object> unstableOptions =
         unstableOptionsBuild
-            .put("Sila Wire Protocol", unstableSilProtocolOptions)
+            .put("Sila Wire Protocol", unstableEthProtocolOptions)
             .put("P2P Network", unstableNetworkingOptions)
             .put("RPC", unstableRPCOptions)
             .put("DNS Configuration", unstableDnsOptions)
             .put("NAT Configuration", unstableNatOptions)
             .put("Synchronizer", unstableSynchronizerOptions)
             .put("Native Library", unstableNativeLibraryOptions)
-            .put("SAVM Options", unstableSavmOptions)
+            .put("SAVM Options", unstableEvmOptions)
             .put("IPC Options", unstableIpcOptions)
             .put("Chain Data Pruning Options", unstableChainPruningOptions)
             .put("QBFT Options", unstableQbftOptions)
@@ -1348,7 +1415,10 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
   private void startPlugins(final Runner runner) {
     blockchainServiceImpl.init(
-        besuController.getProtocolContext().getBlockchain(), besuController.getProtocolSchedule());
+        besuController.getProtocolContext().getBlockchain(),
+        besuController.getProtocolSchedule(),
+        besuController.getProtocolManager().getBlockBroadcaster(),
+        besuController.getProtocolContext().getBadBlockManager());
     transactionSimulationServiceImpl.init(
         besuController.getProtocolContext().getBlockchain(),
         besuController.getTransactionSimulator());
@@ -1392,12 +1462,13 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
    * @param announce sets to true to print the logging level on standard output
    */
   public void configureLogging(final boolean announce) {
-    // To change the configuration if color was enabled/disabled
-    LogConfigurator.reconfigure();
     // set log level per CLI flags
     final String logLevel = loggingLevelOption.getLogLevel();
     if (logLevel != null) {
-      if (announce) {
+      // Printed directly to stdout (bypassing the logger) so it is always visible regardless of
+      // the level being set; skipped for structured formats where a raw text line would corrupt
+      // the JSON stream.
+      if (announce && isPatternLayoutActive()) {
         System.out.println("Setting logging level to " + logLevel);
       }
       LogConfigurator.setLevel("", logLevel);
@@ -1516,7 +1587,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     validateRpcOptionsParams();
     validateRpcWsOptions();
     validateChainDataPruningParams();
-    validatePostMergeCheckpointBlockRequirements();
+    validateAndResolveCheckpointRelatedConfig();
     validateTransactionPoolOptions();
     validateDataStorageOptions();
     validateGraphQlOptions();
@@ -1582,8 +1653,8 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   private void validateNetStatsParams() {
-    if (Strings.isNullOrEmpty(silstatsOptions.getSilstatsUrl())
-        && !silstatsOptions.getSilstatsContact().isEmpty()) {
+    if (Strings.isNullOrEmpty(silStatsOptions.getSilStatsUrl())
+        && !silStatsOptions.getSilStatsContact().isEmpty()) {
       throw new ParameterException(
           this.commandLine,
           "The `--silstats-contact` requires silstats server URL to be provided. Either remove --silstats-contact"
@@ -1721,7 +1792,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   /**
-   * Loads a genesis file from File and applies Gsil-to-Besu transformation if needed.
+   * Loads a genesis file from File and applies Geth-to-Besu transformation if needed.
    *
    * @param genesisFile the genesis file
    * @return the loaded and potentially transformed ObjectNode
@@ -1731,9 +1802,9 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
       final URL url = genesisFile.toURI().toURL();
       final ObjectNode genesisRoot = JsonUtil.objectNodeFromURL(url, false);
 
-      // Check if this is a Gsil format genesis file and transform if needed
-      if (isGsilFormat(genesisRoot)) {
-        transformGsilToBesu(genesisRoot);
+      // Check if this is a Geth format genesis file and transform if needed
+      if (isGethFormat(genesisRoot)) {
+        transformGethToBesu(genesisRoot);
       }
 
       return genesisRoot;
@@ -1748,20 +1819,20 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   /**
-   * Detects if a genesis file is in Gsil format.
+   * Detects if a genesis file is in Geth format.
    *
-   * <p>A genesis file is considered Gsil format if:
+   * <p>A genesis file is considered Geth format if:
    *
    * <ul>
    *   <li>It has a "config" section
-   *   <li>The config has a "mergeNetsplitBlock" field (Gsil-specific)
-   *   <li>The config does NOT have an "silash" field (Besu-specific)
+   *   <li>The config has a "mergeNetsplitBlock" field (Geth-specific)
+   *   <li>The config does NOT have an "ethash" field (Besu-specific)
    * </ul>
    *
    * @param genesisRoot the root genesis JSON node
-   * @return true if this is a Gsil format genesis file
+   * @return true if this is a Geth format genesis file
    */
-  private boolean isGsilFormat(final ObjectNode genesisRoot) {
+  private boolean isGethFormat(final ObjectNode genesisRoot) {
     final Optional<ObjectNode> configNode = JsonUtil.getObjectNode(genesisRoot, "config");
     if (!configNode.isPresent()) {
       return false;
@@ -1769,25 +1840,25 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
     final ObjectNode config = configNode.get();
     final boolean hasMergeNetsplitBlock = config.has("mergeNetsplitBlock");
-    final boolean hasSilash = config.has("silash");
+    final boolean hasEthash = config.has("ethash");
 
-    // It's Gsil format if it has mergeNetsplitBlock but not silash
-    return hasMergeNetsplitBlock && !hasSilash;
+    // It's Geth format if it has mergeNetsplitBlock but not ethash
+    return hasMergeNetsplitBlock && !hasEthash;
   }
 
   /**
-   * Transforms a Gsil-format genesis file to Besu format by applying five transformations.
+   * Transforms a Geth-format genesis file to Besu format by applying five transformations.
    *
    * <p>Transformations applied:
    *
    * <ol>
-   *   <li><b>Add silash field:</b> Besu's {@code isSilHash()} method checks for the presence of
+   *   <li><b>Add ethash field:</b> Besu's {@code isEthHash()} method checks for the presence of
    *       this field in the JSON structure. Since this is a structural check, the overrides
    *       mechanism doesn't work - we must add it to the JSON.
    *   <li><b>Map mergeNetsplitBlock to preMergeForkBlock:</b> These fields serve identical purposes
-   *       (marking the merge activation block) but use different names in Gsil vs Besu.
+   *       (marking the merge activation block) but use different names in Geth vs Besu.
    *   <li><b>Add baseFeePerGas:</b> When London fork is activated at genesis (block 0), Besu
-   *       expects an explicit base fee. Gsil may omit this field, so we add the standard default of
+   *       expects an explicit base fee. Geth may omit this field, so we add the standard default of
    *       1 gwei (0x3B9ACA00).
    *   <li><b>Add withdrawalRequestContractAddress:</b> SIP-7002 withdrawal request contract address
    *       if missing.
@@ -1797,7 +1868,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
    *
    * @param genesisRoot the root genesis JSON node (will be modified in place)
    */
-  private void transformGsilToBesu(final ObjectNode genesisRoot) {
+  private void transformGethToBesu(final ObjectNode genesisRoot) {
     final Optional<ObjectNode> configNode = JsonUtil.getObjectNode(genesisRoot, "config");
     if (!configNode.isPresent()) {
       return;
@@ -1805,9 +1876,9 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
     final ObjectNode config = configNode.get();
 
-    // Add silash field if not present
-    if (!config.has("silash")) {
-      config.set("silash", JsonUtil.createEmptyObjectNode());
+    // Add ethash field if not present
+    if (!config.has("ethash")) {
+      config.set("ethash", JsonUtil.createEmptyObjectNode());
     }
 
     // Map mergeNetsplitBlock to preMergeForkBlock
@@ -1846,16 +1917,16 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
    * @return true if any KZG-requiring fork time is present
    */
   private boolean hasKzgFork(final GenesisConfigOptions genesisConfigOptions) {
-    return genesisConfigOptions.getSilaCancunTime().isPresent()
-        || genesisConfigOptions.getSilaPragueTime().isPresent()
-        || genesisConfigOptions.getSilaOsakaTime().isPresent()
+    return genesisConfigOptions.getCancunTime().isPresent()
+        || genesisConfigOptions.getPragueTime().isPresent()
+        || genesisConfigOptions.getOsakaTime().isPresent()
         || genesisConfigOptions.getBpo1Time().isPresent()
         || genesisConfigOptions.getBpo2Time().isPresent()
         || genesisConfigOptions.getBpo3Time().isPresent()
         || genesisConfigOptions.getBpo4Time().isPresent()
         || genesisConfigOptions.getBpo5Time().isPresent()
-        || genesisConfigOptions.getSilaAmsterdamTime().isPresent()
-        || genesisConfigOptions.getFutureSipsTime().isPresent();
+        || genesisConfigOptions.getAmsterdamTime().isPresent()
+        || genesisConfigOptions.getFutureEipsTime().isPresent();
   }
 
   /**
@@ -1893,15 +1964,15 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
    * Gets the name of the consensus mechanism configured in the genesis.
    *
    * @param genesisConfigOptions the genesis config options
-   * @return the consensus mechanism name (e.g., "IBFT2", "QBFT", "Clique", "Silash")
+   * @return the consensus mechanism name (e.g., "IBFT2", "QBFT", "Clique", "Ethash")
    */
   private String getConsensusMechanism(final GenesisConfigOptions genesisConfigOptions) {
     if (genesisConfigOptions.isIbft2()) {
       return "IBFT2";
     } else if (genesisConfigOptions.isQbft()) {
       return "QBFT";
-    } else if (genesisConfigOptions.isSilHash()) {
-      return "Silash";
+    } else if (genesisConfigOptions.isEthHash()) {
+      return "Ethash";
     }
     return "Unknown";
   }
@@ -1930,12 +2001,16 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
       logger.warn("--sync-min-peers is ignored in FULL sync-mode");
     }
 
+    if (getDefaultSyncModeIfNotSet() == SyncMode.FULL && isOptionSet(commandLine, "--checkpoint")) {
+      logger.warn("--checkpoint is ignored in FULL sync-mode");
+    }
+
     CommandLineUtils.failIfOptionDoesntMeetRequirement(
         commandLine,
         "--Xsnapsync-synchronizer-flat option can only be used when --Xbonsai-full-flat-db-enabled is true",
         dataStorageOptions
             .toDomainObject()
-            .getPathBasedExtraStorageConfiguration()
+            .getExtraStorageConfiguration()
             .getUnstable()
             .getFullFlatDbEnabled(),
         asList(
@@ -2013,7 +2088,9 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
     instantiateSignatureAlgorithmFactory();
 
-    logger.info(generateConfigurationOverview());
+    // The multi-line framed overview embeds poorly as a single escaped string in structured log
+    // formats, so those get a single-line, semicolon-separated rendering of the same fields.
+    logger.info(generateConfigurationOverview(isPatternLayoutActive()));
     logger.info("Security Module: {}", securityModuleName);
   }
 
@@ -2091,9 +2168,10 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
     BesuControllerBuilder besuControllerBuilder =
         controllerBuilder
-            .fromSilNetworkConfig(updateNetworkConfig(network), getDefaultSyncModeIfNotSet())
+            .checkpoint(checkpoint)
+            .fromEthNetworkConfig(updateNetworkConfig(network), getDefaultSyncModeIfNotSet())
             .synchronizerConfiguration(buildSyncConfig())
-            .silProtocolConfiguration(unstableSilProtocolOptions.toDomainObject())
+            .silProtocolConfiguration(unstableEthProtocolOptions.toDomainObject())
             .networkConfiguration(unstableNetworkingOptions.toDomainObject())
             .dataDirectory(dataDir())
             .dataStorageConfiguration(getDataStorageConfiguration())
@@ -2109,7 +2187,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
                 unstableBftOptions.isLegacyProtocolEncodingEnabled())
             .requiredBlocks(requiredBlocks)
             .reorgLoggingThreshold(reorgLoggingThreshold)
-            .savmConfiguration(unstableSavmOptions.toDomainObject())
+            .savmConfiguration(unstableEvmOptions.toDomainObject())
             .maxPeers(p2PDiscoveryOptions.maxPeers)
             .maxRemotelyInitiatedPeers(maxRemoteInitiatedPeers)
             .randomPeerPriority(p2PDiscoveryOptions.randomPeerPriority)
@@ -2124,8 +2202,8 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
             .balConfiguration(balConfiguration)
             .besuComponent(besuComponent);
     if (getDataStorageConfiguration().getDataStorageFormat().isBonsaiFormat()) {
-      final PathBasedExtraStorageConfiguration subStorageConfiguration =
-          getDataStorageConfiguration().getPathBasedExtraStorageConfiguration();
+      final ExtraStorageConfiguration subStorageConfiguration =
+          getDataStorageConfiguration().getExtraStorageConfiguration();
       besuControllerBuilder.isParallelTxProcessingEnabled(
           subStorageConfiguration.getParallelTxProcessingEnabled());
     }
@@ -2186,7 +2264,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
             "--metrics-push-host",
             "--metrics-push-port",
             "--metrics-push-interval",
-            "--metrics-push-promsileus-job"));
+            "--metrics-push-prometheus-job"));
 
     metricsOptions.setMetricCategoryRegistry(metricCategoryRegistry);
 
@@ -2314,32 +2392,56 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
       dataStorageConfiguration = dataStorageOptions.toDomainObject();
     }
 
+    // BAL prefetch warms VersionedFlatDbCacheManager; enable the cross-block cache when prefetch is
+    // on so those reads are not discarded by the no-op cache. Only Bonsai (non-archive) benefits:
+    // Forest ignores the flag, and archive getMultipleFlat is a no-op, so auto-enabling there would
+    // only change default memory behaviour.
+    if (DataStorageFormat.BONSAI.equals(dataStorageConfiguration.getDataStorageFormat())
+        && balConfigurationOptions.toDomainObject().isBalPreFetchReadingEnabled()
+        && !dataStorageConfiguration
+            .getExtraStorageConfiguration()
+            .getUnstable()
+            .getBonsaiCrossBlockCacheEnabled()) {
+      dataStorageConfiguration =
+          ImmutableDataStorageConfiguration.copyOf(dataStorageConfiguration)
+              .withExtraStorageConfiguration(
+                  ImmutableExtraStorageConfiguration.copyOf(
+                          dataStorageConfiguration.getExtraStorageConfiguration())
+                      .withUnstable(
+                          ImmutableExtraStorageConfiguration.Unstable.copyOf(
+                                  dataStorageConfiguration
+                                      .getExtraStorageConfiguration()
+                                      .getUnstable())
+                              .withBonsaiCrossBlockCacheEnabled(true)));
+      logger.info("Bonsai cross-block cache enabled for BAL prefetch reading");
+    }
+
     if (SyncMode.FULL.equals(getDefaultSyncModeIfNotSet())
         && DataStorageFormat.BONSAI.equals(dataStorageConfiguration.getDataStorageFormat())) {
-      final PathBasedExtraStorageConfiguration pathBasedExtraStorageConfiguration =
-          dataStorageConfiguration.getPathBasedExtraStorageConfiguration();
-      if (pathBasedExtraStorageConfiguration.getLimitTrieLogsEnabled()) {
+      final ExtraStorageConfiguration extraStorageConfiguration =
+          dataStorageConfiguration.getExtraStorageConfiguration();
+      if (extraStorageConfiguration.getLimitTrieLogsEnabled()) {
         if (CommandLineUtils.isOptionSet(
-            commandLine, PathBasedExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED)) {
+            commandLine, ExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED)) {
           throw new ParameterException(
               commandLine,
               String.format(
                   "Cannot enable %s with --sync-mode=%s and --data-storage-format=%s. You must set %s or use a different sync-mode",
-                  PathBasedExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED,
+                  ExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED,
                   SyncMode.FULL,
                   DataStorageFormat.BONSAI,
-                  PathBasedExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED + "=false"));
+                  ExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED + "=false"));
         }
 
         dataStorageConfiguration =
             ImmutableDataStorageConfiguration.copyOf(dataStorageConfiguration)
-                .withPathBasedExtraStorageConfiguration(
-                    ImmutablePathBasedExtraStorageConfiguration.copyOf(
-                            dataStorageConfiguration.getPathBasedExtraStorageConfiguration())
+                .withExtraStorageConfiguration(
+                    ImmutableExtraStorageConfiguration.copyOf(
+                            dataStorageConfiguration.getExtraStorageConfiguration())
                         .withLimitTrieLogsEnabled(false));
         logger.warn(
             "Forcing {}, since it cannot be enabled with --sync-mode={} and --data-storage-format={}.",
-            PathBasedExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED + "=false",
+            ExtraStorageOptions.LIMIT_TRIE_LOGS_ENABLED + "=false",
             SyncMode.FULL,
             DataStorageFormat.BONSAI);
       }
@@ -2396,9 +2498,11 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
             .p2pAdvertisedHost(p2pAdvertisedHost)
             .p2pListenInterface(p2pListenInterface)
             .p2pListenPort(p2pListenPort)
+            .p2pDiscoveryListenPort(p2PDiscoveryConfig.p2pDiscoveryPort())
             .p2pAdvertisedHostIpv6(p2PDiscoveryConfig.p2pHostIpv6())
             .p2pListenInterfaceIpv6(p2PDiscoveryConfig.p2pInterfaceIpv6())
             .p2pListenPortIpv6(p2PDiscoveryConfig.p2pPortIpv6())
+            .p2pDiscoveryListenPortIpv6(p2PDiscoveryConfig.p2pDiscoveryPortIpv6())
             .networkingConfiguration(unstableNetworkingOptions.toDomainObject())
             .graphQLConfiguration(graphQLConfiguration)
             .jsonRpcConfiguration(jsonRpcConfiguration)
@@ -2417,13 +2521,14 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
             .identityString(identityString)
             .besuPluginContext(besuPluginContext)
             .autoLogBloomCaching(autoLogBloomCachingEnabled)
-            .silstatsOptions(silstatsOptions)
+            .silStatsOptions(silStatsOptions)
             .storageProvider(keyValueStorageProvider(keyValueStorageName))
             .rpcEndpointService(rpcEndpointServiceImpl)
             .enodeDnsConfiguration(getEnodeDnsConfiguration())
             .allowedSubnets(p2PDiscoveryConfig.allowedSubnets())
             .poaDiscoveryRetryBootnodes(p2PDiscoveryConfig.poaDiscoveryRetryBootnodes())
             .preferIpv6Outbound(p2PDiscoveryConfig.preferIpv6Outbound())
+            .discoveryMode(p2PDiscoveryConfig.discoveryMode())
             .transactionValidatorService(transactionValidatorServiceImpl)
             .build();
 
@@ -2489,7 +2594,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
       }
 
       if (networkId == null) {
-        // If no chain id is found in the genesis, use sila-mainnet network id
+        // If no chain id is found in the genesis, use mainnet network id
         try {
           builder.setNetworkId(
               readGenesisConfigOptions()
@@ -2531,12 +2636,12 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
       discoveryDnsUrlFromGenesis.ifPresent(builder::setDnsDiscoveryUrl);
     }
 
+    // clear enr/enode bootnodes that may be pre-populated in the builder based on default network.
+    builder.setEnrBootNodes(Collections.emptyList());
+    builder.setEnodeBootNodes(Collections.emptyList());
+
     // Resolve bootnodes: CLI --bootnodes overrides genesis defaults.
-    // The discovery protocol version determines the expected format:
-    //   V5 → ENR strings ("enr:..."),  V4 → enode URLs ("enode://...")
-    final boolean isV5 =
-        unstableNetworkingOptions.toDomainObject().discoveryConfiguration().isDiscoveryV5Enabled();
-    List<String> rawBootnodes = null;
+    final List<String> rawBootnodes;
     final boolean cliBootnodesProvided = p2PDiscoveryOptions.bootNodes != null;
     if (cliBootnodesProvided) {
       try {
@@ -2545,62 +2650,60 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
         throw new ParameterException(commandLine, e.getMessage(), e);
       }
     } else {
-      final DiscoveryOptions discoveryOptions =
-          genesisConfigOptionsSupplier.get().getDiscoveryOptions();
       rawBootnodes =
-          isV5
-              ? discoveryOptions.getV5BootNodes().orElse(null)
-              : discoveryOptions.getBootNodes().orElse(null);
+          genesisConfigOptionsSupplier.get().getDiscoveryOptions().getBootNodes().orElse(null);
     }
 
-    if (rawBootnodes != null && !rawBootnodes.isEmpty()) {
-      if (!p2PDiscoveryOptions.peerDiscoveryEnabled) {
-        logger.warn("Discovery disabled: bootnodes will be ignored.");
-      }
-      try {
-        if (isV5) {
-          builder.setEnrBootNodes(
-              rawBootnodes.stream()
-                  .map(
-                      enr -> {
-                        try {
-                          return SilaNodeRecord.fromEnr(enr);
-                        } catch (final Exception e) {
-                          throw new ParameterException(
-                              commandLine,
-                              "Invalid ENR bootnode: '"
-                                  + enr
-                                  + "'. ENR bootnodes must start with 'enr:'. Error: "
-                                  + e.getMessage(),
-                              e);
-                        }
-                      })
-                  .toList());
-        } else {
-          final List<EnodeURLImpl> enodes = buildEnodes(rawBootnodes, getEnodeDnsConfiguration());
-          DiscoveryConfiguration.assertValidBootnodes(enodes);
-          builder.setEnodeBootNodes(enodes);
-        }
-        // CLI --bootnodes is a full override: clear the unused protocol's list
-        if (cliBootnodesProvided) {
-          if (isV5) {
-            builder.setEnodeBootNodes(Collections.emptyList());
-          } else {
-            builder.setEnrBootNodes(Collections.emptyList());
-          }
-        }
-      } catch (final ParameterException e) {
-        throw e; // re-throw ParameterException from ENR parsing as-is
-      } catch (final IllegalArgumentException e) {
-        throw new ParameterException(commandLine, e.getMessage());
-      } catch (final RuntimeException e) {
-        throw new ParameterException(commandLine, "Invalid bootnode format: " + e.getMessage(), e);
-      }
-    } else if (cliBootnodesProvided) {
-      // Explicitly empty --bootnodes clears all default bootnodes
-      builder.setEnodeBootNodes(Collections.emptyList());
-      builder.setEnrBootNodes(Collections.emptyList());
+    // if resolved bootnodes are null/empty build and return early
+    if (rawBootnodes == null || rawBootnodes.isEmpty()) {
+      return builder.build();
     }
+
+    if (!p2PDiscoveryOptions.peerDiscoveryEnabled) {
+      logger.warn("Discovery disabled: bootnodes will be ignored.");
+    }
+
+    // separate enr/enodes from resolved raw bootnodes.
+    try {
+      final List<EthereumNodeRecord> enrBootnodes = new ArrayList<>();
+      final List<EnodeURLImpl> enodeBootnodes = new ArrayList<>();
+
+      for (final String entry : rawBootnodes) {
+        if (entry == null || entry.isBlank()) {
+          // Silently skip, matching BootnodeResolver's precedent for the CLI --bootnodes path -
+          // this loop also serves the genesis-file bootnodes path, which isn't pre-filtered.
+          continue;
+        }
+        try {
+          if (entry.startsWith("enr:")) {
+            enrBootnodes.add(EthereumNodeRecord.fromEnr(entry));
+          } else {
+            enodeBootnodes.add(EnodeURLImpl.fromString(entry, getEnodeDnsConfiguration()));
+          }
+        } catch (final Exception e) {
+          throw new ParameterException(
+              commandLine, "Invalid bootnode: '" + entry + "'. Error: " + e.getMessage(), e);
+        }
+      }
+
+      // additional validation that bootnodes have discovery ports in it
+      DiscoveryConfiguration.assertValidBootnodes(
+          Stream.concat(enodeBootnodes.stream(), enrBootnodes.stream()));
+
+      builder.setEnrBootNodes(enrBootnodes);
+      builder.setEnodeBootNodes(enodeBootnodes);
+
+      if (p2PDiscoveryOptions.peerDiscoveryEnabled) {
+        warnOnBootnodeMismatch(p2PDiscoveryOptions.discoveryMode, enrBootnodes, enodeBootnodes);
+      }
+    } catch (final ParameterException e) {
+      throw e; // re-throw ParameterException from ENR parsing as-is
+    } catch (final IllegalArgumentException e) {
+      throw new ParameterException(commandLine, e.getMessage());
+    } catch (final RuntimeException e) {
+      throw new ParameterException(commandLine, "Invalid bootnode format: " + e.getMessage(), e);
+    }
+
     return builder.build();
   }
 
@@ -2654,12 +2757,30 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     return staticNodes;
   }
 
-  private List<EnodeURLImpl> buildEnodes(
-      final List<String> bootNodes, final EnodeDnsConfiguration enodeDnsConfiguration) {
-    return bootNodes.stream()
-        .filter(bootNode -> !bootNode.isEmpty())
-        .map(bootNode -> EnodeURLImpl.fromString(bootNode, enodeDnsConfiguration))
-        .collect(Collectors.toList());
+  private void warnOnBootnodeMismatch(
+      final DiscoveryMode mode,
+      final List<EthereumNodeRecord> enrBootnodes,
+      final List<EnodeURLImpl> enodeBootnodes) {
+    // Same resolution CompositePeerDiscoveryAgentFactory uses, so this can't warn about a
+    // protocol that already silently fell back (e.g. V5 without a secp256k1 key).
+    final DiscoveryModeResolver.Resolution resolution =
+        DiscoveryModeResolver.resolve(mode, DiscoveryModeResolver.isV5CurveSupported());
+    final boolean v5Active = resolution.v5Enabled();
+    final boolean v4Active = resolution.v4Enabled();
+    if (v5Active && enrBootnodes.isEmpty() && !enodeBootnodes.isEmpty()) {
+      logger.warn(
+          "--discovery-mode={} but no ENR (enr:) bootnodes provided; "
+              + "DiscV5 will start with no bootstrap peers. "
+              + "Add ENR bootnodes for DiscV5 peer discovery.",
+          mode);
+    }
+    if (v4Active && enodeBootnodes.isEmpty() && !enrBootnodes.isEmpty()) {
+      logger.warn(
+          "--discovery-mode={} but no enode:// bootnodes provided; "
+              + "DiscV4 will start with no bootstrap peers. "
+              + "Add enode:// bootnodes for DiscV4 peer discovery.",
+          mode);
+    }
   }
 
   /**
@@ -2695,15 +2816,14 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
   private void checkPortClash() {
     getEffectivePorts().stream()
-        .filter(Objects::nonNull)
-        .filter(port -> port > 0)
+        .filter(binding -> binding.port() != null && binding.port() > 0)
         .forEach(
-            port -> {
-              if (!allocatedPorts.add(port)) {
+            binding -> {
+              if (!allocatedPorts.add(binding)) {
                 throw new ParameterException(
                     commandLine,
                     "Port number '"
-                        + port
+                        + binding.port()
                         + "' has been specified multiple times. Please review the supplied configuration.");
               }
             });
@@ -2715,22 +2835,16 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
    * @throws InvalidConfigurationException if ports are not available.
    */
   protected void checkIfRequiredPortsAreAvailable() {
-    final List<Integer> unavailablePorts = new ArrayList<>();
-    getEffectivePorts().stream()
-        .filter(Objects::nonNull)
-        .filter(port -> port > 0)
-        .forEach(
-            port -> {
-              if (port.equals(p2PDiscoveryConfig.p2pPort())
-                  && (NetworkUtility.isPortUnavailableForTcp(port)
-                      || NetworkUtility.isPortUnavailableForUdp(port))) {
-                unavailablePorts.add(port);
-              }
-              if (!port.equals(p2PDiscoveryConfig.p2pPort())
-                  && NetworkUtility.isPortUnavailableForTcp(port)) {
-                unavailablePorts.add(port);
-              }
-            });
+    final List<PortBinding> unavailablePorts =
+        getEffectivePorts().stream()
+            .filter(binding -> binding.port() != null && binding.port() > 0)
+            .filter(
+                binding ->
+                    switch (binding.transport()) {
+                      case TCP -> NetworkUtility.isPortUnavailableForTcp(binding.port());
+                      case UDP -> NetworkUtility.isPortUnavailableForUdp(binding.port());
+                    })
+            .toList();
     if (!unavailablePorts.isEmpty()) {
       throw new InvalidConfigurationException(
           "Port(s) '"
@@ -2740,42 +2854,92 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
   }
 
   /**
-   * * Gets the list of effective ports (ports that are enabled).
+   * Gets the list of effective ports (ports that are enabled) tagged with transport protocol.
    *
-   * @return The list of effective ports
+   * @return The list of effective port bindings
    */
-  private List<Integer> getEffectivePorts() {
-    final List<Integer> effectivePorts = new ArrayList<>();
-    addPortIfEnabled(effectivePorts, p2PDiscoveryOptions.p2pPort, p2PDiscoveryOptions.p2pEnabled);
+  private List<PortBinding> getEffectivePorts() {
+    final List<PortBinding> effectivePorts = new ArrayList<>();
     addPortIfEnabled(
-        effectivePorts, graphQlOptions.getGraphQLHttpPort(), graphQlOptions.isGraphQLHttpEnabled());
+        effectivePorts,
+        p2PDiscoveryConfig.p2pPort(),
+        Transport.TCP,
+        p2PDiscoveryConfig.p2pEnabled());
     addPortIfEnabled(
-        effectivePorts, jsonRpcHttpOptions.getRpcHttpPort(), jsonRpcHttpOptions.isRpcHttpEnabled());
+        effectivePorts,
+        p2PDiscoveryConfig.p2pDiscoveryPort(),
+        Transport.UDP,
+        p2PDiscoveryConfig.p2pEnabled());
+    if (p2PDiscoveryConfig.p2pInterfaceIpv6().isPresent()) {
+      // Skip when equal to the IPv4 port: Besu binds a single dual-stack socket in that case.
+      if (!p2PDiscoveryConfig.p2pPortIpv6().equals(p2PDiscoveryConfig.p2pPort())) {
+        addPortIfEnabled(
+            effectivePorts,
+            p2PDiscoveryConfig.p2pPortIpv6(),
+            Transport.TCP,
+            p2PDiscoveryConfig.p2pEnabled());
+      }
+      if (!p2PDiscoveryConfig
+          .p2pDiscoveryPortIpv6()
+          .equals(p2PDiscoveryConfig.p2pDiscoveryPort())) {
+        addPortIfEnabled(
+            effectivePorts,
+            p2PDiscoveryConfig.p2pDiscoveryPortIpv6(),
+            Transport.UDP,
+            p2PDiscoveryConfig.p2pEnabled());
+      }
+    }
     addPortIfEnabled(
-        effectivePorts, rpcWebsocketOptions.getRpcWsPort(), rpcWebsocketOptions.isRpcWsEnabled());
-    addPortIfEnabled(effectivePorts, engineRPCConfig.engineRpcPort(), isEngineApiEnabled());
+        effectivePorts,
+        graphQlOptions.getGraphQLHttpPort(),
+        Transport.TCP,
+        graphQlOptions.isGraphQLHttpEnabled());
     addPortIfEnabled(
-        effectivePorts, metricsOptions.getMetricsPort(), metricsOptions.getMetricsEnabled());
+        effectivePorts,
+        jsonRpcHttpOptions.getRpcHttpPort(),
+        Transport.TCP,
+        jsonRpcHttpOptions.isRpcHttpEnabled());
+    addPortIfEnabled(
+        effectivePorts,
+        rpcWebsocketOptions.getRpcWsPort(),
+        Transport.TCP,
+        rpcWebsocketOptions.isRpcWsEnabled());
+    addPortIfEnabled(
+        effectivePorts, engineRPCConfig.engineRpcPort(), Transport.TCP, isEngineApiEnabled());
+    addPortIfEnabled(
+        effectivePorts,
+        metricsOptions.getMetricsPort(),
+        Transport.TCP,
+        metricsOptions.getMetricsEnabled());
     return effectivePorts;
   }
 
   /**
-   * Adds port to the specified list only if enabled.
+   * Adds a port binding to the specified list only if enabled.
    *
-   * @param ports The list of ports
+   * @param ports The list of port bindings
    * @param port The port value
+   * @param transport The transport protocol the port is bound on
    * @param enabled true if enabled, false otherwise
    */
   private void addPortIfEnabled(
-      final List<Integer> ports, final Integer port, final boolean enabled) {
+      final List<PortBinding> ports,
+      final Integer port,
+      final Transport transport,
+      final boolean enabled) {
     if (enabled) {
-      ports.add(port);
+      ports.add(new PortBinding(port, transport));
     }
   }
 
   @VisibleForTesting
   String getLogLevel() {
     return loggingLevelOption.getLogLevel();
+  }
+
+  @VisibleForTesting
+  LoggingFormat getLoggingFormat() {
+    return loggingLevelOption.getLoggingFormat();
   }
 
   /**
@@ -2830,17 +2994,38 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     }
   }
 
-  private void validatePostMergeCheckpointBlockRequirements() {
-    final GenesisConfigOptions genesisConfigOptions = readGenesisConfigOptions();
-    final CheckpointConfigOptions checkpointConfigOptions =
-        genesisConfigOptions.getCheckpointOptions();
+  private void validateAndResolveCheckpointRelatedConfig() {
+    if (checkpointOverride != null) {
+      checkpoint = Optional.of(checkpointOverride);
+    } else {
 
-    // Only validate if checkpoint config is not the default (empty) one
-    if (checkpointConfigOptions != CheckpointConfigOptions.DEFAULT) {
-      if (!checkpointConfigOptions.isValid()) {
-        throw new InvalidConfigurationException(
-            "The checkpoint block configured in the genesis file is not valid.");
+      final GenesisConfigOptions genesisConfigOptions = readGenesisConfigOptions();
+      final CheckpointConfigOptions checkpointConfigOptions =
+          genesisConfigOptions.getCheckpointOptions();
+
+      if (checkpointConfigOptions == CheckpointConfigOptions.DEFAULT) {
+        checkpoint = Optional.empty();
+      } else {
+        if (!checkpointConfigOptions.isValid()) {
+          throw new InvalidConfigurationException(
+              "The checkpoint block configured in the genesis file is not valid.");
+        }
+        try {
+          checkpoint = Checkpoint.fromConfig(checkpointConfigOptions);
+        } catch (final IllegalArgumentException e) {
+          throw new InvalidConfigurationException(
+              "The checkpoint block configured in the genesis file is not valid: "
+                  + e.getMessage());
+        }
       }
+    }
+
+    if (unstableSynchronizerOptions.isSnapSyncHeadersToCheckpointOnly() && checkpoint.isEmpty()) {
+      throw new ParameterException(
+          this.commandLine,
+          "--snapsync-synchronizer-skip-pre-checkpoint-headers-enabled requires a trusted "
+              + "checkpoint, but none is configured. Provide one with --checkpoint or a checkpoint "
+              + "section in the genesis file.");
     }
   }
 
@@ -2870,7 +3055,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
         .orElse(genesisFile != null || networkId != null);
   }
 
-  private String generateConfigurationOverview() {
+  private String generateConfigurationOverview(final boolean framed) {
     final ConfigurationOverviewBuilder builder = new ConfigurationOverviewBuilder(logger);
 
     if (environment != null) {
@@ -2898,7 +3083,7 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
 
     builder.setParallelTxProcessingEnabled(
         getDataStorageConfiguration()
-            .getPathBasedExtraStorageConfiguration()
+            .getExtraStorageConfiguration()
             .getParallelTxProcessingEnabled());
 
     if (jsonRpcConfiguration != null && jsonRpcConfiguration.isEnabled()) {
@@ -2927,8 +3112,8 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
     }
 
     if (DataStorageFormat.BONSAI.equals(getDataStorageConfiguration().getDataStorageFormat())) {
-      final PathBasedExtraStorageConfiguration subStorageConfiguration =
-          getDataStorageConfiguration().getPathBasedExtraStorageConfiguration();
+      final ExtraStorageConfiguration subStorageConfiguration =
+          getDataStorageConfiguration().getExtraStorageConfiguration();
       if (subStorageConfiguration.getLimitTrieLogsEnabled()) {
         builder
             .setLimitTrieLogsEnabled()
@@ -2968,14 +3153,16 @@ public class BesuCommand implements DefaultCommandValues, Runnable {
         .setDiscoveryEnabled(p2PDiscoveryOptions.peerDiscoveryEnabled)
         .setSnapServerEnabled(this.unstableSynchronizerOptions.isSnapsyncServerEnabled())
         .setTxPoolImplementation(buildTransactionPoolConfiguration().getTxPoolImplementation())
-        .setWorldStateUpdateMode(unstableSavmOptions.toDomainObject().worldUpdaterMode())
-        .setEnabledOpcodeOptimizations(unstableSavmOptions.toDomainObject().enableOptimizedOpcodes())
-        .setSavmV2(unstableSavmOptions.toDomainObject().enableSavmV2())
+        .setWorldStateUpdateMode(unstableEvmOptions.toDomainObject().worldUpdaterMode())
+        .setEnabledOpcodeOptimizations(unstableEvmOptions.toDomainObject().enableOptimizedOpcodes())
+        .setEvmV2(unstableEvmOptions.toDomainObject().enableEvmV2())
         .setPluginContext(this.besuPluginContext)
         .setHistoryExpiryPruneEnabled(getDataStorageConfiguration().getHistoryExpiryPruneEnabled())
-        .setBlobDBSettings(rocksDBPlugin.getBlobDBSettings());
+        .setBlobDBSettings(rocksDBPlugin.getBlobDBSettings())
+        .setRocksDbMaxOpenFiles(
+            rocksDBPlugin.getResolvedMaxOpenFiles(), rocksDBPlugin.isMaxOpenFilesExplicitlySet());
 
-    return builder.build();
+    return framed ? builder.build() : builder.buildCompact();
   }
 
   /**

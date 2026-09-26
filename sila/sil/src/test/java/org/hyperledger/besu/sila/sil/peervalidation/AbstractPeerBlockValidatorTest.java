@@ -19,19 +19,19 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockDataGenerator.BlockOptions;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
 import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
-import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.sil.messages.GetBlockHeadersMessage;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.List;
 import java.util.Optional;
@@ -59,15 +59,15 @@ public abstract class AbstractPeerBlockValidatorTest {
   public void validatePeer_unresponsivePeer() {
     final SilProtocolManager silProtocolManager =
         SilProtocolManagerTestBuilder.builder()
-            .setSilScheduler(
-                new DeterministicSilScheduler(
-                    DeterministicSilScheduler.TimeoutPolicy.ALWAYS_TIMEOUT))
+            .setEthScheduler(
+                new DeterministicEthScheduler(
+                    DeterministicEthScheduler.TimeoutPolicy.ALWAYS_TIMEOUT))
             .build();
     final long blockNumber = 500;
     final PeerValidator validator = createValidator(peerTaskExecutor, blockNumber, 0);
 
     final SilPeer peer =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -99,11 +99,11 @@ public abstract class AbstractPeerBlockValidatorTest {
         Stream.generate(
                 () ->
                     SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber)
-                        .getSilPeer())
+                        .getEthPeer())
             .limit(peerCount)
             .toList();
     final SilPeer targetPeer =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, blockNumber).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -133,15 +133,15 @@ public abstract class AbstractPeerBlockValidatorTest {
     final BlockDataGenerator gen = new BlockDataGenerator(1);
     final SilProtocolManager silProtocolManager =
         SilProtocolManagerTestBuilder.builder()
-            .setSilScheduler(
-                new DeterministicSilScheduler(
-                    DeterministicSilScheduler.TimeoutPolicy.ALWAYS_TIMEOUT))
+            .setEthScheduler(
+                new DeterministicEthScheduler(
+                    DeterministicEthScheduler.TimeoutPolicy.ALWAYS_TIMEOUT))
             .build();
     final long blockNumber = 500;
     final long buffer = 10;
 
     final PeerValidator validator = createValidator(peerTaskExecutor, blockNumber, buffer);
-    final SilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0).getSilPeer();
+    final SilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 0).getEthPeer();
 
     peer.chainState().update(gen.hash(), blockNumber - 10);
     assertThat(validator.canBeValidated(peer)).isFalse();
@@ -159,11 +159,11 @@ public abstract class AbstractPeerBlockValidatorTest {
     assertThat(validator.canBeValidated(peer)).isTrue();
   }
 
-  AtomicBoolean respondToBlockRequest(final RespondingSilPeer peer, final Block block) {
+  AtomicBoolean respondToBlockRequest(final RespondingEthPeer peer, final Block block) {
     final AtomicBoolean blockRequested = new AtomicBoolean(false);
 
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.targetedResponder(
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.targetedResponder(
             (cap, p, msg) -> {
               if (msg.getCode() != SilProtocolMessages.GET_BLOCK_HEADERS) {
                 return false;

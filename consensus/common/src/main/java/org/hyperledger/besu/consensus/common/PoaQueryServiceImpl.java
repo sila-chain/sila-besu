@@ -16,14 +16,15 @@ package org.hyperledger.besu.consensus.common;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Address;
-import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.plugin.services.query.PoaQueryService;
+import org.hyperledger.besu.sila.chain.Blockchain;
 
 import java.util.ArrayList;
 import java.util.Collection;
 
 /** The Poa query service. */
+@SuppressWarnings("removal")
 public class PoaQueryServiceImpl implements PoaQueryService {
 
   private final BlockInterface blockInterface;

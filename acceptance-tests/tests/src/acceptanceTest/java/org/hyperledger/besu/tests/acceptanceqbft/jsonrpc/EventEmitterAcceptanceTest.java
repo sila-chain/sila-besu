@@ -28,8 +28,8 @@ import io.reactivex.Flowable;
 import io.reactivex.disposables.Disposable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.request.SilFilter;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.request.EthFilter;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 /*
  * This class is based around the EventEmitter solidity contract
@@ -50,7 +50,7 @@ public class EventEmitterAcceptanceTest extends AcceptanceTestBase {
         node.execute(contractTransactions.createSmartContract(EventEmitter.class));
 
     final Flowable<StoredEventResponse> storedEventResponseObservable =
-        eventEmitter.storedEventFlowable(new SilFilter());
+        eventEmitter.storedEventFlowable(new EthFilter());
 
     final AtomicBoolean subscriptionReceived = new AtomicBoolean(false);
 

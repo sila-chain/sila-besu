@@ -81,24 +81,24 @@ public class SyncTransactionReceiptDecoder {
     if (!isCompacted) {
       bloomFilter = new LogsBloomFilter(rlpInput.readBytes());
     }
-    boolean isSil69Receipt = isCompacted && !rlpInput.nextIsList();
+    boolean isEth69Receipt = isCompacted && !rlpInput.nextIsList();
     SyncTransactionReceipt result;
-    if (isSil69Receipt) {
-      result = decodeSil69Receipt(rawRlp, rlpInput, firstElement, secondElement);
+    if (isEth69Receipt) {
+      result = decodeEth69Receipt(rawRlp, rlpInput, firstElement, secondElement);
     } else {
       result = decodeLegacyReceipt(rawRlp, rlpInput, firstElement, secondElement, bloomFilter);
     }
     return result;
   }
 
-  private SyncTransactionReceipt decodeSil69Receipt(
+  private SyncTransactionReceipt decodeEth69Receipt(
       final Bytes rawRlp,
       final RLPInput input,
       final Bytes transactionByteRlp,
       final Bytes statusOrStateRoot) {
     Bytes transactionTypeCode =
         transactionByteRlp.isEmpty()
-            ? Bytes.of(TransactionType.FRONTIER.getSilSerializedType())
+            ? Bytes.of(TransactionType.FRONTIER.getEthSerializedType())
             : transactionByteRlp;
     Bytes cumulativeGasUsed = input.readBytes();
     List<List<Bytes>> logs = parseLogs(input);
@@ -117,7 +117,7 @@ public class SyncTransactionReceiptDecoder {
     if (bloomFilter != null) {
       syncTransactionReceipt = new SyncTransactionReceipt(rawRlp);
     } else {
-      Bytes transactionTypeCode = Bytes.of(TransactionType.FRONTIER.getSilSerializedType());
+      Bytes transactionTypeCode = Bytes.of(TransactionType.FRONTIER.getEthSerializedType());
       List<List<Bytes>> logs = parseLogs(input);
       syncTransactionReceipt =
           new SyncTransactionReceipt(

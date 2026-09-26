@@ -21,11 +21,11 @@ import org.hyperledger.besu.tests.acceptance.dsl.account.Accounts;
 import org.hyperledger.besu.tests.acceptance.dsl.blockchain.Blockchain;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.admin.AdminConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.bft.BftConditions;
-import org.hyperledger.besu.tests.acceptance.dsl.condition.sil.SilConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.login.LoginConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.net.NetConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.perm.PermissioningConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.process.ExitedWithCode;
+import org.hyperledger.besu.tests.acceptance.dsl.condition.sil.SilConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.txpool.TxPoolConditions;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.web3.Web3Conditions;
 import org.hyperledger.besu.tests.acceptance.dsl.contract.ContractVerifier;
@@ -38,11 +38,11 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.admin.AdminTransact
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.bft.BftTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.contract.ContractTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.debug.DebugTransactions;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.miner.MinerTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.NetTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.perm.PermissioningTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.plugins.PluginsTransactions;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.txpool.TxPoolTransactions;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.web3.Web3Transactions;
 
@@ -68,7 +68,7 @@ import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 /**
- * Superlass for acceptance tests. For now (transition to junit5 is ongoing) this class supports
+ * Superclass for acceptance tests. For now (transition to junit5 is ongoing) this class supports
  * junit4 format.
  */
 @ExtendWith(AcceptanceTestBaseTestWatcher.class)
@@ -142,7 +142,8 @@ public class AcceptanceTestBase {
 
   @AfterEach
   public void tearDownAcceptanceTestBase() {
-    reportMemory();
+    // commented by default, since it is quite verbose, uncomment if needed for debugging
+    // reportMemory();
     cluster.close();
   }
 

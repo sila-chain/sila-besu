@@ -16,33 +16,35 @@ package org.hyperledger.besu.sila.vm;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.assertj.core.api.Assertions.entry;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withStateRootAndBlockHashAndUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withStateRootAndBlockHashAndUpdateNodeHead;
 
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
+import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.chain.MutableBlockchain;
-import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.sila.core.ExecutionContextTestFixture;
-import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
-import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder;
 import org.hyperledger.besu.savm.tracing.OpCodeTracerConfigBuilder.OpCodeTracerConfig;
 import org.hyperledger.besu.savm.tracing.TraceFrame;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.sila.chain.MutableBlockchain;
+import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
+import org.hyperledger.besu.sila.core.ExecutionContextTestFixture;
+import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.core.Util;
+import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
+import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 
 import java.util.List;
 import java.util.Map;
@@ -254,6 +256,57 @@ public class TraceTransactionIntegrationTest {
         "0000000000000000000000000000000000000000000000000000000000000000",
         "0000000000000000000000000000000000000000000000000000000000000000",
         "0000000000000000000000000000000000000000000000000000000000000080");
+  }
+
+  @Test
+  public void shouldTraceEoaToEoaTransferWithSyntheticStopOnly() {
+    final KeyPair keyPair = SignatureAlgorithmFactory.getInstance().generateKeyPair();
+    final Address sender = Util.publicKeyToAddress(keyPair.getPublicKey());
+
+    final BlockHeader genesisBlockHeader = genesisBlock.getHeader();
+    final MutableWorldState worldState =
+        worldStateArchive
+            .getWorldState(
+                withStateRootAndBlockHashAndUpdateNodeHead(
+                    genesisBlockHeader.getStateRoot(), genesisBlockHeader.getHash()))
+            .get();
+    final WorldUpdater fundingUpdater = worldState.updater();
+    fundingUpdater.createAccount(sender, 0, Wei.of(1_000_000L));
+    fundingUpdater.commit();
+
+    final DebugOperationTracer tracer =
+        new DebugOperationTracer(
+            OpCodeTracerConfigBuilder.createFrom(OpCodeTracerConfig.DEFAULT).build(), false);
+    final Transaction transferTransaction =
+        Transaction.builder()
+            .type(TransactionType.FRONTIER)
+            .gasLimit(300_000)
+            .gasPrice(Wei.ZERO)
+            .nonce(0)
+            .to(Address.fromHexString("0x00000000000000000000000000000000deadbeef"))
+            .value(Wei.of(1_000L))
+            .payload(Bytes.EMPTY)
+            .signAndBuild(keyPair);
+
+    final TransactionProcessingResult result =
+        transactionProcessor.processTransaction(
+            worldState.updater(),
+            genesisBlockHeader,
+            transferTransaction,
+            genesisBlockHeader.getCoinbase(),
+            tracer,
+            blockHashLookup,
+            Wei.ZERO);
+
+    assertThat(result.isSuccessful()).isTrue();
+
+    final List<TraceFrame> traceFrames = tracer.getTraceFrames();
+    assertThat(traceFrames).hasSize(1);
+    final TraceFrame frame = traceFrames.get(0);
+    assertThat(frame.getOpcode()).isEqualTo("STOP");
+    assertThat(frame.isVirtualOperation()).isTrue();
+    assertThat(frame.getMaybeCode()).isPresent();
+    assertThat(frame.getMaybeCode().get().getSize()).isZero();
   }
 
   private void assertStackContainsExactly(

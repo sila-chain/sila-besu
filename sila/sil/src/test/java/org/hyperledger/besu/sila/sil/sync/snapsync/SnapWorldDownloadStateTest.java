@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.sil.sync.snapsync;
 
 import static java.util.Collections.emptyList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.atLeastOnce;
 import static org.mockito.Mockito.doAnswer;
@@ -25,6 +26,12 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
+import org.hyperledger.besu.services.tasks.InMemoryTasksPriorityQueues;
 import org.hyperledger.besu.sila.chain.BlockAddedEvent;
 import org.hyperledger.besu.sila.chain.BlockAddedObserver;
 import org.hyperledger.besu.sila.chain.Blockchain;
@@ -39,18 +46,13 @@ import org.hyperledger.besu.sila.sil.manager.task.SilTask;
 import org.hyperledger.besu.sila.sil.sync.snapsync.context.SnapSyncStatePersistenceManager;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.BytecodeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
+import org.hyperledger.besu.sila.sil.sync.worldstate.StalledDownloadException;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloadProcess;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
-import org.hyperledger.besu.services.tasks.InMemoryTasksPriorityQueues;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.util.Collections;
@@ -508,5 +510,43 @@ public class SnapWorldDownloadStateTest {
                 Bytes.EMPTY, Bytes32.wrap(ROOT_NODE_HASH.getBytes())))
         .isEmpty();
     assertThat(downloadState.isDownloading()).isTrue();
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(SnapWorldDownloadStateTestArguments.class)
+  public void completesExceptionallyWithStalledDownloadExceptionAfterMaxFailedRequestsAndDelay(
+      final DataStorageFormat storageFormat, final boolean isFlatDbHealingEnabled) {
+    setUp(storageFormat);
+
+    // Accumulate failures up to (and including) the counter boundary. Time gate hasn't elapsed yet.
+    for (int i = 0; i < MAX_REQUESTS_WITHOUT_PROGRESS; i++) {
+      downloadState.requestComplete(false);
+    }
+    assertThat(future).isNotCompleted();
+
+    // Advance clock past minMillisBeforeStalling and trigger one more failure.
+    clock.stepMillis(MIN_MILLIS_BEFORE_STALLING + 1);
+    downloadState.requestComplete(false);
+
+    assertThat(future).isCompletedExceptionally();
+    assertThatThrownBy(future::get).hasCauseInstanceOf(StalledDownloadException.class);
+  }
+
+  @ParameterizedTest
+  @ArgumentsSource(SnapWorldDownloadStateTestArguments.class)
+  public void doesNotStallIfPivotSwitchHappensBeforeCounterTrips(
+      final DataStorageFormat storageFormat, final boolean isFlatDbHealingEnabled) {
+    setUp(storageFormat);
+
+    for (int i = 0; i < MAX_REQUESTS_WITHOUT_PROGRESS; i++) {
+      downloadState.requestComplete(false);
+    }
+    clock.stepMillis(MIN_MILLIS_BEFORE_STALLING + 1);
+
+    // Pivot switch resets the counter and the timestamp. Next failure must NOT stall.
+    downloadState.resetProgressTracking();
+    downloadState.requestComplete(false);
+
+    assertThat(future).isNotCompleted();
   }
 }

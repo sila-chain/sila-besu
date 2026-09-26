@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.pr
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 
 public class NoOpBonsaiCachedMerkleTrieLoader extends BonsaiCachedMerkleTrieLoader {
 

@@ -38,6 +38,10 @@ import org.hyperledger.besu.datatypes.LogTopic;
 import org.hyperledger.besu.datatypes.RequestType;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.blockcreation.BlockCreator.BlockCreationResult;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
@@ -68,29 +72,25 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.sorter.AbstractPendingTransactionsSorter;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.ImmutableBalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolScheduleBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecAdapters;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidator;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidatorFactory;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.sila-mainnet.WithdrawalsProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.AccountChanges;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListFactory;
-import org.hyperledger.besu.sila.sila-mainnet.requests.DepositRequestProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.requests.RequestProcessingContext;
-import org.hyperledger.besu.sila.sila-mainnet.systemcall.BlockProcessingContext;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.ImmutableBalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolScheduleBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidator;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidatorFactory;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.WithdrawalsProcessor;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.AccountChanges;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListFactory;
+import org.hyperledger.besu.sila.silaMainnet.requests.DepositRequestProcessor;
+import org.hyperledger.besu.sila.silaMainnet.requests.RequestProcessingContext;
+import org.hyperledger.besu.sila.silaMainnet.systemcall.BlockProcessingContext;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.sila.util.TrustedSetupClassLoaderExtension;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.time.Clock;
@@ -118,7 +118,7 @@ class AbstractBlockCreatorTest extends TrustedSetupClassLoaderExtension {
       new KeyPair(PRIVATE_KEY1, SIGNATURE_ALGORITHM.createPublicKey(PRIVATE_KEY1));
 
   @Mock private WithdrawalsProcessor withdrawalsProcessor;
-  protected SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected SilScheduler silScheduler = new DeterministicEthScheduler();
 
   public static final Address DEFAULT_DEPOSIT_CONTRACT_ADDRESS =
       Address.fromHexString("0x00000000219ab540356cbb839cbe05303d7705fa");
@@ -334,7 +334,7 @@ class AbstractBlockCreatorTest extends TrustedSetupClassLoaderExtension {
     final Address coinbase = Address.fromHexString(genesisConfig.getCoinbase().get());
     final KeyPair keyPair =
         SIGNATURE_ALGORITHM.createKeyPair(SECPPrivateKey.create(sender.privateKey(), "ECDSA"));
-    final BigInteger delta = Wei.fromSil(1).toBigInteger();
+    final BigInteger delta = Wei.fromEth(1).toBigInteger();
     final Transaction txn =
         new TransactionTestFixture()
             .sender(sender.address())
@@ -352,23 +352,19 @@ class AbstractBlockCreatorTest extends TrustedSetupClassLoaderExtension {
     final Optional<BlockAccessList> maybeBlockAccessList = blockCreationResult.getBlockAccessList();
     assertThat(maybeBlockAccessList).isNotEmpty();
     final BlockAccessList blockAccessList = maybeBlockAccessList.get();
-    final List<AccountChanges> accountChanges = blockAccessList.accountChanges();
+    // The SIP-2935 history contract is not deployed in this genesis, but the pre-execution system
+    // call still reads it, so it appears in the access list with no changes of its own.
+    final List<AccountChanges> accountChanges =
+        blockAccessList.accountChanges().stream()
+            .filter(change -> !change.balanceChanges().isEmpty())
+            .toList();
     assertThat(accountChanges.size()).isEqualTo(3);
-    final AccountChanges accountChange1 = accountChanges.get(0);
-    assertThat(accountChange1.address()).isIn(sender.address(), recipient.address(), coinbase);
-    assertThat(accountChange1.balanceChanges().size()).isEqualTo(1);
-    assertThat(accountChange1.balanceChanges().get(0).postBalance()).isNotEqualTo(Bytes.of(0));
-    assertThat(accountChange1.balanceChanges().get(0).txIndex()).isGreaterThanOrEqualTo(0);
-    final AccountChanges accountChange2 = accountChanges.get(1);
-    assertThat(accountChange2.address()).isIn(sender.address(), recipient.address(), coinbase);
-    assertThat(accountChange2.balanceChanges().size()).isEqualTo(1);
-    assertThat(accountChange2.balanceChanges().get(0).postBalance()).isNotEqualTo(Bytes.of(0));
-    assertThat(accountChange2.balanceChanges().get(0).txIndex()).isGreaterThanOrEqualTo(0);
-    final AccountChanges accountChange3 = accountChanges.get(2);
-    assertThat(accountChange3.address()).isIn(sender.address(), recipient.address(), coinbase);
-    assertThat(accountChange3.balanceChanges().size()).isEqualTo(1);
-    assertThat(accountChange3.balanceChanges().get(0).postBalance()).isNotEqualTo(Bytes.of(0));
-    assertThat(accountChange3.balanceChanges().get(0).txIndex()).isGreaterThanOrEqualTo(0);
+    for (final AccountChanges accountChange : accountChanges) {
+      assertThat(accountChange.address()).isIn(sender.address(), recipient.address(), coinbase);
+      assertThat(accountChange.balanceChanges().size()).isEqualTo(1);
+      assertThat(accountChange.balanceChanges().get(0).postBalance()).isNotEqualTo(Bytes.of(0));
+      assertThat(accountChange.balanceChanges().get(0).txIndex()).isGreaterThanOrEqualTo(0);
+    }
   }
 
   @Test
@@ -379,7 +375,7 @@ class AbstractBlockCreatorTest extends TrustedSetupClassLoaderExtension {
     final GenesisAccount recipient = accounts.get(2);
     final KeyPair keyPair =
         SIGNATURE_ALGORITHM.createKeyPair(SECPPrivateKey.create(sender.privateKey(), "ECDSA"));
-    final BigInteger delta = Wei.fromSil(1).toBigInteger();
+    final BigInteger delta = Wei.fromEth(1).toBigInteger();
     final Transaction txn =
         new TransactionTestFixture()
             .sender(sender.address())
@@ -445,7 +441,7 @@ class AbstractBlockCreatorTest extends TrustedSetupClassLoaderExtension {
             Suppliers.ofInstance(parentHeader));
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(

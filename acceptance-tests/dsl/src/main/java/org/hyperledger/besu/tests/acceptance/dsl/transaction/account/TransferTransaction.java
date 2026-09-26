@@ -22,17 +22,17 @@ import org.hyperledger.besu.tests.acceptance.dsl.blockchain.Amount;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.SignUtil;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFactory.SilSendRawTransactionResponse;
 
 import java.io.IOException;
 import java.math.BigDecimal;
 import java.math.BigInteger;
 import java.util.Optional;
 
-import org.web3j.crypto.RawTransaction;
-import org.web3j.protocol.core.methods.response.SilSendTransaction;
-import org.web3j.utils.Convert;
-import org.web3j.utils.Convert.Unit;
-import org.web3j.utils.Numeric;
+import sila.web3j.crypto.RawTransaction;
+import sila.web3j.utils.Convert;
+import sila.web3j.utils.Convert.Unit;
+import sila.web3j.utils.Numeric;
 
 public class TransferTransaction implements Transaction<Hash> {
 
@@ -51,6 +51,7 @@ public class TransferTransaction implements Transaction<Hash> {
   private final Optional<BigInteger> chainId;
   private final SignatureAlgorithm signatureAlgorithm;
   private final TransactionType transactionType;
+  private final Optional<BigInteger> gasLimit;
   private byte[] signedTxData = null;
 
   public TransferTransaction(
@@ -61,7 +62,8 @@ public class TransferTransaction implements Transaction<Hash> {
       final BigInteger nonce,
       final Optional<BigInteger> chainId,
       final SignatureAlgorithm signatureAlgorithm,
-      final TransactionType transactionType) {
+      final TransactionType transactionType,
+      final Optional<BigInteger> gasLimit) {
     this.sender = sender;
     this.recipient = recipient;
     this.transferAmount = transferAmount.getValue();
@@ -71,6 +73,7 @@ public class TransferTransaction implements Transaction<Hash> {
     this.chainId = chainId;
     this.signatureAlgorithm = signatureAlgorithm;
     this.transactionType = transactionType;
+    this.gasLimit = gasLimit;
   }
 
   @Override
@@ -89,7 +92,7 @@ public class TransferTransaction implements Transaction<Hash> {
 
   public String transactionHash() {
     final byte[] signedTx = createSignedTransactionData();
-    final byte[] txHash = org.web3j.crypto.Hash.sha3(signedTx);
+    final byte[] txHash = sila.web3j.crypto.Hash.sha3(signedTx);
     return Numeric.toHexString(txHash);
   }
 
@@ -103,13 +106,13 @@ public class TransferTransaction implements Transaction<Hash> {
 
   private Hash sendRawTransaction(final NodeRequests node, final String signedTransactionData) {
     try {
-      final SilSendTransaction transaction =
-          node.sil().silSendRawTransaction(signedTransactionData).send();
+      final SilSendRawTransactionResponse transaction =
+          node.custom().silSendRawTransaction(signedTransactionData).send();
       if (transaction.getResult() == null && transaction.getError() != null) {
         throw new RuntimeException(
             "Error sending transaction: " + transaction.getError().getMessage());
       }
-      return Hash.fromHexString(transaction.getTransactionHash());
+      return Hash.fromHexString(transaction.getResult());
     } catch (final IOException e) {
       throw new RuntimeException(e);
     }
@@ -130,19 +133,19 @@ public class TransferTransaction implements Transaction<Hash> {
   }
 
   private RawTransaction createFrontierTransaction() {
-    return RawTransaction.createSilerTransaction(
+    return RawTransaction.createEtherTransaction(
         getNonce(),
         gasPrice,
-        INTRINSIC_GAS,
+        gasLimit.orElse(INTRINSIC_GAS),
         recipient.getAddress(),
         Convert.toWei(transferAmount, transferUnit).toBigIntegerExact());
   }
 
   private RawTransaction create1559Transaction(final BigInteger chainId) {
-    return RawTransaction.createSilerTransaction(
+    return RawTransaction.createEtherTransaction(
         chainId.longValueExact(),
         getNonce(),
-        INTRINSIC_GAS,
+        gasLimit.orElse(INTRINSIC_GAS),
         recipient.getAddress(),
         Convert.toWei(transferAmount, transferUnit).toBigIntegerExact(),
         BigInteger.ZERO,

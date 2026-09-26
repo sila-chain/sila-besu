@@ -18,10 +18,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListEncoder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -51,7 +51,7 @@ public class BlockAccessListsMessageTest {
   }
 
   @Test
-  public void wrapsWithSil71WireShape() {
+  public void wrapsWithEth71WireShape() {
     // [request-id, [access-lists]]
     final BlockAccessList blockAccessList = new BlockDataGenerator(1).blockAccessList();
 

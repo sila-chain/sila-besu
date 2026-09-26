@@ -65,7 +65,7 @@ dependencies {
   implementation 'io.consensys.tuweni:tuweni-units'
   implementation 'io.consensys.tuweni:tuweni-rlp'
   implementation 'org.immutables:value-annotations'
-  implementation 'io.consensys.protocols:jc-kzg-4844'
+  implementation 'sila.java:sila-ckzg4844'
 
   implementation 'org.xerial.snappy:snappy-java'
 
@@ -89,7 +89,7 @@ dependencies {
   testImplementation 'org.mockito:mockito-core'
   testImplementation 'org.mockito:mockito-junit-jupiter'
   testImplementation 'org.awaitility:awaitility'
-  testImplementation 'org.web3j:abi'
+  testImplementation rootProject.ext.silaWeb3jRuntimeSanitized
 
   integrationTestImplementation project(path: ':config', configuration: 'testSupportArtifacts')
   integrationTestImplementation project(':testutil')

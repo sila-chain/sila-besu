@@ -20,13 +20,13 @@ import static org.hyperledger.besu.sila.referencetests.ReferenceTestBlockchain.g
 
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
+import org.hyperledger.besu.sila.sil.manager.MockPeerConnection;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.MockPeerConnection;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
-import org.hyperledger.besu.sila.sil.manager.siltaskutils.PeerMessageTaskTest;
+import org.hyperledger.besu.sila.sil.manager.ethtaskutils.PeerMessageTaskTest;
 import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 
 import java.util.ArrayList;
 import java.util.Arrays;
@@ -99,8 +99,8 @@ public class GetHeadersFromPeerByHashTaskTest extends PeerMessageTaskTest<List<B
 
   private void getHeadersFromHash(final int skip, final boolean reverse) {
     // Setup a responsive peer
-    final RespondingSilPeer.Responder responder = RespondingSilPeer.blockchainResponder(blockchain);
-    final RespondingSilPeer respondingPeer =
+    final RespondingEthPeer.Responder responder = RespondingEthPeer.blockchainResponder(blockchain);
+    final RespondingEthPeer respondingPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     // Set up parameters and calculated expected response
@@ -135,7 +135,7 @@ public class GetHeadersFromPeerByHashTaskTest extends PeerMessageTaskTest<List<B
         });
 
     assertThat(done).isTrue();
-    assertThat(actualResult.get().getPeer()).isEqualTo(respondingPeer.getSilPeer());
+    assertThat(actualResult.get().getPeer()).isEqualTo(respondingPeer.getEthPeer());
     assertThat(actualResult.get().getResult()).isEqualTo(expectedHeaders);
   }
 

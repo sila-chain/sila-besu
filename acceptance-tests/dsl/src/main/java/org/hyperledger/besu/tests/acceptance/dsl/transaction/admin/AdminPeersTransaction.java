@@ -23,7 +23,7 @@ import java.io.IOException;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.web3j.protocol.core.methods.response.admin.AdminPeers;
+import sila.web3j.protocol.core.methods.response.admin.AdminPeers;
 
 public class AdminPeersTransaction implements Transaction<List<String>> {
 

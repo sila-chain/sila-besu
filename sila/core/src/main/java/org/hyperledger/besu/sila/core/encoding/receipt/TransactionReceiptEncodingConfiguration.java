@@ -23,7 +23,7 @@ public class TransactionReceiptEncodingConfiguration {
 
   public static final TransactionReceiptEncodingConfiguration SIL69_RECEIPT_CONFIGURATION =
       new Builder()
-          .withSil69Receipt(true)
+          .withEth69Receipt(true)
           .withBloomFilter(false)
           .withCompactedLogs(false)
           .withRevertReason(false)
@@ -43,19 +43,19 @@ public class TransactionReceiptEncodingConfiguration {
   private final boolean withCompactedLogs;
   private final boolean withOpaqueBytes;
   private final boolean withBloomFilter;
-  private final boolean withSil69Receipt;
+  private final boolean withEth69Receipt;
 
   private TransactionReceiptEncodingConfiguration(
       final boolean withRevertReason,
       final boolean withCompactedLogs,
       final boolean withOpaqueBytes,
       final boolean withBloomFilter,
-      final boolean withSil69Receipt) {
+      final boolean withEth69Receipt) {
     this.withRevertReason = withRevertReason;
     this.withCompactedLogs = withCompactedLogs;
     this.withOpaqueBytes = withOpaqueBytes;
     this.withBloomFilter = withBloomFilter;
-    this.withSil69Receipt = withSil69Receipt;
+    this.withEth69Receipt = withEth69Receipt;
   }
 
   public boolean isWithRevertReason() {
@@ -74,8 +74,8 @@ public class TransactionReceiptEncodingConfiguration {
     return withBloomFilter;
   }
 
-  public boolean isWithSil69Receipt() {
-    return withSil69Receipt;
+  public boolean isWithEth69Receipt() {
+    return withEth69Receipt;
   }
 
   @Override
@@ -89,8 +89,8 @@ public class TransactionReceiptEncodingConfiguration {
         + withOpaqueBytes
         + ", withBloomFilter="
         + withBloomFilter
-        + ", withSil69Receipt="
-        + withSil69Receipt
+        + ", withEth69Receipt="
+        + withEth69Receipt
         + '}';
   }
 
@@ -99,7 +99,7 @@ public class TransactionReceiptEncodingConfiguration {
     private boolean withCompactedLogs = false;
     private boolean withOpaqueBytes = true;
     private boolean withBloomFilter = true;
-    private boolean withSil69Receipt = false;
+    private boolean withEth69Receipt = false;
 
     public Builder withRevertReason(final boolean withRevertReason) {
       this.withRevertReason = withRevertReason;
@@ -121,14 +121,14 @@ public class TransactionReceiptEncodingConfiguration {
       return this;
     }
 
-    public Builder withSil69Receipt(final boolean withSil69Receipt) {
-      this.withSil69Receipt = withSil69Receipt;
+    public Builder withEth69Receipt(final boolean withEth69Receipt) {
+      this.withEth69Receipt = withEth69Receipt;
       return this;
     }
 
     public TransactionReceiptEncodingConfiguration build() {
       return new TransactionReceiptEncodingConfiguration(
-          withRevertReason, withCompactedLogs, withOpaqueBytes, withBloomFilter, withSil69Receipt);
+          withRevertReason, withCompactedLogs, withOpaqueBytes, withBloomFilter, withEth69Receipt);
     }
   }
 }

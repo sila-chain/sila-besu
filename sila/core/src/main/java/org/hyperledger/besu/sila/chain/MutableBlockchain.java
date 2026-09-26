@@ -20,7 +20,7 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.SyncBlockWithReceipts;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -112,6 +112,16 @@ public interface MutableBlockchain extends Blockchain {
    * @param blockHeaders The block headers to store.
    */
   void storeBlockHeaders(List<BlockHeader> blockHeaders);
+
+  /**
+   * Removes the canonical blockNumber→blockHash index entries for the given block number range,
+   * without otherwise altering stored headers or chain state.
+   *
+   * @param lowerExclusive blocks at or below this number are not touched
+   * @param upperInclusive blocks up to and including this number have their canonical index entry
+   *     removed
+   */
+  void unsafeRemoveCanonicalIndexRange(long lowerExclusive, long upperInclusive);
 
   Difficulty calculateTotalDifficulty(final BlockHeader blockHeader);
 

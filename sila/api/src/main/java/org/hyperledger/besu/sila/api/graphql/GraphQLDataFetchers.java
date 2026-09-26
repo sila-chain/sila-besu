@@ -20,6 +20,8 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.LogTopic;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.data.SyncStatus;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.AccountAdapter;
 import org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.EmptyAccountAdapter;
 import org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.LogAdapter;
@@ -28,6 +30,7 @@ import org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.PendingStateAd
 import org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.SyncStateAdapter;
 import org.hyperledger.besu.sila.api.graphql.internal.pojoadapter.TransactionAdapter;
 import org.hyperledger.besu.sila.api.graphql.internal.response.GraphQLError;
+import org.hyperledger.besu.sila.api.query.BackendQuery;
 import org.hyperledger.besu.sila.api.query.BlockWithMetadata;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.api.query.LogsQuery;
@@ -35,15 +38,13 @@ import org.hyperledger.besu.sila.api.query.TransactionWithMetadata;
 import org.hyperledger.besu.sila.core.LogWithMetadata;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sil.SilProtocol;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.sil.SilProtocol;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.plugin.data.SyncStatus;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -53,6 +54,7 @@ import java.util.Map;
 import java.util.Optional;
 import java.util.OptionalInt;
 import java.util.Set;
+import java.util.function.Supplier;
 
 import com.google.common.base.Preconditions;
 import graphql.GraphQLContext;
@@ -77,7 +79,15 @@ import org.apache.tuweni.bytes.Bytes32;
  */
 public class GraphQLDataFetchers {
 
-  private final Integer highestSilVersion;
+  /**
+   * Default maximum number of blocks a single {@code blocks(from,to)} query may span, used when no
+   * explicit limit is supplied (e.g. by test call sites). Mirrors {@link
+   * GraphQLConfiguration#DEFAULT_MAX_BLOCK_RANGE}.
+   */
+  public static final long DEFAULT_MAX_BLOCK_RANGE = GraphQLConfiguration.DEFAULT_MAX_BLOCK_RANGE;
+
+  private final Integer highestEthVersion;
+  private final long maxBlockRange;
 
   /**
    * Constructs a new GraphQLDataFetchers instance.
@@ -89,12 +99,26 @@ public class GraphQLDataFetchers {
    * @param supportedCapabilities a set of capabilities supported by the Sila node
    */
   public GraphQLDataFetchers(final Set<Capability> supportedCapabilities) {
+    this(supportedCapabilities, DEFAULT_MAX_BLOCK_RANGE);
+  }
+
+  /**
+   * Constructs a new GraphQLDataFetchers instance with an explicit cap on the span of a single
+   * {@code blocks(from,to)} range query.
+   *
+   * @param supportedCapabilities a set of capabilities supported by the Sila node
+   * @param maxBlockRange the maximum number of blocks a single {@code blocks(from,to)} query may
+   *     span; 0 means no limit
+   */
+  public GraphQLDataFetchers(
+      final Set<Capability> supportedCapabilities, final long maxBlockRange) {
     final OptionalInt version =
         supportedCapabilities.stream()
             .filter(cap -> SilProtocol.NAME.equals(cap.getName()))
             .mapToInt(Capability::getVersion)
             .max();
-    highestSilVersion = version.isPresent() ? version.getAsInt() : null;
+    highestEthVersion = version.isPresent() ? version.getAsInt() : null;
+    this.maxBlockRange = maxBlockRange;
   }
 
   /**
@@ -107,7 +131,7 @@ public class GraphQLDataFetchers {
    * @return a DataFetcher that fetches the highest Sila protocol version
    */
   DataFetcher<Optional<Integer>> getProtocolVersionDataFetcher() {
-    return dataFetchingEnvironment -> Optional.of(highestSilVersion);
+    return dataFetchingEnvironment -> Optional.of(highestEthVersion);
   }
 
   /**
@@ -219,20 +243,42 @@ public class GraphQLDataFetchers {
     return dataFetchingEnvironment -> {
       final BlockchainQueries blockchainQuery =
           dataFetchingEnvironment.getGraphQlContext().get(GraphQLContextType.BLOCKCHAIN_QUERIES);
+      final Supplier<Boolean> isAlive =
+          dataFetchingEnvironment.getGraphQlContext().get(GraphQLContextType.IS_ALIVE_HANDLER);
 
-      final long from = dataFetchingEnvironment.getArgument("from");
-      final long to;
+      final long chainHeadBlockNumber = blockchainQuery.getBlockchain().getChainHeadBlockNumber();
+      long from;
+      if (dataFetchingEnvironment.containsArgument("from")) {
+        from = dataFetchingEnvironment.getArgument("from");
+      } else {
+        from = chainHeadBlockNumber;
+      }
+      long to;
       if (dataFetchingEnvironment.containsArgument("to")) {
         to = dataFetchingEnvironment.getArgument("to");
       } else {
-        to = blockchainQuery.latestBlock().map(block -> block.getHeader().getNumber()).orElse(0L);
+        to = chainHeadBlockNumber;
       }
-      if (from > to) {
+      if (from < 0 || from > to) {
         throw new GraphQLException(GraphQLError.INVALID_PARAMS);
       }
+      // Checked on the caller-supplied (pre-clamp) span so an attacker can't sidestep the cap by
+      // supplying a `to` far beyond the chain head, relying on the clamp below to shrink it first.
+      if (maxBlockRange > 0 && (to - from) > maxBlockRange) {
+        throw new GraphQLException(GraphQLError.INVALID_PARAMS);
+      }
+      // A supplied `to` beyond the chain head only ever shrinks the loop below, so clamping here
+      // (after the span check above) can only reduce work, never let more through.
+      to = Math.min(to, chainHeadBlockNumber);
 
       final List<NormalBlockAdapter> results = new ArrayList<>();
       for (long i = from; i <= to; i++) {
+        // IS_ALIVE_HANDLER is always populated for real HTTP requests (GraphQLHttpService), but
+        // any call site that builds a GraphQlContext without it (tests, future callers) should
+        // fail open here rather than NPE inside the loop.
+        if (isAlive != null) {
+          BackendQuery.stopIfExpired(isAlive);
+        }
         final Optional<BlockWithMetadata<TransactionWithMetadata, Hash>> block =
             blockchainQuery.blockByNumber(i);
         block.ifPresent(e -> results.add(new NormalBlockAdapter(e)));
@@ -334,14 +380,28 @@ public class GraphQLDataFetchers {
       final long fromBlock = (Long) filter.getOrDefault("fromBlock", currentBlock);
       final long toBlock = (Long) filter.getOrDefault("toBlock", currentBlock);
 
+      if (fromBlock < 0) {
+        throw new GraphQLException(GraphQLError.INVALID_PARAMS);
+      }
       if (fromBlock > toBlock) {
+        throw new GraphQLException(GraphQLError.INVALID_PARAMS);
+      }
+      // Checked on the caller-supplied (pre-clamp) span so an attacker can't sidestep the cap by
+      // supplying a `toBlock` far beyond the chain head, relying on matchingLogs to short-circuit.
+      if (maxBlockRange > 0 && (toBlock - fromBlock) > maxBlockRange) {
         throw new GraphQLException(GraphQLError.INVALID_PARAMS);
       }
 
       @SuppressWarnings("unchecked")
       final List<Address> addrs = (List<Address>) filter.get("addresses");
+      // `topics` is nullable in the schema, and the schema's own documentation says "[] or nil
+      // matches any topic list", so an omitted value has to behave like an empty one rather than
+      // being dereferenced. graphql-java puts the key in the map with a null value when a client
+      // writes `topics: null` explicitly, so getOrDefault is not enough on its own.
+      // (`addrs` may stay null: LogsQuery.Builder.addresses tolerates it.)
       @SuppressWarnings("unchecked")
-      final List<List<LogTopic>> topics = (List<List<LogTopic>>) filter.get("topics");
+      final List<List<LogTopic>> topics =
+          Optional.ofNullable((List<List<LogTopic>>) filter.get("topics")).orElse(List.of());
 
       final List<List<LogTopic>> transformedTopics = new ArrayList<>();
       for (final List<LogTopic> topic : topics) {

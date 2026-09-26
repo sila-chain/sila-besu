@@ -20,6 +20,7 @@ env:
   GRADLE_OPTS: "-Xmx6g -Dorg.gradle.parallel=true"
 
 # Job matrix:
+# Generated Besu-authority commits are workflow-neutral; this PR-head run is the CI authority.
 #
 #   push to main:      [gradleWrapper, spotless, checkLicense]
 #                    → build
@@ -79,6 +80,83 @@ jobs:
       - name: run spotless
         run: ./gradlew spotlessCheck
 
+  upstreamSyncProbe:
+    name: "Latest Besu authority gate"
+    if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout Sila closure branch
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+          fetch-depth: 0
+      - name: Verify pinned upstream Besu authority is still current
+        run: |
+          expected="accdae0061952615b23f3bc521ebcd82efd097d4"
+          actual="$(git ls-remote https://github.com/besu-eth/besu.git refs/heads/main | awk '{print $1}')"
+          echo "EXPECTED_UPSTREAM=$expected"
+          echo "ACTUAL_UPSTREAM=$actual"
+          if [ "$actual" != "$expected" ]; then
+            echo "UPSTREAM_ADVANCED=1"
+            exit 1
+          fi
+          if ! git log --format=%B --all | grep -Fq "Upstream-Besu: $expected"; then
+            echo "PINNED_AUTHORITY_COMMIT_NOT_IN_HISTORY=1"
+            exit 1
+          fi
+          echo "UPSTREAM_AUTHORITY_GATE=PASS"
+
+  silaIdentityGate:
+    name: "Pure Sila identity gate"
+    if: github.event_name == 'pull_request'
+    runs-on: ubuntu-latest
+    needs: [upstreamSyncProbe]
+    steps:
+      - name: Checkout Repo
+        uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
+        with:
+          ref: ${{ github.event.pull_request.head.sha }}
+      - name: Reject Ethereum-affiliated runtime and dependency identities
+        run: |
+          python - <<'PY'
+          from pathlib import Path
+          import re
+          import subprocess
+
+          patterns = [
+              ("WEB3J_DEPENDENCY", re.compile(r"org\.web3j(?=[:.])")),
+              ("ETHEREUM_JAVA_NAMESPACE", re.compile(r"org\.ethereum(?=\.)")),
+              ("ETHEREUM_GITHUB_AUTHORITY", re.compile(r"github\.com/ethereum/")),
+              ("ETHEREUM_MAVEN_GROUP", re.compile(r"(?:group\s*[:=]\s*['\"]ethereum['\"]|group=\"ethereum\")")),
+              ("ETHEREUM_CKZG_NAMESPACE", re.compile(r"ethereum\.ckzg4844")),
+              ("ETHSTATS_IDENTITY", re.compile(r"(?:org\.hyperledger\.besu\.ethstats|:sila:ethstats|sila/ethstats)")),
+          ]
+
+          tracked = subprocess.check_output(["git", "ls-files", "-z"]).decode().split("\0")
+          blockers = []
+          for raw in tracked:
+              if not raw or raw.startswith(".github/workflows/"):
+                  continue
+              path = Path(raw)
+              if not path.is_file():
+                  continue
+              try:
+                  body = path.read_text(encoding="utf-8")
+              except (UnicodeDecodeError, OSError):
+                  body = ""
+              target = raw + "\n" + body
+              for label, pattern in patterns:
+                  if pattern.search(target):
+                      blockers.append((label, raw))
+          unique = sorted(set(blockers))
+          print(f"SILA_IDENTITY_BLOCKER_COUNT={len(unique)}")
+          for label, path in unique[:400]:
+              print(f"SILA_IDENTITY_BLOCKER {label} {path}")
+          if unique:
+              raise SystemExit(3)
+          print("PURE_SILA_IDENTITY_GATE=PASS")
+          PY
+
   checkLicense:
     name: "Check License"
     runs-on: ubuntu-latest
@@ -107,7 +185,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     timeout-minutes: 30
-    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries]
+    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries, upstreamSyncProbe]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -153,7 +231,7 @@ jobs:
     name: "Verify Dependency Source Metadata"
     if: github.event_name == 'pull_request'
     runs-on: ubuntu-latest
-    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries]
+    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries, upstreamSyncProbe]
     steps:
       - name: Checkout Repo
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
@@ -175,7 +253,7 @@ jobs:
   # Each suite has its suite-tests-passed job in the file directly
   unitTests:
     if: github.event_name == 'pull_request'
-    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries]
+    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries, upstreamSyncProbe]
     permissions:
       actions: read
       contents: read
@@ -185,7 +263,7 @@ jobs:
 
   integrationTests:
     if: github.event_name == 'pull_request'
-    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries]
+    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries, upstreamSyncProbe]
     permissions:
       actions: read
       contents: read
@@ -195,7 +273,7 @@ jobs:
 
   referenceTests:
     if: github.event_name == 'pull_request'
-    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries]
+    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries, upstreamSyncProbe]
     permissions:
       actions: read
       contents: read
@@ -207,7 +285,7 @@ jobs:
 
   acceptanceTests:
     if: github.event_name == 'pull_request'
-    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries]
+    needs: [spotless, checkLicense, gradleWrapper, checkNoBinaries, upstreamSyncProbe]
     permissions:
       actions: read
       contents: read

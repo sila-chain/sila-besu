@@ -15,15 +15,15 @@
 package org.hyperledger.besu.components;
 
 import org.hyperledger.besu.cli.BesuCommand;
-import org.hyperledger.besu.sila.sil.transactions.BlobCache;
-import org.hyperledger.besu.sila.sil.transactions.BlobCacheModule;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoaderModule;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCacheModule;
 import org.hyperledger.besu.metrics.MetricsSystemModule;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.services.BesuPluginContextImpl;
+import org.hyperledger.besu.sila.sil.transactions.BlobCache;
+import org.hyperledger.besu.sila.sil.transactions.BlobCacheModule;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCacheModule;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoaderModule;
 
 import javax.inject.Named;
 import javax.inject.Singleton;
@@ -40,7 +40,7 @@ import org.slf4j.Logger;
       BonsaiCachedMerkleTrieLoaderModule.class,
       BesuPluginContextModule.class,
       BlobCacheModule.class,
-      PathBasedCodeCacheModule.class
+      BonsaiCodeCacheModule.class
     })
 public interface BesuComponent {
 
@@ -59,7 +59,7 @@ public interface BesuComponent {
   BonsaiCachedMerkleTrieLoader getCachedMerkleTrieLoader();
 
   /**
-   * a metrics system that is observable by a Promsileus or OTEL metrics collection subsystem
+   * a metrics system that is observable by a Prometheus or OTEL metrics collection subsystem
    *
    * @return ObservableMetricsSystem
    */
@@ -90,7 +90,7 @@ public interface BesuComponent {
   /**
    * Code cache for storing SAVM code.
    *
-   * @return PathBasedCodeCache
+   * @return BonsaiCodeCache
    */
-  PathBasedCodeCache getCodeCache();
+  BonsaiCodeCache getCodeCache();
 }

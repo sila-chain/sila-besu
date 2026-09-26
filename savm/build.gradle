@@ -43,6 +43,7 @@ dependencies {
 
   implementation 'com.github.ben-manes.caffeine:caffeine'
   implementation 'com.google.guava:guava'
+  compileOnly 'com.google.errorprone:error_prone_annotations'
   implementation 'com.google.dagger:dagger'
   implementation 'net.java.dev.jna:jna'
   implementation 'io.consensys.tuweni:tuweni-bytes'
@@ -51,7 +52,7 @@ dependencies {
   implementation 'org.hyperledger.besu:gnark'
   implementation 'org.hyperledger.besu:secp256k1'
   implementation 'org.hyperledger.besu:boringssl'
-  implementation 'io.consensys.protocols:jc-kzg-4844'
+  implementation 'sila.java:sila-ckzg4844'
 
   compileOnly 'com.fasterxml.jackson.core:jackson-databind'
   compileOnly 'org.jspecify:jspecify'

@@ -23,25 +23,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.SyncBlockAccessList;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
+import org.hyperledger.besu.sila.sil.manager.PeerRequest;
+import org.hyperledger.besu.sila.sil.manager.PendingPeerRequest;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sil.manager.PeerRequest;
-import org.hyperledger.besu.sila.sil.manager.PendingPeerRequest;
 import org.hyperledger.besu.sila.sil.manager.exceptions.ProtocolViolationException;
 import org.hyperledger.besu.sila.sil.messages.snap.BlockAccessListsMessage;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.rlp.RLP;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.util.ArrayDeque;
@@ -212,7 +212,7 @@ class GetBlockAccessListsFromPeerTaskTest {
     }
 
     final SilContext silContext = mock(SilContext.class);
-    when(silContext.getScheduler()).thenReturn(new DeterministicSilScheduler());
+    when(silContext.getScheduler()).thenReturn(new DeterministicEthScheduler());
     final TestableRetryingGetBlockAccessListsFromPeerTask task =
         new TestableRetryingGetBlockAccessListsFromPeerTask(silContext, headers, responses);
 
@@ -234,7 +234,7 @@ class GetBlockAccessListsFromPeerTaskTest {
         new RetryingGetBlockAccessListsFromPeerTask(
             silContext, List.of(headerForBal(1, blockAccessList)), new NoOpMetricsSystem());
 
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(silPeers.executePeerRequest(any(PeerRequest.class), eq(1L), eq(Optional.of(selectedPeer))))
         .thenReturn(pendingPeerRequest);
 

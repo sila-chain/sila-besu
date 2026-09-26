@@ -21,7 +21,7 @@ import com.google.common.base.MoreObjects;
 
 /**
  * Adapted from the pc_ecc (Apache 2 License) implementation:
- * https://github.com/sila-chain/py_ecc/blob/master/py_ecc/bn128/bn128_field_elements.py
+ * https://github.com/sila/py_ecc/blob/master/py_ecc/bn128/bn128_field_elements.py
  *
  * @param <U> the type parameter
  */

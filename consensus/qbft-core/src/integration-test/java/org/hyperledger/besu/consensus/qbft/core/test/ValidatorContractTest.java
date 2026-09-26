@@ -142,7 +142,7 @@ public class ValidatorContractTest {
   }
 
   @Test
-  public void retrievesValidatorsFromValidatorContract_SilaShanghaiFork_ZeroBaseFee() {
+  public void retrievesValidatorsFromValidatorContract_ShanghaiFork_ZeroBaseFee() {
     // Using SilaShanghai on a free gas network
     final TestContext context =
         new TestContextBuilder()
@@ -153,7 +153,7 @@ public class ValidatorContractTest {
             .genesisFile(
                 Resources.getResource("genesis_validator_contract_shanghai.json").getFile())
             .useValidatorContract(true)
-            .useSilaShanghaiMilestone(true)
+            .useShanghaiMilestone(true)
             .useZeroBaseFee(true)
             .buildAndStart();
 
@@ -193,7 +193,7 @@ public class ValidatorContractTest {
   }
 
   @Test
-  public void retrievesValidatorsFromValidatorContract_SilaShanghaiFork_FixedBaseFee() {
+  public void retrievesValidatorsFromValidatorContract_ShanghaiFork_FixedBaseFee() {
     // Using SilaShanghai on a free gas network
     final TestContext context =
         new TestContextBuilder()
@@ -204,7 +204,7 @@ public class ValidatorContractTest {
             .genesisFile(
                 Resources.getResource("genesis_validator_contract_shanghai.json").getFile())
             .useValidatorContract(true)
-            .useSilaShanghaiMilestone(true)
+            .useShanghaiMilestone(true)
             .useFixedBaseFee(true)
             .buildAndStart();
 

@@ -112,12 +112,12 @@
     },
     {
       "prompt-type": "CONFIRM",
-      "question": "Do you want to use Silstats ?",
+      "question": "Do you want to use SilStats ?",
       "default-option": "no",
       "sub-questions": [
         {
           "prompt-type": "INPUT",
-          "question": "What is the URL of Silstats (nodename:secret@host:port) ?",
+          "question": "What is the URL of SilStats (nodename:secret@host:port) ?",
           "config-key": "silstats",
           "regex": "([-\\w]+):([\\w]+)?@([-.\\w]+):([\\d]+)"
         },

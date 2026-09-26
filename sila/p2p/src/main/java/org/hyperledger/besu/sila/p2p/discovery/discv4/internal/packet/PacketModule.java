@@ -22,7 +22,7 @@ import javax.inject.Singleton;
 
 import dagger.Module;
 import dagger.Provides;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 @Module
 abstract class PacketModule {

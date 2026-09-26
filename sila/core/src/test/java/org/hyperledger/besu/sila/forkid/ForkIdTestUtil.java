@@ -85,10 +85,10 @@ public class ForkIdTestUtil {
 
     public static final List<Long> PRIVATE = Arrays.asList(0L, 0L, 0L, 0L, 0L, 0L, 0L, 0L);
 
-    public static final List<Long> SILA_MAINNET_WITH_SHANGHAI_BLOCKS =
+    public static final List<Long> MAINNET_WITH_SHANGHAI_BLOCKS =
         Streams.concat(SILA_MAINNET.stream(), Stream.of(18000000L)).collect(Collectors.toList());
 
-    public static final List<Long> SILA_MAINNET_WITH_SHANGHAI_TIMESTAMPS = List.of(1668000000L);
+    public static final List<Long> MAINNET_WITH_SHANGHAI_TIMESTAMPS = List.of(1668000000L);
   }
 
   public static class ForkIds {
@@ -112,7 +112,8 @@ public class ForkIdTestUtil {
         Arrays.asList(
             new ForkId(Bytes.fromHexString("0xfe3366e7"), 1735371L),
             new ForkId(Bytes.fromHexString("0xb96cbd13"), 1677557088L),
-            new ForkId(Bytes.fromHexString("0xf7f9bc08"), 0L)); // First SilaShanghai block (timestamp)
+            new ForkId(
+                Bytes.fromHexString("0xf7f9bc08"), 0L)); // First SilaShanghai block (timestamp)
     public static final List<ForkId> HOODI =
         List.of(
             new ForkId(Bytes.fromHexString("0xbef71d30"), 1742999832L),
@@ -140,18 +141,19 @@ public class ForkIdTestUtil {
   }
 
   public static class Network {
-    public static final Network SILA_MAINNET = network(GenesisHash.SILA_MAINNET, Forks.SILA_MAINNET, emptyList());
+    public static final Network SILA_MAINNET =
+        network(GenesisHash.SILA_MAINNET, Forks.SILA_MAINNET, emptyList());
     public static final Network SEPOLIA =
         network(GenesisHash.SEPOLIA, Forks.SEPOLIA_BLOCKNUMBERS, Forks.SEPOLIA_TIMESTAMPS);
     public static final Network HOODI =
         network(GenesisHash.HOODI, Forks.HOODI_BLOCKNUMBERS, Forks.HOODI_TIMESTAMPS);
     public static final Network PRIVATE = network(GenesisHash.PRIVATE, Forks.PRIVATE, emptyList());
 
-    public static final Network SILA_MAINNET_WITH_SHANGHAI =
+    public static final Network MAINNET_WITH_SHANGHAI =
         network(
             GenesisHash.SILA_MAINNET,
-            Forks.SILA_MAINNET_WITH_SHANGHAI_BLOCKS,
-            Forks.SILA_MAINNET_WITH_SHANGHAI_TIMESTAMPS);
+            Forks.MAINNET_WITH_SHANGHAI_BLOCKS,
+            Forks.MAINNET_WITH_SHANGHAI_TIMESTAMPS);
 
     public final String hash;
     public final List<Long> blockForks;

@@ -42,13 +42,13 @@ public class SilConditions {
         transactions.getTransactionReceipt(transactionHash));
   }
 
-  public Condition expectSilSendRawTransactionException(
+  public Condition expectEthSendRawTransactionException(
       final String transactionData, final String expectedMessage) {
     return new ExpectSilSendRawTransactionException(
         transactions.sendRawTransaction(transactionData), expectedMessage);
   }
 
-  public Condition expectSuccessfulSilRawTransaction(final String transactionData) {
+  public Condition expectSuccessfulEthRawTransaction(final String transactionData) {
     return new ExpectSuccessfulSilSendRawTransaction(
         transactions.sendRawTransaction(transactionData));
   }

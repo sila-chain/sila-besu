@@ -17,15 +17,15 @@ package org.hyperledger.besu.sila.sil.sync;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
+import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessage;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.messages.BlockRangeUpdateMessage;
 import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.sila.rlp.RLPException;
 
 import java.time.Duration;
 import java.util.List;
@@ -47,7 +47,7 @@ public class BlockRangeBroadcaster {
     this.silContext = silContext;
     this.blockchain = blockchain;
     silContext
-        .getSilMessages()
+        .getEthMessages()
         .subscribe(SilProtocolMessages.BLOCK_RANGE_UPDATE, this::handleBlockRangeUpdateMessage);
     silContext
         .getScheduler()
@@ -165,7 +165,7 @@ public class BlockRangeBroadcaster {
   private List<SilPeer> getPeersSupportingBlockRangeUpdate() {
     // Only peers with sil/69 support BLOCK_RANGE_UPDATE message
     return silContext
-        .getSilPeers()
+        .getEthPeers()
         .streamAvailablePeers()
         .map(SilPeerImmutableAttributes::silPeer)
         .filter(peer -> peer.hasSupportForMessage(SilProtocolMessages.BLOCK_RANGE_UPDATE))

@@ -16,8 +16,8 @@ package org.hyperledger.besu.sila.core.feemarket;
 
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hyperledger.besu.datatypes.TransactionType.ACCESS_LIST;
-import static org.hyperledger.besu.datatypes.TransactionType.SIP1559;
 import static org.hyperledger.besu.datatypes.TransactionType.FRONTIER;
+import static org.hyperledger.besu.datatypes.TransactionType.SIP1559;
 
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;

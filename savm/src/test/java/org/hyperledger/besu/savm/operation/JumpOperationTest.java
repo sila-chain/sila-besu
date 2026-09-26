@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.frame.BlockValues;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
@@ -57,7 +57,7 @@ class JumpOperationTest {
 
   @BeforeEach
   void init() {
-    savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+    savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
   }
 
   @Test

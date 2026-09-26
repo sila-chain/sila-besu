@@ -21,10 +21,10 @@ import org.hyperledger.besu.consensus.qbft.core.payload.ProposalPayload;
 import org.hyperledger.besu.consensus.qbft.core.payload.RoundChangePayload;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlock;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlockCodec;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -119,9 +119,9 @@ public class Proposal extends BftMessage<ProposalPayload> {
 
     rlpIn.enterList();
     final List<SignedData<RoundChangePayload>> roundChanges =
-        rlpIn.readList(r -> readPayload(r, RoundChangePayload::readFrom));
+        rlpIn.readList(r -> readPayload(r, RoundChangePayload::readFrom), MAX_LIST_ENTRIES);
     final List<SignedData<PreparePayload>> prepares =
-        rlpIn.readList(r -> readPayload(r, PreparePayload::readFrom));
+        rlpIn.readList(r -> readPayload(r, PreparePayload::readFrom), MAX_LIST_ENTRIES);
     rlpIn.leaveList();
 
     rlpIn.leaveList();

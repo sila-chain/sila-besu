@@ -26,8 +26,8 @@ import org.hyperledger.besu.sila.api.query.TransactionReceiptWithMetadata;
 import org.hyperledger.besu.sila.chain.BlockAddedEvent;
 import org.hyperledger.besu.sila.chain.BlockAddedObserver;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionReceiptType;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.TransactionReceiptType;
 
 import java.util.ArrayList;
 import java.util.Collections;

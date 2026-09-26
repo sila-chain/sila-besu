@@ -17,7 +17,7 @@ package org.hyperledger.besu.sila.sil.transactions;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration.Implementation.LAYERED;
 import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration.Implementation.LEGACY;
-import static org.hyperledger.besu.sila.sila-mainnet.SilaMainnetProtocolSchedule.DEFAULT_CHAIN_ID;
+import static org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule.DEFAULT_CHAIN_ID;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.anyLong;
 import static org.mockito.Mockito.atLeast;
@@ -30,6 +30,9 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.BlockAddedObserver;
@@ -38,6 +41,7 @@ import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
+import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
@@ -50,16 +54,12 @@ import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.layered.LayeredPendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.sorter.BaseFeePendingTransactionsSorter;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
-import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolScheduleBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecAdapters;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolScheduleBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.math.BigInteger;
@@ -123,8 +123,8 @@ public class TransactionPoolFactoryTest {
             false,
             SyncMode.SNAP,
             new ForkIdManager(blockchain, Collections.emptyList(), Collections.emptyList()));
-    when(silContext.getSilMessages()).thenReturn(silMessages);
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthMessages()).thenReturn(silMessages);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
 
     when(silContext.getScheduler()).thenReturn(silScheduler);
   }
@@ -206,16 +206,14 @@ public class TransactionPoolFactoryTest {
         .haveAtLeastOne(
             new Condition<>(
                 h ->
-                    h instanceof NewPooledTransactionHashesMessageHandler
-                        && !((NewPooledTransactionHashesMessageHandler) h).isEnabled(),
+                    h instanceof NewPooledTransactionHashesMessageHandler handler
+                        && !handler.isEnabled(),
                 "pooled transaction hashes handler should be disabled"));
 
     assertThat(messageHandlers.getAllValues())
         .haveAtLeastOne(
             new Condition<>(
-                h ->
-                    h instanceof TransactionsMessageHandler
-                        && !((TransactionsMessageHandler) h).isEnabled(),
+                h -> h instanceof TransactionsMessageHandler handler && !handler.isEnabled(),
                 "transaction messages handler should be disabled"));
   }
 
@@ -232,16 +230,14 @@ public class TransactionPoolFactoryTest {
         .haveAtLeastOne(
             new Condition<>(
                 h ->
-                    h instanceof NewPooledTransactionHashesMessageHandler
-                        && ((NewPooledTransactionHashesMessageHandler) h).isEnabled(),
+                    h instanceof NewPooledTransactionHashesMessageHandler handler
+                        && handler.isEnabled(),
                 "pooled transaction hashes handler should be enabled"));
 
     assertThat(messageHandlers.getAllValues())
         .haveAtLeastOne(
             new Condition<>(
-                h ->
-                    h instanceof TransactionsMessageHandler
-                        && ((TransactionsMessageHandler) h).isEnabled(),
+                h -> h instanceof TransactionsMessageHandler handler && handler.isEnabled(),
                 "transaction messages handler should be enabled"));
   }
 
@@ -257,16 +253,14 @@ public class TransactionPoolFactoryTest {
         .haveAtLeastOne(
             new Condition<>(
                 h ->
-                    h instanceof NewPooledTransactionHashesMessageHandler
-                        && ((NewPooledTransactionHashesMessageHandler) h).isEnabled(),
+                    h instanceof NewPooledTransactionHashesMessageHandler handler
+                        && handler.isEnabled(),
                 "pooled transaction hashes handler should be enabled"));
 
     assertThat(messageHandlers.getAllValues())
         .haveAtLeastOne(
             new Condition<>(
-                h ->
-                    h instanceof TransactionsMessageHandler
-                        && ((TransactionsMessageHandler) h).isEnabled(),
+                h -> h instanceof TransactionsMessageHandler handler && handler.isEnabled(),
                 "transaction messages handler should be enabled"));
   }
 

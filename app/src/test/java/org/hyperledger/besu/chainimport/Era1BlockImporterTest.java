@@ -21,18 +21,18 @@ import org.hyperledger.besu.components.BesuComponent;
 import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.testutil.BlockTestUtil;
 import org.hyperledger.besu.testutil.TestClock;
 
@@ -63,11 +63,11 @@ public class Era1BlockImporterTest {
         Path.of(
             BlockTestUtil.class
                 .getClassLoader()
-                .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+                .getResource("mainnet-00000-5ec1ffb8.era1")
                 .toURI());
     final BesuController targetController =
         new BesuController.Builder()
-            .fromSilNetworkConfig(
+            .fromEthNetworkConfig(
                 SilNetworkConfig.getNetworkConfig(NetworkDefinition.SILA_MAINNET), SyncMode.SNAP)
             .synchronizerConfiguration(SynchronizerConfiguration.builder().build())
             .silProtocolConfiguration(SilProtocolConfiguration.DEFAULT)

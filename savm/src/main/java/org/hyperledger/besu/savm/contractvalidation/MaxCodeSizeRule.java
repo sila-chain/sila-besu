@@ -76,19 +76,19 @@ public class MaxCodeSizeRule implements ContractValidationRule {
    * @return the contract validation rule
    */
   public static ContractValidationRule from(final SAVM savm) {
-    return from(savm.getSavmVersion(), savm.getSavmConfiguration());
+    return from(savm.getEvmVersion(), savm.getEvmConfiguration());
   }
 
   /**
    * Fluent MaxCodeSizeRule from the SAVM it is working with.
    *
-   * @param savmspec The savm spec version to get the size rules from.
+   * @param evmspec The savm spec version to get the size rules from.
    * @param savmConfiguration The savm configuration, including overrides
    * @return the contract validation rule
    */
   public static ContractValidationRule from(
-      final SavmSpecVersion savmspec, final SavmConfiguration savmConfiguration) {
+      final SavmSpecVersion evmspec, final SavmConfiguration savmConfiguration) {
     return new MaxCodeSizeRule(
-        savmConfiguration.maxCodeSizeOverride().orElse(savmspec.getMaxCodeSize()));
+        savmConfiguration.maxCodeSizeOverride().orElse(evmspec.getMaxCodeSize()));
   }
 }

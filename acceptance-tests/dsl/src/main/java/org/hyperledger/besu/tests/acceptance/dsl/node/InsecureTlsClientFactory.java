@@ -25,7 +25,7 @@ import javax.net.ssl.TrustManager;
 import javax.net.ssl.X509TrustManager;
 
 import okhttp3.OkHttpClient;
-import org.web3j.protocol.websocket.WebSocketClient;
+import sila.web3j.protocol.websocket.WebSocketClient;
 
 /**
  * Trust-all TLS plumbing used by the acceptance-test DSL when talking to a Besu node configured

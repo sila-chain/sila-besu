@@ -28,7 +28,7 @@ import org.hyperledger.besu.metrics.MetricsSystemFactory;
 import org.hyperledger.besu.metrics.ObservableMetricsSystem;
 import org.hyperledger.besu.metrics.Observation;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
@@ -279,7 +279,7 @@ public class OpenTelemetryMetricsSystemTest {
           new OpenTelemetrySystem(
               metricsConfiguration.getMetricCategories(),
               metricsConfiguration.isTimersEnabled(),
-              metricsConfiguration.getPromsileusJob(),
+              metricsConfiguration.getPrometheusJob(),
               false);
       localMetricSystem.initDefaults();
       localMetricSystem.createGauge(RPC, "myValue", "Help", () -> 7.0);
@@ -322,7 +322,7 @@ public class OpenTelemetryMetricsSystemTest {
           new OpenTelemetrySystem(
               metricsConfiguration.getMetricCategories(),
               metricsConfiguration.isTimersEnabled(),
-              metricsConfiguration.getPromsileusJob(),
+              metricsConfiguration.getPrometheusJob(),
               false);
       localMetricSystem.initDefaults();
 
@@ -364,7 +364,7 @@ public class OpenTelemetryMetricsSystemTest {
   }
 
   @Test
-  public void returnsPromsileusMetricsWhenEnabled() {
+  public void returnsPrometheusMetricsWhenEnabled() {
     final MetricsConfiguration metricsConfiguration =
         MetricsConfiguration.builder()
             .enabled(true)

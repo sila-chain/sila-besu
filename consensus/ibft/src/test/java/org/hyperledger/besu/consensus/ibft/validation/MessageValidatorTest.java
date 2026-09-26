@@ -43,7 +43,7 @@ import org.hyperledger.besu.sila.BlockValidator;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.AddressHelpers;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.List;
 import java.util.Optional;

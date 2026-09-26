@@ -66,12 +66,12 @@ public class Subscription {
   }
 
   private boolean matches(final Hash expectedTransaction, final SubscriptionEvent event) {
-    return isSilSubscription(event)
+    return isEthSubscription(event)
         && isExpectedSubscription(event)
         && isExpectedTransaction(expectedTransaction, event);
   }
 
-  private boolean isSilSubscription(final SubscriptionEvent event) {
+  private boolean isEthSubscription(final SubscriptionEvent event) {
     return "2.0".equals(event.getVersion())
         && "sil_subscription".equals(event.getMethod())
         && event.getParams() != null;

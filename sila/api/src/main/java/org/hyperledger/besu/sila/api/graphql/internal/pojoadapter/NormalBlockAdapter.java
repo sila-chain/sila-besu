@@ -22,7 +22,7 @@ import org.hyperledger.besu.sila.api.query.TransactionReceiptWithMetadata;
 import org.hyperledger.besu.sila.api.query.TransactionWithMetadata;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.ArrayList;
 import java.util.List;

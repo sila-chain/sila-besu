@@ -24,20 +24,20 @@ import static org.hyperledger.besu.datatypes.HardforkId.SilaMainnetHardforkId.SH
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.chain.BadBlockManager;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.blockhash.SilaPraguePreExecutionProcessor;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.savm.operation.InvalidOperation;
 import org.hyperledger.besu.savm.operation.PrevRanDaoOperation;
 import org.hyperledger.besu.savm.operation.Push0Operation;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.chain.BadBlockManager;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
+import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.blockhash.SilaPraguePreExecutionProcessor;
 
 import java.math.BigInteger;
 
@@ -75,9 +75,9 @@ public class MergeProtocolScheduleTest {
   }
 
   @Test
-  public void mergeSpecificModificationsAreUnappliedForSilaShanghai() {
+  public void mergeSpecificModificationsAreUnappliedForShanghai() {
 
-    final GenesisConfigOptions config = GenesisConfig.sila-mainnet().getConfigOptions();
+    final GenesisConfigOptions config = GenesisConfig.silaMainnet().getConfigOptions();
     final ProtocolSchedule protocolSchedule =
         MergeProtocolSchedule.create(
             config,
@@ -89,9 +89,9 @@ public class MergeProtocolScheduleTest {
             new NoOpMetricsSystem(),
             SavmConfiguration.DEFAULT);
 
-    final long lastSilaParisBlockNumber = 17034869L;
+    final long lastParisBlockNumber = 17034869L;
     final ProtocolSpec parisSpec =
-        protocolSchedule.getByBlockHeader(blockHeader(lastSilaParisBlockNumber));
+        protocolSchedule.getByBlockHeader(blockHeader(lastParisBlockNumber));
     final ProtocolSpec shanghaiSpec =
         protocolSchedule.getByBlockHeader(
             new BlockHeaderTestFixture().timestamp(1681338455).buildHeader());
@@ -101,9 +101,9 @@ public class MergeProtocolScheduleTest {
 
     // ensure PUSH0 is enabled in SilaShanghai
     final int PUSH0 = 0x5f;
-    assertThat(parisSpec.getSavm().getOperationsUnsafe()[PUSH0])
+    assertThat(parisSpec.getEvm().getOperationsUnsafe()[PUSH0])
         .isInstanceOf(InvalidOperation.class);
-    assertThat(shanghaiSpec.getSavm().getOperationsUnsafe()[PUSH0])
+    assertThat(shanghaiSpec.getEvm().getOperationsUnsafe()[PUSH0])
         .isInstanceOf(Push0Operation.class);
 
     assertProofOfStakeConfigIsEnabled(parisSpec);
@@ -111,7 +111,7 @@ public class MergeProtocolScheduleTest {
   }
 
   @Test
-  public void mergeSpecificModificationsAreUnappliedForSilaCancun_whenSilaShanghaiNotConfigured() {
+  public void mergeSpecificModificationsAreUnappliedForCancun_whenShanghaiNotConfigured() {
 
     final String jsonInput =
         "{\"config\": "
@@ -142,20 +142,21 @@ public class MergeProtocolScheduleTest {
     assertThat(parisSpec.getHardforkId()).isEqualTo(PARIS);
     assertThat(cancunSpec.getHardforkId()).isEqualTo(CANCUN);
 
-    // ensure PUSH0 is enabled in SilaCancun (i.e. it has picked up the SilaShanghai change rather than been
+    // ensure PUSH0 is enabled in SilaCancun (i.e. it has picked up the SilaShanghai change rather
+    // than been
     // reverted to SilaParis)
     final int PUSH0 = 0x5f;
-    assertThat(parisSpec.getSavm().getOperationsUnsafe()[PUSH0])
+    assertThat(parisSpec.getEvm().getOperationsUnsafe()[PUSH0])
         .isInstanceOf(InvalidOperation.class);
-    assertThat(cancunSpec.getSavm().getOperationsUnsafe()[PUSH0]).isInstanceOf(Push0Operation.class);
+    assertThat(cancunSpec.getEvm().getOperationsUnsafe()[PUSH0]).isInstanceOf(Push0Operation.class);
 
     assertProofOfStakeConfigIsEnabled(parisSpec);
     assertProofOfStakeConfigIsEnabled(cancunSpec);
   }
 
   @Test
-  public void mergeSpecificModificationsAreUnappliedForAllSilaMainnetForksAfterSilaParis() {
-    final GenesisConfigOptions config = GenesisConfig.sila-mainnet().getConfigOptions();
+  public void mergeSpecificModificationsAreUnappliedForAllMainnetForksAfterParis() {
+    final GenesisConfigOptions config = GenesisConfig.silaMainnet().getConfigOptions();
     final ProtocolSchedule protocolSchedule =
         MergeProtocolSchedule.create(
             config,
@@ -167,31 +168,31 @@ public class MergeProtocolScheduleTest {
             new NoOpMetricsSystem(),
             SavmConfiguration.DEFAULT);
 
-    final long lastSilaParisBlockNumber = 17034869L;
+    final long lastParisBlockNumber = 17034869L;
     final ProtocolSpec parisSpec =
-        protocolSchedule.getByBlockHeader(blockHeader(lastSilaParisBlockNumber));
+        protocolSchedule.getByBlockHeader(blockHeader(lastParisBlockNumber));
     assertThat(parisSpec.getHardforkId()).isEqualTo(PARIS);
 
     for (long forkTimestamp : config.getForkBlockTimestamps()) {
-      final ProtocolSpec postSilaParisSpec =
+      final ProtocolSpec postParisSpec =
           protocolSchedule.getByBlockHeader(
               new BlockHeaderTestFixture().timestamp(forkTimestamp).buildHeader());
 
-      assertThat(postSilaParisSpec.getHardforkId()).isNotEqualTo(PARIS);
+      assertThat(postParisSpec.getHardforkId()).isNotEqualTo(PARIS);
       // ensure PUSH0 is enabled from SilaShanghai onwards
       final int PUSH0 = 0x5f;
-      assertThat(parisSpec.getSavm().getOperationsUnsafe()[PUSH0])
+      assertThat(parisSpec.getEvm().getOperationsUnsafe()[PUSH0])
           .isInstanceOf(InvalidOperation.class);
-      assertThat(postSilaParisSpec.getSavm().getOperationsUnsafe()[PUSH0])
+      assertThat(postParisSpec.getEvm().getOperationsUnsafe()[PUSH0])
           .isInstanceOf(Push0Operation.class);
 
       assertProofOfStakeConfigIsEnabled(parisSpec);
-      assertProofOfStakeConfigIsEnabled(postSilaParisSpec);
+      assertProofOfStakeConfigIsEnabled(postParisSpec);
     }
   }
 
   @Test
-  public void parametersAlignWithSilaMainnetWithAdjustments() {
+  public void parametersAlignWithMainnetWithAdjustments() {
     final ProtocolSpec london =
         MergeProtocolSchedule.create(
                 GenesisConfig.DEFAULT.getConfigOptions(),
@@ -210,7 +211,7 @@ public class MergeProtocolScheduleTest {
 
   private static void assertProofOfStakeConfigIsEnabled(final ProtocolSpec spec) {
     assertThat(spec.isPoS()).isTrue();
-    assertThat(spec.getSavm().getOperationsUnsafe()[0x44]).isInstanceOf(PrevRanDaoOperation.class);
+    assertThat(spec.getEvm().getOperationsUnsafe()[0x44]).isInstanceOf(PrevRanDaoOperation.class);
     assertThat(spec.getDifficultyCalculator().nextDifficulty(-1, null)).isEqualTo(BigInteger.ZERO);
     assertThat(spec.getBlockReward()).isEqualTo(Wei.ZERO);
     assertThat(spec.isSkipZeroBlockRewards()).isTrue();
@@ -268,18 +269,19 @@ public class MergeProtocolScheduleTest {
 
     // Verify that BlockAccessListFactory is present and fork-activated
     assertThat(amsterdamSpec.getBlockAccessListFactory())
-        .withFailMessage("BlockAccessListFactory should be present for SilaAmsterdam, but it was empty")
+        .withFailMessage(
+            "BlockAccessListFactory should be present for SilaAmsterdam, but it was empty")
         .isPresent();
   }
 
   /**
    * Verifies that a Clique-to-PoS network (with TTD set) uses SilaPraguePreExecutionProcessor for
-   * post-merge SilaPrague blocks, not FrontierPreExecutionProcessor. This is a regression test for a
-   * bug where isPoAConsensus() returned true for Clique genesis configs even when TTD was set,
+   * post-merge SilaPrague blocks, not FrontierPreExecutionProcessor. This is a regression test for
+   * a bug where isPoAConsensus() returned true for Clique genesis configs even when TTD was set,
    * causing SIP-2935 and SIP-4788 system calls to be skipped for post-merge blocks.
    */
   @Test
-  public void cliqueToPoSNetworkUsesSilaPraguePreExecutionProcessorAfterMerge() {
+  public void cliqueToPoSNetworkUsesPraguePreExecutionProcessorAfterMerge() {
     final String jsonInput =
         "{\"config\": "
             + "{\"chainId\": 59139,\n"

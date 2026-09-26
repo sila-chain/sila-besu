@@ -23,7 +23,7 @@ import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.LogWithMetadata;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Comparator;
 import java.util.List;
@@ -125,8 +125,8 @@ public interface Blockchain {
    */
   default boolean blockIsOnCanonicalChain(final Hash blockHeaderHash) {
     return getBlockHeader(blockHeaderHash)
-        .flatMap(h -> getBlockHashByNumber(h.getNumber()))
-        .filter(h -> h.equals(blockHeaderHash))
+        .flatMap(header -> getBlockHashByNumber(header.getNumber()))
+        .filter(hash -> hash.equals(blockHeaderHash))
         .isPresent();
   }
 

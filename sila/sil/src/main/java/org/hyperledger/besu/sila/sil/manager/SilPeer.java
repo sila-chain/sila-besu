@@ -17,12 +17,18 @@ package org.hyperledger.besu.sila.sil.manager;
 import static com.google.common.base.Preconditions.checkArgument;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
-import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.sil.messages.GetBlockBodiesMessage;
 import org.hyperledger.besu.sila.sil.messages.GetBlockHeadersMessage;
 import org.hyperledger.besu.sila.sil.messages.GetPooledTransactionsMessage;
+import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
 import org.hyperledger.besu.sila.sil.messages.StatusMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.GetAccountRangeMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.GetBlockAccessListsMessage;
@@ -32,12 +38,6 @@ import org.hyperledger.besu.sila.sil.messages.snap.GetTrieNodesMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.SnapV1;
 import org.hyperledger.besu.sila.sil.messages.snap.SnapV2;
 import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 
 import java.time.Clock;
 import java.util.Collections;
@@ -139,11 +139,11 @@ public class SilPeer implements Comparable<SilPeer> {
     this.requestManagers = new ConcurrentHashMap<>();
     this.localNodeId = localNodeId;
     this.id = connection.getPeer().getId();
-    initSilRequestManagers();
+    initEthRequestManagers();
     initSnapRequestManagers();
   }
 
-  private void initSilRequestManagers() {
+  private void initEthRequestManagers() {
     // sil protocol
     requestManagers.put(
         SilProtocol.NAME,
@@ -204,7 +204,9 @@ public class SilPeer implements Comparable<SilPeer> {
 
   public void recordRequestTimeout(final String protocolName, final int requestCode) {
     LOG.atDebug()
-        .setMessage("Timed out while waiting for response from peer {}")
+        .setMessage("Timed out while waiting for response to {}/{} from peer {}")
+        .addArgument(protocolName)
+        .addArgument(requestCode)
         .addArgument(this::getLoggableId)
         .log();
     LOG.trace("Timed out while waiting for response from peer {}", this);

@@ -102,9 +102,9 @@ public interface HardforkId {
     /** Bangkok fork. */
     BANGKOK(false, "Bangkok"),
     /** Development fork, for accepted and unscheduled SIPs. */
-    FUTURE_SIPS(false, "FutureSips"),
+    FUTURE_EIPS(false, "FutureEips"),
     /** Developmental fork, for experimental SIPs. */
-    EXPERIMENTAL_SIPS(false, "ExperimentalSips");
+    EXPERIMENTAL_EIPS(false, "ExperimentalEips");
 
     final boolean finalized;
     final String description;
@@ -125,10 +125,10 @@ public interface HardforkId {
     }
 
     /**
-     * The most recent finalized sila-mainnet hardfork Besu supports. This will change across versions
-     * and will be updated after sila-mainnet activations.
+     * The most recent finalized mainnet hardfork Besu supports. This will change across versions
+     * and will be updated after mainnet activations.
      *
-     * @return the most recently activated sila-mainnet spec.
+     * @return the most recently activated mainnet spec.
      */
     public static SilaMainnetHardforkId mostRecent() {
       return Stream.of(SilaMainnetHardforkId.values())

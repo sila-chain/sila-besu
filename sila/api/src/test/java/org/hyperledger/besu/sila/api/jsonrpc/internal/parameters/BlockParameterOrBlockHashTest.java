@@ -36,7 +36,7 @@ public class BlockParameterOrBlockHashTest {
   }
 
   @Test
-  public void hexBlockNumberInSip1898ObjectFormIsAccepted() throws JsonProcessingException {
+  public void hexBlockNumberInEip1898ObjectFormIsAccepted() throws JsonProcessingException {
     // SIP-1898 object form: {"blockNumber": "0x64"}
     final BlockParameterOrBlockHash param =
         new BlockParameterOrBlockHash(java.util.Map.of("blockNumber", "0x64"));
@@ -44,7 +44,7 @@ public class BlockParameterOrBlockHashTest {
   }
 
   @Test
-  public void decimalBlockNumberInSip1898ObjectFormIsRejected() {
+  public void decimalBlockNumberInEip1898ObjectFormIsRejected() {
     // SIP-1898 object form with decimal: {"blockNumber": "100"} must be rejected
     assertThatThrownBy(() -> new BlockParameterOrBlockHash(java.util.Map.of("blockNumber", "100")))
         .isInstanceOf(IllegalArgumentException.class)

@@ -17,8 +17,8 @@ package org.hyperledger.besu.savm.processor;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.savm.Code;
-import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.ModificationNotAllowedException;
+import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.tracing.OperationTracer;
@@ -139,21 +139,16 @@ public abstract class AbstractMessageProcessor {
   }
 
   /**
-   * SIP-8037 state-gas accounting on frame failure (REVERT or exceptional HALT). Rolls back the
-   * frame's UndoScalar state-gas mutations, then credits any gas-left spill back to the reservoir
-   * so the parent (or sender, on top-level failure) recovers it. Halt and revert share this path
-   * because both propagate the full state_gas_used back via incorporate_child_on_error.
+   * SIP-8037 state-gas accounting on frame failure. The spill goes back to gasRemaining rather than
+   * the reservoir, because a revert propagates it to the parent and a halt burns it.
    */
   private void handleStateGasOnFrameFailure(final MessageFrame frame) {
-    final long stateGasUsedBefore = frame.getStateGasUsed();
-    final long reservoirBefore = frame.getStateGasReservoir();
     clearAccumulatedStateBesidesGasAndOutput(frame);
-    final long stateGasRestored = stateGasUsedBefore - frame.getStateGasUsed();
-    final long reservoirRestored = frame.getStateGasReservoir() - reservoirBefore;
-    final long spill = stateGasRestored - reservoirRestored;
-    if (spill > 0) {
-      frame.incrementStateGasReservoir(spill);
+    final long spilled = frame.getStateGasSpilled();
+    if (spilled > 0) {
+      frame.incrementRemainingGas(spilled);
     }
+    frame.resetStateGasSpilled();
   }
 
   private void exceptionalHalt(final MessageFrame frame) {
@@ -190,15 +185,17 @@ public abstract class AbstractMessageProcessor {
   }
 
   private static void traceFrameExit(final MessageFrame frame, final String status) {
-    final var contractAddress = frame.getContractAddress();
-    LOG.trace(
-        "SIP-8037 FRAME_EXIT depth={} contractAddress={} status={} gasLeft={} reservoir={} stateGasUsed={}",
-        frame.getDepth(),
-        contractAddress == null ? "" : contractAddress.toHexString(),
-        status,
-        frame.getRemainingGas(),
-        frame.getStateGasReservoir(),
-        frame.getStateGasUsed());
+    if (LOG.isTraceEnabled()) {
+      final var contractAddress = frame.getContractAddress();
+      LOG.trace(
+          "SIP-8037 FRAME_EXIT depth={} contractAddress={} status={} gasLeft={} reservoir={} stateGasUsed={}",
+          frame.getDepth(),
+          contractAddress == null ? "" : contractAddress.toHexString(),
+          status,
+          frame.getRemainingGas(),
+          frame.getStateGasReservoir(),
+          frame.getStateGasUsed());
+    }
   }
 
   /**
@@ -232,7 +229,7 @@ public abstract class AbstractMessageProcessor {
    * @param operationTracer the operation tracer
    */
   public void process(final MessageFrame frame, final OperationTracer operationTracer) {
-    if (frame.getState() == MessageFrame.State.NOT_STARTED) {
+    if (LOG.isTraceEnabled() && frame.getState() == MessageFrame.State.NOT_STARTED) {
       final var contractAddress = frame.getContractAddress();
       LOG.trace(
           "SIP-8037 FRAME_ENTER depth={} contractAddress={} gasLimit={} reservoir={} stateGasUsed={}",

@@ -142,10 +142,10 @@ public class TransactionReceiptDecoder {
     if (!isCompacted) {
       bloomFilter = LogsBloomFilter.readFrom(rlpInput);
     }
-    boolean isSil69Receipt = isCompacted && !rlpInput.nextIsList();
+    boolean isEth69Receipt = isCompacted && !rlpInput.nextIsList();
     TransactionReceipt receipt;
-    if (isSil69Receipt) {
-      receipt = decodeSil69Receipt(rlpInput, firstElement, secondElement);
+    if (isEth69Receipt) {
+      receipt = decodeEth69Receipt(rlpInput, firstElement, secondElement);
     } else {
       receipt =
           decodeLegacyReceipt(
@@ -155,7 +155,7 @@ public class TransactionReceiptDecoder {
     return receipt;
   }
 
-  private static TransactionReceipt decodeSil69Receipt(
+  private static TransactionReceipt decodeEth69Receipt(
       final RLPInput input, final RLPInput transactionByteRlp, final RLPInput statusOrStateRoot) {
     final TransactionType transactionType = getTransactionType(transactionByteRlp);
     final long cumulativeGas = input.readLongScalar();
@@ -175,7 +175,7 @@ public class TransactionReceiptDecoder {
     } else {
       final byte typeByte = transactionBytes.get(0);
       transactionType =
-          TransactionType.fromSilSerializedType(typeByte)
+          TransactionType.fromEthSerializedType(typeByte)
               .orElseThrow(
                   () ->
                       new IllegalStateException(

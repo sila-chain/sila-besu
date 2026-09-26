@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.execution;
 
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
+import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.JsonRpcRequestId;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
-import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
 
 import java.io.IOException;
 import java.io.OutputStream;

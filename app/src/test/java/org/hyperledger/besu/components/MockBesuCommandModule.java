@@ -17,7 +17,7 @@ package org.hyperledger.besu.components;
 import static org.mockito.Mockito.mock;
 
 import org.hyperledger.besu.cli.BesuCommand;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.plugin.services.BesuConfiguration;
 import org.hyperledger.besu.services.BesuConfigurationImpl;
 import org.hyperledger.besu.services.BesuPluginContextImpl;

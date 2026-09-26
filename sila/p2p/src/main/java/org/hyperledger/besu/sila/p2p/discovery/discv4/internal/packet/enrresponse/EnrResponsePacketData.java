@@ -17,7 +17,7 @@ package org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrrespon
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketData;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class EnrResponsePacketData implements PacketData {
   /* The hash of the entire ENRRequest packet being replied to. */

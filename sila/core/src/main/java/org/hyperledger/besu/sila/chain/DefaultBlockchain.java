@@ -24,6 +24,10 @@ import static org.hyperledger.besu.metrics.BesuMetricCategory.BLOCKCHAIN;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.sila.chain.BlockchainStorage.Updater;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
@@ -36,11 +40,7 @@ import org.hyperledger.besu.sila.core.SyncBlockBody;
 import org.hyperledger.besu.sila.core.SyncBlockWithReceipts;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.util.InvalidConfigurationException;
 import org.hyperledger.besu.util.Subscribers;
 
@@ -611,6 +611,16 @@ public class DefaultBlockchain implements MutableBlockchain {
   }
 
   @Override
+  public void unsafeRemoveCanonicalIndexRange(
+      final long lowerExclusive, final long upperInclusive) {
+    final BlockchainStorage.Updater updater = blockchainStorage.updater();
+    for (long i = lowerExclusive + 1; i <= upperInclusive; i++) {
+      updater.removeBlockHash(i);
+    }
+    updater.commit();
+  }
+
+  @Override
   public void unsafeStoreHeader(final BlockHeader blockHeader, final Difficulty totalDifficulty) {
     // as this is used only to store premerge block headers, we don't cache the header in this case
     final BlockchainStorage.Updater updater = blockchainStorage.updater();
@@ -1126,7 +1136,7 @@ public class DefaultBlockchain implements MutableBlockchain {
                 + dataDirectory
                 + "\n"
                 + "Please specify a different data directory with --data-path, specify the original genesis file with "
-                + "--genesis-file or supply a testnet/sila-mainnet option with --network.");
+                + "--genesis-file or supply a testnet/mainnet option with --network.");
       }
     }
   }

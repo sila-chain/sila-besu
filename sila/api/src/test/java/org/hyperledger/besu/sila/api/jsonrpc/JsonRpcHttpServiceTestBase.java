@@ -19,6 +19,10 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.config.StubGenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
@@ -35,21 +39,17 @@ import org.hyperledger.besu.sila.chain.ChainHead;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.sila.sil.SilProtocol;
-import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetProtocolSchedule;
 import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.permissioning.AccountLocalConfigPermissioningController;
 import org.hyperledger.besu.sila.permissioning.NodeLocalConfigPermissioningController;
+import org.hyperledger.besu.sila.sil.SilProtocol;
+import org.hyperledger.besu.sila.sil.manager.SilPeers;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -158,7 +158,7 @@ public class JsonRpcHttpServiceTestBase {
                 mock(ApiConfiguration.class),
                 Optional.empty(),
                 mock(TransactionSimulator.class),
-                new DeterministicSilScheduler());
+                new DeterministicEthScheduler());
     disabledRpcMethods = new HashMap<>();
     addedRpcMethods = new HashSet<>();
 

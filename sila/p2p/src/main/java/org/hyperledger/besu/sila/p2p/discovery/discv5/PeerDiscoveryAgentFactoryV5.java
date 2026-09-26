@@ -18,6 +18,8 @@ import org.hyperledger.besu.crypto.SECPPublicKey;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
@@ -26,29 +28,29 @@ import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeerFactory;
 import org.hyperledger.besu.sila.p2p.discovery.NodeRecordManager;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryAgent;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryAgentFactory;
-import org.hyperledger.besu.sila.p2p.discovery.dns.SilaNodeRecord;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.DefaultPeerId;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.net.InetSocketAddress;
+import java.util.List;
 import java.util.Objects;
 import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
-import org.sila.beacon.discovery.AddressAccessPolicy;
-import org.sila.beacon.discovery.DiscoverySystemBuilder;
-import org.sila.beacon.discovery.MutableDiscoverySystem;
-import org.sila.beacon.discovery.crypto.Signer;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.storage.NewAddressHandler;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sila.beacon.discovery.AddressAccessPolicy;
+import sila.beacon.discovery.DiscoverySystemBuilder;
+import sila.beacon.discovery.MutableDiscoverySystem;
+import sila.beacon.discovery.crypto.Signer;
+import sila.beacon.discovery.network.NettyDiscoveryServer;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.storage.NewAddressHandler;
 
 /**
  * Factory for creating DiscV5 {@link PeerDiscoveryAgent} instances.
@@ -71,6 +73,9 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
   private final PeerPermissions peerPermissions;
   private final ForkIdManager forkIdManager;
   private final MetricsSystem metricsSystem;
+
+  // Non-null when BOTH mode injects pre-bound discovery servers instead of calling builder.listen()
+  private final List<NettyDiscoveryServer> customDiscoveryServers;
 
   /**
    * Creates a new DiscV5 peer discovery agent factory.
@@ -109,6 +114,21 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
       final ForkIdManager forkIdManager,
       final MetricsSystem metricsSystem,
       final NodeRecordManager nodeRecordManager) {
+    this(config, nodeKey, peerPermissions, forkIdManager, metricsSystem, nodeRecordManager, null);
+  }
+
+  /**
+   * Package-private constructor for BOTH mode: injects pre-bound {@link NettyDiscoveryServer}
+   * instances instead of calling {@code builder.listen(...)}.
+   */
+  PeerDiscoveryAgentFactoryV5(
+      final NetworkingConfiguration config,
+      final NodeKey nodeKey,
+      final PeerPermissions peerPermissions,
+      final ForkIdManager forkIdManager,
+      final MetricsSystem metricsSystem,
+      final NodeRecordManager nodeRecordManager,
+      final List<NettyDiscoveryServer> customDiscoveryServers) {
     this.config = Objects.requireNonNull(config, "config must not be null");
     this.nodeKey = Objects.requireNonNull(nodeKey, "nodeKey must not be null");
     this.peerPermissions =
@@ -117,6 +137,7 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
     this.metricsSystem = Objects.requireNonNull(metricsSystem, "metricsSystem must not be null");
     this.nodeRecordManager =
         Objects.requireNonNull(nodeRecordManager, "nodeRecordManager must not be null");
+    this.customDiscoveryServers = customDiscoveryServers;
   }
 
   /**
@@ -142,7 +163,7 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
         buildDefaultDiscoverySystemFactory());
   }
 
-  /** Creates the default {@link PeerDiscoveryAgentV5.DiscoverySystemFactory}. */
+  /** Creates the {@link PeerDiscoveryAgentV5.DiscoverySystemFactory} for this factory. */
   private PeerDiscoveryAgentV5.DiscoverySystemFactory buildDefaultDiscoverySystemFactory() {
     final DiscoveryConfiguration discoveryConfig = config.discoveryConfiguration();
 
@@ -165,10 +186,13 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
               .addressAccessPolicy(createAddressAccessPolicy())
               .bootnodes(
                   discoveryConfig.getEnrBootnodes().stream()
-                      .map(SilaNodeRecord::nodeRecord)
+                      .map(EthereumNodeRecord::nodeRecord)
                       .toList());
 
-      if (discoveryConfig.isDualStackEnabled()) {
+      if (customDiscoveryServers != null && !customDiscoveryServers.isEmpty()) {
+        // BOTH mode: use pre-bound shared channels instead of binding new sockets
+        builder.discoveryServers(customDiscoveryServers.toArray(new NettyDiscoveryServer[0]));
+      } else if (discoveryConfig.isDualStackEnabled()) {
         final InetSocketAddress ipv4 =
             new InetSocketAddress(discoveryConfig.getBindHost(), discoveryConfig.getBindPort());
         final InetSocketAddress ipv6 =
@@ -196,9 +220,9 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
    *
    * <p>The {@code allow(InetSocketAddress)} method delegates to {@code
    * peerPermissions.isPermitted(address)}, which in turn checks subnet restrictions via {@link
-   * org.hyperledger.besu.sila.p2p.permissions.PeerPermissionSubnet} if configured. This
-   * provides the earliest possible filtering — raw UDP packets from disallowed IPs are dropped
-   * before protocol processing.
+   * org.hyperledger.besu.sila.p2p.permissions.PeerPermissionSubnet} if configured. This provides
+   * the earliest possible filtering — raw UDP packets from disallowed IPs are dropped before
+   * protocol processing.
    *
    * <p>The {@code allow(NodeRecord)} method first checks the node record's addresses via the same
    * IP-level permissions, then creates a {@link DiscoveryPeer} from the ENR and checks full {@link
@@ -252,7 +276,7 @@ public final class PeerDiscoveryAgentFactoryV5 implements PeerDiscoveryAgentFact
           // Implementations that need an IP (e.g. subnet filters) default to true since
           // there is nothing to filter on; only ID-based checks (e.g. denylists) fire.
           try {
-            final Bytes publicKey = SilaNodeRecord.uncompressedPublicKey(record);
+            final Bytes publicKey = EthereumNodeRecord.uncompressedPublicKey(record);
             return peerPermissions.isPermitted(
                 localNode,
                 new DefaultPeerId(publicKey),

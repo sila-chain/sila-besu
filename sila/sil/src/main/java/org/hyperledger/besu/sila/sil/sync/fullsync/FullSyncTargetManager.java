@@ -16,17 +16,17 @@ package org.hyperledger.besu.sila.sil.sync.fullsync;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.sync.AbstractSyncTargetManager;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
@@ -76,12 +76,12 @@ class FullSyncTargetManager extends AbstractSyncTargetManager {
 
   @Override
   protected CompletableFuture<Optional<SilPeer>> selectBestAvailableSyncTarget() {
-    final Optional<SilPeer> maybeBestPeer = silContext.getSilPeers().bestPeerWithHeightEstimate();
+    final Optional<SilPeer> maybeBestPeer = silContext.getEthPeers().bestPeerWithHeightEstimate();
     if (!maybeBestPeer.isPresent()) {
       LOG.info(
           "Unable to find sync target. Waiting for {} peers minimum. Currently checking {} peers for usefulness",
           config.getSyncMinimumPeerCount(),
-          silContext.getSilPeers().peerCount());
+          silContext.getEthPeers().peerCount());
       return completedFuture(Optional.empty());
     } else {
       final SilPeer bestPeer = maybeBestPeer.get();
@@ -91,14 +91,14 @@ class FullSyncTargetManager extends AbstractSyncTargetManager {
             "Caught up to best peer: {}, chain state: {}. Current peers: {}",
             bestPeer,
             bestPeer.chainState(),
-            silContext.getSilPeers().peerCount());
+            silContext.getEthPeers().peerCount());
         return completedFuture(Optional.empty());
       }
       LOG.debug(
           "Best peer: {}, chain state: {}. Current peers: {}",
           bestPeer,
           bestPeer.chainState(),
-          silContext.getSilPeers().peerCount());
+          silContext.getEthPeers().peerCount());
       return completedFuture(maybeBestPeer);
     }
   }

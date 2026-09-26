@@ -15,12 +15,12 @@
 package org.hyperledger.besu.consensus.qbft.validator;
 
 import org.hyperledger.besu.datatypes.Address;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
+import org.hyperledger.besu.savm.tracing.OperationTracer;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
 import org.hyperledger.besu.sila.transaction.CallParameter;
 import org.hyperledger.besu.sila.transaction.ImmutableCallParameter;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.transaction.TransactionSimulatorResult;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
 
 import java.util.Collection;
 import java.util.List;
@@ -28,12 +28,12 @@ import java.util.Optional;
 import java.util.stream.Collectors;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.web3j.abi.FunctionEncoder;
-import org.web3j.abi.FunctionReturnDecoder;
-import org.web3j.abi.TypeReference;
-import org.web3j.abi.datatypes.DynamicArray;
-import org.web3j.abi.datatypes.Function;
-import org.web3j.abi.datatypes.Type;
+import sila.web3j.abi.FunctionEncoder;
+import sila.web3j.abi.FunctionReturnDecoder;
+import sila.web3j.abi.TypeReference;
+import sila.web3j.abi.datatypes.DynamicArray;
+import sila.web3j.abi.datatypes.Function;
+import sila.web3j.abi.datatypes.Type;
 
 /** The Validator contract controller. */
 public class ValidatorContractController {
@@ -60,7 +60,7 @@ public class ValidatorContractController {
           new Function(
               GET_VALIDATORS,
               List.of(),
-              List.of(new TypeReference<DynamicArray<org.web3j.abi.datatypes.Address>>() {}));
+              List.of(new TypeReference<DynamicArray<sila.web3j.abi.datatypes.Address>>() {}));
     } catch (final Exception e) {
       throw new RuntimeException("Error creating smart contract function", e);
     }
@@ -82,8 +82,8 @@ public class ValidatorContractController {
   @SuppressWarnings({"rawtypes", "unchecked"})
   private Collection<Address> parseGetValidatorsResult(final TransactionSimulatorResult result) {
     final List<Type> resultDecoding = decodeResult(result, getValidatorsFunction);
-    final List<org.web3j.abi.datatypes.Address> addresses =
-        (List<org.web3j.abi.datatypes.Address>) resultDecoding.get(0).getValue();
+    final List<sila.web3j.abi.datatypes.Address> addresses =
+        (List<sila.web3j.abi.datatypes.Address>) resultDecoding.get(0).getValue();
     return addresses.stream()
         .map(a -> Address.fromHexString(a.getValue()))
         .collect(Collectors.toList());

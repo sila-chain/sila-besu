@@ -46,7 +46,7 @@ import org.junit.jupiter.api.Test;
 class SAVMExecutorTest {
 
   @Test
-  void customSAVM() {
+  void customEVM() {
     var subject =
         new SAVMExecutor(
             SavmSpec.savmSpec(
@@ -54,12 +54,12 @@ class SAVMExecutorTest {
                     new OperationRegistry(),
                     new FrontierGasCalculator(),
                     SavmConfiguration.DEFAULT,
-                    SavmSpecVersion.EXPERIMENTAL_SIPS)));
+                    SavmSpecVersion.EXPERIMENTAL_EIPS)));
     assertThat(subject).isNotNull();
   }
 
   @Test
-  void nullSavmSpec() {
+  void nullEvmSpec() {
     assertThrows(NullPointerException.class, () -> new SAVMExecutor((SavmSpec) null));
   }
 
@@ -108,7 +108,7 @@ class SAVMExecutorTest {
             .gasPriceGWei(Wei.ONE)
             .blobGasPrice(Wei.ONE)
             .callData(Bytes.fromHexString("0x12345678"))
-            .silValue(Wei.fromSil(1))
+            .silValue(Wei.fromEth(1))
             .code(Bytes.fromHexString("0x6001600255"))
             .blockValues(new SimpleBlockValues())
             .difficulty(Bytes.ofUnsignedLong(1L))
@@ -147,11 +147,11 @@ class SAVMExecutorTest {
   private static SimpleWorld createSimpleWorld() {
     SimpleWorld simpleWorld = new SimpleWorld();
 
-    simpleWorld.createAccount(Address.fromHexString("0x0"), 1, Wei.fromSil(100));
-    simpleWorld.createAccount(Address.fromHexString("0x100"), 1, Wei.fromSil(100));
-    simpleWorld.createAccount(Address.fromHexString("0x200"), 1, Wei.fromSil(100));
-    simpleWorld.createAccount(Address.fromHexString("0x300"), 1, Wei.fromSil(100));
-    simpleWorld.createAccount(Address.fromHexString("0x400"), 1, Wei.fromSil(100));
+    simpleWorld.createAccount(Address.fromHexString("0x0"), 1, Wei.fromEth(100));
+    simpleWorld.createAccount(Address.fromHexString("0x100"), 1, Wei.fromEth(100));
+    simpleWorld.createAccount(Address.fromHexString("0x200"), 1, Wei.fromEth(100));
+    simpleWorld.createAccount(Address.fromHexString("0x300"), 1, Wei.fromEth(100));
+    simpleWorld.createAccount(Address.fromHexString("0x400"), 1, Wei.fromEth(100));
     return simpleWorld;
   }
 }

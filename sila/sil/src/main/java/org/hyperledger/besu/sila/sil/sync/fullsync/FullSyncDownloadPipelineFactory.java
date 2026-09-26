@@ -14,6 +14,10 @@
  */
 package org.hyperledger.besu.sila.sil.sync.fullsync;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.services.pipeline.Pipeline;
+import org.hyperledger.besu.services.pipeline.PipelineBuilder;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
@@ -29,12 +33,8 @@ import org.hyperledger.besu.sila.sil.sync.range.RangeHeadersValidationStep;
 import org.hyperledger.besu.sila.sil.sync.range.SyncTargetRangeSource;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.services.pipeline.Pipeline;
-import org.hyperledger.besu.services.pipeline.PipelineBuilder;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.concurrent.CompletionStage;
 
@@ -68,7 +68,7 @@ public class FullSyncDownloadPipelineFactory implements DownloadPipelineFactory 
     this.metricsSystem = metricsSystem;
     this.fullSyncTerminationCondition = syncTerminationCondition;
     this.betterSyncTargetEvaluator =
-        new BetterSyncTargetEvaluator(syncConfig, silContext.getSilPeers());
+        new BetterSyncTargetEvaluator(syncConfig, silContext.getEthPeers());
   }
 
   @Override

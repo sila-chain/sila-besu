@@ -35,57 +35,58 @@ public class SavmSpecTest {
   void defaultChainIdAPIs() {
     Bytes32 defaultChainId = Bytes32.leftPad(Bytes.of(1));
 
-    SavmSpec istanbulSAVM = SavmSpec.istanbul(SavmConfiguration.DEFAULT);
-    assertThat(istanbulSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec istanbulEVM = SavmSpec.istanbul(SavmConfiguration.DEFAULT);
+    assertThat(istanbulEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec berlinSAVM = SavmSpec.berlin(SavmConfiguration.DEFAULT);
-    assertThat(berlinSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec berlinEVM = SavmSpec.berlin(SavmConfiguration.DEFAULT);
+    assertThat(berlinEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec londonSAVM = SavmSpec.london(SavmConfiguration.DEFAULT);
-    assertThat(londonSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec londonEVM = SavmSpec.london(SavmConfiguration.DEFAULT);
+    assertThat(londonEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec parisSAVM = SavmSpec.paris(SavmConfiguration.DEFAULT);
-    assertThat(parisSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec parisEVM = SavmSpec.paris(SavmConfiguration.DEFAULT);
+    assertThat(parisEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec shanghaiSAVM = SavmSpec.shanghai(SavmConfiguration.DEFAULT);
-    assertThat(shanghaiSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec shanghaiEVM = SavmSpec.shanghai(SavmConfiguration.DEFAULT);
+    assertThat(shanghaiEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec cancunSAVM = SavmSpec.cancun(SavmConfiguration.DEFAULT);
-    assertThat(cancunSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec cancunEVM = SavmSpec.cancun(SavmConfiguration.DEFAULT);
+    assertThat(cancunEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec pragueSAVM = SavmSpec.prague(defaultChainId.toBigInteger(), SavmConfiguration.DEFAULT);
-    assertThat(pragueSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec pragueEVM = SavmSpec.prague(defaultChainId.toBigInteger(), SavmConfiguration.DEFAULT);
+    assertThat(pragueEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec osakaSAVM = SavmSpec.osaka(defaultChainId.toBigInteger(), SavmConfiguration.DEFAULT);
-    assertThat(osakaSAVM.getChainId()).contains(defaultChainId);
+    SavmSpec osakaEVM = SavmSpec.osaka(defaultChainId.toBigInteger(), SavmConfiguration.DEFAULT);
+    assertThat(osakaEVM.getChainId()).contains(defaultChainId);
 
-    SavmSpec futureSipsVM = SavmSpec.futureSips(SavmConfiguration.DEFAULT);
-    assertThat(futureSipsVM.getChainId()).contains(defaultChainId);
+    SavmSpec futureEipsVM = SavmSpec.futureEips(SavmConfiguration.DEFAULT);
+    assertThat(futureEipsVM.getChainId()).contains(defaultChainId);
   }
 
   @Test
-  void nullSavmSpec() {
-    assertThrows(NullPointerException.class, () -> new SAVMExecutor(SavmSpec.savmSpec((SAVM) null)));
+  void nullEvmSpec() {
+    assertThrows(
+        NullPointerException.class, () -> new SAVMExecutor(SavmSpec.savmSpec((SAVM) null)));
   }
 
   @Test
-  void currentSAVM() {
+  void currentEVM() {
     var subject = SavmSpec.savmSpec();
-    assertThat(subject.getSAVMVersion()).isEqualTo(SavmSpecVersion.OSAKA);
+    assertThat(subject.getEVMVersion()).isEqualTo(SavmSpecVersion.OSAKA);
   }
 
   @ParameterizedTest
   @EnumSource(SavmSpecVersion.class)
   void savmByRequest(final SavmSpecVersion version) {
     var subject = SavmSpec.savmSpec(version);
-    assertThat(subject.getSAVMVersion()).isEqualTo(version);
+    assertThat(subject.getEVMVersion()).isEqualTo(version);
   }
 
   @ParameterizedTest
   @EnumSource(SavmSpecVersion.class)
   void savmWithChainIDByRequest(final SavmSpecVersion version) {
     var subject = SavmSpec.savmSpec(version, BigInteger.TEN);
-    assertThat(subject.getSAVMVersion()).isEqualTo(version);
+    assertThat(subject.getEVMVersion()).isEqualTo(version);
     if (SavmSpecVersion.ISTANBUL.compareTo(version) <= 0) {
       assertThat(subject.getChainId()).map(Bytes::trimLeadingZeros).map(Bytes::toInt).contains(10);
     } else {
@@ -97,7 +98,7 @@ public class SavmSpecTest {
   @EnumSource(SavmSpecVersion.class)
   void savmWithChainIDByBytes(final SavmSpecVersion version) {
     var subject = SavmSpec.savmSpec(version, Bytes.fromHexString("0xc4a1201d"));
-    assertThat(subject.getSAVMVersion()).isEqualTo(version);
+    assertThat(subject.getEVMVersion()).isEqualTo(version);
     if (SavmSpecVersion.ISTANBUL.compareTo(version) <= 0) {
       assertThat(subject.getChainId())
           .map(Bytes::trimLeadingZeros)

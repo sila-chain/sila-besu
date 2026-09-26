@@ -145,7 +145,7 @@ public class Era1BlockExporterTest {
     Mockito.when(era1Accumulator.accumulate()).thenReturn(Bytes32.wrap(accumulatorHash.getBytes()));
 
     String expectedFilename =
-        "sila-mainnet-00000-" + accumulatorHash.getBytes().toFastHex(false).substring(0, 8) + ".era1";
+        "mainnet-00000-" + accumulatorHash.getBytes().toFastHex(false).substring(0, 8) + ".era1";
     Mockito.when(era1FileWriterFactory.era1FileWriter(Mockito.any(File.class)))
         .thenReturn(era1FileWriter);
 

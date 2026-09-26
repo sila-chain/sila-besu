@@ -11,9 +11,8 @@
  * specific language governing permissions and limitations under the License.
  */
 
-import java.security.MessageDigest
-
 apply plugin: 'java-library'
+apply plugin: 'me.champeau.gradle.japicmp'
 jar {
   archiveBaseName = calculateArtifactId(project)
   manifest {
@@ -29,6 +28,21 @@ jar {
 }
 
 dependencies {
+  api project(':plugin-api:core')
+  api project(':metrics:plugin-api')
+  api project(':crypto:plugin-api')
+  api project(':sila:permissioning:plugin-api')
+  api project(':services:kvstore:plugin-api')
+  api project(':sila:core:plugin-api-worldstate')
+  api project(':sila:p2p:plugin-api')
+  api project(':sila:sil:plugin-api-txpool')
+  api project(':sila:sil:plugin-api-sync')
+  api project(':sila:api:plugin-api')
+  api project(':sila:core:plugin-api-chain')
+  api project(':sila:core:plugin-api-worldstate-backend')
+  api project(':sila:core:plugin-api-execution')
+  api project(':sila:blockcreation:plugin-api')
+  api project(':sila:core:plugin-api-validation')
   api project(':datatypes')
   api 'org.apache.commons:commons-lang3'
   api 'io.consensys.tuweni:tuweni-bytes'
@@ -40,40 +54,94 @@ dependencies {
 
 configurations { testArtifacts }
 
-class FileStateChecker extends DefaultTask {
+// The released jar to compare against; the transitive configuration lets the baseline
+// type hierarchy resolve, so missing supertypes do not show up as API changes.
+def apiBaselineJar = configurations.detachedConfiguration(
+  dependencies.create("org.hyperledger.besu:besu-plugin-api:${apiBaselineVersion}") { transitive = false })
+def apiBaselineClasspath = configurations.detachedConfiguration(
+  dependencies.create("org.hyperledger.besu:besu-plugin-api:${apiBaselineVersion}"))
 
-  @Input
-  Set<File> files
-
-  @Input
-  String knownHash
-
-  @TaskAction
-  def CheckState() {
-    def digestor = MessageDigest.getInstance("SHA-256")
-
-    this.files.toSorted(Comparator.comparing({it.canonicalPath})).each {
-      digestor.update(it.readBytes())
-    }
-    def currentHash = digestor.digest().encodeBase64().toString()
-    if (this.knownHash != currentHash) {
-      throw new GradleException("""For the Plugin APIs the checksum of the project did not match what was expected.
-
-If this is a deliberate change where you have thought through backwards compatibility,
-then update "Expected" for "Calculated" in the appropriate build.gradle as the knownHash for this task.
-Expected   : ${this.knownHash}
-Calculated : ${currentHash}
-""")
-    }
+[
+  apiBaselineJar,
+  apiBaselineClasspath
+].each { cfg ->
+  cfg.resolutionStrategy.dependencySubstitution {
+    substitute module('io.consensys.protocols:jc-kzg-4844') using module('sila.java:sila-ckzg4844:2.1.8')
+    substitute module('io.consensys.protocols:discovery') using module('sila.java:sila-discovery:26.8.0')
+    substitute module('sila.web3j:core') using module('sila.java:sila-web3j-runtime:5.0.3')
   }
 }
 
-tasks.register('checkAPIChanges', FileStateChecker) {
-  description = "Checks that the API for the Plugin-API project does not change without deliberate thought"
-  files = sourceSets.main.allJava.files
-  knownHash = 'nKgL6IVQtUfwVXjf8zg8XtEVZm+ImSiM3BAz9owTLUc='
+tasks.register('checkAPICompatibility', me.champeau.gradle.japicmp.JapicmpTask) {
+  description = "Checks that the Plugin API remains binary and source compatible with the last released version, allowing only additions"
+  group = 'verification'
+
+  oldArchives.from(apiBaselineJar)
+  oldClasspath.from(apiBaselineClasspath)
+  // When the Plugin API is split into modules, each new jar is added here so the union is checked
+  newArchives.from(
+    tasks.named('jar'),
+    project(':plugin-api:core').tasks.named('jar'),
+    project(':metrics:plugin-api').tasks.named('jar'),
+    project(':sila:permissioning:plugin-api').tasks.named('jar'),
+    project(':crypto:plugin-api').tasks.named('jar'),
+    project(':services:kvstore:plugin-api').tasks.named('jar'),
+    project(':sila:core:plugin-api-worldstate').tasks.named('jar'),
+    project(':sila:p2p:plugin-api').tasks.named('jar'),
+    project(':sila:sil:plugin-api-txpool').tasks.named('jar'),
+    project(':sila:sil:plugin-api-sync').tasks.named('jar'),
+    project(':sila:api:plugin-api').tasks.named('jar'),
+    project(':sila:core:plugin-api-chain').tasks.named('jar'),
+    project(':sila:core:plugin-api-worldstate-backend').tasks.named('jar'),
+    project(':sila:core:plugin-api-execution').tasks.named('jar'),
+    project(':sila:blockcreation:plugin-api').tasks.named('jar'),
+    project(':sila:core:plugin-api-validation').tasks.named('jar'))
+  newClasspath.from(sourceSets.main.runtimeClasspath)
+
+  packageIncludes = [
+    'org.hyperledger.besu.plugin*'
+  ]
+  onlyModified = true
+  failOnModification = true
+  failOnSourceIncompatibility = true
+  // Plugin authors subclass API types, so protected members are API too (default is public only)
+  accessModifier = 'protected'
+  // Track compiler-generated bridge methods, whose removal is a real binary break
+  includeSynthetic = true
+  // Baseline signatures reference types outside the API jar (savm, datatypes, tuweni, ...)
+  ignoreMissingClasses = true
+
+  // An intentional breaking change is recorded here in the same PR, as the narrowest
+  // exclusion covering it (method/field/class/compatibilityChangeExcludes), e.g.
+  //   methodExcludes = ['org.hyperledger.besu.plugin.services.metrics.Counter#inc(long)']
+  // Exclusions are cleared by the release PR that bumps apiBaselineVersion.
+  fieldExcludes = []
+  methodExcludes = []
+
+  txtOutputFile = layout.buildDirectory.file('reports/japicmp/plugin-api-compatibility.txt')
+  htmlOutputFile = layout.buildDirectory.file('reports/japicmp/plugin-api-compatibility.html')
 }
-check.dependsOn('checkAPIChanges')
+check.dependsOn('checkAPICompatibility')
+
+// Prints the change list into the build log when the compatibility check fails
+tasks.register('printAPICompatibilityReport') {
+  def compatTask = tasks.named('checkAPICompatibility')
+  def txtReport = layout.buildDirectory.file('reports/japicmp/plugin-api-compatibility.txt')
+  doLast {
+    def reportFile = txtReport.get().asFile
+    if (compatTask.get().state.failure != null && reportFile.exists()) {
+      def maxLines = 100
+      def lines = reportFile.readLines()
+      def message = "Plugin API compatibility check failed. Changes against the baseline:\n\n" +
+        lines.take(maxLines).join('\n')
+      if (lines.size() > maxLines) {
+        message += "\n... truncated (${lines.size() - maxLines} more lines), full report: ${reportFile}"
+      }
+      logger.error(message)
+    }
+  }
+}
+tasks.named('checkAPICompatibility') { finalizedBy('printAPICompatibilityReport') }
 
 publishing {
   publications {

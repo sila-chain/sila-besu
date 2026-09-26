@@ -23,10 +23,10 @@ import org.hyperledger.besu.sila.core.encoding.receipt.SyncTransactionReceiptEnc
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptDecoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.SimpleNoCopyRlpEncoder;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
 
 import java.math.BigInteger;
 import java.util.List;

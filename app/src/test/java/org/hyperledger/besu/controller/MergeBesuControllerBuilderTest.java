@@ -32,6 +32,11 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.GasLimitCalculator;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.chain.Blockchain;
@@ -43,29 +48,26 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
+import org.hyperledger.besu.sila.sil.sync.common.checkpoint.ImmutableCheckpoint;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStoragePrefixedKeyBlockchainStorage;
 import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -176,7 +178,7 @@ public class MergeBesuControllerBuilderTest {
         .thenReturn(mock(ForestWorldStateKeyValueStorage.Updater.class));
     lenient().when(miningConfiguration.getTargetGasLimit()).thenReturn(OptionalLong.empty());
     lenient()
-        .when(silProtocolConfiguration.getMaxSilCapability())
+        .when(silProtocolConfiguration.getMaxEthCapability())
         .thenReturn(SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY);
 
     besuControllerBuilder = visitWithMockConfigs(new MergeBesuControllerBuilder());
@@ -222,7 +224,7 @@ public class MergeBesuControllerBuilderTest {
   public void buildsSuccessfullyWhenTerminalTotalDifficultyIsAbsent() {
     when(genesisConfigOptions.getTerminalTotalDifficulty()).thenReturn(Optional.empty());
 
-    // Prior to this fix, build() threw here because createSilProtocolManager called orElseThrow()
+    // Prior to this fix, build() threw here because createEthProtocolManager called orElseThrow()
     // on an absent TTD. The TTD=ZERO assertion is secondary.
     final Difficulty terminalTotalDifficulty =
         visitWithMockConfigs(new MergeBesuControllerBuilder())
@@ -335,9 +337,8 @@ public class MergeBesuControllerBuilderTest {
   }
 
   @Test
-  public void reportSyncingWhenP2pEnabled() {
-    when(synchronizerConfiguration.getSyncMode())
-        .thenReturn(new Random().nextBoolean() ? SyncMode.FULL : SyncMode.SNAP);
+  public void reportSyncingWhenP2pEnabledAndSnapSync() {
+    when(synchronizerConfiguration.getSyncMode()).thenReturn(SyncMode.SNAP);
 
     final boolean isSyncing =
         visitWithMockConfigs(new MergeBesuControllerBuilder())
@@ -347,7 +348,47 @@ public class MergeBesuControllerBuilderTest {
             .getConsensusContext(MergeContext.class)
             .isSyncing();
 
+    // The initial sync phase has not completed yet.
     assertThat(isSyncing).isTrue();
+  }
+
+  @Test
+  public void reportNotSyncingWhenP2pEnabledAndFullSyncAndNoPeers() {
+    when(synchronizerConfiguration.getSyncMode()).thenReturn(SyncMode.FULL);
+
+    final boolean isSyncing =
+        visitWithMockConfigs(new MergeBesuControllerBuilder())
+            .p2pEnabled(true)
+            .build()
+            .getProtocolContext()
+            .getConsensusContext(MergeContext.class)
+            .isSyncing();
+
+    // Full sync marks the initial sync phase done at startup and leaves terminal difficulty
+    // undetermined until the downloader terminates. That undetermined state now defaults to
+    // "reached", so with no peers ahead of us we are in sync rather than syncing.
+    assertThat(isSyncing).isFalse();
+  }
+
+  @Test
+  public void checkpointOverrideIsReflectedInSyncState() {
+    final Checkpoint override =
+        ImmutableCheckpoint.builder()
+            .blockHash(
+                Hash.fromHexString(
+                    "0x0000000000000000000000000000000000000000000000000000000000000001"))
+            .blockNumber(1234L)
+            .totalDifficulty(Difficulty.of(9999L))
+            .build();
+
+    final Optional<Checkpoint> checkpoint =
+        visitWithMockConfigs(new MergeBesuControllerBuilder())
+            .checkpoint(Optional.of(override))
+            .build()
+            .getSyncState()
+            .getCheckpoint();
+
+    assertThat(checkpoint).contains(override);
   }
 
   @Test
@@ -364,12 +405,45 @@ public class MergeBesuControllerBuilderTest {
   }
 
   @Test
+  public void hoodiShapedGenesisIsPostMergeAtGenesis() {
+    // difficulty 0x01 with TTD 0: genesis already meets the terminal condition.
+    when(genesisConfig.getDifficulty()).thenReturn("0x01");
+    when(genesisConfigOptions.getTerminalTotalDifficulty()).thenReturn(Optional.of(UInt256.ZERO));
+
+    final Blockchain mockChain = mock(Blockchain.class);
+    when(mockChain.getBlockHeader(anyLong())).thenReturn(Optional.of(mock(BlockHeader.class)));
+
+    final MergeContext mergeContext =
+        besuControllerBuilder.createConsensusContext(
+            mockChain,
+            mock(WorldStateArchive.class),
+            this.besuControllerBuilder.createProtocolSchedule());
+
+    assertThat(mergeContext.isPostMergeAtGenesis()).isTrue();
+  }
+
+  @Test
+  public void genesisDifficultyBelowTerminalTotalDifficultyIsNotPostMergeAtGenesis() {
+    // Uses the setup defaults: difficulty 0x00, TTD 100.
+    final Blockchain mockChain = mock(Blockchain.class);
+    when(mockChain.getBlockHeader(anyLong())).thenReturn(Optional.of(mock(BlockHeader.class)));
+
+    final MergeContext mergeContext =
+        besuControllerBuilder.createConsensusContext(
+            mockChain,
+            mock(WorldStateArchive.class),
+            this.besuControllerBuilder.createProtocolSchedule());
+
+    assertThat(mergeContext.isPostMergeAtGenesis()).isFalse();
+  }
+
+  @Test
   public void assertBuiltContextMonitorsTTD() {
     final GenesisState genesisState =
         GenesisState.fromConfig(
             genesisConfig,
             this.besuControllerBuilder.createProtocolSchedule(),
-            new PathBasedCodeCache());
+            new BonsaiCodeCache());
     final MutableBlockchain blockchain = createInMemoryBlockchain(genesisState.getBlock());
     final MergeContext mergeContext =
         spy(

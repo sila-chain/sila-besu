@@ -14,8 +14,9 @@
  */
 package org.hyperledger.besu.sila.transaction;
 
-import static org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
+import static org.hyperledger.besu.sila.silaMainnet.feemarket.BlobFeeMarket.MIN_BLOB_GASPRICE;
+import static org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
 
 import org.hyperledger.besu.crypto.SECPSignature;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
@@ -28,27 +29,27 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StateOverride;
 import org.hyperledger.besu.datatypes.StateOverrideMap;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.account.MutableAccount;
+import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
+import org.hyperledger.besu.savm.tracing.OperationTracer;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.AccessLocationTracker;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.AccessLocationTracker;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
 import org.hyperledger.besu.sila.vm.DebugOperationTracer;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.account.MutableAccount;
-import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
-import org.hyperledger.besu.savm.tracing.OperationTracer;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -377,7 +378,9 @@ public class TransactionSimulator {
         (protocolSpec, maybeParentHeader) -> {
           if (transactionValidationParams.isAllowExceedingBalance()
               && !transactionValidationParams.isPreserveCallerGasPricing()) {
-            return Wei.ZERO;
+            // Returning zero is spec-illegal even in no-fee simulation paths where baseFee
+            // is zeroed for caller convenience.
+            return MIN_BLOB_GASPRICE;
           }
           return protocolSpec
               .getFeeMarket()
@@ -535,26 +538,18 @@ public class TransactionSimulator {
         simulationGasCap = userProvidedGasLimit;
       }
     } else {
-      final long txGasLimitCap =
-          protocolSchedule
-              .getByBlockHeader(blockHeader)
-              .getGasLimitCalculator()
-              .transactionGasLimitCap();
       if (rpcGasCap > 0) {
-        simulationGasCap = Math.min(rpcGasCap, Math.min(txGasLimitCap, blockGasLimit));
+        simulationGasCap = Math.min(rpcGasCap, blockGasLimit);
         LOG.trace(
-            "No user provided gas limit, setting simulation gas cap to the value of min(rpc-gas-cap={},txGasLimitCap={},blockGasLimit={})={}",
+            "No user provided gas limit, setting simulation gas cap to the value of min(rpc-gas-cap={},blockGasLimit={})={}",
             rpcGasCap,
-            txGasLimitCap,
             blockGasLimit,
             simulationGasCap);
       } else {
-        simulationGasCap = Math.min(txGasLimitCap, blockGasLimit);
+        simulationGasCap = blockGasLimit;
         LOG.trace(
-            "No user provided gas limit and rpc-gas-cap options is not set, setting simulation gas cap to min(txGasLimitCap={},blockGasLimit={})={}",
-            txGasLimitCap,
-            blockGasLimit,
-            simulationGasCap);
+            "No user provided gas limit and rpc-gas-cap option is not set, setting simulation gas cap to block gas limit {}",
+            blockGasLimit);
       }
     }
     return simulationGasCap;
@@ -607,7 +602,9 @@ public class TransactionSimulator {
       gasPrice = Wei.ZERO;
       maxFeePerGas = Wei.ZERO;
       maxPriorityFeePerGas = Wei.ZERO;
-      maxFeePerBlobGas = Wei.ZERO;
+      // Must match blobGasPrice (MIN_BLOB_GASPRICE) so the fee-cap check passes; see
+      // blobGasPricePerGasSupplier above.
+      maxFeePerBlobGas = MIN_BLOB_GASPRICE;
     } else {
       if (noPricingParametersPresent) {
         // in case there are no gas price parameters,

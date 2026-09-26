@@ -17,7 +17,7 @@ package org.hyperledger.besu.consensus.clique;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 /** The Clique block header functions. */
 public class CliqueBlockHeaderFunctions implements BlockHeaderFunctions {

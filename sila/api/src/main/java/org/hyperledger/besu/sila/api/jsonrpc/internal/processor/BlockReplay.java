@@ -14,11 +14,12 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.processor;
 
-import static org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
+import static org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
 
 import org.hyperledger.besu.datatypes.BlobGas;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.Tracer.TraceableState;
 import org.hyperledger.besu.sila.chain.Blockchain;
@@ -26,12 +27,12 @@ import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.TransactionValidationParams;
-import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.TransactionValidationParams;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -53,25 +54,24 @@ public class BlockReplay {
   public Optional<BlockTrace> block(
       final Block block, final TransactionAction<TransactionTrace> action) {
     return performActionWithBlock(
-        block.getHeader(),
-        block.getBody(),
-        (body, header, blockchain, transactionProcessor, protocolSpec) -> {
+        block,
+        (blk, blockchain, transactionProcessor, protocolSpec) -> {
           final Wei blobGasPrice =
               protocolSpec
                   .getFeeMarket()
                   .blobGasPricePerGas(
                       blockchain
-                          .getBlockHeader(header.getParentHash())
+                          .getBlockHeader(blk.getHeader().getParentHash())
                           .map(parent -> calculateExcessBlobGasForParent(protocolSpec, parent))
                           .orElse(BlobGas.ZERO));
 
-          final List<TransactionTrace> transactionTraces =
-              body.getTransactions().stream()
-                  .map(
-                      transaction ->
-                          action.performAction(
-                              transaction, header, blockchain, transactionProcessor, blobGasPrice))
-                  .toList();
+          final List<Transaction> transactions = blk.getBody().getTransactions();
+          final List<TransactionTrace> transactionTraces = new ArrayList<>(transactions.size());
+          for (int i = 0; i < transactions.size(); i++) {
+            transactionTraces.add(
+                action.performAction(
+                    transactions.get(i), i, blk, blockchain, transactionProcessor, blobGasPrice));
+          }
           return Optional.of(new BlockTrace(transactionTraces));
         });
   }
@@ -88,7 +88,8 @@ public class BlockReplay {
       final TransactionAction<T> action) {
     return performActionWithBlock(
         blockHash,
-        (body, header, blockchain, transactionProcessor, protocolSpec) -> {
+        (block, blockchain, transactionProcessor, protocolSpec) -> {
+          final BlockHeader header = block.getHeader();
           final BlockHashLookup blockHashLookup =
               protocolSpec.getPreExecutionProcessor().createBlockHashLookup(blockchain, header);
           final Wei blobGasPrice =
@@ -100,11 +101,13 @@ public class BlockReplay {
                           .map(parent -> calculateExcessBlobGasForParent(protocolSpec, parent))
                           .orElse(BlobGas.ZERO));
 
-          for (final Transaction transaction : body.getTransactions()) {
+          final List<Transaction> transactions = block.getBody().getTransactions();
+          for (int i = 0; i < transactions.size(); i++) {
+            final Transaction transaction = transactions.get(i);
             if (transaction.getHash().equals(transactionHash)) {
               return Optional.of(
                   action.performAction(
-                      transaction, header, blockchain, transactionProcessor, blobGasPrice));
+                      transaction, i, block, blockchain, transactionProcessor, blobGasPrice));
             } else {
               transactionProcessor.processTransaction(
                   mutableWorldState.updater(),
@@ -129,7 +132,8 @@ public class BlockReplay {
         mutableWorldState,
         blockHash,
         transactionHash,
-        (transaction, blockHeader, blockchain, transactionProcessor, blobGasPrice) -> {
+        (transaction, transactionIndex, block, blockchain, transactionProcessor, blobGasPrice) -> {
+          final BlockHeader blockHeader = block.getHeader();
           final ProtocolSpec spec = protocolSchedule.getByBlockHeader(blockHeader);
           transactionProcessor.processTransaction(
               mutableWorldState.updater(),
@@ -140,7 +144,7 @@ public class BlockReplay {
               TransactionValidationParams.blockReplay(),
               blobGasPrice);
           return action.performAction(
-              transaction, blockHeader, blockchain, transactionProcessor, blobGasPrice);
+              transaction, transactionIndex, block, blockchain, transactionProcessor, blobGasPrice);
         });
   }
 
@@ -149,22 +153,21 @@ public class BlockReplay {
     if (maybeBlock.isEmpty()) {
       maybeBlock = protocolContext.getBadBlockManager().getBadBlock(blockHash);
     }
-    return maybeBlock.flatMap(
-        block -> performActionWithBlock(block.getHeader(), block.getBody(), action));
+    return maybeBlock.flatMap(block -> performActionWithBlock(block, action));
   }
 
-  private <T> Optional<T> performActionWithBlock(
-      final BlockHeader header, final BlockBody body, final BlockAction<T> action) {
-    if (header == null) {
+  private <T> Optional<T> performActionWithBlock(final Block block, final BlockAction<T> action) {
+    if (block.getHeader() == null) {
       return Optional.empty();
     }
-    if (body == null) {
+    if (block.getBody() == null) {
       return Optional.empty();
     }
-    final ProtocolSpec protocolSpec = protocolSchedule.getByBlockHeader(header);
-    final SilaMainnetTransactionProcessor transactionProcessor = protocolSpec.getTransactionProcessor();
+    final ProtocolSpec protocolSpec = protocolSchedule.getByBlockHeader(block.getHeader());
+    final SilaMainnetTransactionProcessor transactionProcessor =
+        protocolSpec.getTransactionProcessor();
 
-    return action.perform(body, header, blockchain, transactionProcessor, protocolSpec);
+    return action.perform(block, blockchain, transactionProcessor, protocolSpec);
   }
 
   private Optional<Block> getBlock(final Hash blockHash) {
@@ -185,8 +188,7 @@ public class BlockReplay {
   @FunctionalInterface
   public interface BlockAction<T> {
     Optional<T> perform(
-        BlockBody body,
-        BlockHeader blockHeader,
+        Block block,
         Blockchain blockchain,
         SilaMainnetTransactionProcessor transactionProcessor,
         ProtocolSpec protocolSpec);
@@ -196,7 +198,8 @@ public class BlockReplay {
   public interface TransactionAction<T> {
     T performAction(
         Transaction transaction,
-        BlockHeader blockHeader,
+        int transactionIndex,
+        Block block,
         Blockchain blockchain,
         SilaMainnetTransactionProcessor transactionProcessor,
         Wei blobGasPrice);

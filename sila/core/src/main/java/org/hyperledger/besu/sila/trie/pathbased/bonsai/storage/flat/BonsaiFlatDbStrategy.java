@@ -20,13 +20,14 @@ import static org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifi
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
-import org.hyperledger.besu.sila.trie.NodeLoader;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.CodeStorageStrategy;
-import org.hyperledger.besu.sila.trie.pathbased.common.storage.flat.FlatDbStrategy;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.SegmentIdentifier;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorageTransaction;
+import org.hyperledger.besu.sila.trie.NodeLoader;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.code.CodeStorageStrategy;
 
+import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 import java.util.function.Supplier;
@@ -68,6 +69,13 @@ public abstract class BonsaiFlatDbStrategy extends FlatDbStrategy {
       Hash accountHash,
       StorageSlotKey storageSlotKey,
       SegmentedKeyValueStorage storageStorage);
+
+  public List<Optional<Bytes>> getMultipleFlat(
+      final SegmentIdentifier segmentIdentifier,
+      final List<Bytes> keys,
+      final SegmentedKeyValueStorage storage) {
+    return List.of();
+  }
 
   @Override
   public void putFlatAccount(

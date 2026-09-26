@@ -15,9 +15,9 @@
 package org.hyperledger.besu.consensus.qbft.adaptor;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.sila-mainnet.BlockImportResult.BlockImportStatus.ALREADY_IMPORTED;
-import static org.hyperledger.besu.sila.sila-mainnet.BlockImportResult.BlockImportStatus.IMPORTED;
-import static org.hyperledger.besu.sila.sila-mainnet.BlockImportResult.BlockImportStatus.NOT_IMPORTED;
+import static org.hyperledger.besu.sila.silaMainnet.BlockImportResult.BlockImportStatus.ALREADY_IMPORTED;
+import static org.hyperledger.besu.sila.silaMainnet.BlockImportResult.BlockImportStatus.IMPORTED;
+import static org.hyperledger.besu.sila.silaMainnet.BlockImportResult.BlockImportStatus.NOT_IMPORTED;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlock;
@@ -25,8 +25,8 @@ import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockImporter;
-import org.hyperledger.besu.sila.sila-mainnet.BlockImportResult;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.BlockImportResult;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 
 import java.util.Optional;
 

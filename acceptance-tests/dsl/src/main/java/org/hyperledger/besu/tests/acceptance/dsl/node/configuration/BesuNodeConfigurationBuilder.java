@@ -19,6 +19,8 @@ import static java.util.Collections.singletonList;
 
 import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.crypto.KeyPair;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.ImmutableInProcessRpcConfiguration;
@@ -33,15 +35,13 @@ import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitValues;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.plugins.PluginConfiguration;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.genesis.GenesisConfigurationProvider;
 
 import java.io.File;
@@ -84,7 +84,6 @@ public class BesuNodeConfigurationBuilder {
   private Boolean p2pEnabled = true;
   private int p2pPort = 0;
   private boolean discoveryEnabled = true;
-  private boolean discoveryV5Enabled = true;
   private boolean bootnodeEligible = true;
   private boolean revertReasonEnabled = false;
   private NetworkDefinition network = null;
@@ -376,11 +375,6 @@ public class BesuNodeConfigurationBuilder {
     return this;
   }
 
-  public BesuNodeConfigurationBuilder discoveryV5Enabled(final boolean discoveryV5Enabled) {
-    this.discoveryV5Enabled = discoveryV5Enabled;
-    return this;
-  }
-
   public BesuNodeConfigurationBuilder plugins(final List<String> plugins) {
     this.plugins.clear();
     this.plugins.addAll(plugins);
@@ -484,8 +478,7 @@ public class BesuNodeConfigurationBuilder {
     final NetworkingConfiguration networkingConfiguration =
         ImmutableNetworkingConfiguration.builder()
             .initiateConnectionsFrequency(Duration.ofSeconds(5))
-            .discoveryConfiguration(
-                DiscoveryConfiguration.create().setDiscoveryV5Enabled(discoveryV5Enabled))
+            .discoveryConfiguration(DiscoveryConfiguration.create())
             .build();
 
     return new BesuNodeConfiguration(

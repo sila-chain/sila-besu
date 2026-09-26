@@ -21,10 +21,10 @@ import static org.hyperledger.besu.sila.chain.VariablesStorage.Keys.SAFE_BLOCK_H
 import static org.hyperledger.besu.sila.chain.VariablesStorage.Keys.SEQ_NO_STORE;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.chain.VariablesStorage;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorageTransaction;
+import org.hyperledger.besu.sila.chain.VariablesStorage;
+import org.hyperledger.besu.sila.rlp.RLP;
 
 import java.util.Collection;
 import java.util.Optional;

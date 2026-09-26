@@ -5,7 +5,7 @@
     "parisBlock": 0,
     "terminalTotalDifficulty": 1001,
     "contractSizeLimit": 2147483647,
-    "silash": {
+    "ethash": {
       "fixeddifficulty": 100
     }
   },

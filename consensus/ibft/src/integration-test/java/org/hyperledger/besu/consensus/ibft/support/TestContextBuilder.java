@@ -70,6 +70,9 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MinedBlockObserver;
@@ -84,6 +87,7 @@ import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitValues;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Util;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Message;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.transactions.BlobCache;
@@ -93,13 +97,9 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Message;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.Subscribers;
 
@@ -336,13 +336,15 @@ public class TestContextBuilder {
         IbftProtocolScheduleBuilder.create(
             genesisConfigOptions,
             forksSchedule,
+            false,
             IBFT_EXTRA_DATA_ENCODER,
             SavmConfiguration.DEFAULT,
             MiningConfiguration.MINING_DISABLED,
             new BadBlockManager(),
             false,
             BalConfiguration.DEFAULT,
-            new NoOpMetricsSystem());
+            new NoOpMetricsSystem(),
+            Long.MAX_VALUE);
 
     /////////////////////////////////////////////////////////////////////////////////////
     // From here down is BASICALLY taken from IbftBesuController
@@ -368,7 +370,7 @@ public class TestContextBuilder {
             poolConf, clock, metricsSystem, blockChain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -383,7 +385,7 @@ public class TestContextBuilder {
 
     transactionPool.setEnabled();
 
-    final SilScheduler silScheduler = new DeterministicSilScheduler();
+    final SilScheduler silScheduler = new DeterministicEthScheduler();
 
     final Address localAddress = Util.publicKeyToAddress(nodeKey.getPublicKey());
     final BftBlockCreatorFactory<?> blockCreatorFactory =

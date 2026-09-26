@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.blockcreation.txselection.selectors;
 
-import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
+import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 
 /**
  * This class represents an abstract transaction selector which provides methods to access and set

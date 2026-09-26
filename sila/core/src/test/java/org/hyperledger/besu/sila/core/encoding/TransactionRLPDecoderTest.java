@@ -43,6 +43,12 @@ class TransactionRLPDecoderTest {
 
   private static final String FRONTIER_TX_RLP =
       "0xf901fc8032830138808080b901ae60056013565b6101918061001d6000396000f35b3360008190555056006001600060e060020a6000350480630a874df61461003a57806341c0e1b514610058578063a02b161e14610066578063dbbdf0831461007757005b610045600435610149565b80600160a060020a031660005260206000f35b610060610161565b60006000f35b6100716004356100d4565b60006000f35b61008560043560243561008b565b60006000f35b600054600160a060020a031632600160a060020a031614156100ac576100b1565b6100d0565b8060018360005260205260406000208190555081600060005260206000a15b5050565b600054600160a060020a031633600160a060020a031614158015610118575033600160a060020a0316600182600052602052604060002054600160a060020a031614155b61012157610126565b610146565b600060018260005260205260406000208190555080600060005260206000a15b50565b60006001826000526020526040600020549050919050565b600054600160a060020a031633600160a060020a0316146101815761018f565b600054600160a060020a0316ff5b561ca0c5689ed1ad124753d54576dfb4b571465a41900a1dff4058d8adf16f752013d0a01221cbd70ec28c94a3b55ec771bcbc70778d6ee0b51ca7ea9514594c861b1884";
+  // NOTE: this is the canonical SIP-1559 opaque bytes wrapped one extra time as an RLP
+  // byte-string (0xb8a9 <canonical 0x02f8a6... bytes>), not the canonical form itself.
+  // decodeEIP1559NominalCase below decodes it via decodeRLP(RLP.input(...)), which strips
+  // the wrapper; decodeOpaqueBytesShouldRejectRlpWrappedTypedTransaction decodes it via
+  // decodeOpaqueBytes(..., BLOCK_BODY), which must reject that same wrapper. Two tests rely
+  // on this constant for opposite reasons -- do not "fix" it to be unwrapped.
   private static final String SIP1559_TX_RLP =
       "0xb8a902f8a686796f6c6f7632800285012a05f20082753094000000000000000000000000000000000000aaaa8080f838f794000000000000000000000000000000000000aaaae1a0000000000000000000000000000000000000000000000000000000000000000001a00c1d69648e348fe26155b45de45004f0e4195f6352d8f0935bc93e98a3e2a862a060064e5b9765c0ac74223b0cf49635c59ae0faf82044fd17bcc68a549ade6f95";
   private static final String NONCE_64_BIT_MAX_MINUS_2_TX_RLP =
@@ -51,7 +57,7 @@ class TransactionRLPDecoderTest {
       "0x04f8c1018080078307a12094a94f5374fce5edbc8e2a8697c15331677e6ebf0b8080c0f85cf85a809400000000000000000000000000000000000010008080a0dbcff17ff6c249f13b334fa86bcbaa1afd9f566ca9b06e4ea5fab9bdde9a9202a05c34c9d8af5b20e4a425fc1daf2d9d484576857eaf1629145b4686bac733868e01a0d61673cd58ffa5fc605c3215aa4647fa3afbea1d1f577e08402442992526d980a0063068ca818025c7b8493d0623cb70ef3a2ba4b3e2ae0af1146d1c9b065c0aff";
 
   @Test
-  void decodeSIP7702SetCodeTransaction() {
+  void decodeEIP7702SetCodeTransaction() {
     final Transaction transaction =
         TransactionDecoder.decodeOpaqueBytes(
             Bytes.fromHexString(SIP7702_SET_CODE_TX_OPAQUE), EncodingContext.BLOCK_BODY);
@@ -89,7 +95,7 @@ class TransactionRLPDecoderTest {
   }
 
   @Test
-  void decodeSIP1559NominalCase() {
+  void decodeEIP1559NominalCase() {
     final Transaction transaction = decodeRLP(RLP.input(Bytes.fromHexString(SIP1559_TX_RLP)));
     assertThat(transaction).isNotNull();
     assertThat(transaction.getMaxPriorityFeePerGas()).hasValue(Wei.of(2L));
@@ -97,7 +103,7 @@ class TransactionRLPDecoderTest {
   }
 
   @Test
-  void doesNotDecodeSIP1559WithLargeMaxFeePerGasOrLargeMaxPriorityFeePerGas() {
+  void doesNotDecodeEIP1559WithLargeMaxFeePerGasOrLargeMaxPriorityFeePerGas() {
     final String txWithBigFees =
         "0x02f84e0101a1648a5f8b2dcad5ea5ba6b720ff069c1d87c21a4a6a5b3766b39e2c2792367bb066a1ffa5ffaf5b0560d3a9fb186c2ede2ae6751bc0b4fef9107cf36389630b6196a38805800180c0010203";
     assertThatThrownBy(
@@ -120,6 +126,35 @@ class TransactionRLPDecoderTest {
     assertThatThrownBy(
             () -> TransactionDecoder.decodeOpaqueBytes(Bytes.EMPTY, EncodingContext.BLOCK_BODY))
         .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void decodeOpaqueBytesShouldRejectRlpWrappedTypedTransaction() {
+    // SIP1559_TX_RLP is the canonical opaque bytes wrapped one extra time as an RLP byte-string
+    // (0xb8a9 <canonical 0x02f8a6... bytes>). decodeOpaqueBytes has no surrounding RLP container
+    // to legitimately unwrap, so it must reject this rather than stripping the wrapper and
+    // decoding the inner transaction, which would otherwise let a block built from the wrapped
+    // bytes hash identically to one built from the canonical bytes.
+    assertThatThrownBy(
+            () ->
+                TransactionDecoder.decodeOpaqueBytes(
+                    Bytes.fromHexString(SIP1559_TX_RLP), EncodingContext.BLOCK_BODY))
+        .isInstanceOf(IllegalArgumentException.class);
+  }
+
+  @Test
+  void decodeOpaqueBytesShouldAcceptRlpWrappedTypedTransactionForPooledTransactionContext() {
+    // Unlike BLOCK_BODY, POOLED_TRANSACTION has no canonical-hash consistency requirement to
+    // protect, so decodeOpaqueBytes retains its pre-existing leniency here and falls back to
+    // stripping the RLP wrapper -- the same behaviour decodeEIP1559NominalCase exercises
+    // directly via decodeRLP(RLP.input(...)). This is the paired acceptance case for
+    // decodeOpaqueBytesShouldRejectRlpWrappedTypedTransaction above.
+    final Transaction transaction =
+        TransactionDecoder.decodeOpaqueBytes(
+            Bytes.fromHexString(SIP1559_TX_RLP), EncodingContext.POOLED_TRANSACTION);
+    assertThat(transaction).isNotNull();
+    assertThat(transaction.getMaxPriorityFeePerGas()).hasValue(Wei.of(2L));
+    assertThat(transaction.getMaxFeePerGas()).hasValue(Wei.of(new BigInteger("5000000000", 10)));
   }
 
   @Test

@@ -15,7 +15,10 @@
 package org.hyperledger.besu.sila.sil.sync.snapsync;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.services.tasks.Task;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.snap.RetryingGetAccountRangeFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.snap.RetryingGetBytecodeFromPeerTask;
@@ -32,12 +35,9 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.request.StorageRangeDataReque
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.AccountFlatDatabaseHealingRangeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.StorageFlatDatabaseHealingRangeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.TrieNodeHealingRequest;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.services.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.HashMap;

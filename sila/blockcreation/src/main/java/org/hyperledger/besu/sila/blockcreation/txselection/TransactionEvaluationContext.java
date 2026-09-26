@@ -16,8 +16,10 @@ package org.hyperledger.besu.sila.blockcreation.txselection;
 
 import org.hyperledger.besu.datatypes.PendingTransaction;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.plugin.data.ProcessableBlockHeader;
+import org.hyperledger.besu.sila.core.Transaction;
+
+import java.util.Objects;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;
@@ -79,6 +81,6 @@ public class TransactionEvaluationContext
 
   @Override
   public boolean isCancelled() {
-    return isCancelledSupplier.get();
+    return Objects.requireNonNull(isCancelledSupplier.get());
   }
 }

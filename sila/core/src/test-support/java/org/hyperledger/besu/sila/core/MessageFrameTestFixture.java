@@ -18,13 +18,13 @@ import static org.hyperledger.besu.savm.frame.MessageFrame.DEFAULT_MAX_STACK_SIZ
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -158,7 +158,9 @@ public class MessageFrameTestFixture {
     final BlockHeader localBlockHeader =
         this.blockHeader.orElseGet(() -> localBlockchain.getBlockHeader(0).get());
     final ProtocolSpec protocolSpec =
-        executionContextTestFixture.getProtocolSchedule().getByBlockHeader(localBlockHeader);
+        getOrCreateExecutionContextTestFixture()
+            .getProtocolSchedule()
+            .getByBlockHeader(localBlockHeader);
     final MessageFrame frame =
         MessageFrame.builder()
             .parentMessageFrame(parentFrame)

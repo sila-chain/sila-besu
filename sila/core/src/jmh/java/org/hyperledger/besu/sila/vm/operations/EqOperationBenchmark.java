@@ -15,6 +15,7 @@
 package org.hyperledger.besu.sila.vm.operations;
 
 import org.hyperledger.besu.savm.frame.MessageFrame;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.operation.EqOperation;
 import org.hyperledger.besu.savm.operation.Operation;
 
@@ -25,8 +26,9 @@ import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.MutableBytes;
 import org.openjdk.jmh.annotations.Param;
 import org.openjdk.jmh.annotations.Setup;
+import org.openjdk.jmh.infra.BenchmarkParams;
 
-public class EqOperationBenchmark extends BinaryOperationBenchmark {
+public class EqOperationBenchmark extends BinaryOperationBenchmark implements GasCostBenchmark {
 
   // public because of jmh code generator
   public enum MODE {
@@ -173,5 +175,10 @@ public class EqOperationBenchmark extends BinaryOperationBenchmark {
   @Override
   protected Operation.OperationResult invoke(final MessageFrame frame) {
     return EqOperation.staticOperation(frame);
+  }
+
+  @Override
+  public long getGasCost(final BenchmarkParams params, final GasCalculator calc) {
+    return new EqOperation(calc).getGasCost();
   }
 }

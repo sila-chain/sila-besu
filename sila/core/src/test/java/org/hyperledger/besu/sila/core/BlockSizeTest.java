@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.core;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -33,7 +33,7 @@ public class BlockSizeTest {
 
   @BeforeAll
   public static void before() {
-    BlockchainSetupUtil.forSilaMainnet()
+    BlockchainSetupUtil.forMainnet()
         .getBlocks()
         .forEach(
             b -> {

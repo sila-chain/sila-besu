@@ -17,6 +17,7 @@ package org.hyperledger.besu.tests.acceptance.dsl.node.configuration.permissioni
 import static java.util.Collections.singletonList;
 import static java.util.stream.Collectors.toList;
 
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcApis;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
@@ -24,7 +25,6 @@ import org.hyperledger.besu.sila.permissioning.AllowlistPersistor;
 import org.hyperledger.besu.sila.permissioning.AllowlistPersistor.ALLOWLIST_TYPE;
 import org.hyperledger.besu.sila.permissioning.LocalPermissioningConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.tests.acceptance.dsl.node.BesuNode;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
 import org.hyperledger.besu.tests.acceptance.dsl.node.RunnableNode;

@@ -19,8 +19,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.hyperledger.besu.tests.acceptance.dsl.WaitUtils;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.Node;
-import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptWithRevertReason;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.net.CustomRequestFactory.TransactionReceiptWithRevertReason;
+import org.hyperledger.besu.tests.acceptance.dsl.transaction.sil.SilGetTransactionReceiptWithRevertReason;
 
 public class ExpectSuccessfulSilGetTransactionReceiptWithoutReason implements Condition {
 

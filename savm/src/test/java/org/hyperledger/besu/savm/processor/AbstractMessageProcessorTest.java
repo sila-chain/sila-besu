@@ -77,7 +77,7 @@ abstract class AbstractMessageProcessorTest<T extends AbstractMessageProcessor> 
   }
 
   @Test
-  void shouldTraceContextEnterExitForSip3155Test() {
+  void shouldTraceContextEnterExitForEip3155Test() {
     final SAVMExecutor executor = new SAVMExecutor(SavmSpec.savmSpec(SavmSpecVersion.SHANGHAI));
     final ContextTracer contextTracer = new ContextTracer();
 

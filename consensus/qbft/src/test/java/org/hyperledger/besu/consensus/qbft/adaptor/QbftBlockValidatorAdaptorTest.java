@@ -22,7 +22,7 @@ import org.hyperledger.besu.sila.BlockProcessingResult;
 import org.hyperledger.besu.sila.BlockValidator;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 
 import java.util.Optional;
 

@@ -18,7 +18,7 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

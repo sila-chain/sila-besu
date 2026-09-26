@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.response;
 
-import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcErrorConverter;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 import org.hyperledger.besu.plugin.services.rpc.RpcMethodError;
+import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcErrorConverter;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
+import org.hyperledger.besu.sila.transaction.TransactionInvalidReason;
 
 import java.util.Objects;
 

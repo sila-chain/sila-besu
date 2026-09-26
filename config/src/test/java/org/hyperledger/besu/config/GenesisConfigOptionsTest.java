@@ -32,16 +32,16 @@ import org.junit.jupiter.api.Test;
 class GenesisConfigOptionsTest {
 
   @Test
-  void shouldUseSilHashWhenSilHashInConfig() {
-    final GenesisConfigOptions config = fromConfigOptions(singletonMap("silash", emptyMap()));
-    assertThat(config.isSilHash()).isTrue();
-    assertThat(config.getConsensusEngine()).isEqualTo("silash");
+  void shouldUseEthHashWhenEthHashInConfig() {
+    final GenesisConfigOptions config = fromConfigOptions(singletonMap("ethash", emptyMap()));
+    assertThat(config.isEthHash()).isTrue();
+    assertThat(config.getConsensusEngine()).isEqualTo("ethash");
   }
 
   @Test
-  void shouldNotUseSilHashIfSilHashNotPresent() {
+  void shouldNotUseEthHashIfEthHashNotPresent() {
     final GenesisConfigOptions config = fromConfigOptions(emptyMap());
-    assertThat(config.isSilHash()).isFalse();
+    assertThat(config.isEthHash()).isFalse();
   }
 
   @Test
@@ -182,27 +182,27 @@ class GenesisConfigOptionsTest {
   }
 
   @Test
-  void shouldGetSilaShanghaiTime() {
+  void shouldGetShanghaiTime() {
     final GenesisConfigOptions config = fromConfigOptions(singletonMap("shanghaiTime", 1670470141));
-    assertThat(config.getSilaShanghaiTime()).hasValue(1670470141);
+    assertThat(config.getShanghaiTime()).hasValue(1670470141);
   }
 
   @Test
-  void shouldGetSilaCancunTime() {
+  void shouldGetCancunTime() {
     final GenesisConfigOptions config = fromConfigOptions(singletonMap("cancunTime", 1670470142));
-    assertThat(config.getSilaCancunTime()).hasValue(1670470142);
+    assertThat(config.getCancunTime()).hasValue(1670470142);
   }
 
   @Test
-  void shouldGetSilaPragueTime() {
+  void shouldGetPragueTime() {
     final GenesisConfigOptions config = fromConfigOptions(singletonMap("pragueTime", 1670470143));
-    assertThat(config.getSilaPragueTime()).hasValue(1670470143);
+    assertThat(config.getPragueTime()).hasValue(1670470143);
   }
 
   @Test
-  void shouldGetSilaOsakaTime() {
+  void shouldGetOsakaTime() {
     final GenesisConfigOptions config = fromConfigOptions(singletonMap("osakaTime", 1670470143));
-    assertThat(config.getSilaOsakaTime()).hasValue(1670470143);
+    assertThat(config.getOsakaTime()).hasValue(1670470143);
   }
 
   @Test
@@ -236,23 +236,23 @@ class GenesisConfigOptionsTest {
   }
 
   @Test
-  void shouldGetSilaAmsterdamTime() {
+  void shouldGetAmsterdamTime() {
     final GenesisConfigOptions config =
         fromConfigOptions(singletonMap("amsterdamTime", 1670470144));
-    assertThat(config.getSilaAmsterdamTime()).hasValue(1670470144);
+    assertThat(config.getAmsterdamTime()).hasValue(1670470144);
   }
 
   @Test
-  void shouldGetFutureSipsTime() {
-    final GenesisConfigOptions config = fromConfigOptions(singletonMap("futureSipsTime", 1337));
-    assertThat(config.getFutureSipsTime()).hasValue(1337);
+  void shouldGetFutureEipsTime() {
+    final GenesisConfigOptions config = fromConfigOptions(singletonMap("futureEipsTime", 1337));
+    assertThat(config.getFutureEipsTime()).hasValue(1337);
   }
 
   @Test
-  void shouldGetExperimentalSipsTime() {
+  void shouldGetExperimentalEipsTime() {
     final GenesisConfigOptions config =
-        fromConfigOptions(singletonMap("experimentalSipsTime", 1337));
-    assertThat(config.getExperimentalSipsTime()).hasValue(1337);
+        fromConfigOptions(singletonMap("experimentalEipsTime", 1337));
+    assertThat(config.getExperimentalEipsTime()).hasValue(1337);
   }
 
   @Test
@@ -272,18 +272,18 @@ class GenesisConfigOptionsTest {
     assertThat(config.getArrowGlacierBlockNumber()).isEmpty();
     assertThat(config.getGrayGlacierBlockNumber()).isEmpty();
     assertThat(config.getMergeNetSplitBlockNumber()).isEmpty();
-    assertThat(config.getSilaShanghaiTime()).isEmpty();
-    assertThat(config.getSilaCancunTime()).isEmpty();
-    assertThat(config.getSilaPragueTime()).isEmpty();
-    assertThat(config.getSilaOsakaTime()).isEmpty();
+    assertThat(config.getShanghaiTime()).isEmpty();
+    assertThat(config.getCancunTime()).isEmpty();
+    assertThat(config.getPragueTime()).isEmpty();
+    assertThat(config.getOsakaTime()).isEmpty();
     assertThat(config.getBpo1Time()).isEmpty();
     assertThat(config.getBpo2Time()).isEmpty();
     assertThat(config.getBpo3Time()).isEmpty();
     assertThat(config.getBpo4Time()).isEmpty();
     assertThat(config.getBpo5Time()).isEmpty();
-    assertThat(config.getSilaAmsterdamTime()).isEmpty();
-    assertThat(config.getFutureSipsTime()).isEmpty();
-    assertThat(config.getExperimentalSipsTime()).isEmpty();
+    assertThat(config.getAmsterdamTime()).isEmpty();
+    assertThat(config.getFutureEipsTime()).isEmpty();
+    assertThat(config.getExperimentalEipsTime()).isEmpty();
   }
 
   @Test

@@ -43,7 +43,7 @@ import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.SilBlock;
+import sila.web3j.protocol.core.methods.response.EthBlock;
 
 public class CliqueToPoSTest extends AcceptanceTestBase {
 
@@ -221,7 +221,7 @@ public class CliqueToPoSTest extends AcceptanceTestBase {
     final ObjectMapper mapper = new ObjectMapper();
 
     // Get current head block to derive hash and next timestamp
-    final SilBlock.Block currentBlock = node.execute(silTransactions.block());
+    final EthBlock.Block currentBlock = node.execute(silTransactions.block());
     final String headHash = currentBlock.getHash();
     final long nextTimestamp = currentBlock.getTimestamp().longValue() + 1;
 

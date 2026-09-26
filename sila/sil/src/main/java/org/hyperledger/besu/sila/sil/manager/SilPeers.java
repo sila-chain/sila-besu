@@ -14,7 +14,22 @@
  */
 package org.hyperledger.besu.sila.sil.manager;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledSuppliedMetric;
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.forkid.ForkId;
+import org.hyperledger.besu.sila.forkid.ForkIdManager;
+import org.hyperledger.besu.sila.p2p.peers.Peer;
+import org.hyperledger.besu.sila.p2p.peers.PeerId;
+import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerClientName;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeer.DisconnectCallback;
@@ -24,22 +39,7 @@ import org.hyperledger.besu.sila.sil.sync.ChainHeadTracker;
 import org.hyperledger.besu.sila.sil.sync.SnapServerChecker;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.TrailingPeerRequirements;
-import org.hyperledger.besu.sila.forkid.ForkId;
-import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.p2p.peers.Peer;
-import org.hyperledger.besu.sila.p2p.peers.PeerId;
-import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerClientName;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledSuppliedMetric;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.time.Clock;
@@ -91,12 +91,20 @@ public class SilPeers implements PeerSelector {
 
   private final Map<Bytes, SilPeer> activeConnections = new ConcurrentHashMap<>();
 
-  private final Cache<PeerConnection, SilPeer> incompleteConnections =
-      CacheBuilder.newBuilder()
-          .expireAfterWrite(Duration.ofSeconds(20L))
-          .concurrencyLevel(1)
-          .removalListener(this::onCacheRemoval)
-          .build();
+  /**
+   * Lower bound for the pre-STATUS (incomplete) connection cap, so that even very small {@code
+   * --max-peers} values still tolerate a reasonable number of concurrent inbound handshakes.
+   */
+  private static final int INCOMPLETE_CONNECTIONS_CAP_FLOOR = 10;
+
+  /**
+   * Maximum number of connections that have completed the devp2p HELLO but not yet the sil STATUS
+   * handshake that we retain. Bounds file-descriptor and heap growth from peers that connect and
+   * never send STATUS, which are otherwise invisible to {@code --max-peers} accounting.
+   */
+  private final int maxIncompleteConnections;
+
+  private final Cache<PeerConnection, SilPeer> incompleteConnections;
   private final Clock clock;
   private final List<NodeMessagePermissioningProvider> permissioningProviders;
   private final int maxMessageSize;
@@ -151,6 +159,14 @@ public class SilPeers implements PeerSelector {
     this.snapServerTargetNumber =
         peerUpperBound / 2; // 50% of peers should be snap servers while snap syncing
     this.shouldLimitRemoteConnections = maxRemotelyInitiatedConnections < peerUpperBound;
+    this.maxIncompleteConnections = Math.max(peerUpperBound * 2, INCOMPLETE_CONNECTIONS_CAP_FLOOR);
+    this.incompleteConnections =
+        CacheBuilder.newBuilder()
+            .maximumSize(maxIncompleteConnections)
+            .expireAfterWrite(Duration.ofSeconds(20L))
+            .concurrencyLevel(1)
+            .removalListener(this::onCacheRemoval)
+            .build();
 
     metricsSystem.createIntegerGauge(
         BesuMetricCategory.SILA,
@@ -173,6 +189,11 @@ public class SilPeers implements PeerSelector {
         "peer_limit",
         "The maximum number of peers this node allows to connect",
         () -> peerUpperBound);
+    metricsSystem.createIntegerGauge(
+        BesuMetricCategory.SILA,
+        "peer_count_incomplete",
+        "The current number of connections that have not yet completed the sil STATUS handshake",
+        () -> (int) incompleteConnections.size());
 
     connectedPeersCounter =
         metricsSystem.createCounter(
@@ -323,15 +344,22 @@ public class SilPeers implements PeerSelector {
   void reattemptPendingPeerRequests() {
     synchronized (this) {
       final Iterator<PendingPeerRequest> iterator = pendingRequests.iterator();
-      while (iterator.hasNext()
-          && streamAvailablePeers()
-              .anyMatch(SilPeerImmutableAttributes::hasAvailableRequestCapacity)) {
+      while (iterator.hasNext() && hasPeerWithAvailableRequestCapacity()) {
         final PendingPeerRequest request = iterator.next();
         if (request.attemptExecution()) {
           pendingRequests.remove(request);
         }
       }
     }
+  }
+
+  private boolean hasPeerWithAvailableRequestCapacity() {
+    for (final SilPeer peer : activeConnections.values()) {
+      if (!peer.isDisconnected() && peer.hasAvailableRequestCapacity()) {
+        return true;
+      }
+    }
+    return false;
   }
 
   public long subscribeConnect(final ConnectCallback callback) {
@@ -639,7 +667,7 @@ public class SilPeers implements PeerSelector {
             }
             isServingSnapFuture.thenRun(
                 () -> {
-                  if (!peer.getConnection().isDisconnected() && addPeerToSilPeers(peer)) {
+                  if (!peer.getConnection().isDisconnected() && addPeerToEthPeers(peer)) {
                     connectedPeersCounter.inc();
                     connectCallbacks.forEach(cb -> cb.onPeerConnected(peer));
                   }
@@ -698,8 +726,11 @@ public class SilPeers implements PeerSelector {
     return rlpxAgent.canExceedConnectionLimits(peerId);
   }
 
-  private int compareConnectionInitiationTimes(final PeerConnection a, final PeerConnection b) {
-    return Math.toIntExact(a.getInitiatedAt() - b.getInitiatedAt());
+  @VisibleForTesting
+  int compareConnectionInitiationTimes(final PeerConnection a, final PeerConnection b) {
+    // Long.compare avoids the integer overflow that subtracting epoch millisecond timestamps
+    // can produce once connections are more than ~24.8 days apart
+    return Long.compare(a.getInitiatedAt(), b.getInitiatedAt());
   }
 
   private int compareByMaskedNodeId(final PeerConnection a, final PeerConnection b) {
@@ -765,25 +796,58 @@ public class SilPeers implements PeerSelector {
         .count();
   }
 
-  private void onCacheRemoval(
-      final RemovalNotification<PeerConnection, SilPeer> removalNotification) {
-    if (removalNotification.wasEvicted()) {
-      final PeerConnection peerConnectionRemoved = removalNotification.getKey();
-      final SilPeer peer = removalNotification.getValue();
-      if (peer == null) {
-        return;
-      }
-      final PeerConnection peerConnectionOfSilPeer = peer.getConnection();
-      if (peerConnectionRemoved != null) {
-        if (!peerConnectionRemoved.equals(peerConnectionOfSilPeer)) {
-          // If this connection is not the connection of the SilPeer by now we can disconnect
-          peerConnectionRemoved.disconnect(DisconnectMessage.DisconnectReason.ALREADY_CONNECTED);
-        }
-      }
+  @VisibleForTesting
+  void onCacheRemoval(final RemovalNotification<PeerConnection, SilPeer> removalNotification) {
+    // Only react to evictions (size cap or expiry). Explicit invalidations (e.g. on a normal
+    // disconnect) already close the connection through their own path.
+    if (!removalNotification.wasEvicted()) {
+      return;
     }
+    final PeerConnection evictedConnection = removalNotification.getKey();
+    final SilPeer peer = removalNotification.getValue();
+    if (evictedConnection == null || evictedConnection.isDisconnected()) {
+      return;
+    }
+
+    final boolean isCurrentConnectionOfPeer =
+        peer != null && evictedConnection.equals(peer.getConnection());
+    if (isCurrentConnectionOfPeer && peer.statusHasBeenReceived()) {
+      // The peer completed (or is completing) the sil STATUS handshake and is being promoted to an
+      // active connection; its incomplete-cache entry is expiring naturally. Leave the live
+      // connection alone - it is (or will be) tracked in activeConnections.
+      return;
+    }
+
+    // Either a superseded connection (the peer reconnected with a different connection), or a
+    // connection that completed the devp2p HELLO but never sent sil STATUS and has now been evicted
+    // (20s expiry, or pushed out of the bounded cache). Close the socket so evicted pre-STATUS
+    // connections cannot leak file descriptors or heap while remaining invisible to --max-peers.
+    DisconnectReason reason =
+        isCurrentConnectionOfPeer
+            ? DisconnectMessage.DisconnectReason.TIMEOUT
+            : DisconnectMessage.DisconnectReason.ALREADY_CONNECTED;
+
+    LOG.atTrace()
+        .setMessage(
+            "Closing pre-STATUS connection {} evicted from incomplete-connection cache, reason {}")
+        .addArgument(evictedConnection::getPeerInfo)
+        .addArgument(reason)
+        .log();
+
+    evictedConnection.disconnect(reason);
   }
 
-  boolean addPeerToSilPeers(final SilPeer peer) {
+  @VisibleForTesting
+  int incompleteConnectionCount() {
+    return (int) incompleteConnections.size();
+  }
+
+  @VisibleForTesting
+  int getMaxIncompleteConnections() {
+    return maxIncompleteConnections;
+  }
+
+  boolean addPeerToEthPeers(final SilPeer peer) {
     // We have a connection to a peer that is on the right chain and is willing to connect to us.
     // Figure out whether we want to add it to the active connections.
     final PeerConnection connection = peer.getConnection();

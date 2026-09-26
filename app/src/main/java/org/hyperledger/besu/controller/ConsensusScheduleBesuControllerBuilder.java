@@ -25,39 +25,40 @@ import org.hyperledger.besu.consensus.common.MigratingMiningCoordinator;
 import org.hyperledger.besu.consensus.common.MigratingProtocolContext;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ConsensusContext;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.methods.JsonRpcMethods;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.forkid.ForkIdManager;
+import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
+import org.hyperledger.besu.sila.p2p.network.ProtocolManager;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.MergePeerFilter;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.MergePeerFilter;
 import org.hyperledger.besu.sila.sil.manager.snap.SnapProtocolManager;
 import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
-import org.hyperledger.besu.sila.p2p.network.ProtocolManager;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.plugin.ServiceManager;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -215,14 +216,23 @@ public class ConsensusScheduleBesuControllerBuilder extends BesuControllerBuilde
       final ProtocolContext protocolContext,
       final ProtocolSchedule protocolSchedule,
       final MiningConfiguration miningConfiguration) {
-    besuControllerBuilderSchedule
-        .values()
-        .forEach(
-            b ->
-                b.createAdditionalJsonRpcMethodFactory(
-                    protocolContext, protocolSchedule, miningConfiguration));
-    return super.createAdditionalJsonRpcMethodFactory(
-        protocolContext, protocolSchedule, miningConfiguration);
+    // Combine the additional RPC methods of every scheduled consensus mechanism so that, for
+    // example, both ibft_* and qbft_* methods remain available throughout an IBFT2->QBFT
+    // migration. Delegates are processed in block number order so later forks win any collision.
+    final List<JsonRpcMethods> delegateFactories =
+        besuControllerBuilderSchedule.entrySet().stream()
+            .sorted(Map.Entry.comparingByKey())
+            .map(
+                e ->
+                    e.getValue()
+                        .createAdditionalJsonRpcMethodFactory(
+                            protocolContext, protocolSchedule, miningConfiguration))
+            .toList();
+    return apis -> {
+      final Map<String, JsonRpcMethod> combinedMethods = new HashMap<>();
+      delegateFactories.forEach(factory -> combinedMethods.putAll(factory.create(apis)));
+      return combinedMethods;
+    };
   }
 
   @Override
@@ -270,11 +280,11 @@ public class ConsensusScheduleBesuControllerBuilder extends BesuControllerBuilde
   }
 
   @Override
-  protected SilProtocolManager createSilProtocolManager(
+  protected SilProtocolManager createEthProtocolManager(
       final ProtocolContext protocolContext,
       final SynchronizerConfiguration synchronizerConfiguration,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilContext silContext,
       final SilMessages silMessages,
@@ -286,11 +296,11 @@ public class ConsensusScheduleBesuControllerBuilder extends BesuControllerBuilde
         .values()
         .forEach(
             b ->
-                b.createSilProtocolManager(
+                b.createEthProtocolManager(
                     protocolContext,
                     synchronizerConfiguration,
                     transactionPool,
-                    silaWireProtocolConfiguration,
+                    ethereumWireProtocolConfiguration,
                     silPeers,
                     silContext,
                     silMessages,
@@ -298,11 +308,11 @@ public class ConsensusScheduleBesuControllerBuilder extends BesuControllerBuilde
                     peerValidators,
                     mergePeerFilter,
                     forkIdManager));
-    return super.createSilProtocolManager(
+    return super.createEthProtocolManager(
         protocolContext,
         synchronizerConfiguration,
         transactionPool,
-        silaWireProtocolConfiguration,
+        ethereumWireProtocolConfiguration,
         silPeers,
         silContext,
         silMessages,

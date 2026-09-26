@@ -14,6 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.sync.fullsync.era1prepipeline;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.services.pipeline.Pipeline;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
@@ -23,10 +26,7 @@ import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.fullsync.SyncTerminationCondition;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.services.pipeline.Pipeline;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.net.URI;
 import java.net.URISyntaxException;
@@ -57,7 +57,7 @@ public class Era1ImportPrepipelineFactoryTest {
         Path.of(
                 Era1FileSourceTest.class
                     .getClassLoader()
-                    .getResource("sila-mainnet-00000-5ec1ffb8.era1")
+                    .getResource("mainnet-00000-5ec1ffb8.era1")
                     .toURI())
             .getParent()
             .toUri();
@@ -65,7 +65,7 @@ public class Era1ImportPrepipelineFactoryTest {
 
   @BeforeEach
   public void setupTest() {
-    BlockchainSetupUtil localBlockchainSetup = BlockchainSetupUtil.forSilaMainnet();
+    BlockchainSetupUtil localBlockchainSetup = BlockchainSetupUtil.forMainnet();
     localBlockchain = localBlockchainSetup.getBlockchain();
 
     ProtocolSchedule protocolSchedule = localBlockchainSetup.getProtocolSchedule();
@@ -74,10 +74,10 @@ public class Era1ImportPrepipelineFactoryTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(localBlockchainSetup.getWorldArchive())
             .setTransactionPool(localBlockchainSetup.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build();
     silContext = silProtocolManager.silContext();
     MetricsSystem metricsSystem = new NoOpMetricsSystem();

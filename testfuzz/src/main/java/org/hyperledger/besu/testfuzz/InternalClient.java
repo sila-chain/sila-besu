@@ -16,7 +16,7 @@ package org.hyperledger.besu.testfuzz;
 
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -27,7 +27,7 @@ class InternalClient implements FuzzingClient {
 
   public InternalClient(final String clientName) {
     this.name = clientName;
-    this.savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+    this.savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
   }
 
   @Override

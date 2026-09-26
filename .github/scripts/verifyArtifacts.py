@@ -18,10 +18,10 @@ def create_artifact_paths(version):
         f"{artifacts_base_path}/internal/besu-metrics-core/{version}/besu-metrics-core-{version}.module",
         f"{artifacts_base_path}/internal/besu-metrics-core/{version}/besu-metrics-core-{version}.pom",
         f"{artifacts_base_path}/internal/besu-metrics-core/{version}/besu-metrics-core-{version}.jar",
-        # internal/besu-silereum-core
-        f"{artifacts_base_path}/internal/besu-silereum-core/{version}/besu-silereum-core-{version}.module",
-        f"{artifacts_base_path}/internal/besu-silereum-core/{version}/besu-silereum-core-{version}.pom",
-        f"{artifacts_base_path}/internal/besu-silereum-core/{version}/besu-silereum-core-{version}.jar",
+        # internal/besu-sila-core
+        f"{artifacts_base_path}/internal/besu-sila-core/{version}/besu-sila-core-{version}.module",
+        f"{artifacts_base_path}/internal/besu-sila-core/{version}/besu-sila-core-{version}.pom",
+        f"{artifacts_base_path}/internal/besu-sila-core/{version}/besu-sila-core-{version}.jar",
         # internal/besu-config
         f"{artifacts_base_path}/internal/besu-config/{version}/besu-config-{version}.module",
         f"{artifacts_base_path}/internal/besu-config/{version}/besu-config-{version}.pom",

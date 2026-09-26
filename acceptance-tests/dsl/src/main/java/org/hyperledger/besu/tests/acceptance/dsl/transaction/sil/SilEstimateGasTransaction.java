@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
-import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
+import static sila.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
@@ -22,9 +22,9 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.math.BigInteger;
 
-import org.web3j.protocol.core.methods.response.SilEstimateGas;
+import sila.web3j.protocol.core.methods.response.EthEstimateGas;
 
-public class SilEstimateGasTransaction implements Transaction<SilEstimateGas> {
+public class SilEstimateGasTransaction implements Transaction<EthEstimateGas> {
   private final String contractAddress;
   private final String functionCall;
   private final String from = "0xfe3b557e8fb62b89f4916b721be55ceb828dbd73";
@@ -35,14 +35,14 @@ public class SilEstimateGasTransaction implements Transaction<SilEstimateGas> {
   }
 
   @Override
-  public SilEstimateGas execute(final NodeRequests node) {
+  public EthEstimateGas execute(final NodeRequests node) {
     try {
 
-      var nonce = node.sil().silGetTransactionCount(from, LATEST).send().getTransactionCount();
+      var nonce = node.sil().ethGetTransactionCount(from, LATEST).send().getTransactionCount();
 
       return node.sil()
-          .silEstimateGas(
-              new org.web3j.protocol.core.methods.request.Transaction(
+          .ethEstimateGas(
+              new sila.web3j.protocol.core.methods.request.Transaction(
                   from,
                   nonce,
                   null,

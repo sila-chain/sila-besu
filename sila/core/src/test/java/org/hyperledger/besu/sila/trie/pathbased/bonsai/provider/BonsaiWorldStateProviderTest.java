@@ -15,10 +15,9 @@
 package org.hyperledger.besu.sila.trie.pathbased.bonsai.provider;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.core.WorldStateHealerHelper.throwingWorldStateHealerSupplier;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndUpdateNodeHead;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withStateRootAndBlockHashAndUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withStateRootAndBlockHashAndUpdateNodeHead;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyList;
 import static org.mockito.Mockito.mock;
@@ -28,25 +27,25 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache.BonsaiWorldStateCacheManager;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogLayer;
-import org.hyperledger.besu.sila.trie.pathbased.common.trielog.TrieLogManager;
-import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorageTransaction;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.SegmentedKeyValueStorageTransaction;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
+import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogLayer;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.trielog.TrieLogManager;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.cache.BonsaiWorldStateCacheManager;
+import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ImmutableExtraStorageConfiguration;
 
 import java.util.Optional;
 
@@ -131,12 +130,11 @@ class BonsaiWorldStateProviderTest {
             new BonsaiWorldStateKeyValueStorage(
                 storageProvider, new NoOpMetricsSystem(), DEFAULT_CONFIG),
             blockchain,
-            ImmutablePathBasedExtraStorageConfiguration.builder().maxLayersToLoad(512L).build(),
+            ImmutableExtraStorageConfiguration.builder().maxLayersToLoad(512L).build(),
             new BonsaiCachedMerkleTrieLoader(new NoOpMetricsSystem()),
             null,
             SavmConfiguration.DEFAULT,
-            throwingWorldStateHealerSupplier(),
-            new PathBasedCodeCache());
+            new BonsaiCodeCache());
 
     final BlockHeader genesis = blockBuilder.number(0).buildHeader();
     final BlockHeader blockHeader512 =
@@ -291,14 +289,13 @@ class BonsaiWorldStateProviderTest {
       final BonsaiWorldStateKeyValueStorage worldStateKeyValueStorage) {
     return new BonsaiWorldStateProvider(
         worldStateCacheManager,
-        DEFAULT_CONFIG.getPathBasedExtraStorageConfiguration(),
+        DEFAULT_CONFIG.getExtraStorageConfiguration(),
         trieLogManager,
         worldStateKeyValueStorage,
         blockchain,
         new BonsaiCachedMerkleTrieLoader(new NoOpMetricsSystem()),
         SavmConfiguration.DEFAULT,
-        throwingWorldStateHealerSupplier(),
-        new PathBasedCodeCache());
+        new BonsaiCodeCache());
   }
 
   private BonsaiWorldState createMockWorldState(final Hash blockHash) {

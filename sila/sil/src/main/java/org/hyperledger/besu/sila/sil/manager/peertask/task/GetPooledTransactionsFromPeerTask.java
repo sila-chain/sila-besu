@@ -16,6 +16,10 @@ package org.hyperledger.besu.sila.sil.manager.peertask.task;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.peertask.InvalidPeerTaskResponseException;
@@ -25,10 +29,6 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskValidationResponse
 import org.hyperledger.besu.sila.sil.messages.GetPooledTransactionsMessage;
 import org.hyperledger.besu.sila.sil.messages.PooledTransactionsMessage;
 import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
-import org.hyperledger.besu.sila.rlp.RLPException;
 
 import java.util.LinkedHashSet;
 import java.util.List;

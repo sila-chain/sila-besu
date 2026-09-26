@@ -19,17 +19,18 @@ import static java.util.Collections.emptyList;
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer.Responder;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer.Responder;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
@@ -37,9 +38,8 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.sync.range.RangeHeadersFetcher;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -85,7 +85,7 @@ public class RangeHeadersFetcherTest {
   private SilProtocolManager silProtocolManager;
   private PeerTaskExecutor peerTaskExecutor;
   private Responder responder;
-  private RespondingSilPeer respondingPeer;
+  private RespondingEthPeer respondingPeer;
 
   @BeforeAll
   public static void setUpClass() {
@@ -105,14 +105,14 @@ public class RangeHeadersFetcherTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(() -> false))
+            .setEthScheduler(new DeterministicEthScheduler(() -> false))
             .setWorldStateArchive(protocolContext.getWorldStateArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     responder =
-        RespondingSilPeer.blockchainResponder(
+        RespondingEthPeer.blockchainResponder(
             blockchain, protocolContext.getWorldStateArchive(), transactionPool);
     respondingPeer =
         SilProtocolManagerTestUtil.createPeer(
@@ -125,11 +125,11 @@ public class RangeHeadersFetcherTest {
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
-                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getSilPeer())))
+                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getEthPeer())))
         .thenAnswer(executeAgainstPeerAnswer);
 
     final CompletableFuture<List<BlockHeader>> result =
-        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getSilPeer(), header(1));
+        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getEthPeer(), header(1));
 
     respondingPeer.respond(responder);
 
@@ -142,11 +142,11 @@ public class RangeHeadersFetcherTest {
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
-                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getSilPeer())))
+                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getEthPeer())))
         .thenAnswer(executeAgainstPeerAnswer);
 
     final CompletableFuture<List<BlockHeader>> result =
-        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getSilPeer(), header(1));
+        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getEthPeer(), header(1));
 
     respondingPeer.respond(responder);
 
@@ -159,11 +159,11 @@ public class RangeHeadersFetcherTest {
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
-                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getSilPeer())))
+                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getEthPeer())))
         .thenAnswer(executeAgainstPeerAnswer);
 
     final CompletableFuture<List<BlockHeader>> result =
-        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getSilPeer(), header(1));
+        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getEthPeer(), header(1));
 
     respondingPeer.respond(responder);
 
@@ -175,7 +175,7 @@ public class RangeHeadersFetcherTest {
     final RangeHeadersFetcher rangeHeaderFetcher = createRangeHeaderFetcher(header(15));
 
     final CompletableFuture<List<BlockHeader>> result =
-        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getSilPeer(), header(11));
+        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getEthPeer(), header(11));
 
     assertThat(result).isCompletedWithValue(singletonList(header(15)));
   }
@@ -185,7 +185,7 @@ public class RangeHeadersFetcherTest {
     final RangeHeadersFetcher rangeHeaderFetcher = createRangeHeaderFetcher(header(15));
 
     final CompletableFuture<List<BlockHeader>> result =
-        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getSilPeer(), header(15));
+        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getEthPeer(), header(15));
     assertThat(result).isCompletedWithValue(emptyList());
   }
 
@@ -194,7 +194,7 @@ public class RangeHeadersFetcherTest {
     final RangeHeadersFetcher rangeHeaderFetcher = createRangeHeaderFetcher(header(15));
 
     final CompletableFuture<List<BlockHeader>> result =
-        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getSilPeer(), header(16));
+        rangeHeaderFetcher.getNextRangeHeaders(respondingPeer.getEthPeer(), header(16));
     assertThat(result).isCompletedWithValue(emptyList());
   }
 
@@ -205,7 +205,7 @@ public class RangeHeadersFetcherTest {
 
     assertThat(
             rangeHeaderFetcher.nextRangeEndsAtChainHead(
-                respondingPeer.getSilPeer(), header(remoteChainHeight - SEGMENT_SIZE + 1)))
+                respondingPeer.getEthPeer(), header(remoteChainHeight - SEGMENT_SIZE + 1)))
         .isTrue();
   }
 
@@ -217,7 +217,7 @@ public class RangeHeadersFetcherTest {
 
     assertThat(
             rangeHeaderFetcher.nextRangeEndsAtChainHead(
-                respondingPeer.getSilPeer(), header(remoteChainHeight - SEGMENT_SIZE + 1)))
+                respondingPeer.getEthPeer(), header(remoteChainHeight - SEGMENT_SIZE + 1)))
         .isFalse();
   }
 
@@ -228,17 +228,17 @@ public class RangeHeadersFetcherTest {
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
-                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getSilPeer())))
+                Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingPeer.getEthPeer())))
         .thenAnswer(executeAgainstPeerAnswer);
 
     assertThat(
             rangeHeaderFetcher.nextRangeEndsAtChainHead(
-                respondingPeer.getSilPeer(), header(remoteChainHeight - SEGMENT_SIZE)))
+                respondingPeer.getEthPeer(), header(remoteChainHeight - SEGMENT_SIZE)))
         .isFalse();
 
     final CompletableFuture<List<BlockHeader>> result =
         rangeHeaderFetcher.getNextRangeHeaders(
-            respondingPeer.getSilPeer(), header(remoteChainHeight - SEGMENT_SIZE));
+            respondingPeer.getEthPeer(), header(remoteChainHeight - SEGMENT_SIZE));
 
     respondingPeer.respond(responder);
 
@@ -265,7 +265,7 @@ public class RangeHeadersFetcherTest {
             .build(),
         protocolSchedule,
         silContext,
-        new SnapSyncProcessState(targetHeader, false));
+        new SnapSyncProcessState(targetHeader));
   }
 
   private BlockHeader header(final long blockNumber) {

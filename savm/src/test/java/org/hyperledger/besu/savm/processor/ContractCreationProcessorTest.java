@@ -20,7 +20,7 @@ import static org.hyperledger.besu.savm.frame.MessageFrame.State.EXCEPTIONAL_HAL
 
 import org.hyperledger.besu.savm.SAVM;
 import org.hyperledger.besu.savm.SavmSpecVersion;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.contractvalidation.MaxCodeSizeRule;
 import org.hyperledger.besu.savm.contractvalidation.PrefixCodeRule;
 import org.hyperledger.besu.savm.frame.MessageFrame;
@@ -41,14 +41,15 @@ import org.mockito.junit.jupiter.MockitoExtension;
 class ContractCreationProcessorTest
     extends AbstractMessageProcessorTest<ContractCreationProcessor> {
 
-  SAVM savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+  SAVM savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
 
   private ContractCreationProcessor processor;
 
   @Test
   void shouldThrowAnExceptionWhenCodeContractFormatInvalidPreEOF() {
     processor =
-        new ContractCreationProcessor(savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
+        new ContractCreationProcessor(
+            savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
     final Bytes contractCode = Bytes.fromHexString("EF01010101010101");
     final MessageFrame messageFrame = new TestMessageFrameBuilder().build();
     messageFrame.setOutputData(contractCode);
@@ -64,7 +65,8 @@ class ContractCreationProcessorTest
   @Test
   void shouldNotThrowAnExceptionWhenCodeContractIsValid() {
     processor =
-        new ContractCreationProcessor(savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
+        new ContractCreationProcessor(
+            savm, true, Collections.singletonList(PrefixCodeRule.of()), 1);
     final Bytes contractCode = Bytes.fromHexString("0101010101010101");
     final MessageFrame messageFrame = new TestMessageFrameBuilder().build();
     messageFrame.setOutputData(contractCode);
@@ -128,7 +130,7 @@ class ContractCreationProcessorTest
   }
 
   @Test
-  void shouldRejectDeployedCodeAboveSilaAmsterdamLimit() {
+  void shouldRejectDeployedCodeAboveAmsterdamLimit() {
     processor =
         new ContractCreationProcessor(
             savm,
@@ -150,7 +152,7 @@ class ContractCreationProcessorTest
   }
 
   @Test
-  void shouldAcceptDeployedCodeAtSilaAmsterdamLimit() {
+  void shouldAcceptDeployedCodeAtAmsterdamLimit() {
     processor =
         new ContractCreationProcessor(
             savm,
@@ -162,7 +164,7 @@ class ContractCreationProcessorTest
         Bytes.fromHexString("00".repeat(SavmSpecVersion.AMSTERDAM.getMaxCodeSize()));
     final MessageFrame messageFrame = new TestMessageFrameBuilder().build();
     messageFrame.setOutputData(contractCode);
-    // SIP-7954: 64KiB code deposit costs 200 * 0x10000 = 13_107_200 regular gas.
+    // SIP-7954: 64KiB code deposit costs 200 * 0x10000 = 13_107_200 execution gas.
     messageFrame.setGasRemaining(15_000_000L);
 
     processor.codeSuccess(messageFrame, OperationTracer.NO_TRACING);
@@ -170,7 +172,7 @@ class ContractCreationProcessorTest
   }
 
   @Test
-  void shouldAcceptDeployedCodeBetweenOldAndNewSilaAmsterdamLimit() {
+  void shouldAcceptDeployedCodeBetweenOldAndNewAmsterdamLimit() {
     processor =
         new ContractCreationProcessor(
             savm,

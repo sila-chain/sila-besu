@@ -15,8 +15,8 @@
 package org.hyperledger.besu.sila.transaction;
 
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
 
 import java.util.Optional;
 

@@ -23,7 +23,7 @@ import org.hyperledger.besu.sila.core.SyncBlockAccessList;
 import org.hyperledger.besu.sila.core.SyncBlockBody;
 import org.hyperledger.besu.sila.core.SyncTransactionReceipt;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Collection;
 import java.util.List;

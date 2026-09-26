@@ -19,9 +19,9 @@ import org.hyperledger.besu.consensus.qbft.core.messagedata.QbftV1;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlock;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlockCodec;
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListDecoder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 import org.hyperledger.besu.sila.rlp.RLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Objects;
 import java.util.Optional;

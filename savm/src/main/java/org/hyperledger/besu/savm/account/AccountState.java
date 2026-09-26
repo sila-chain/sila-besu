@@ -31,7 +31,7 @@ import org.apache.tuweni.units.bigints.UInt256;
  *
  * <ul>
  *   <li><b>Nonce:</b> the number of transactions sent (and committed) from the account.
- *   <li><b>Balance:</b> the amount of Wei (10^18 Siler) owned by the account.
+ *   <li><b>Balance:</b> the amount of Wei (10^18 Sila) owned by the account.
  *   <li><b>Storage:</b> a key-value mapping between 256-bit integer values. Note that formally, a
  *       key always has an associated value in that mapping, with 0 being the default (and thus, in
  *       practice, only non-zero mappings are stored and setting a key to the value 0 is akin to

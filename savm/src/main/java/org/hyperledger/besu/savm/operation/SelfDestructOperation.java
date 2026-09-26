@@ -103,7 +103,7 @@ public class SelfDestructOperation extends AbstractOperation {
       return new OperationResult(cost, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
-    // SIP-8037: Deduct regular gas before charging state gas (ordering requirement).
+    // SIP-8037: Deduct execution gas before charging state gas (ordering requirement).
     frame.decrementRemainingGas(cost);
 
     // SIP-8037: Charge state gas when SELFDESTRUCT forces creation of an empty beneficiary.
@@ -113,7 +113,7 @@ public class SelfDestructOperation extends AbstractOperation {
       return new OperationResult(cost, ExceptionalHaltReason.INSUFFICIENT_GAS);
     }
 
-    // Add regular gas back — the SAVM loop will deduct it via the OperationResult.
+    // Add execution gas back — the SAVM loop will deduct it via the OperationResult.
     frame.incrementRemainingGas(cost);
 
     // We passed preliminary checks, get mutable accounts.
@@ -128,19 +128,26 @@ public class SelfDestructOperation extends AbstractOperation {
     originatorAccount.decrementBalance(originatorBalance);
     beneficiaryAccount.incrementBalance(originatorBalance);
 
-    // SIP-7708: if the contract will actually be destroyed, and it is not a self transfer emit
-    // a burn log or a transfer log depending on if it's a self transfer or not
-    if (!originatorAddress.equals(beneficiaryAddress) || willBeDestroyed) {
+    // SIP-7708: emit a transfer log for the value moved to the beneficiary. Pre-SIP-8246 a
+    // self-referential destruction additionally emitted a burn log (the balance was burned); under
+    // SIP-8246 the balance is preserved, so only a genuine transfer (beneficiary != originator)
+    // logs.
+    final boolean emitBurnLog =
+        willBeDestroyed && !gasCalculator().isSelfDestructBalancePreserved();
+    if (!originatorAddress.equals(beneficiaryAddress) || emitBurnLog) {
       transferLogEmitter.emitSelfDestructLog(
           frame, originatorAddress, beneficiaryAddress, originatorBalance);
     }
 
-    // If we are actually destroying the originator (pre-SilaCancun or same-tx-create) we need to
-    // explicitly zero out the account balance (destroying siler/value if the originator is the
-    // beneficiary) as well as tag it for later self-destruct cleanup.
+    // If we are actually destroying the originator (pre-SilaCancun or same-tx-create) we tag it for
+    // later self-destruct cleanup. Pre-SIP-8246 we also explicitly zero the balance here, which
+    // burns sila when the originator is its own beneficiary. SIP-8246 removes that burn: the
+    // balance is preserved and the account is merely cleared at transaction finalization.
     if (willBeDestroyed) {
       frame.addSelfDestruct(originatorAccount.getAddress());
-      originatorAccount.setBalance(Wei.ZERO);
+      if (!gasCalculator().isSelfDestructBalancePreserved()) {
+        originatorAccount.setBalance(Wei.ZERO);
+      }
     }
 
     // Add refund in message frame.

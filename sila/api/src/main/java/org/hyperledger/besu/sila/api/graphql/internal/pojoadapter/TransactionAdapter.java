@@ -29,8 +29,8 @@ import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.math.BigInteger;
 import java.util.ArrayList;
@@ -510,8 +510,8 @@ public class TransactionAdapter extends AdapterBase {
     BigInteger v = transactionWithMetadata.getTransaction().getV();
     return Optional.ofNullable(
         v == null
-                && (transactionWithMetadata.getTransaction().getType().getSilSerializedType()
-                    < TransactionType.BLOB.getSilSerializedType())
+                && (transactionWithMetadata.getTransaction().getType().getEthSerializedType()
+                    < TransactionType.BLOB.getEthSerializedType())
             ? transactionWithMetadata.getTransaction().getYParity()
             : v);
   }

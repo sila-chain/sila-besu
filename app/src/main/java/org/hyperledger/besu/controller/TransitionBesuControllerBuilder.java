@@ -23,20 +23,26 @@ import org.hyperledger.besu.consensus.merge.TransitionProtocolSchedule;
 import org.hyperledger.besu.consensus.merge.blockcreation.TransitionCoordinator;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ConsensusContext;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.ChainDataPruner;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.MergePeerFilter;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.MergePeerFilter;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.sila.sil.sync.DefaultSynchronizer;
@@ -47,17 +53,12 @@ import org.hyperledger.besu.sila.sil.sync.backwardsync.BackwardSyncContext;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.forkid.ForkIdManager;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.plugin.ServiceManager;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -156,11 +157,11 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
   }
 
   @Override
-  protected SilProtocolManager createSilProtocolManager(
+  protected SilProtocolManager createEthProtocolManager(
       final ProtocolContext protocolContext,
       final SynchronizerConfiguration synchronizerConfiguration,
       final TransactionPool transactionPool,
-      final SilProtocolConfiguration silaWireProtocolConfiguration,
+      final SilProtocolConfiguration ethereumWireProtocolConfiguration,
       final SilPeers silPeers,
       final SilContext silContext,
       final SilMessages silMessages,
@@ -168,11 +169,11 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
       final List<PeerValidator> peerValidators,
       final Optional<MergePeerFilter> mergePeerFilter,
       final ForkIdManager forkIdManager) {
-    return mergeBesuControllerBuilder.createSilProtocolManager(
+    return mergeBesuControllerBuilder.createEthProtocolManager(
         protocolContext,
         synchronizerConfiguration,
         transactionPool,
-        silaWireProtocolConfiguration,
+        ethereumWireProtocolConfiguration,
         silPeers,
         silContext,
         silMessages,
@@ -232,7 +233,8 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
       final PeerTaskExecutor peerTaskExecutor,
       final SyncState syncState,
       final SilProtocolManager silProtocolManager,
-      final PivotBlockSelector pivotBlockSelector) {
+      final PivotBlockSelector pivotBlockSelector,
+      final Optional<ChainDataPruner> chainDataPruner) {
 
     DefaultSynchronizer sync =
         super.createSynchronizer(
@@ -243,7 +245,8 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
             peerTaskExecutor,
             syncState,
             silProtocolManager,
-            pivotBlockSelector);
+            pivotBlockSelector,
+            chainDataPruner);
 
     if (genesisConfigOptions.getTerminalTotalDifficulty().isPresent()) {
       LOG.info(
@@ -265,6 +268,8 @@ public class TransitionBesuControllerBuilder extends BesuControllerBuilder {
         (isPoS, priorState, difficultyStoppedAt) -> {
           if (isPoS) {
             // if we transitioned to post-merge, stop and disable any mining
+            // Note: this callback can run on the BFT event thread itself (during import of the
+            // terminal block), so stop() must remain safe to call from that thread.
             composedCoordinator.getPreMergeObject().disable();
             composedCoordinator.getPreMergeObject().stop();
             // set the blockchoiceRule to never reorg, rely on forkchoiceUpdated instead

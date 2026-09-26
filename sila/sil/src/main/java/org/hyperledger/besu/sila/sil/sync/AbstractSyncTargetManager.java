@@ -16,17 +16,18 @@ package org.hyperledger.besu.sila.sil.sync;
 
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
 import org.hyperledger.besu.sila.sil.sync.tasks.DetermineCommonAncestorTask;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.time.Duration;
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicBoolean;
 
 import org.slf4j.Logger;
@@ -120,8 +121,9 @@ public abstract class AbstractSyncTargetManager {
         .scheduleFutureTask(
             () ->
                 silContext
-                    .getSilPeers()
+                    .getEthPeers()
                     .waitForPeer((peer) -> true)
+                    .orTimeout(5, TimeUnit.SECONDS)
                     .handle((ignored, ignored2) -> null)
                     .thenCompose((r) -> findSyncTarget()),
             Duration.ofSeconds(5));

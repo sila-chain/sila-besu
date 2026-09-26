@@ -15,14 +15,23 @@
 package org.hyperledger.besu.sila.vm.operations;
 
 import org.hyperledger.besu.savm.frame.MessageFrame;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.operation.Operation;
 import org.hyperledger.besu.savm.operation.SarOperationOptimized;
 
+import org.openjdk.jmh.infra.BenchmarkParams;
+
 /** JMH benchmark for the optimized SAR (Shift Arithmetic Right) operation. */
-public class SarOperationOptimizedBenchmark extends AbstractSarOperationBenchmark {
+public class SarOperationOptimizedBenchmark extends AbstractSarOperationBenchmark
+    implements GasCostBenchmark {
 
   @Override
   protected Operation.OperationResult invoke(final MessageFrame frame) {
     return SarOperationOptimized.staticOperation(frame);
+  }
+
+  @Override
+  public long getGasCost(final BenchmarkParams params, final GasCalculator calc) {
+    return new SarOperationOptimized(calc).getGasCost();
   }
 }

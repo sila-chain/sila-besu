@@ -18,16 +18,16 @@ import static org.hyperledger.besu.sila.sil.transactions.TransactionPoolStructur
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.worldstate.WorldState;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 
 import java.util.HashMap;
 import java.util.Map;
@@ -103,14 +103,6 @@ public interface SenderBalanceChecker {
       final var sender = tx.getSender();
 
       final var senderBalance = senderBalancesCache.computeIfAbsent(sender, this::getSenderBalance);
-
-      if (senderBalance.equals(Wei.ZERO)) {
-        LOG.atTrace()
-            .setMessage("Sender has zero balance for transaction {}")
-            .addArgument(pendingTransaction::toTraceLog)
-            .log();
-        return false;
-      }
 
       final var gasCalculator =
           protocolSchedule.getByBlockHeader(blockchain.getChainHeadHeader()).getGasCalculator();

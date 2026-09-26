@@ -26,7 +26,10 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.sil.manager.ChainState;
+import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilMessage;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
@@ -34,11 +37,8 @@ import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.PeerReputation;
 import org.hyperledger.besu.sila.sil.messages.BlockRangeUpdateMessage;
 import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 
 import java.util.Optional;
 import java.util.stream.Stream;
@@ -64,7 +64,7 @@ public class BlockRangeBroadcasterTest {
 
   @BeforeEach
   public void setup() {
-    when(silContext.getSilMessages()).thenReturn(mock(SilMessages.class));
+    when(silContext.getEthMessages()).thenReturn(mock(SilMessages.class));
     when(silContext.getScheduler()).thenReturn(mock(SilScheduler.class));
     blockRangeBroadcaster = spy(new BlockRangeBroadcaster(silContext, blockchain));
   }
@@ -79,7 +79,7 @@ public class BlockRangeBroadcasterTest {
   }
 
   @Test
-  public void shouldSendBlockRangeOnlyToSil69Peers() throws PeerConnection.PeerNotConnected {
+  public void shouldSendBlockRangeOnlyToEth69Peers() throws PeerConnection.PeerNotConnected {
     setupPeers(silPeerWithoutSupport, silPeerWithSupport);
     when(silPeerWithSupport.hasSupportForMessage(SilProtocolMessages.BLOCK_RANGE_UPDATE))
         .thenReturn(true);
@@ -91,7 +91,7 @@ public class BlockRangeBroadcasterTest {
   }
 
   private void setupPeers(final SilPeer... peers) {
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(silPeers.streamAvailablePeers())
         .thenReturn(Stream.of(peers).map(SilPeerImmutableAttributes::from));
     for (SilPeer silPeer : peers) {

@@ -109,6 +109,23 @@ public class TransactionPoolOptionsTest
   }
 
   @Test
+  public void maxTxBytesDefaultsTo128KiB() {
+    internalTestSuccess(config -> assertThat(config.getTxPoolMaxTxBytes()).isEqualTo(128 * 1024));
+  }
+
+  @Test
+  public void maxTxBytesOverride() {
+    internalTestSuccess(
+        config -> assertThat(config.getTxPoolMaxTxBytes()).isEqualTo(65536),
+        "--tx-pool-max-tx-bytes=65536");
+  }
+
+  @Test
+  public void maxTxBytesMustBePositive() {
+    internalTestFailure("Max transaction bytes must be greater than 0", "--tx-pool-max-tx-bytes=0");
+  }
+
+  @Test
   public void saveToFileDisabledByDefault() {
     internalTestSuccess(config -> assertThat(config.getEnableSaveRestore()).isFalse());
   }
@@ -199,7 +216,7 @@ public class TransactionPoolOptionsTest
 
   @Test
   public void txFeeCap() {
-    final Wei txFeeCap = Wei.fromSil(2);
+    final Wei txFeeCap = Wei.fromEth(2);
     internalTestSuccess(
         config -> assertThat(config.getTxFeeCap()).isEqualTo(txFeeCap),
         "--rpc-tx-feecap",
@@ -212,6 +229,29 @@ public class TransactionPoolOptionsTest
         "Invalid value for option '--rpc-tx-feecap'",
         "cannot convert 'abcd' to Wei",
         "--rpc-tx-feecap",
+        "abcd");
+  }
+
+  @Test
+  public void p2pTxFeeCap() {
+    final Wei p2pTxFeeCap = Wei.fromEth(2);
+    internalTestSuccess(
+        config -> assertThat(config.getP2pTxFeeCap()).isEqualTo(p2pTxFeeCap),
+        "--p2p-tx-feecap",
+        OptionParser.format(p2pTxFeeCap));
+  }
+
+  @Test
+  public void p2pTxFeeCapDefaultsToMaxWei() {
+    internalTestSuccess(config -> assertThat(config.getP2pTxFeeCap()).isEqualTo(Wei.MAX_WEI));
+  }
+
+  @Test
+  public void invalidP2pTxFeeCapShouldFail() {
+    internalTestFailure(
+        "Invalid value for option '--p2p-tx-feecap'",
+        "cannot convert 'abcd' to Wei",
+        "--p2p-tx-feecap",
         "abcd");
   }
 

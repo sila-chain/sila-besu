@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila.sil.manager;
 
-import org.hyperledger.besu.sila.sil.manager.bounded.BoundedQueue;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.sila.sil.manager.bounded.BoundedQueue;
 
 import java.util.Locale;
 import java.util.concurrent.BlockingQueue;

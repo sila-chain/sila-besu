@@ -17,13 +17,11 @@ package org.hyperledger.besu.sila.trie.forest.worldview;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.rlp.RLP;
-import org.hyperledger.besu.sila.rlp.RLPException;
-import org.hyperledger.besu.sila.rlp.RLPInput;
-import org.hyperledger.besu.sila.trie.MerkleTrie;
-import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
-import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
+import org.hyperledger.besu.plugin.data.BlockHeader;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.plugin.services.worldstate.StateRootCommitter;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.account.AccountStorageEntry;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
@@ -31,11 +29,14 @@ import org.hyperledger.besu.savm.worldstate.AbstractWorldUpdater;
 import org.hyperledger.besu.savm.worldstate.UpdateTrackingAccount;
 import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.data.BlockHeader;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
-import org.hyperledger.besu.plugin.services.worldstate.StateRootCommitter;
+import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.ForestStateRootCommitter;
+import org.hyperledger.besu.sila.trie.MerkleTrie;
+import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
+import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 
 import java.util.ArrayList;
 import java.util.Collection;
@@ -175,13 +176,22 @@ public class ForestMutableWorldState implements MutableWorldState {
   }
 
   @Override
-  public void persist(final BlockHeader blockHeader, final StateRootCommitter committer) {
-    final ForestWorldStateKeyValueStorage.Updater stateUpdater =
-        worldStateKeyValueStorage.updater();
-    committer.computeRoot(() -> applyAndComputeRoot(stateUpdater), this, stateUpdater, blockHeader);
+  public void persist(final BlockHeader blockHeader) {
+    persist(blockHeader, ForestStateRootCommitter.INSTANCE);
   }
 
-  private Hash applyAndComputeRoot(final ForestWorldStateKeyValueStorage.Updater forestUpdater) {
+  /**
+   * Forest committers ({@link ForestStateRootCommitter}) read accumulated changes from this world
+   * state directly and do not use a {@link WorldUpdater}; {@code null} is intentional here.
+   */
+  @Override
+  public void persist(final BlockHeader blockHeader, final StateRootCommitter committer) {
+    committer.compute(this, blockHeader, null);
+  }
+
+  public Hash applyAndComputeRoot() {
+    final ForestWorldStateKeyValueStorage.Updater forestUpdater =
+        worldStateKeyValueStorage.updater();
     for (final Bytes code : updatedAccountCode.values()) {
       forestUpdater.putCode(code);
     }
@@ -326,18 +336,6 @@ public class ForestMutableWorldState implements MutableWorldState {
                 storageEntries.put(key, entry);
               });
       return storageEntries;
-    }
-
-    /**
-     * Does this account have any storage slots that are set to non-zero values?
-     *
-     * @return true if the account has no storage values set to non-zero values. False if any
-     *     storage is set.
-     */
-    @Override
-    public boolean isStorageEmpty() {
-      return Hash.EMPTY_TRIE_HASH.equals(
-          storageTrie == null ? getStorageRoot() : storageTrie.getRootHash());
     }
 
     @Override

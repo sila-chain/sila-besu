@@ -19,7 +19,7 @@ import static org.hyperledger.besu.savm.Code.EMPTY_CODE;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.savm.frame.Sip7928AccessList;
+import org.hyperledger.besu.savm.frame.Eip7928AccessList;
 
 import java.util.Optional;
 import java.util.function.Predicate;
@@ -84,7 +84,7 @@ public class CodeDelegationHelper {
       final WorldUpdater worldUpdater,
       final Predicate<Address> isPrecompile,
       final Account account,
-      final Optional<? extends Sip7928AccessList> sip7928AccessList)
+      final Optional<? extends Eip7928AccessList> sip7928AccessList)
       throws IllegalArgumentException {
     if (account == null) {
       throw new IllegalArgumentException("Account must not be null.");
@@ -106,7 +106,7 @@ public class CodeDelegationHelper {
       final WorldUpdater worldUpdater,
       final Predicate<Address> isPrecompile,
       final Address targetAddress,
-      final Optional<? extends Sip7928AccessList> sip7928AccessList) {
+      final Optional<? extends Eip7928AccessList> sip7928AccessList) {
     if (targetAddress == null) {
       return EMPTY_CODE;
     }

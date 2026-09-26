@@ -17,12 +17,12 @@ package org.hyperledger.besu.sila.sil.manager.peertask.task;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.sil.manager.peertask.InvalidPeerTaskResponseException;
 import org.hyperledger.besu.sila.sil.manager.task.BodyIdentifier;
 import org.hyperledger.besu.sila.sil.messages.BlockBodiesMessage;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.ArrayList;
 import java.util.List;

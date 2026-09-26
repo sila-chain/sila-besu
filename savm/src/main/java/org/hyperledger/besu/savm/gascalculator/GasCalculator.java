@@ -199,7 +199,7 @@ public interface GasCalculator {
    * Returns the static gas cost to execute a call operation.
    *
    * <p>This method <strong>must not</strong> access or mutate world state and it must not mutate
-   * {@code frame.getSip7928AccessList()}.
+   * {@code frame.getEip7928AccessList()}.
    *
    * @param frame The current frame
    * @param stipend The gas stipend being provided by the CALL caller
@@ -422,6 +422,19 @@ public interface GasCalculator {
   }
 
   /**
+   * SIP-8246: whether SELFDESTRUCT preserves the originator's balance instead of burning it. When
+   * true, a same-tx-created account is cleared (nonce/code/storage) at transaction finalization
+   * with its balance preserved (SIP-161 state clearing then removes a zero-balance result) and no
+   * Burn log is emitted while the balance is preserved.
+   *
+   * @return true if the originator's balance is preserved on self destruct, false
+   *     (pre-SilaAmsterdam) otherwise
+   */
+  default boolean isSelfDestructBalancePreserved() {
+    return false;
+  }
+
+  /**
    * Returns the cost for executing a {@link Keccak256Operation}.
    *
    * @param frame The current frame
@@ -448,6 +461,25 @@ public interface GasCalculator {
    */
   long calculateStorageCost(
       UInt256 newValue, Supplier<UInt256> currentValue, Supplier<UInt256> originalValue);
+
+  /**
+   * Returns the execution-gas cost of an SSTORE, i.e. the portion charged as execution gas (as
+   * opposed to state gas). Through SilaOsaka this is the whole SSTORE cost, so it delegates to
+   * {@link #calculateStorageCost}. SIP-8038 (SilaAmsterdam) splits the cost into execution and
+   * state gas and overrides this to return only the execution portion; a future fork that moves the
+   * remaining execution portion to state gas can zero it out.
+   *
+   * @param newValue the new value to be stored
+   * @param currentValue the supplier of the current value
+   * @param originalValue the supplier of the original value
+   * @return the execution-gas cost for the SSTORE operation
+   */
+  default long slotAccessCost(
+      final UInt256 newValue,
+      final Supplier<UInt256> currentValue,
+      final Supplier<UInt256> originalValue) {
+    return calculateStorageCost(newValue, currentValue, originalValue);
+  }
 
   /**
    * Returns the refund amount for an SSTORE operation.
@@ -477,11 +509,33 @@ public interface GasCalculator {
   }
 
   /**
+   * Returns the cold access surcharge charged for an SSTORE to a storage slot not previously
+   * accessed in the TX context. By default this equals the cold SLOAD cost; SIP-8038 overrides it
+   * to exclude the warm access base already included in {@link #slotAccessCost}.
+   *
+   * @return the SSTORE cold access surcharge.
+   */
+  default long getSStoreColdAccessGasCost() {
+    return getColdSloadCost();
+  }
+
+  /**
    * Returns the cost to access an account not previously accessed in the TX context.
    *
    * @return the cost to access an account not previously accessed in the TX context.
    */
   default long getColdAccountAccessCost() {
+    return 0L;
+  }
+
+  /**
+   * Returns the execution gas charged for the first write to an account leaf (SIP-2780
+   * ACCOUNT_WRITE), used for the top-frame SIP-7702 authorization charge. Zero for forks without
+   * state-gas metering.
+   *
+   * @return the ACCOUNT_WRITE execution gas cost
+   */
+  default long getAccountWriteGasCost() {
     return 0L;
   }
 
@@ -535,18 +589,18 @@ public interface GasCalculator {
   long transactionIntrinsicGasCost(Transaction transaction, long baselineGas);
 
   /**
-   * Returns the regular-dimension intrinsic gas cost of a transaction, including the gas for its
+   * Returns the execution-dimension intrinsic gas cost of a transaction, including the gas for its
    * access list and SIP-7702 code-delegation authorizations.
    *
    * <p>This is the single entry point for callers that have a {@link Transaction} and want the full
-   * regular intrinsic cost: it derives the access-list and code-delegation baseline internally and
-   * delegates to {@link #transactionIntrinsicGasCost(Transaction, long)}, so the summing lives in
-   * one place rather than at every call site.
+   * intrinsic execution cost: it derives the access-list and code-delegation baseline internally
+   * and delegates to {@link #transactionIntrinsicGasCost(Transaction, long)}, so the summing lives
+   * in one place rather than at every call site.
    *
    * @param transaction the transaction
-   * @return the transaction's regular intrinsic gas cost
+   * @return the transaction's intrinsic execution gas cost
    */
-  default long transactionIntrinsicRegularGas(final Transaction transaction) {
+  default long transactionIntrinsicExecutionGas(final Transaction transaction) {
     final long accessListGas = accessListGasCost(transaction.getAccessList().orElse(List.of()));
     final long codeDelegationGas = delegateCodeGasCost(transaction.codeDelegationListSize());
     return transactionIntrinsicGasCost(transaction, clampedAdd(accessListGas, codeDelegationGas));

@@ -17,7 +17,6 @@ package org.hyperledger.besu.cli;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static java.util.Arrays.asList;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.config.NetworkDefinition.DEV;
 import static org.hyperledger.besu.config.NetworkDefinition.SILA_MAINNET;
 import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.SIL;
 import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.WEB3;
@@ -28,14 +27,14 @@ import static org.mockito.Mockito.verify;
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
 
 import java.io.File;
 import java.io.IOException;
@@ -134,7 +133,7 @@ public class CascadingDefaultProviderTest extends CommandTestAbstract {
             .setDnsDiscoveryUrl(null)
             .build();
     verify(mockControllerBuilder).dataDirectory(eq(dataFolder.toPath()));
-    verify(mockControllerBuilderFactory).fromSilNetworkConfig(eq(networkConfig), any());
+    verify(mockControllerBuilderFactory).fromEthNetworkConfig(eq(networkConfig), any());
     verify(mockControllerBuilder).synchronizerConfiguration(syncConfigurationCaptor.capture());
 
     assertThat(syncConfigurationCaptor.getValue().getSyncMode()).isEqualTo(SyncMode.SNAP);
@@ -226,42 +225,21 @@ public class CascadingDefaultProviderTest extends CommandTestAbstract {
   }
 
   /**
-   * Test if the profile option sets the correct defaults. The test checks if the 'dev' profile
-   * correctly sets the network ID to the expected value.
-   */
-  @Test
-  public void profileOptionShouldSetCorrectDefaults() {
-    final ArgumentCaptor<SilNetworkConfig> networkArg =
-        ArgumentCaptor.forClass(SilNetworkConfig.class);
-
-    parseCommand("--profile", "dev");
-
-    assertThat(commandOutput.toString(UTF_8)).isEmpty();
-    assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
-
-    verify(mockControllerBuilderFactory).fromSilNetworkConfig(networkArg.capture(), any());
-    verify(mockControllerBuilder).build();
-
-    final SilNetworkConfig config = networkArg.getValue();
-    assertThat(config.networkId()).isEqualTo(DEV.getNetworkId());
-  }
-
-  /**
    * Test if the command line option overrides the profile configuration. The test checks if the
    * network ID set through a command line option correctly overrides the value specified in the
-   * 'dev' profile.
+   * 'staker' profile.
    */
   @Test
   public void cliOptionOverridesProfileConfiguration() {
     final ArgumentCaptor<SilNetworkConfig> networkArg =
         ArgumentCaptor.forClass(SilNetworkConfig.class);
 
-    parseCommand("--profile", "dev", "--network", "SILA_MAINNET");
+    parseCommand("--profile", "staker", "--network", "SILA_MAINNET");
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
 
-    verify(mockControllerBuilderFactory).fromSilNetworkConfig(networkArg.capture(), any());
+    verify(mockControllerBuilderFactory).fromEthNetworkConfig(networkArg.capture(), any());
     verify(mockControllerBuilder).build();
 
     final SilNetworkConfig config = networkArg.getValue();
@@ -271,7 +249,7 @@ public class CascadingDefaultProviderTest extends CommandTestAbstract {
   /**
    * Test if the configuration file overrides the profile configuration. The test checks if the
    * network ID specified in the configuration file correctly overrides the value specified in the
-   * 'dev' profile.
+   * 'staker' profile.
    */
   @Test
   public void configFileOverridesProfileConfiguration() {
@@ -279,12 +257,12 @@ public class CascadingDefaultProviderTest extends CommandTestAbstract {
         ArgumentCaptor.forClass(SilNetworkConfig.class);
 
     final String configFile = this.getClass().getResource("/partial_config.toml").getFile();
-    parseCommand("--profile", "dev", "--config-file", configFile);
+    parseCommand("--profile", "staker", "--config-file", configFile);
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
 
-    verify(mockControllerBuilderFactory).fromSilNetworkConfig(networkArg.capture(), any());
+    verify(mockControllerBuilderFactory).fromEthNetworkConfig(networkArg.capture(), any());
     verify(mockControllerBuilder).build();
 
     final SilNetworkConfig config = networkArg.getValue();
@@ -294,19 +272,19 @@ public class CascadingDefaultProviderTest extends CommandTestAbstract {
   /**
    * Test if the environment variable overrides the profile configuration. The test checks if the
    * network ID set through an environment variable correctly overrides the value specified in the
-   * 'dev' profile.
+   * 'staker' profile.
    */
   @Test
   public void environmentVariableOverridesProfileConfiguration() {
     final ArgumentCaptor<SilNetworkConfig> networkArg =
         ArgumentCaptor.forClass(SilNetworkConfig.class);
     setEnvironmentVariable("BESU_NETWORK", "SILA_MAINNET");
-    parseCommand("--profile", "dev");
+    parseCommand("--profile", "staker");
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8)).isEmpty();
 
-    verify(mockControllerBuilderFactory).fromSilNetworkConfig(networkArg.capture(), any());
+    verify(mockControllerBuilderFactory).fromEthNetworkConfig(networkArg.capture(), any());
     verify(mockControllerBuilder).build();
 
     final SilNetworkConfig config = networkArg.getValue();

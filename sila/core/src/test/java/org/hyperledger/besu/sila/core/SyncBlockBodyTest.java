@@ -22,19 +22,20 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.GWei;
 import org.hyperledger.besu.datatypes.HardforkId;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
 import org.hyperledger.besu.sila.GasLimitCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockGasAccountingStrategy;
-import org.hyperledger.besu.sila.sila-mainnet.BlockGasUsedValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.staterootcommitter.DefaultStateRootCommitterFactory;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
-import org.hyperledger.besu.savm.precompile.PrecompileContractRegistry;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockGasAccountingStrategy;
+import org.hyperledger.besu.sila.silaMainnet.BlockGasUsedValidator;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.StateRootCommitterFactory;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -219,12 +220,13 @@ public class SyncBlockBodyTest {
         Optional.empty(),
         null,
         true,
+        false,
         Duration.ofSeconds(12),
         true,
         Optional.empty(),
         Optional.empty(),
         BlockAccessListValidator.ALWAYS_REJECT_BAL,
-        new DefaultStateRootCommitterFactory(),
+        new StateRootCommitterFactory(BalConfiguration.DISABLED),
         BlockGasAccountingStrategy.FRONTIER,
         BlockGasUsedValidator.FRONTIER);
   }
