@@ -62,8 +62,8 @@ import java.util.concurrent.CompletableFuture;
 import java.util.stream.Stream;
 
 import io.vertx.core.Vertx;
-import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.Bytes;
+import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.crypto.SECP256K1;
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;

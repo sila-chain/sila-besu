@@ -33,8 +33,8 @@ import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper.AgentBuilder;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
-import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.MockPeerDiscoveryAgent.IncomingPacket;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.MockPeerDiscoveryAgent;
+import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.MockPeerDiscoveryAgent.IncomingPacket;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.PacketType;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.DaggerPacketPackage;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
@@ -44,8 +44,8 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.neighbors.
 import org.hyperledger.besu.sila.p2p.peers.DefaultPeer;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
-import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions.Action;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
+import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions.Action;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionsDenylist;
 
 import java.net.InetAddress;
@@ -55,8 +55,8 @@ import java.util.List;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.bytes.Bytes;
+import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.units.bigints.UInt64;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
