@@ -82,13 +82,13 @@ jobs:
 
   upstreamSyncProbe:
     name: "Latest Besu authority gate"
-    if: github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923'
+    if: (github.event_name == 'pull_request' && github.head_ref == 'sila/besu-close-20260923') || (github.event_name == 'push' && github.ref == 'refs/heads/main')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout Sila closure branch
         uses: actions/checkout@de0fac2e4500dabe0009e67214ff5f5447ce83dd # v6.0.2
         with:
-          ref: ${{ github.event.pull_request.head.sha }}
+          ref: ${{ github.event.pull_request.head.sha || github.ref }}
           fetch-depth: 0
       - name: Verify pinned upstream Besu authority is still current
         run: |
