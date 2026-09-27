@@ -1,7 +1,7 @@
 {
   "cli": [
     "--json",
-    "--trace.noeip-3155",
+    "--trace.nosip-3155",
     "--nomemory",
     "state-test",
     "stdin",
