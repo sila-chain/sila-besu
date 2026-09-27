@@ -22,17 +22,20 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.permissioning.NodeLocalConfigPermissioningController;
-import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
+import java.util.concurrent.atomic.AtomicInteger;
+import java.util.function.Consumer;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
+import org.mockito.ArgumentCaptor;
 import org.mockito.Mock;
 import org.mockito.junit.jupiter.MockitoExtension;
 
@@ -105,6 +108,25 @@ public class NodePermissioningControllerTest {
 
     verify(localConfigNodePermissioningProvider).isConnectionPermitted(eq(enode1), eq(enode2));
     verify(otherPermissioningProvider).isConnectionPermitted(eq(enode1), eq(enode2));
+  }
+
+  @Test
+  @SuppressWarnings("unchecked")
+  public void notifiesUpdateSubscribersWhenLocalConfigAllowlistIsUpdated() {
+    final ArgumentCaptor<Consumer<NodeAllowlistUpdatedEvent>> allowlistListener =
+        ArgumentCaptor.forClass(Consumer.class);
+
+    this.controller =
+        new NodePermissioningController(List.of(localConfigNodePermissioningProvider));
+    verify(localConfigNodePermissioningProvider)
+        .subscribeToListUpdatedEvent(allowlistListener.capture());
+
+    final AtomicInteger updates = new AtomicInteger();
+    controller.subscribeToUpdates(updates::incrementAndGet);
+
+    allowlistListener.getValue().accept(new NodeAllowlistUpdatedEvent(List.of(), List.of(enode1)));
+
+    assertThat(updates).hasValue(1);
   }
 
   @Test

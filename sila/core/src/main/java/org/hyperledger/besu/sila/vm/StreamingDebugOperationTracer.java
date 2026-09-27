@@ -55,7 +55,7 @@ public class StreamingDebugOperationTracer extends AbstractDebugOperationTracer 
    *
    * @param options The opcode tracer config (stack/memory/storage options, opcode filter)
    * @param recordChildCallGas If true, gas cost for CALL ops includes gas granted to the child call
-   *     (Parity style). If false, only the operation cost is reported (Gsil style).
+   *     (Parity style). If false, only the operation cost is reported (Geth style).
    * @param frameWriter Callback invoked once per traced operation with live frame data
    */
   public StreamingDebugOperationTracer(
@@ -73,6 +73,10 @@ public class StreamingDebugOperationTracer extends AbstractDebugOperationTracer 
     }
     final Operation currentOperation = frame.getCurrentOperation();
     final String opcode = currentOperation.getName();
+    if (isSyntheticEmptyCodeStop(
+        currentOperation.isVirtualOperation(), opcode, frame.getCode().getSize())) {
+      return;
+    }
     final long thisGasCost = computeGasCost(currentOperation, operationResult, frame);
 
     final ExceptionalHaltReason haltReason =

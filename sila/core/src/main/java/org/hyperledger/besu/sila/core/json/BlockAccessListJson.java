@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.core.json;
 
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListDecoder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.io.IOException;
 

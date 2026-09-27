@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila;
 
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockBodyValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockBodyValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockProcessor;
 
 /** Utility class for creating a block validators. */
 public class SilaMainnetBlockValidatorBuilder {
@@ -29,7 +29,7 @@ public class SilaMainnetBlockValidatorBuilder {
   private SilaMainnetBlockValidatorBuilder() {}
 
   /**
-   * Creates a block validator for the sila-mainnet with no block size limit.
+   * Creates a block validator for the mainnet with no block size limit.
    *
    * @param blockHeaderValidator the block header validator
    * @param blockBodyValidator the block body validator

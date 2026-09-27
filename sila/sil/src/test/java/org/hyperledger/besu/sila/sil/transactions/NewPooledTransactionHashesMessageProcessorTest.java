@@ -27,6 +27,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.StubMetricsSystem;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.SilProtocol;
@@ -36,7 +37,6 @@ import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.messages.NewPooledTransactionHashesMessage;
 import org.hyperledger.besu.sila.sil.transactions.NewPooledTransactionHashesMessageProcessor.FetcherCreatorTask;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
 
 import java.time.Duration;
 import java.util.Collections;

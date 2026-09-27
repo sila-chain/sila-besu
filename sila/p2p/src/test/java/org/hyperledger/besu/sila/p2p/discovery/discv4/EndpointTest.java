@@ -73,7 +73,7 @@ public class EndpointTest {
     assertThatThrownBy(() -> Endpoint.decodeStandalone(in))
         .isInstanceOf(PeerDiscoveryPacketDecodingException.class);
     // decodeStandalone's catch already skipped to the end of the malformed list before
-    // rsilrowing, so the enclosing list's cursor is still in sync for the next field.
+    // rethrowing, so the enclosing list's cursor is still in sync for the next field.
     assertThat(in.readLongScalar()).isEqualTo(MARKER_VALUE);
   }
 

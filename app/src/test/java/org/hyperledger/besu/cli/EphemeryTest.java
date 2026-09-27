@@ -37,31 +37,31 @@ import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.KeyPairUtil;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.ImmutableInProcessRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.ipc.JsonRpcIpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
+import org.hyperledger.besu.sila.api.pluginadapter.RpcEndpointServiceImpl;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.permissioning.pluginadapter.PermissioningServiceImpl;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.services.BesuPluginContextImpl;
-import org.hyperledger.besu.services.PermissioningServiceImpl;
-import org.hyperledger.besu.services.RpcEndpointServiceImpl;
-import org.hyperledger.besu.services.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.io.IOException;
@@ -166,7 +166,7 @@ public class EphemeryTest extends CommandTestAbstract {
       controller = setController();
       runner = setRunner();
       runner.startExternalServices();
-      runner.startSilaMainLoop();
+      runner.startEthereumMainLoop();
 
       cycleIdField = BesuCommand.class.getDeclaredField("ephemeryNextCycleId");
       cycleIdField.setAccessible(true);
@@ -205,7 +205,7 @@ public class EphemeryTest extends CommandTestAbstract {
     controller = setController();
     runner = setRunner();
     runner.startExternalServices();
-    runner.startSilaMainLoop();
+    runner.startEthereumMainLoop();
     KeyPairUtil.storeKeyFile(keyPair, besuCommand.dataPath);
 
     Awaitility.await()
@@ -272,7 +272,7 @@ public class EphemeryTest extends CommandTestAbstract {
     assertThat(lastGenesisTimestamp).isEqualTo(timestampCaptor.getValue());
   }
 
-  @Disabled("test is flaky, see https://github.com/hyperledger/besu/issues/9726")
+  @Disabled("test is flaky, see https://github.com/sila-chain/sila-besu/issues/9726")
   @Test
   public void testPeersCountShouldBeMoreThanZeroWhileRunning() {
     getPeers(90, 1, 1);
@@ -289,7 +289,7 @@ public class EphemeryTest extends CommandTestAbstract {
         });
   }
 
-  @Disabled("test is flaky, see https://github.com/hyperledger/besu/issues/9726")
+  @Disabled("test is flaky, see https://github.com/sila-chain/sila-besu/issues/9726")
   @Test
   public void testPeersCountShouldBeMoreThanZeroBeforeEphemeryStopButNotAfter() throws Exception {
     getPeers(90, 1, 1);
@@ -307,11 +307,12 @@ public class EphemeryTest extends CommandTestAbstract {
     Field portsField = BesuCommand.class.getDeclaredField("allocatedPorts");
     portsField.setAccessible(true);
     @SuppressWarnings("unchecked")
-    Set<Integer> allocatedPorts = (Set<Integer>) portsField.get(besuCommand);
+    Set<BesuCommand.PortBinding> allocatedPorts =
+        (Set<BesuCommand.PortBinding>) portsField.get(besuCommand);
 
     // Add some ports
-    allocatedPorts.add(8545);
-    allocatedPorts.add(30303);
+    allocatedPorts.add(new BesuCommand.PortBinding(8545, BesuCommand.Transport.TCP));
+    allocatedPorts.add(new BesuCommand.PortBinding(30303, BesuCommand.Transport.TCP));
     assertThat(allocatedPorts).hasSizeGreaterThanOrEqualTo(2);
     besuCommand.clearAllocatedPorts();
 

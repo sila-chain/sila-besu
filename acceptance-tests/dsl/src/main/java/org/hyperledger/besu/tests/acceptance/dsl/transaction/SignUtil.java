@@ -25,17 +25,17 @@ import java.util.List;
 import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes32;
-import org.web3j.crypto.Credentials;
-import org.web3j.crypto.RawTransaction;
-import org.web3j.crypto.Sign;
-import org.web3j.crypto.TransactionEncoder;
-import org.web3j.crypto.transaction.type.TransactionType;
-import org.web3j.rlp.RlpEncoder;
-import org.web3j.rlp.RlpList;
-import org.web3j.rlp.RlpString;
-import org.web3j.rlp.RlpType;
-import org.web3j.utils.Bytes;
-import org.web3j.utils.Numeric;
+import sila.web3j.crypto.Credentials;
+import sila.web3j.crypto.RawTransaction;
+import sila.web3j.crypto.Sign;
+import sila.web3j.crypto.TransactionEncoder;
+import sila.web3j.crypto.transaction.type.TransactionType;
+import sila.web3j.rlp.RlpEncoder;
+import sila.web3j.rlp.RlpList;
+import sila.web3j.rlp.RlpString;
+import sila.web3j.rlp.RlpType;
+import sila.web3j.utils.Bytes;
+import sila.web3j.utils.Numeric;
 
 public class SignUtil {
   private static final int CHAIN_ID_INC = 35;
@@ -57,7 +57,7 @@ public class SignUtil {
     SECPPrivateKey privateKey =
         signatureAlgorithm.createPrivateKey(credentials.getEcKeyPair().getPrivateKey());
 
-    byte[] transactionHash = org.web3j.crypto.Hash.sha3(encodedTransaction);
+    byte[] transactionHash = sila.web3j.crypto.Hash.sha3(encodedTransaction);
 
     SECPSignature secpSignature =
         signatureAlgorithm.sign(
@@ -86,7 +86,7 @@ public class SignUtil {
       final Sign.SignatureData signature,
       final SECPSignature secpSignature) {
     final List<RlpType> values = TransactionEncoder.asRlpValues(transaction, signature);
-    if (!transaction.getType().equals(TransactionType.SIP1559)) {
+    if (!transaction.getType().equals(TransactionType.EIP1559)) {
       return values;
     }
 

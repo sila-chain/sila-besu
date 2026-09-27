@@ -19,7 +19,7 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.metrics.MetricCategoryRegistryImpl;
 import org.hyperledger.besu.metrics.StandardMetricCategory;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 
 import java.util.EnumSet;
 import java.util.stream.Collectors;

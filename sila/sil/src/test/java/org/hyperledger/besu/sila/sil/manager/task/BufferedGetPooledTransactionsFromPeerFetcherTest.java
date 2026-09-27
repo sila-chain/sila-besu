@@ -41,7 +41,7 @@ import org.hyperledger.besu.sila.sil.transactions.PeerTransactionTracker;
 import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -67,14 +67,14 @@ public class BufferedGetPooledTransactionsFromPeerFetcherTest {
   private @Mock PeerTaskExecutor peerTaskExecutor;
 
   private final BlockDataGenerator generator = new BlockDataGenerator();
-  private final SilScheduler silScheduler = new DeterministicSilScheduler();
+  private final SilScheduler silScheduler = new DeterministicEthScheduler();
 
   private BufferedGetPooledTransactionsFromPeerFetcher fetcher;
   private PeerTransactionTracker transactionTracker;
 
   @BeforeEach
   public void setup() {
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(silContext.getScheduler()).thenReturn(silScheduler);
     when(silPeers.getMaxPeers()).thenReturn(25);
     when(silPeer.isDisconnected()).thenReturn(false);

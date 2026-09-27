@@ -18,12 +18,12 @@ import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.chain.VariablesStorage;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.util.NetworkUtility;
 
 import java.util.ArrayList;
@@ -36,12 +36,12 @@ import java.util.function.Supplier;
 import com.google.common.net.InetAddresses;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.sila.beacon.discovery.schema.EnrField;
-import org.sila.beacon.discovery.schema.IdentitySchema;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.IdentitySchema;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 /**
  * Manages the local Sila Node Record (ENR) lifecycle.
@@ -78,9 +78,12 @@ public class NodeRecordManager {
 
   private final ReentrantLock lock = new ReentrantLock();
 
-  private Optional<DiscoveryPeerV4> localNode = Optional.empty();
-  private HostEndpoint primaryEndpoint;
-  private Optional<HostEndpoint> ipv6Endpoint = Optional.empty();
+  // Mutated only under lock, but readers like getLocalNode()/isPrimaryEndpointIpv6() (called
+  // from both the DiscV4 and DiscV5 agent threads) intentionally don't take the lock - volatile
+  // supplies the missing JMM visibility guarantee for those reads.
+  private volatile Optional<DiscoveryPeerV4> localNode = Optional.empty();
+  private volatile HostEndpoint primaryEndpoint;
+  private volatile Optional<HostEndpoint> ipv6Endpoint = Optional.empty();
 
   // TCP port to use if/when an IPv6 host is auto-discovered via DiscV5 peer consensus.
   // Holds only the port — never a host — so it cannot leak into a broadcast/signed ENR.
@@ -123,6 +126,36 @@ public class NodeRecordManager {
    */
   public Optional<DiscoveryPeerV4> getLocalNode() {
     return localNode;
+  }
+
+  /**
+   * Returns whether {@link #initializeLocalNode} has already been called.
+   *
+   * <p>When a manager is shared by the DiscV4 and DiscV5 agents, this lets whichever starts second
+   * call {@link #registerIpv6AutoDiscoveryHint} instead of re-initializing and clobbering the first
+   * agent's already-resolved state.
+   *
+   * @return {@code true} if the local node has already been initialized
+   */
+  public boolean isInitialized() {
+    return localNode.isPresent();
+  }
+
+  /**
+   * Registers the locally-bound IPv6 TCP port hint used for peer-consensus IPv6 auto-discovery,
+   * without re-initializing or rewriting the ENR. Used instead of {@link #initializeLocalNode} when
+   * another agent sharing this manager has already initialized it (see {@link #isInitialized}).
+   *
+   * @param ipv6AutoDiscoveryTcpPort optional locally-bound IPv6 TCP port used to construct the
+   *     secondary endpoint if and when peer-consensus auto-discovery succeeds
+   */
+  public void registerIpv6AutoDiscoveryHint(final Optional<Integer> ipv6AutoDiscoveryTcpPort) {
+    lock.lock();
+    try {
+      this.ipv6AutoDiscoveryTcpPort = ipv6AutoDiscoveryTcpPort;
+    } finally {
+      lock.unlock();
+    }
   }
 
   /**
@@ -300,12 +333,12 @@ public class NodeRecordManager {
    * locally-bound IPv6 TCP port hint registered at {@link #initializeLocalNode(HostEndpoint,
    * Optional, Optional)}. Writes a new ENR with an incremented {@code seq} and returns it.
    *
-   * <p><b>Fire-once semantics.</b> Sila nodes are expected to keep a stable advertised address
-   * for the lifetime of a session. If {@code ipv6Endpoint} is already set — either because the
-   * operator pinned {@code --p2p-host-ipv6} or because a prior auto-discovery write has already
-   * happened this session — this method is a no-op and returns {@link Optional#empty()}. The
-   * handler enforces the same principle by short-circuiting on operator pin upstream; this method
-   * provides the second guarantee against mid-session address churn.
+   * <p><b>Fire-once semantics.</b> Sila nodes are expected to keep a stable advertised address for
+   * the lifetime of a session. If {@code ipv6Endpoint} is already set — either because the operator
+   * pinned {@code --p2p-host-ipv6} or because a prior auto-discovery write has already happened
+   * this session — this method is a no-op and returns {@link Optional#empty()}. The handler
+   * enforces the same principle by short-circuiting on operator pin upstream; this method provides
+   * the second guarantee against mid-session address churn.
    *
    * <p>If no IPv6 TCP port hint was registered (i.e. dual-stack bind is not active, or RLPx did not
    * bind an IPv6 socket), this method is also a no-op.

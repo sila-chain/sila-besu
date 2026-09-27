@@ -24,9 +24,9 @@ import org.hyperledger.besu.consensus.ibft.payload.RoundChangeCertificate;
 import org.hyperledger.besu.sila.BlockValidator;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 

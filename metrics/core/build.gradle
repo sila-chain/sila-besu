@@ -70,11 +70,11 @@ dependencies {
   implementation 'io.opentelemetry.semconv:opentelemetry-semconv'
   implementation 'io.opentelemetry.semconv:opentelemetry-semconv-incubating'
 
-  implementation 'io.promsileus:promsileus-metrics-core'
-  implementation 'io.promsileus:promsileus-metrics-instrumentation-guava'
-  implementation 'io.promsileus:promsileus-metrics-instrumentation-jvm'
-  implementation 'io.promsileus:promsileus-metrics-exporter-httpserver'
-  implementation 'io.promsileus:promsileus-metrics-exporter-pushgateway'
+  implementation 'io.prometheus:prometheus-metrics-core'
+  implementation 'io.prometheus:prometheus-metrics-instrumentation-guava'
+  implementation 'io.prometheus:prometheus-metrics-instrumentation-jvm'
+  implementation 'io.prometheus:prometheus-metrics-exporter-httpserver'
+  implementation 'io.prometheus:prometheus-metrics-exporter-pushgateway'
 
   implementation 'io.vertx:vertx-core'
   implementation 'io.vertx:vertx-web'

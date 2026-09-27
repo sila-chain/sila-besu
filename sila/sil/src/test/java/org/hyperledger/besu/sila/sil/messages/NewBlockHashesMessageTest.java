@@ -15,12 +15,12 @@
 package org.hyperledger.besu.sila.sil.messages;
 
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;
@@ -38,7 +38,7 @@ public final class NewBlockHashesMessageTest {
 
   @Test
   public void blockHeadersRoundTrip() throws IOException {
-    final List<NewBlockHashesMessage.NewBlockHash> hashes = new ArrayList<>();
+    final List<NewBlockHashesMessage.BlockAnnouncement> hashes = new ArrayList<>();
     final ByteBuffer buffer =
         ByteBuffer.wrap(Resources.toByteArray(this.getClass().getResource("/50.blocks")));
     for (int i = 0; i < 50; ++i) {
@@ -48,8 +48,9 @@ public final class NewBlockHashesMessageTest {
       buffer.compact().position(0);
       final RLPInput oneBlock = new BytesValueRLPInput(Bytes.wrap(block), false);
       oneBlock.enterList();
-      final BlockHeader header = BlockHeader.readFrom(oneBlock, new SilaMainnetBlockHeaderFunctions());
-      hashes.add(new NewBlockHashesMessage.NewBlockHash(header.getHash(), header.getNumber()));
+      final BlockHeader header =
+          BlockHeader.readFrom(oneBlock, new SilaMainnetBlockHeaderFunctions());
+      hashes.add(new NewBlockHashesMessage.BlockAnnouncement(header.getHash(), header.getNumber()));
       // We don't care about the bodies, just the header hashes
       oneBlock.skipNext();
       oneBlock.skipNext();
@@ -58,7 +59,7 @@ public final class NewBlockHashesMessageTest {
     final MessageData raw =
         new RawMessage(SilProtocolMessages.NEW_BLOCK_HASHES, initialMessage.getData());
     final NewBlockHashesMessage message = NewBlockHashesMessage.readFrom(raw);
-    final Iterator<NewBlockHashesMessage.NewBlockHash> readHeaders = message.getNewHashes();
+    final Iterator<NewBlockHashesMessage.BlockAnnouncement> readHeaders = message.getNewHashes();
     for (int i = 0; i < 50; ++i) {
       Assertions.assertThat(readHeaders.next()).isEqualTo(hashes.get(i));
     }

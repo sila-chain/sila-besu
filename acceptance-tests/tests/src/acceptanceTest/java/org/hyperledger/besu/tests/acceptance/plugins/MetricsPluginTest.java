@@ -17,7 +17,7 @@ package org.hyperledger.besu.tests.acceptance.plugins;
 import static org.assertj.core.api.Assertions.assertThat;
 import static org.hyperledger.besu.tests.acceptance.plugins.TestMetricsPlugin.TestMetricCategory.TEST_METRIC_CATEGORY;
 
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.tests.acceptance.dsl.AcceptanceTestBase;
 import org.hyperledger.besu.tests.acceptance.dsl.node.BesuNode;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.BesuNodeConfigurationBuilder;

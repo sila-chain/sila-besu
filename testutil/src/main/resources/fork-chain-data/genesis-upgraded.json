@@ -5,7 +5,7 @@
     "constantinopleBlock": 5,
     "petersburgBlock": 7,
     "contractSizeLimit": 2147483647,
-    "silash": {
+    "ethash": {
       "fixeddifficulty": 100
     }
   },

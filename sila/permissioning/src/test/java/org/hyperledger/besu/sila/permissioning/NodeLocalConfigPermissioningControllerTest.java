@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.permissioning;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.eq;
@@ -27,16 +28,16 @@ import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
 import org.hyperledger.besu.sila.p2p.peers.EnodeDnsConfiguration;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.ImmutableEnodeDnsConfiguration;
 import org.hyperledger.besu.sila.permissioning.NodeLocalConfigPermissioningController.NodesAllowlistResult;
 import org.hyperledger.besu.sila.permissioning.node.NodeAllowlistUpdatedEvent;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.plugin.data.EnodeURL;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
 
 import java.io.IOException;
 import java.net.InetAddress;
@@ -119,6 +120,23 @@ public class NodeLocalConfigPermissioningControllerTest {
         .comparingOnlyFields("result")
         .isEqualTo(expected);
     assertThat(controller.getNodesAllowlist()).containsExactly(enode1);
+  }
+
+  @Test
+  public void missingNodePermissioningFileIsInvalidConfigurationState() {
+    final LocalPermissioningConfiguration permissioningConfiguration =
+        LocalPermissioningConfiguration.createDefault();
+
+    assertThatThrownBy(
+            () ->
+                new NodeLocalConfigPermissioningController(
+                    permissioningConfiguration,
+                    bootnodesList,
+                    selfEnode.getNodeId(),
+                    metricsSystem))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            "Node permissioning config file path is required when node permissioning is enabled");
   }
 
   @Test

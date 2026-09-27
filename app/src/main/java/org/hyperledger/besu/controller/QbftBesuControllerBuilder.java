@@ -31,10 +31,10 @@ import org.hyperledger.besu.consensus.common.bft.BftProcessor;
 import org.hyperledger.besu.consensus.common.bft.BftProtocolSchedule;
 import org.hyperledger.besu.consensus.common.bft.BftRoundExpiryTimeCalculator;
 import org.hyperledger.besu.consensus.common.bft.BlockTimer;
-import org.hyperledger.besu.consensus.common.bft.SilSynchronizerUpdater;
 import org.hyperledger.besu.consensus.common.bft.EventMultiplexer;
 import org.hyperledger.besu.consensus.common.bft.MessageTracker;
 import org.hyperledger.besu.consensus.common.bft.RoundTimer;
+import org.hyperledger.besu.consensus.common.bft.SilSynchronizerUpdater;
 import org.hyperledger.besu.consensus.common.bft.UniqueMessageMulticaster;
 import org.hyperledger.besu.consensus.common.bft.blockcreation.BftMiningCoordinator;
 import org.hyperledger.besu.consensus.common.bft.blockcreation.BftProposerSelector;
@@ -51,6 +51,7 @@ import org.hyperledger.besu.consensus.qbft.QbftForksSchedulesFactory;
 import org.hyperledger.besu.consensus.qbft.QbftProtocolScheduleBuilder;
 import org.hyperledger.besu.consensus.qbft.adaptor.AdaptorUtil;
 import org.hyperledger.besu.consensus.qbft.adaptor.BftEventHandlerAdaptor;
+import org.hyperledger.besu.consensus.qbft.adaptor.QbftBlockAdaptor;
 import org.hyperledger.besu.consensus.qbft.adaptor.QbftBlockCodecAdaptor;
 import org.hyperledger.besu.consensus.qbft.adaptor.QbftBlockCreatorFactoryAdaptor;
 import org.hyperledger.besu.consensus.qbft.adaptor.QbftBlockInterfaceAdaptor;
@@ -81,23 +82,26 @@ import org.hyperledger.besu.consensus.qbft.validator.TransactionValidatorProvide
 import org.hyperledger.besu.consensus.qbft.validator.ValidatorContractController;
 import org.hyperledger.besu.consensus.qbft.validator.ValidatorModeTransitionLogger;
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.jsonrpc.methods.JsonRpcMethods;
+import org.hyperledger.besu.sila.blockcreation.BlockCreationTiming;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.chain.MinedBlockObserver;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
+import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Util;
+import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.snap.SnapProtocolManager;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.util.Subscribers;
 
@@ -243,6 +247,9 @@ public class QbftBesuControllerBuilder extends BesuControllerBuilder {
 
     final QbftGossiperImpl gossiper = new QbftGossiperImpl(uniqueMessageMulticaster, blockEncoder);
 
+    final BlockTimer blockTimer =
+        new BlockTimer(bftEventQueue, qbftForksSchedule, bftExecutors, clock);
+
     final QbftFinalState finalState =
         new QbftFinalStateImpl(
             validatorProvider,
@@ -255,9 +262,11 @@ public class QbftBesuControllerBuilder extends BesuControllerBuilder {
                 new BftRoundExpiryTimeCalculator(
                     Duration.ofSeconds(qbftConfig.getRequestTimeoutSeconds())),
                 bftExecutors),
-            new BlockTimer(bftEventQueue, qbftForksSchedule, bftExecutors, clock),
+            blockTimer,
             new QbftBlockCreatorFactoryAdaptor(blockCreatorFactory, qbftExtraDataCodec),
             clock);
+
+    registerEmptyBlockPeriodMetrics(metricsSystem, blockTimer);
 
     final MessageValidatorFactory messageValidatorFactory =
         new MessageValidatorFactory(
@@ -266,18 +275,16 @@ public class QbftBesuControllerBuilder extends BesuControllerBuilder {
     final Subscribers<QbftMinedBlockObserver> minedBlockObservers = Subscribers.create();
     minedBlockObservers.subscribe(
         qbftBlock -> silProtocolManager.blockMined(AdaptorUtil.toBesuBlock(qbftBlock)));
-    minedBlockObservers.subscribe(
-        qbftBlock ->
-            blockLogger(transactionPool, localAddress)
-                .blockMined(AdaptorUtil.toBesuBlock(qbftBlock)));
+    minedBlockObservers.subscribe(blockLogger(transactionPool, localAddress));
 
     final SilSynchronizerUpdater synchronizerUpdater =
-        new SilSynchronizerUpdater(silProtocolManager.silContext().getSilPeers());
+        new SilSynchronizerUpdater(silProtocolManager.silContext().getEthPeers());
     final FutureMessageBuffer<QbftMessage> futureMessageBuffer =
         new FutureMessageBuffer<>(
             qbftConfig.getFutureMessagesMaxDistance(),
             qbftConfig.getFutureMessagesLimit(),
             blockchain.getChainHeadBlockNumber(),
+            (QbftMessage message) -> message.getData().getSize(),
             new FutureMessageSynchronizerHandler(synchronizerUpdater));
     final MessageTracker duplicateMessageTracker =
         new MessageTracker(qbftConfig.getDuplicateMessageLimit());
@@ -372,7 +379,8 @@ public class QbftBesuControllerBuilder extends BesuControllerBuilder {
         badBlockManager,
         isParallelTxProcessingEnabled,
         balConfiguration,
-        metricsSystem);
+        metricsSystem,
+        genesisConfig.getGasLimit());
   }
 
   @Override
@@ -450,9 +458,27 @@ public class QbftBesuControllerBuilder extends BesuControllerBuilder {
     return new BftValidatorOverrides(result);
   }
 
-  private static MinedBlockObserver blockLogger(
+  private static QbftMinedBlockObserver blockLogger(
       final TransactionPool transactionPool, final Address localAddress) {
-    return block ->
+    return qbftBlock -> {
+      final Block block = AdaptorUtil.toBesuBlock(qbftBlock);
+      final Optional<BlockCreationTiming> timing =
+          qbftBlock instanceof QbftBlockAdaptor adaptor
+              ? adaptor.getBlockCreationTiming()
+              : Optional.empty();
+      if (block.getHeader().getCoinbase().equals(localAddress) && timing.isPresent()) {
+        LOG.info(
+            String.format(
+                "Produced #%,d  (%s)| %4d tx | %d pending | %,d (%01.1f%%) gas in %01.3fs | Timing(%s)",
+                block.getHeader().getNumber(),
+                block.getHash().toShortLogString(),
+                block.getBody().getTransactions().size(),
+                transactionPool.count(),
+                block.getHeader().getGasUsed(),
+                (block.getHeader().getGasUsed() * 100.0) / block.getHeader().getGasLimit(),
+                timing.get().end("blockImported").toMillis() / 1000.0,
+                timing.get()));
+      } else {
         LOG.info(
             String.format(
                 "%s %-11s #%,d / %d tx / %d pending / %,d (%01.1f%%) gas / (%s)",
@@ -464,5 +490,42 @@ public class QbftBesuControllerBuilder extends BesuControllerBuilder {
                 block.getHeader().getGasUsed(),
                 (block.getHeader().getGasUsed() * 100.0) / block.getHeader().getGasLimit(),
                 block.getHash().getBytes().toHexString()));
+      }
+    };
+  }
+
+  /**
+   * Registers metrics that let an operator distinguish a chain that is deliberately quiet during
+   * emptyblockperiodseconds from one that has stalled. Without these, "no new blocks for a long
+   * time" looks identical in both cases.
+   *
+   * @param metricsSystem the metrics system to register with
+   * @param blockTimer the block timer holding the empty-block-period state
+   */
+  private void registerEmptyBlockPeriodMetrics(
+      final MetricsSystem metricsSystem, final BlockTimer blockTimer) {
+    metricsSystem.createLongGauge(
+        BesuMetricCategory.BFT,
+        "empty_block_period_waiting_seconds",
+        "Seconds this node has been intentionally not proposing because it has nothing worth putting in a block; 0 when producing normally. A value above emptyblockperiodseconds means the wait should have ended and the node is not making progress",
+        blockTimer::getEmptyBlockWaitSeconds);
+
+    metricsSystem.createLongGauge(
+        BesuMetricCategory.BFT,
+        "empty_block_period_seconds",
+        "Configured emptyblockperiodseconds currently in effect, 0 when not enabled. Follows QBFT transitions, so alerts can compare empty_block_period_waiting_seconds against this rather than hardcoding a threshold",
+        blockTimer::getEmptyBlockPeriodSeconds);
+
+    metricsSystem.createLongGauge(
+        BesuMetricCategory.BFT,
+        "block_period_seconds",
+        "Configured blockperiodseconds currently in effect. Follows QBFT transitions",
+        blockTimer::getBlockPeriodSeconds);
+
+    metricsSystem.createLongGauge(
+        BesuMetricCategory.BFT,
+        "empty_block_period_expiry_timestamp",
+        "Unix time in seconds at which the current empty block period ends, or 0 when not waiting",
+        () -> blockTimer.getEmptyBlockPeriodExpiryMillis() / 1000L);
   }
 }

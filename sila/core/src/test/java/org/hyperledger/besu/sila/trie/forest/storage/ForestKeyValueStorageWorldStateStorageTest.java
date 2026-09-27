@@ -17,9 +17,9 @@ package org.hyperledger.besu.sila.trie.forest.storage;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage.Updater;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;

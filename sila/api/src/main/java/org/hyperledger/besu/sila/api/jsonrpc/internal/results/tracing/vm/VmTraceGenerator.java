@@ -14,12 +14,12 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.vm;
 
-import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
-import org.hyperledger.besu.sila.api.jsonrpc.internal.results.Quantity;
-import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.Trace;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.tracing.TraceFrame;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.results.Quantity;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.Trace;
 
 import java.util.ArrayDeque;
 import java.util.Deque;

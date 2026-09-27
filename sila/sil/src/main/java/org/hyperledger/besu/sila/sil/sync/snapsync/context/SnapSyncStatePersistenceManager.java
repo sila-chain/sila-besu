@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.sil.sync.snapsync.context;
 
+import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.sil.sync.backwardsync.GenericKeyValueStorageFacade;
 import org.hyperledger.besu.sila.sil.sync.backwardsync.ValueConvertor;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.AccountRangeDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
-import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
 

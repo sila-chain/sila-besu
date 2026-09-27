@@ -19,14 +19,15 @@ import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
@@ -34,9 +35,8 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.sync.common.PivotBlockConfirmer.ContestedPivotBlockException;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.Collections;
 import java.util.List;
@@ -83,10 +83,10 @@ public class PivotBlockConfirmerTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(blockchain)
-            .setSilScheduler(new DeterministicSilScheduler(timeout::get))
+            .setEthScheduler(new DeterministicEthScheduler(timeout::get))
             .setWorldStateArchive(blockchainSetupUtil.getWorldArchive())
             .setTransactionPool(transactionPool)
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
   }
@@ -103,30 +103,30 @@ public class PivotBlockConfirmerTest {
     setUp(storageFormat);
     PivotBlockConfirmer pivotBlockConfirmer = createPivotBlockConfirmer(2);
 
-    final RespondingSilPeer respondingPeerA =
+    final RespondingEthPeer respondingPeerA =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
 
-    final RespondingSilPeer respondingPeerB =
+    final RespondingEthPeer respondingPeerB =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingPeerA.getSilPeer())))
+                Mockito.eq(respondingPeerA.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(respondingPeerA.getSilPeer())));
+                List.of(respondingPeerA.getEthPeer())));
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingPeerB.getSilPeer())))
+                Mockito.eq(respondingPeerB.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(respondingPeerB.getSilPeer())));
+                List.of(respondingPeerB.getEthPeer())));
 
     // Execute task
     final CompletableFuture<SnapSyncProcessState> future = pivotBlockConfirmer.confirmPivotBlock();
@@ -134,7 +134,7 @@ public class PivotBlockConfirmerTest {
     future.join();
     assertThat(future)
         .isCompletedWithValue(
-            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get(), false));
+            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get()));
   }
 
   @ParameterizedTest
@@ -143,36 +143,36 @@ public class PivotBlockConfirmerTest {
     setUp(storageFormat);
     PivotBlockConfirmer pivotBlockConfirmer = createPivotBlockConfirmer(2);
 
-    RespondingSilPeer peerA = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
-    RespondingSilPeer peerB = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
-    RespondingSilPeer peerC = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
+    RespondingEthPeer peerA = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
+    RespondingEthPeer peerB = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
+    RespondingEthPeer peerC = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
 
     when(peerTaskExecutor.executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peerA.getSilPeer())))
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peerA.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(peerA.getSilPeer())));
+                List.of(peerA.getEthPeer())));
     when(peerTaskExecutor.executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peerB.getSilPeer())))
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peerB.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.empty(), PeerTaskExecutorResponseCode.TIMEOUT, Collections.emptyList()));
     when(peerTaskExecutor.executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peerC.getSilPeer())))
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(peerC.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(peerC.getSilPeer())));
+                List.of(peerC.getEthPeer())));
 
     // Execute task
     final CompletableFuture<SnapSyncProcessState> future = pivotBlockConfirmer.confirmPivotBlock();
 
     assertThat(future)
         .isCompletedWithValue(
-            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get(), false));
+            new SnapSyncProcessState(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get()));
   }
 
   @ParameterizedTest
@@ -181,25 +181,25 @@ public class PivotBlockConfirmerTest {
     setUp(storageFormat);
     PivotBlockConfirmer pivotBlockConfirmer = createPivotBlockConfirmer(2);
 
-    final RespondingSilPeer respondingPeerA =
+    final RespondingEthPeer respondingPeerA =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
 
-    final RespondingSilPeer respondingPeerB =
+    final RespondingEthPeer respondingPeerB =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1000);
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingPeerA.getSilPeer())))
+                Mockito.eq(respondingPeerA.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.of(List.of(blockchain.getBlockHeader(PIVOT_BLOCK_NUMBER).get())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(respondingPeerA.getSilPeer())));
+                List.of(respondingPeerA.getEthPeer())));
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingPeerB.getSilPeer())))
+                Mockito.eq(respondingPeerB.getEthPeer())))
         .thenReturn(
             new PeerTaskExecutorResult<>(
                 Optional.of(
@@ -209,7 +209,7 @@ public class PivotBlockConfirmerTest {
                             .extraData(Bytes.of(1))
                             .buildHeader())),
                 PeerTaskExecutorResponseCode.SUCCESS,
-                List.of(respondingPeerB.getSilPeer())));
+                List.of(respondingPeerB.getEthPeer())));
 
     // Execute task and wait for response
     final CompletableFuture<SnapSyncProcessState> future = pivotBlockConfirmer.confirmPivotBlock();

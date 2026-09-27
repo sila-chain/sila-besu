@@ -25,8 +25,8 @@ import java.io.IOException;
 import java.util.Optional;
 
 /**
- * Transaction that fetches a block with the slotNumber field (SIP-7843, SilaAmsterdam+). This allows
- * tests to verify that the slotNumber field is correctly populated in block headers.
+ * Transaction that fetches a block with the slotNumber field (SIP-7843, SilaAmsterdam+). This
+ * allows tests to verify that the slotNumber field is correctly populated in block headers.
  */
 public class SilGetBlockWithSlotNumber implements Transaction<Optional<BlockWithSlotNumber>> {
   private final String blockNumber;

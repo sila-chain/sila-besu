@@ -19,7 +19,7 @@
                 "balance": "0x90000000000000000000000"
               },
               "0x0000000000000000000000000000000000009999": {
-                "comment": "Contract sends all its Siler to the address provided as a call data.",
+                "comment": "Contract sends all its Sila to the address provided as a call data.",
                 "code": "5F5F5F5F475F355AF100"
               },
               "0x0000000000000000000000000000000000009998": {

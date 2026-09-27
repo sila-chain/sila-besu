@@ -24,16 +24,16 @@ import picocli.CommandLine;
 public class SavmOptions implements CLIOptions<SavmConfiguration> {
 
   /** The constant JUMPDEST_CACHE_WEIGHT. */
-  public static final String JUMPDEST_CACHE_WEIGHT = "--Xsavm-jumpdest-cache-weight-kb";
+  public static final String JUMPDEST_CACHE_WEIGHT = "--Xevm-jumpdest-cache-weight-kb";
 
   /** The constant WORLDSTATE_UPDATE_MODE. */
-  public static final String WORLDSTATE_UPDATE_MODE = "--Xsavm-worldstate-update-mode";
+  public static final String WORLDSTATE_UPDATE_MODE = "--Xevm-worldstate-update-mode";
 
   /** The constant OPTIMIZED_OP_CODES. */
-  public static final String OPTIMIZED_OP_CODES = "--Xsavm-optimized-opcodes";
+  public static final String OPTIMIZED_OP_CODES = "--Xevm-optimized-opcodes";
 
   /** The constant SAVM_V2. */
-  public static final String SAVM_V2 = "--Xsavm-v2";
+  public static final String SAVM_V2 = "--Xevm-v2";
 
   /** Default constructor. */
   SavmOptions() {}
@@ -76,17 +76,17 @@ public class SavmOptions implements CLIOptions<SavmConfiguration> {
   private boolean enableOptimizedOpcodes = true;
 
   @CommandLine.Option(
-      names = {SAVM_V2, "--Xsavm-go-fast"},
+      names = {SAVM_V2, "--Xevm-go-fast"},
       description = "Enable experimental SAVM v2 with long[] stack representation (default: false)",
       fallbackValue = "false",
       hidden = true,
       arity = "1")
-  private boolean enableSavmV2 = false;
+  private boolean enableEvmV2 = false;
 
   @Override
   public SavmConfiguration toDomainObject() {
     return new SavmConfiguration(
-        jumpDestCacheWeightKilobytes, worldstateUpdateMode, enableOptimizedOpcodes, enableSavmV2);
+        jumpDestCacheWeightKilobytes, worldstateUpdateMode, enableOptimizedOpcodes, enableEvmV2);
   }
 
   @Override

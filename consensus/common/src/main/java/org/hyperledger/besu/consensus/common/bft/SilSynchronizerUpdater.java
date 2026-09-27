@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.consensus.common.bft;
 
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;

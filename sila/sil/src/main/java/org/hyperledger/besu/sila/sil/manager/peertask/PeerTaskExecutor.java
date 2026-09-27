@@ -14,18 +14,18 @@
  */
 package org.hyperledger.besu.sila.sil.manager.peertask;
 
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.plugin.services.metrics.LabelledSuppliedMetric;
 import org.hyperledger.besu.plugin.services.metrics.OperationTimer;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -95,26 +95,26 @@ public class PeerTaskExecutor {
   public <T> PeerTaskExecutorResult<T> execute(final PeerTask<T> peerTask) {
     PeerTaskExecutorResult<T> executorResult;
     int retriesRemaining = peerTask.getRetriesWithOtherPeer();
-    final List<SilPeer> usedSilPeers = new ArrayList<>();
+    final List<SilPeer> usedEthPeers = new ArrayList<>();
     do {
       Optional<SilPeer> peer =
           peerSelector.getPeer(
               (candidatePeer) ->
                   peerTask.getPeerRequirementFilter().test(candidatePeer)
-                      && !usedSilPeers.contains(candidatePeer.silPeer()));
+                      && !usedEthPeers.contains(candidatePeer.silPeer()));
       if (peer.isEmpty()) {
         executorResult =
             new PeerTaskExecutorResult<>(
-                Optional.empty(), PeerTaskExecutorResponseCode.NO_PEER_AVAILABLE, usedSilPeers);
+                Optional.empty(), PeerTaskExecutorResponseCode.NO_PEER_AVAILABLE, usedEthPeers);
         break;
       }
-      usedSilPeers.add(peer.get());
+      usedEthPeers.add(peer.get());
       executorResult = executeAgainstPeer(peerTask, peer.get());
     } while (retriesRemaining-- > 0
         && executorResult.responseCode() != PeerTaskExecutorResponseCode.SUCCESS);
 
     return new PeerTaskExecutorResult<>(
-        executorResult.result(), executorResult.responseCode(), usedSilPeers);
+        executorResult.result(), executorResult.responseCode(), usedEthPeers);
   }
 
   public <T> PeerTaskExecutorResult<T> executeAgainstPeer(
@@ -181,9 +181,19 @@ public class PeerTaskExecutor {
             new PeerTaskExecutorResult<>(
                 Optional.empty(), PeerTaskExecutorResponseCode.PEER_DISCONNECTED, List.of(peer));
 
-      } catch (InterruptedException | TimeoutException e) {
+      } catch (InterruptedException e) {
+        Thread.currentThread().interrupt();
         peer.recordRequestTimeout(peerTaskSubProtocol.getName(), requestMessageData.getCode());
         timeoutCounter.labels(taskClassName).inc();
+        LOG.debug("Interrupted executing {} against peer {}", taskClassName, peer.getLoggableId());
+        executorResult =
+            new PeerTaskExecutorResult<>(
+                Optional.empty(), PeerTaskExecutorResponseCode.TIMEOUT, List.of(peer));
+
+      } catch (TimeoutException e) {
+        peer.recordRequestTimeout(peerTaskSubProtocol.getName(), requestMessageData.getCode());
+        timeoutCounter.labels(taskClassName).inc();
+        LOG.debug("Timeout executing {} against peer {}", taskClassName, peer.getLoggableId());
         executorResult =
             new PeerTaskExecutorResult<>(
                 Optional.empty(), PeerTaskExecutorResponseCode.TIMEOUT, List.of(peer));

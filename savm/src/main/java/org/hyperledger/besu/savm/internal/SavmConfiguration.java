@@ -25,7 +25,7 @@ import java.util.OptionalInt;
  * @param jumpDestCacheWeightKB the jump destination cache weight in kb
  * @param worldUpdaterMode the world updater mode
  * @param enableOptimizedOpcodes enable optimized implementation of certain opcodes in the SAVM
- * @param enableSavmV2 enable experimental SAVM v2 with long[] stack representation
+ * @param enableEvmV2 enable experimental SAVM v2 with long[] stack representation
  * @param savmStackSize the maximum savm stack size
  * @param maxCodeSizeOverride An optional override of the maximum code size set by the SAVM fork
  * @param maxInitcodeSizeOverride An optional override of the maximum initcode size set by the SAVM
@@ -35,7 +35,7 @@ public record SavmConfiguration(
     long jumpDestCacheWeightKB,
     WorldUpdaterMode worldUpdaterMode,
     boolean enableOptimizedOpcodes,
-    boolean enableSavmV2,
+    boolean enableEvmV2,
     Integer savmStackSize,
     Optional<Integer> maxCodeSizeOverride,
     Optional<Integer> maxInitcodeSizeOverride) {
@@ -81,18 +81,18 @@ public record SavmConfiguration(
    * @param jumpDestCacheWeightKilobytes the jump dest cache weight (in kibibytes)
    * @param worldstateUpdateMode the world update mode
    * @param enableOptimizedOpcodes enabled opcode optimizations
-   * @param enableSavmV2 enable experimental SAVM v2 with long[] stack representation
+   * @param enableEvmV2 enable experimental SAVM v2 with long[] stack representation
    */
   public SavmConfiguration(
       final Long jumpDestCacheWeightKilobytes,
       final WorldUpdaterMode worldstateUpdateMode,
       final boolean enableOptimizedOpcodes,
-      final boolean enableSavmV2) {
+      final boolean enableEvmV2) {
     this(
         jumpDestCacheWeightKilobytes,
         worldstateUpdateMode,
         enableOptimizedOpcodes,
-        enableSavmV2,
+        enableEvmV2,
         MessageFrame.DEFAULT_MAX_STACK_SIZE,
         Optional.empty(),
         Optional.empty());
@@ -113,19 +113,19 @@ public record SavmConfiguration(
    *
    * @param newMaxCodeSize a new max code size override
    * @param newMaxInitcodeSize a new max initcode size override
-   * @param newSavmStackSize a new SAVM stack size override
+   * @param newEvmStackSize a new SAVM stack size override
    * @return the updated SAVM configuration
    */
   public SavmConfiguration overrides(
       final OptionalInt newMaxCodeSize,
       final OptionalInt newMaxInitcodeSize,
-      final OptionalInt newSavmStackSize) {
+      final OptionalInt newEvmStackSize) {
     return new SavmConfiguration(
         jumpDestCacheWeightKB,
         worldUpdaterMode,
         enableOptimizedOpcodes,
-        enableSavmV2,
-        newSavmStackSize.orElse(MessageFrame.DEFAULT_MAX_STACK_SIZE),
+        enableEvmV2,
+        newEvmStackSize.orElse(MessageFrame.DEFAULT_MAX_STACK_SIZE),
         newMaxCodeSize.isPresent() ? Optional.of(newMaxCodeSize.getAsInt()) : Optional.empty(),
         newMaxInitcodeSize.isPresent()
             ? Optional.of(newMaxInitcodeSize.getAsInt())

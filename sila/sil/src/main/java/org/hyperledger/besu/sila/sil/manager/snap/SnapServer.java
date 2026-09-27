@@ -15,9 +15,14 @@
 package org.hyperledger.besu.sila.sil.manager.snap;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.BesuEvents;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.Synchronizer;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
+import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.manager.SilMessages;
 import org.hyperledger.besu.sila.sil.messages.snap.AccountRangeMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.BlockAccessListsMessage;
@@ -32,18 +37,13 @@ import org.hyperledger.besu.sila.sil.messages.snap.SnapV2;
 import org.hyperledger.besu.sila.sil.messages.snap.StorageRangeMessage;
 import org.hyperledger.besu.sila.sil.messages.snap.TrieNodesMessage;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
-import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
-import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.trie.CompactEncoding;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.BesuEvents;
 
 import java.util.ArrayList;
 import java.util.Collections;
@@ -68,7 +68,7 @@ import org.apache.tuweni.units.bigints.UInt256;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** See <a href="https://github.com/sila-chain/devp2p/blob/master/caps/snap.md">snap</a> */
+/** See <a href="https://github.com/sila/devp2p/blob/master/caps/snap.md">snap</a> */
 class SnapServer implements BesuEvents.InitialSyncCompletionListener {
   private static final Logger LOGGER = LoggerFactory.getLogger(SnapServer.class);
   private static final int PRIME_STATE_ROOT_CACHE_LIMIT = 128;
@@ -76,14 +76,16 @@ class SnapServer implements BesuEvents.InitialSyncCompletionListener {
   private static final int MAX_RESPONSE_SIZE = 2 * 1024 * 1024;
   private static final int MAX_CODE_LOOKUPS_PER_REQUEST = 1024;
   private static final int MAX_STORAGE_RANGE_ACCOUNTS_PER_REQUEST = 4096;
-  private static final AccountRangeMessage EMPTY_ACCOUNT_RANGE =
+  static final AccountRangeMessage EMPTY_ACCOUNT_RANGE =
       AccountRangeMessage.create(new HashMap<>(), new ArrayDeque<>());
-  private static final StorageRangeMessage EMPTY_STORAGE_RANGE =
+  static final StorageRangeMessage EMPTY_STORAGE_RANGE =
       StorageRangeMessage.create(new ArrayDeque<>(), Collections.emptyList());
-  private static final TrieNodesMessage EMPTY_TRIE_NODES_MESSAGE =
+  static final TrieNodesMessage EMPTY_TRIE_NODES_MESSAGE =
       TrieNodesMessage.create(new ArrayList<>());
-  private static final ByteCodesMessage EMPTY_BYTE_CODES_MESSAGE =
+  static final ByteCodesMessage EMPTY_BYTE_CODES_MESSAGE =
       ByteCodesMessage.create(new ArrayDeque<>());
+  static final BlockAccessListsMessage EMPTY_BLOCK_ACCESS_LISTS =
+      BlockAccessListsMessage.create(List.of());
 
   static final Hash HASH_LAST = Hash.wrap(Bytes32.leftPad(Bytes.fromHexString("FF"), (byte) 0xFF));
 
@@ -253,46 +255,65 @@ class SnapServer implements BesuEvents.InitialSyncCompletionListener {
 
   MessageData constructGetBlockAccessListsResponse(final MessageData message) {
     if (!isStarted.get()) {
-      return BlockAccessListsMessage.create(List.of());
+      return EMPTY_BLOCK_ACCESS_LISTS;
     }
-
-    final GetBlockAccessListsMessage getBlockAccessLists =
-        GetBlockAccessListsMessage.readFrom(message);
-    final Iterable<Hash> blockHashes = getBlockAccessLists.blockHashes(true);
-    final int maxResponseBytes =
-        Math.min(getBlockAccessLists.responseBytes(true).intValue(), MAX_RESPONSE_SIZE);
 
     final StopWatch stopWatch = StopWatch.createStarted();
-    final List<Optional<BlockAccessList>> blockAccessLists = new ArrayList<>();
+    int requestedCount = 0;
+    try {
+      final GetBlockAccessListsMessage getBlockAccessLists =
+          GetBlockAccessListsMessage.readFrom(message);
+      final Iterable<Hash> blockHashes = getBlockAccessLists.blockHashes(true);
+      final int maxResponseBytes =
+          Math.min(getBlockAccessLists.responseBytes(true).intValue(), MAX_RESPONSE_SIZE);
 
-    final Optional<Blockchain> maybeBlockchain =
-        protocolContext.map(ProtocolContext::getBlockchain);
+      final List<Optional<BlockAccessList>> blockAccessLists = new ArrayList<>();
 
-    if (maybeBlockchain.isPresent()) {
-      final var blockchain = maybeBlockchain.get();
-      final ExceedingPredicate<Optional<BlockAccessList>> blockAccessListsResponseSizePredicate =
-          new ExceedingPredicate<>(
-              new ResponseSizePredicate<>(
-                  "block access lists",
-                  stopWatch,
-                  maxResponseBytes,
-                  maxMillisPerRequest,
-                  SnapServer::calculateBlockAccessListEncodedSize));
-      for (final Hash blockHash : blockHashes) {
-        final Optional<BlockAccessList> maybeBlockAccessList =
-            blockchain.getBlockAccessList(blockHash);
+      final Optional<Blockchain> maybeBlockchain =
+          protocolContext.map(ProtocolContext::getBlockchain);
 
-        if (blockAccessListsResponseSizePredicate.test(maybeBlockAccessList)) {
-          blockAccessLists.add(maybeBlockAccessList);
-        }
+      if (maybeBlockchain.isPresent()) {
+        final var blockchain = maybeBlockchain.get();
+        final ExceedingPredicate<Optional<BlockAccessList>> blockAccessListsResponseSizePredicate =
+            new ExceedingPredicate<>(
+                new ResponseSizePredicate<>(
+                    "block access lists",
+                    stopWatch,
+                    maxResponseBytes,
+                    maxMillisPerRequest,
+                    SnapServer::calculateBlockAccessListEncodedSize));
+        for (final Hash blockHash : blockHashes) {
+          requestedCount++;
+          final Optional<BlockAccessList> maybeBlockAccessList =
+              blockchain.getBlockAccessList(blockHash);
 
-        if (!blockAccessListsResponseSizePredicate.shouldGetMore()) {
-          break;
+          if (blockAccessListsResponseSizePredicate.test(maybeBlockAccessList)) {
+            blockAccessLists.add(maybeBlockAccessList);
+          }
+
+          if (!blockAccessListsResponseSizePredicate.shouldGetMore()) {
+            break;
+          }
         }
       }
-    }
 
-    return BlockAccessListsMessage.create(blockAccessLists);
+      if (LOGGER.isDebugEnabled()) {
+        final long unavailable = blockAccessLists.stream().filter(Optional::isEmpty).count();
+        LOGGER
+            .atDebug()
+            .setMessage(
+                "Served block access lists request: requested={}, returned={}, unavailable={}, took {} ms")
+            .addArgument(requestedCount)
+            .addArgument(blockAccessLists.size() - unavailable)
+            .addArgument(unavailable)
+            .addArgument(stopWatch.getTime())
+            .log();
+      }
+      return BlockAccessListsMessage.create(blockAccessLists);
+    } catch (final RuntimeException e) {
+      LOGGER.error("Unexpected exception serving block access lists request", e);
+      return BlockAccessListsMessage.create(List.of());
+    }
   }
 
   MessageData constructGetAccountRangeResponse(final MessageData message) {
@@ -344,7 +365,7 @@ class SnapServer implements BesuEvents.InitialSyncCompletionListener {
 
                 if (accounts.isEmpty() && shouldContinuePredicate.shouldContinue.get()) {
                   var fromNextHash =
-                      range.endKeyHash().compareTo(range.startKeyHash()) >= 0
+                      range.endKeyHash().getBytes().compareTo(range.startKeyHash().getBytes()) >= 0
                           ? range.endKeyHash()
                           : range.startKeyHash();
                   // fetch next account after range, if it exists

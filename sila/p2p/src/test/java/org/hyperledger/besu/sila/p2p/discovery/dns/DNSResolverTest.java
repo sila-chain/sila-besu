@@ -111,7 +111,7 @@ class DNSResolverTest {
     final DNSEntry entry = DNSResolver.readDNSEntry(txtRecord);
 
     assertThat(entry).isInstanceOf(DNSEntry.ENRNode.class);
-    final SilaNodeRecord record = ((DNSEntry.ENRNode) entry).nodeRecord();
+    final EthereumNodeRecord record = ((DNSEntry.ENRNode) entry).nodeRecord();
     assertThat(record.publicKey()).isEqualTo(expectedPublicKey);
     assertThat(record.ip().get()).isEqualTo(expectedIp);
     assertThat(record.tcp()).isEqualTo(Optional.of(expectedTcpPort));

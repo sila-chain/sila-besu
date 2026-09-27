@@ -21,7 +21,7 @@ import java.util.Map;
 import org.junit.jupiter.api.Test;
 
 public class KVReaderTest {
-  // copied from `dig all.holesky.sildisco.net txt`
+  // copied from `dig all.holesky.ethdisco.net txt`
   private static final String txtRecord =
       "enrtree-root:v1 e=KVKZLGARGADDZSMCF65QQMEWLE l=FDXN3SN67NA5DKA4J2GOK7BVQI seq=919 sig=braPmdwMk-g65lQxums6hEy553s3bWMoecW0QQ0IdykIoM9i3We0bxFT0IDONPaFcRePcN-yaOpt8GBfeQ4qDAE";
 

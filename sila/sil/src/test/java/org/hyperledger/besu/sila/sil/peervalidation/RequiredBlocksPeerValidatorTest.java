@@ -68,7 +68,7 @@ public class RequiredBlocksPeerValidatorTest extends AbstractPeerBlockValidatorT
             0);
 
     final SilPeer peer =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, requiredBlockNumber).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, requiredBlockNumber).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -108,7 +108,7 @@ public class RequiredBlocksPeerValidatorTest extends AbstractPeerBlockValidatorT
             0);
 
     final SilPeer peer =
-        SilProtocolManagerTestUtil.createPeer(silProtocolManager, requiredBlockNumber).getSilPeer();
+        SilProtocolManagerTestUtil.createPeer(silProtocolManager, requiredBlockNumber).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
@@ -139,7 +139,7 @@ public class RequiredBlocksPeerValidatorTest extends AbstractPeerBlockValidatorT
         new RequiredBlocksPeerValidator(
             ProtocolScheduleFixture.TESTING_NETWORK, peerTaskExecutor, 1, Hash.ZERO);
 
-    final SilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1).getSilPeer();
+    final SilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1).getEthPeer();
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(

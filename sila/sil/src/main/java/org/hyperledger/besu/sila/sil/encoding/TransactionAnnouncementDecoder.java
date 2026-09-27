@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.encoding;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.TransactionType;
-import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -40,7 +40,7 @@ public class TransactionAnnouncementDecoder {
    * @return the correct decoder
    */
   public static Decoder getDecoder(final Capability capability) {
-    return TransactionAnnouncementDecoder::decodeForSil68;
+    return TransactionAnnouncementDecoder::decodeForEth68;
   }
 
   /**
@@ -50,14 +50,14 @@ public class TransactionAnnouncementDecoder {
    *     <p>format: [[type_0: B_1, type_1: B_1, ...], [size_0: P, size_1: P, ...], ...]
    * @return the list of TransactionAnnouncement decoded from the message with size, type and hash
    */
-  private static List<TransactionAnnouncement> decodeForSil68(final RLPInput input) {
+  private static List<TransactionAnnouncement> decodeForEth68(final RLPInput input) {
     final int size = input.enterList();
 
     final List<TransactionType> types = new ArrayList<>(size);
     final byte[] bytes = input.readBytes().toArray();
     for (final byte b : bytes) {
       final var transactionType =
-          TransactionType.fromSilSerializedType(b)
+          TransactionType.fromEthSerializedType(b)
               .orElseThrow(
                   () ->
                       new RLPException(

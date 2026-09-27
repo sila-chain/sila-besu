@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.manager.peertask;
 
+import org.hyperledger.besu.sila.p2p.peers.PeerId;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
-import org.hyperledger.besu.sila.p2p.peers.PeerId;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

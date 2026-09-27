@@ -14,17 +14,14 @@
  */
 package org.hyperledger.besu.sila.core;
 
-import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.plugin.data.SyncStatus;
 import org.hyperledger.besu.plugin.services.BesuEvents;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
 
-import org.apache.tuweni.bytes.Bytes;
-
 /**
- * Naive implementation of Synchronizer used by retestsil. Because retestsil is not implemented in
+ * Naive implementation of Synchronizer used by retesteth. Because retesteth is not implemented in
  * the test module, it has no access to mockito. This class provides a minimum implementation needed
  * to run RPC methods which may require a Synchronizer.
  */
@@ -57,12 +54,6 @@ public class DummySynchronizer implements Synchronizer {
 
   @Override
   public boolean resyncWorldState() {
-    return false;
-  }
-
-  @Override
-  public boolean healWorldState(
-      final Optional<Address> maybeAccountToRepair, final Bytes location) {
     return false;
   }
 

@@ -16,10 +16,10 @@ package org.hyperledger.besu.savm.precompile;
 
 import org.hyperledger.besu.crypto.altbn128.AltBn128Point;
 import org.hyperledger.besu.crypto.altbn128.Fq;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP196;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP196;
 
 import java.math.BigInteger;
 import java.util.Arrays;
@@ -45,16 +45,16 @@ public class AltBN128MulPrecompiledContract extends AbstractAltBnPrecompiledCont
 
   private static final Bytes POINT_AT_INFINITY = Bytes.repeat((byte) 0, 64);
   private final long gasCost;
-  private static final Cache<Integer, PrecompileInputResultTuple> bnMulCache =
+  private static final Cache<Bytes, PrecompileInputResultTuple> bnMulCache =
       AbstractPrecompiledContract.resultCacheBuilder().build();
 
   AltBN128MulPrecompiledContract(final GasCalculator gasCalculator, final long gasCost) {
     super(
         PRECOMPILE_NAME,
         gasCalculator,
-        LibGnarkSIP196.SIP196_MUL_OPERATION_RAW_VALUE,
+        LibGnarkEIP196.EIP196_MUL_OPERATION_RAW_VALUE,
         PARAMETER_LENGTH,
-        LibGnarkSIP196.SIP196_PREALLOCATE_FOR_RESULT_BYTES);
+        LibGnarkEIP196.EIP196_PREALLOCATE_FOR_RESULT_BYTES);
     this.gasCost = gasCost;
   }
 
@@ -74,7 +74,7 @@ public class AltBN128MulPrecompiledContract extends AbstractAltBnPrecompiledCont
     }
 
     PrecompileInputResultTuple res;
-    Integer cacheKey = null;
+    Bytes cacheKey = null;
     final Bytes cachedInput =
         input.size() > PARAMETER_LENGTH ? input.slice(0, PARAMETER_LENGTH) : input;
     if (enableResultCaching) {
@@ -85,12 +85,14 @@ public class AltBN128MulPrecompiledContract extends AbstractAltBnPrecompiledCont
           cacheEventConsumer.accept(new CacheEvent(PRECOMPILE_NAME, CacheMetric.HIT));
           return res.cachedResult();
         } else {
-          LOG.debug(
-              "false positive altbn128Mul {}, cache key {}, cached input: {}, input: {}",
-              input.getClass().getSimpleName(),
-              cacheKey,
-              res.cachedInput().toHexString(),
-              cachedInput.toHexString());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                "false positive altbn128Mul {}, cache key {}, cached input: {}, input: {}",
+                input.getClass().getSimpleName(),
+                cacheKey,
+                res.cachedInput().toHexString(),
+                cachedInput.toHexString());
+          }
 
           cacheEventConsumer.accept(new CacheEvent(PRECOMPILE_NAME, CacheMetric.FALSE_POSITIVE));
         }

@@ -18,8 +18,8 @@ import org.jspecify.annotations.Nullable;
 
 /** Enumeration of metrics protocols supported by Besu. */
 public enum MetricsProtocol {
-  /** Promsileus metrics protocol. */
-  PROMSILEUS,
+  /** Prometheus metrics protocol. */
+  PROMETHEUS,
   /** Open telemetry metrics protocol. */
   OPENTELEMETRY,
   /** None metrics protocol. */

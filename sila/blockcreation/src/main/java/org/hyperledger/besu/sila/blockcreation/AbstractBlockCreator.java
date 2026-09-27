@@ -15,14 +15,21 @@
 package org.hyperledger.besu.sila.blockcreation;
 
 import static org.hyperledger.besu.sila.core.BlockHeaderBuilder.createPending;
-import static org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
+import static org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator.calculateExcessBlobGasForParent;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.BlobGas;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.exception.StorageException;
+import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
+import org.hyperledger.besu.plugin.services.txselection.PluginTransactionSelector;
+import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.account.MutableAccount;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockTransactionSelector;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionSelectionResults;
@@ -39,28 +46,21 @@ import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.Withdrawal;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.AbstractBlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.WithdrawalsProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.AccessLocationTracker;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.BlockAccessListBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessListFactory;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.ExcessBlobGasCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.requests.RequestProcessingContext;
-import org.hyperledger.besu.sila.sila-mainnet.requests.RequestProcessorCoordinator;
-import org.hyperledger.besu.sila.sila-mainnet.systemcall.BlockProcessingContext;
-import org.hyperledger.besu.savm.account.MutableAccount;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.services.exception.StorageException;
-import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
-import org.hyperledger.besu.plugin.services.txselection.PluginTransactionSelector;
-import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.sila.silaMainnet.AbstractBlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.WithdrawalsProcessor;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.AccessLocationTracker;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.BlockAccessListBuilder;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessListFactory;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.ExcessBlobGasCalculator;
+import org.hyperledger.besu.sila.silaMainnet.requests.RequestProcessingContext;
+import org.hyperledger.besu.sila.silaMainnet.requests.RequestProcessorCoordinator;
+import org.hyperledger.besu.sila.silaMainnet.systemcall.BlockProcessingContext;
 
 import java.time.Duration;
 import java.util.List;
@@ -71,6 +71,7 @@ import java.util.concurrent.atomic.AtomicBoolean;
 import com.google.common.collect.Lists;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
+import org.jspecify.annotations.Nullable;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
@@ -92,7 +93,7 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
   protected final BlockHeaderFunctions blockHeaderFunctions;
   private final SilScheduler silScheduler;
   private final AtomicBoolean isCancelled = new AtomicBoolean(false);
-  private volatile BlockTransactionSelector selector;
+  private volatile @Nullable BlockTransactionSelector selector;
 
   protected AbstractBlockCreator(
       final MiningConfiguration miningConfiguration,
@@ -336,7 +337,7 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
               .logsBloom(BodyValidation.logsBloom(transactionResults.getReceipts()))
               .gasUsed(
                   Math.max(
-                      transactionResults.getCumulativeRegularGasUsed(),
+                      transactionResults.getCumulativeExecutionGasUsed(),
                       transactionResults.getCumulativeStateGasUsed()))
               .extraData(extraDataCalculator.get(parentHeader))
               .withdrawalsRoot(
@@ -378,7 +379,7 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
 
   record GasUsage(BlobGas excessBlobGas, BlobGas used) {}
 
-  private GasUsage computeExcessBlobGas(
+  private @Nullable GasUsage computeExcessBlobGas(
       final TransactionSelectionResults transactionResults,
       final ProtocolSpec newProtocolSpec,
       final BlockHeader parentHeader) {
@@ -411,7 +412,8 @@ public abstract class AbstractBlockCreator implements AsyncBlockCreator {
       final BlockHeader parentHeader,
       final Optional<BlockAccessListBuilder> blockAccessListBuilder)
       throws RuntimeException {
-    final SilaMainnetTransactionProcessor transactionProcessor = protocolSpec.getTransactionProcessor();
+    final SilaMainnetTransactionProcessor transactionProcessor =
+        protocolSpec.getTransactionProcessor();
 
     final AbstractBlockProcessor.TransactionReceiptFactory transactionReceiptFactory =
         protocolSpec.getTransactionReceiptFactory();

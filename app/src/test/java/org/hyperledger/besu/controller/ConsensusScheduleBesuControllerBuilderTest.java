@@ -29,22 +29,26 @@ import org.hyperledger.besu.consensus.common.MigratingMiningCoordinator;
 import org.hyperledger.besu.consensus.common.bft.blockcreation.BftMiningCoordinator;
 import org.hyperledger.besu.sila.ConsensusContext;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
+import org.hyperledger.besu.sila.api.jsonrpc.methods.JsonRpcMethods;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
-import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
 import org.hyperledger.besu.sila.p2p.network.ProtocolManager;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
+import org.hyperledger.besu.sila.sil.sync.state.SyncState;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 
 import java.math.BigInteger;
 import java.util.Collections;
+import java.util.Comparator;
+import java.util.List;
 import java.util.Map;
 import java.util.NavigableSet;
 import java.util.Optional;
@@ -218,6 +222,63 @@ public class ConsensusScheduleBesuControllerBuilderTest {
     assertThat(contextSchedule.getFork(9, 0).getValue()).isSameAs(context1);
     assertThat(contextSchedule.getFork(10, 0).getValue()).isSameAs(context2);
     assertThat(contextSchedule.getFork(11, 0).getValue()).isSameAs(context2);
+  }
+
+  @Test
+  public void combinesAdditionalJsonRpcMethodsFromAllDelegateBuilders() {
+    final Map<Long, BesuControllerBuilder> consensusSchedule =
+        Map.of(0L, besuControllerBuilder1, 50L, besuControllerBuilder2);
+
+    final JsonRpcMethod ibftMethod = mock(JsonRpcMethod.class);
+    final JsonRpcMethod qbftMethod = mock(JsonRpcMethod.class);
+    when(besuControllerBuilder1.createAdditionalJsonRpcMethodFactory(any(), any(), any()))
+        .thenReturn(apis -> Map.of("ibft_getValidatorsByBlockNumber", ibftMethod));
+    when(besuControllerBuilder2.createAdditionalJsonRpcMethodFactory(any(), any(), any()))
+        .thenReturn(apis -> Map.of("qbft_getValidatorsByBlockNumber", qbftMethod));
+
+    final ConsensusScheduleBesuControllerBuilder builder =
+        new ConsensusScheduleBesuControllerBuilder(consensusSchedule);
+
+    final JsonRpcMethods combinedFactory =
+        builder.createAdditionalJsonRpcMethodFactory(
+            mock(ProtocolContext.class),
+            mock(ProtocolSchedule.class),
+            mock(MiningConfiguration.class));
+
+    final Map<String, JsonRpcMethod> methods = combinedFactory.create(List.of("IBFT", "QBFT"));
+    assertThat(methods)
+        .containsEntry("ibft_getValidatorsByBlockNumber", ibftMethod)
+        .containsEntry("qbft_getValidatorsByBlockNumber", qbftMethod);
+  }
+
+  @Test
+  public void laterForkWinsWhenDelegateBuildersProvideTheSameJsonRpcMethodName() {
+    final JsonRpcMethod earlierForkMethod = mock(JsonRpcMethod.class);
+    final JsonRpcMethod laterForkMethod = mock(JsonRpcMethod.class);
+    when(besuControllerBuilder1.createAdditionalJsonRpcMethodFactory(any(), any(), any()))
+        .thenReturn(apis -> Map.of("consensus_sharedMethod", earlierForkMethod));
+    when(besuControllerBuilder2.createAdditionalJsonRpcMethodFactory(any(), any(), any()))
+        .thenReturn(apis -> Map.of("consensus_sharedMethod", laterForkMethod));
+
+    // use an ordered map with keys in reverse order to show ordering comes from the block
+    // numbers, not from map iteration order
+    final Map<Long, BesuControllerBuilder> consensusSchedule =
+        new TreeMap<>(Comparator.reverseOrder());
+    consensusSchedule.put(0L, besuControllerBuilder1);
+    consensusSchedule.put(50L, besuControllerBuilder2);
+
+    final ConsensusScheduleBesuControllerBuilder builder =
+        new ConsensusScheduleBesuControllerBuilder(consensusSchedule);
+
+    final Map<String, JsonRpcMethod> methods =
+        builder
+            .createAdditionalJsonRpcMethodFactory(
+                mock(ProtocolContext.class),
+                mock(ProtocolSchedule.class),
+                mock(MiningConfiguration.class))
+            .create(List.of("IBFT", "QBFT"));
+
+    assertThat(methods).containsEntry("consensus_sharedMethod", laterForkMethod);
   }
 
   @Test

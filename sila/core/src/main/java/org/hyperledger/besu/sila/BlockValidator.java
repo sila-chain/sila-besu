@@ -16,16 +16,16 @@ package org.hyperledger.besu.sila;
 
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
 
 /**
- * The BlockValidator interface defines the methods for validating and processing blocks in the
- * Sila protocol.
+ * The BlockValidator interface defines the methods for validating and processing blocks in the Sila
+ * protocol.
  */
 public interface BlockValidator {
 

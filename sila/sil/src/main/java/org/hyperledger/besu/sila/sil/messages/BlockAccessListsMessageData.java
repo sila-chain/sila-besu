@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.messages;
 
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListDecoder;
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListEncoder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Iterator;
 import java.util.NoSuchElementException;
@@ -30,7 +30,7 @@ import org.apache.tuweni.bytes.Bytes;
 public final class BlockAccessListsMessageData {
   private BlockAccessListsMessageData() {}
 
-  public static Bytes encodeSilResponse(
+  public static Bytes encodeEthResponse(
       final Iterable<Optional<BlockAccessList>> blockAccessLists) {
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     output.startList();
@@ -45,12 +45,12 @@ public final class BlockAccessListsMessageData {
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     output.startList();
     // Snap splices request-id into this body: [[access-lists]].
-    output.writeRaw(encodeSilResponse(blockAccessLists));
+    output.writeRaw(encodeEthResponse(blockAccessLists));
     output.endList();
     return output.encoded();
   }
 
-  public static Iterable<Optional<BlockAccessList>> decodeSilResponse(final Bytes data) {
+  public static Iterable<Optional<BlockAccessList>> decodeEthResponse(final Bytes data) {
     return decodeEntries(
         data,
         false,
@@ -83,7 +83,7 @@ public final class BlockAccessListsMessageData {
         });
   }
 
-  public static Iterable<Bytes> decodeSilResponseRaw(final Bytes data) {
+  public static Iterable<Bytes> decodeEthResponseRaw(final Bytes data) {
     return decodeEntries(data, false, false, input -> input.readAsRlp().raw());
   }
 

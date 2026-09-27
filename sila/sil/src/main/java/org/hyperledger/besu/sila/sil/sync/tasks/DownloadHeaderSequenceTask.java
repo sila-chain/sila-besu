@@ -18,11 +18,13 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Arrays.asList;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockCause;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
@@ -33,12 +35,10 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.manager.task.AbstractRetryingPeerTask;
 import org.hyperledger.besu.sila.sil.sync.ValidationPolicy;
 import org.hyperledger.besu.sila.sil.sync.tasks.exceptions.InvalidBlockException;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.util.Arrays;
 import java.util.Collection;

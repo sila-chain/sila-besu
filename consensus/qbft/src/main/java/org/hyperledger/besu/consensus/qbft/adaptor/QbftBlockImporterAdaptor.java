@@ -18,9 +18,9 @@ import org.hyperledger.besu.consensus.qbft.core.types.QbftBlock;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlockImporter;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockImporter;
-import org.hyperledger.besu.sila.sila-mainnet.BlockImportResult;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.BlockImportResult;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 

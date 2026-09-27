@@ -15,8 +15,8 @@
 package org.hyperledger.besu.cli.options;
 
 import org.hyperledger.besu.cli.util.CommandLineUtils;
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.ImmutableSilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.util.number.PositiveNumber;
 
 import java.util.List;
@@ -25,15 +25,15 @@ import picocli.CommandLine;
 
 /** The Sil protocol CLI options. */
 public class SilProtocolOptions implements CLIOptions<SilProtocolConfiguration> {
-  private static final String MAX_MESSAGE_SIZE_FLAG = "--Xsil-max-message-size";
+  private static final String MAX_MESSAGE_SIZE_FLAG = "--Xeth-max-message-size";
   private static final String MAX_TRANSACTIONS_MESSAGE_SIZE_FLAG =
-      "--Xsil-max-transactions-message-size";
+      "--Xeth-max-transactions-message-size";
   private static final String MAX_GET_HEADERS_FLAG = "--Xewp-max-get-headers";
   private static final String MAX_GET_BODIES_FLAG = "--Xewp-max-get-bodies";
   private static final String MAX_GET_RECEIPTS_FLAG = "--Xewp-max-get-receipts";
   private static final String MAX_GET_POOLED_TRANSACTIONS = "--Xewp-max-get-pooled-transactions";
-  private static final String MAX_CAPABILITY = "--Xsil-capability-max";
-  private static final String MIN_CAPABILITY = "--Xsil-capability-min";
+  private static final String MAX_CAPABILITY = "--Xeth-capability-max";
+  private static final String MIN_CAPABILITY = "--Xeth-capability-min";
 
   @CommandLine.Option(
       hidden = true,
@@ -94,14 +94,14 @@ public class SilProtocolOptions implements CLIOptions<SilProtocolConfiguration> 
       names = {MAX_CAPABILITY},
       paramLabel = "<INTEGER>",
       description = "Max protocol version to support")
-  private int maxSilCapability = SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY;
+  private int maxEthCapability = SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY;
 
   @CommandLine.Option(
       hidden = true,
       names = {MIN_CAPABILITY},
       paramLabel = "<INTEGER>",
       description = "Min protocol version to support")
-  private int minSilCapability = SilProtocolConfiguration.DEFAULT_MIN_CAPABILITY;
+  private int minEthCapability = SilProtocolConfiguration.DEFAULT_MIN_CAPABILITY;
 
   private SilProtocolOptions() {}
 
@@ -129,8 +129,8 @@ public class SilProtocolOptions implements CLIOptions<SilProtocolConfiguration> 
     options.maxGetBlockBodies = PositiveNumber.fromInt(config.getMaxGetBlockBodies());
     options.maxGetReceipts = PositiveNumber.fromInt(config.getMaxGetReceipts());
     options.maxGetPooledTransactions = PositiveNumber.fromInt(config.getMaxGetPooledTransactions());
-    options.maxSilCapability = config.getMaxSilCapability();
-    options.minSilCapability = config.getMinSilCapability();
+    options.maxEthCapability = config.getMaxEthCapability();
+    options.minEthCapability = config.getMinEthCapability();
     return options;
   }
 
@@ -143,8 +143,8 @@ public class SilProtocolOptions implements CLIOptions<SilProtocolConfiguration> 
         .maxGetBlockBodies(maxGetBlockBodies.getValue())
         .maxGetReceipts(maxGetReceipts.getValue())
         .maxGetPooledTransactions(maxGetPooledTransactions.getValue())
-        .maxSilCapability(maxSilCapability)
-        .minSilCapability(minSilCapability)
+        .maxEthCapability(maxEthCapability)
+        .minEthCapability(minEthCapability)
         .build();
   }
 

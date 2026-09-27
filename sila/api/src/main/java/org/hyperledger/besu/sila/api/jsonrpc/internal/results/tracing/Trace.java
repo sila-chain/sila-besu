@@ -22,8 +22,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing;
  * <ul>
  *   <li>trace: {@link
  *       org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.flat.FlatTrace}
- *   <li>vmTrace: {@link
- *       org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.vm.VmTrace}
+ *   <li>vmTrace: {@link org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing.vm.VmTrace}
  *   <li>stateDiff:
  * </ul>
  */

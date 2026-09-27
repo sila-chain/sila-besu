@@ -50,11 +50,11 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
-import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
 import org.hyperledger.besu.util.Subscribers;
 
 import java.math.BigInteger;

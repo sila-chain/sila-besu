@@ -38,13 +38,13 @@ import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitVa
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.backwardsync.BackwardSyncContext;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.util.LogConfigurator;
 
 import java.util.ArrayList;
@@ -69,12 +69,11 @@ public class MergeReorgTest implements MergeGenesisConfigHelper {
   private final MergeContext mergeContext = new PostMergeContext();
   private final ProtocolSchedule mockProtocolSchedule = getMergeProtocolSchedule();
   private final GenesisState genesisState =
-      GenesisState.fromConfig(
-          getPowGenesisConfig(), mockProtocolSchedule, new PathBasedCodeCache());
+      GenesisState.fromConfig(getPowGenesisConfig(), mockProtocolSchedule, new BonsaiCodeCache());
 
   private final WorldStateArchive worldStateArchive = createInMemoryWorldStateArchive();
   private final MutableBlockchain blockchain = createInMemoryBlockchain(genesisState.getBlock());
-  private final SilScheduler silScheduler = new DeterministicSilScheduler();
+  private final SilScheduler silScheduler = new DeterministicEthScheduler();
   private final ProtocolContext protocolContext =
       new ProtocolContext.Builder()
           .withBlockchain(blockchain)

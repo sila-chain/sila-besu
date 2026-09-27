@@ -18,11 +18,11 @@ import static java.util.Comparator.comparing;
 import static java.util.stream.Collectors.toUnmodifiableList;
 
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.time.Clock;
 import java.util.Comparator;

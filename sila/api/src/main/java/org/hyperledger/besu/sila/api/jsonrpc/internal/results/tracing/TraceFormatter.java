@@ -16,7 +16,7 @@ package org.hyperledger.besu.sila.api.jsonrpc.internal.results.tracing;
 
 import org.hyperledger.besu.sila.api.jsonrpc.internal.processor.TransactionTrace;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.concurrent.atomic.AtomicInteger;
 import java.util.stream.Stream;

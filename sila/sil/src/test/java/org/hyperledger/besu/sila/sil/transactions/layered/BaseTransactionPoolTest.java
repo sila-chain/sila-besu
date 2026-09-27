@@ -29,6 +29,8 @@ import org.hyperledger.besu.datatypes.BlobType;
 import org.hyperledger.besu.datatypes.CodeDelegation;
 import org.hyperledger.besu.datatypes.TransactionType;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.StubMetricsSystem;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.core.BlobTestFixture;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
@@ -40,9 +42,7 @@ import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.util.TrustedSetupClassLoaderExtension;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -70,9 +70,9 @@ public class BaseTransactionPoolTest extends TrustedSetupClassLoaderExtension {
   protected final Transaction transaction0 = createTransaction(0);
   protected final Transaction transaction1 = createTransaction(1);
   protected final Transaction transaction2 = createTransaction(2);
-  protected final Transaction blobTransaction0 = createSIP4844Transaction(0, KEYS1, 1, 1);
+  protected final Transaction blobTransaction0 = createEIP4844Transaction(0, KEYS1, 1, 1);
 
-  protected final SilScheduler silScheduler = new DeterministicSilScheduler();
+  protected final SilScheduler silScheduler = new DeterministicEthScheduler();
   protected final StubMetricsSystem metricsSystem = new StubMetricsSystem();
   protected final SenderBalanceChecker senderBalanceChecker = mock(SenderBalanceChecker.class);
 
@@ -102,13 +102,13 @@ public class BaseTransactionPoolTest extends TrustedSetupClassLoaderExtension {
     return createTransaction(nonce, maxGasPrice, 0, keys);
   }
 
-  protected Transaction createSIP1559Transaction(
+  protected Transaction createEIP1559Transaction(
       final long nonce, final KeyPair keys, final int gasFeeMultiplier) {
     return createTransaction(
         TransactionType.SIP1559, nonce, Wei.of(5000L).multiply(gasFeeMultiplier), 0, null, keys);
   }
 
-  protected Transaction createSIP4844Transaction(
+  protected Transaction createEIP4844Transaction(
       final long nonce, final KeyPair keys, final int gasFeeMultiplier, final int blobCount) {
     return createTransaction(
         TransactionType.BLOB,
@@ -122,7 +122,7 @@ public class BaseTransactionPoolTest extends TrustedSetupClassLoaderExtension {
         keys);
   }
 
-  protected Transaction createSIP7702Transaction(
+  protected Transaction createEIP7702Transaction(
       final long nonce,
       final KeyPair keys,
       final int gasFeeMultiplier,

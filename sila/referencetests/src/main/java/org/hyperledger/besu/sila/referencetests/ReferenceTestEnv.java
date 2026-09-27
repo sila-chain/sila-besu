@@ -27,10 +27,10 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.Withdrawal;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
 
 import java.util.List;
 import java.util.Map;

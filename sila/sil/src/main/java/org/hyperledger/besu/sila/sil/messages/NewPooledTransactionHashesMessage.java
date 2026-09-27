@@ -18,11 +18,11 @@ import static org.hyperledger.besu.sila.sil.encoding.TransactionAnnouncementDeco
 import static org.hyperledger.besu.sila.sil.encoding.TransactionAnnouncementEncoder.getEncoder;
 
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.AbstractMessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
 
 import java.util.List;
 

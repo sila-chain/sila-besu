@@ -23,6 +23,8 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.consensus.merge.ForkchoiceEvent;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
@@ -31,12 +33,12 @@ import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.ProtocolScheduleFixture;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
@@ -47,11 +49,9 @@ import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.io.IOException;
 import java.time.Clock;
@@ -69,6 +69,7 @@ import org.junit.jupiter.params.provider.Arguments;
 import org.junit.jupiter.params.provider.ArgumentsProvider;
 import org.junit.jupiter.params.provider.ArgumentsSource;
 
+/** Tests for {@link PivotSyncActions}. */
 public class PivotSyncActionsTest {
   private final WorldStateStorageCoordinator worldStateStorageCoordinator =
       mock(WorldStateStorageCoordinator.class);
@@ -108,14 +109,14 @@ public class PivotSyncActionsTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(ProtocolScheduleFixture.TESTING_NETWORK)
             .setBlockchain(blockchain)
-            .setSilScheduler(
-                new DeterministicSilScheduler(() -> timeoutCount.getAndDecrement() > 0))
+            .setEthScheduler(
+                new DeterministicEthScheduler(() -> timeoutCount.getAndDecrement() > 0))
             .setWorldStateArchive(blockchainSetupUtil.getWorldArchive())
             .setTransactionPool(blockchainSetupUtil.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .build();
     silContext = silProtocolManager.silContext();
-    silPeers = silContext.getSilPeers();
+    silPeers = silContext.getEthPeers();
     syncState = new SyncState(blockchain, silPeers);
     pivotSyncActions =
         createPivotSyncActions(
@@ -138,7 +139,7 @@ public class PivotSyncActionsTest {
     }
     final CompletableFuture<SnapSyncProcessState> result =
         pivotSyncActions.selectPivotBlock(new SnapSyncProcessState());
-    assertThat(result).isCompletedWithValue(new SnapSyncProcessState(5, false));
+    assertThat(result).isCompletedWithValue(new SnapSyncProcessState(5));
   }
 
   @ParameterizedTest
@@ -146,7 +147,7 @@ public class PivotSyncActionsTest {
   public void returnTheSamePivotBlockIfAlreadySelected(final DataStorageFormat storageFormat) {
     setUp(storageFormat);
     final BlockHeader pivotHeader = new BlockHeaderTestFixture().number(1024).buildHeader();
-    final SnapSyncProcessState fastSyncState = new SnapSyncProcessState(pivotHeader, false);
+    final SnapSyncProcessState fastSyncState = new SnapSyncProcessState(pivotHeader);
     final CompletableFuture<SnapSyncProcessState> result =
         pivotSyncActions.selectPivotBlock(fastSyncState);
     assertThat(result).isDone();
@@ -162,8 +163,8 @@ public class PivotSyncActionsTest {
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, 5000);
 
     final CompletableFuture<SnapSyncProcessState> result =
-        pivotSyncActions.selectPivotBlock(new SnapSyncProcessState(pivotHeader, false));
-    final SnapSyncProcessState expected = new SnapSyncProcessState(pivotHeader, false);
+        pivotSyncActions.selectPivotBlock(new SnapSyncProcessState(pivotHeader));
+    final SnapSyncProcessState expected = new SnapSyncProcessState(pivotHeader);
     assertThat(result).isCompletedWithValue(expected);
   }
 
@@ -186,7 +187,7 @@ public class PivotSyncActionsTest {
 
     final CompletableFuture<SnapSyncProcessState> result =
         pivotSyncActions.selectPivotBlock(new SnapSyncProcessState());
-    final SnapSyncProcessState expected = new SnapSyncProcessState(4000, false);
+    final SnapSyncProcessState expected = new SnapSyncProcessState(4000);
     assertThat(result).isCompletedWithValue(expected);
   }
 
@@ -209,7 +210,7 @@ public class PivotSyncActionsTest {
 
     final CompletableFuture<SnapSyncProcessState> result =
         pivotSyncActions.selectPivotBlock(new SnapSyncProcessState());
-    final SnapSyncProcessState expected = new SnapSyncProcessState(3000, false);
+    final SnapSyncProcessState expected = new SnapSyncProcessState(3000);
     assertThat(result).isCompletedWithValue(expected);
   }
 
@@ -227,7 +228,7 @@ public class PivotSyncActionsTest {
                 syncState,
                 SnapSyncConfiguration.DEFAULT_PIVOT_BLOCK_WINDOW_VALIDITY));
 
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
 
     final CompletableFuture<SnapSyncProcessState> result =
         pivotSyncActions.selectPivotBlock(new SnapSyncProcessState());
@@ -240,7 +241,7 @@ public class PivotSyncActionsTest {
 
     // Second peer meets min peer threshold, we should select the pivot
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, 5000);
-    final SnapSyncProcessState expected = new SnapSyncProcessState(4000, false);
+    final SnapSyncProcessState expected = new SnapSyncProcessState(4000);
     SilProtocolManagerTestUtil.runPendingFutures(silProtocolManager);
     assertThat(result).isCompletedWithValue(expected);
   }
@@ -254,7 +255,7 @@ public class PivotSyncActionsTest {
     PivotBlockSelector pivotBlockSelector = mock(PivotBlockSelector.class);
     pivotSyncActions = createPivotSyncActions(syncConfig, pivotBlockSelector);
 
-    SnapSyncProcessState expectedResult = new SnapSyncProcessState(123, false);
+    SnapSyncProcessState expectedResult = new SnapSyncProcessState(123);
 
     when(pivotBlockSelector.selectNewPivotBlock())
         .thenReturn(
@@ -306,11 +307,11 @@ public class PivotSyncActionsTest {
                 syncState,
                 SnapSyncConfiguration.DEFAULT_PIVOT_BLOCK_WINDOW_VALIDITY));
     final long minPivotHeight = syncConfig.getSyncPivotDistance() + 1L;
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
 
     // Create peers without chain height estimates
     final PeerValidator validator = mock(PeerValidator.class);
-    List<RespondingSilPeer> peers = new ArrayList<>();
+    List<RespondingEthPeer> peers = new ArrayList<>();
     for (int i = 0; i < peerCount; i++) {
       // Best peer by td is the first peer, td decreases as i increases
       final boolean isBest = i == 0;
@@ -325,10 +326,10 @@ public class PivotSyncActionsTest {
         height = OptionalLong.of(minPivotHeight + i);
       }
 
-      final RespondingSilPeer peer =
+      final RespondingEthPeer peer =
           SilProtocolManagerTestUtil.createPeer(silProtocolManager, td, height, validator);
       if (!isBest || !bestNotValidated) {
-        peer.getSilPeer().markValidated(validator);
+        peer.getEthPeer().markValidated(validator);
       }
       peers.add(peer);
     }
@@ -338,10 +339,9 @@ public class PivotSyncActionsTest {
     SilProtocolManagerTestUtil.runPendingFutures(silProtocolManager);
 
     final long expectedBestChainHeight =
-        peers.get(1).getSilPeer().chainState().getEstimatedHeight();
+        peers.get(1).getEthPeer().chainState().getEstimatedHeight();
     final SnapSyncProcessState expected =
-        new SnapSyncProcessState(
-            expectedBestChainHeight - syncConfig.getSyncPivotDistance(), false);
+        new SnapSyncProcessState(expectedBestChainHeight - syncConfig.getSyncPivotDistance());
     SilProtocolManagerTestUtil.runPendingFutures(silProtocolManager);
     assertThat(result).isCompletedWithValue(expected);
   }
@@ -361,7 +361,7 @@ public class PivotSyncActionsTest {
                 SnapSyncConfiguration.DEFAULT_PIVOT_BLOCK_WINDOW_VALIDITY));
     final long pivotDistance = syncConfig.getSyncPivotDistance();
 
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, pivotDistance - 1);
 
     final CompletableFuture<SnapSyncProcessState> result =
@@ -372,7 +372,7 @@ public class PivotSyncActionsTest {
 
     final long validHeight = pivotDistance + 1;
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, validHeight);
-    final SnapSyncProcessState expected = new SnapSyncProcessState(1, false);
+    final SnapSyncProcessState expected = new SnapSyncProcessState(1);
     SilProtocolManagerTestUtil.runPendingFutures(silProtocolManager);
     assertThat(result).isCompletedWithValue(expected);
   }
@@ -383,7 +383,7 @@ public class PivotSyncActionsTest {
       final DataStorageFormat storageFormat) {
     setUp(storageFormat);
     final long pivotDistance = syncConfig.getSyncPivotDistance();
-    SilProtocolManagerTestUtil.disableSilSchedulerAutoRun(silProtocolManager);
+    SilProtocolManagerTestUtil.disableEthSchedulerAutoRun(silProtocolManager);
     // Create peers with chains that are too short
     for (int i = 0; i < syncConfig.getSyncMinimumPeerCount(); i++) {
       SilProtocolManagerTestUtil.createPeer(silProtocolManager, pivotDistance);
@@ -397,24 +397,24 @@ public class PivotSyncActionsTest {
 
     final long validHeight = pivotDistance + 1;
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, validHeight);
-    final SnapSyncProcessState expected = new SnapSyncProcessState(1, false);
+    final SnapSyncProcessState expected = new SnapSyncProcessState(1);
     SilProtocolManagerTestUtil.runPendingFutures(silProtocolManager);
     assertThat(result).isCompletedWithValue(expected);
   }
 
   @ParameterizedTest
   @ArgumentsSource(PivotSyncActionsTest.PivotSyncActionsTestArguments.class)
-  public void downloadPivotBlockHeaderShouldUseExistingPivotBlockHeaderIfPresent(
+  public void resolvePivotBlockHeaderShouldUseExistingPivotBlockHeaderIfPresent(
       final DataStorageFormat storageFormat) {
     setUp(storageFormat);
     final BlockHeader pivotHeader = new BlockHeaderTestFixture().number(1024).buildHeader();
-    final SnapSyncProcessState expected = new SnapSyncProcessState(pivotHeader, false);
-    assertThat(pivotSyncActions.downloadPivotBlockHeader(expected)).isCompletedWithValue(expected);
+    final SnapSyncProcessState expected = new SnapSyncProcessState(pivotHeader);
+    assertThat(pivotSyncActions.resolvePivotBlockHeader(expected)).isCompletedWithValue(expected);
   }
 
   @ParameterizedTest
   @ArgumentsSource(PivotSyncActionsTest.PivotSyncActionsTestArguments.class)
-  public void downloadPivotBlockHeaderShouldRetrievePivotBlockHeader(
+  public void resolvePivotBlockHeaderShouldRetrievePivotBlockHeader(
       final DataStorageFormat storageFormat) {
     setUp(storageFormat, Optional.of(1));
     pivotSyncActions =
@@ -437,14 +437,14 @@ public class PivotSyncActionsTest {
 
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1001);
     final CompletableFuture<SnapSyncProcessState> result =
-        pivotSyncActions.downloadPivotBlockHeader(new SnapSyncProcessState(1, false));
+        pivotSyncActions.resolvePivotBlockHeader(new SnapSyncProcessState(1));
 
-    assertThat(result).isCompletedWithValue(new SnapSyncProcessState(expectedHeader, false));
+    assertThat(result).isCompletedWithValue(new SnapSyncProcessState(expectedHeader));
   }
 
   @ParameterizedTest
   @ArgumentsSource(PivotSyncActionsTest.PivotSyncActionsTestArguments.class)
-  public void downloadPivotBlockHeaderShouldRetrievePivotBlockHash(
+  public void resolvePivotBlockHeaderShouldRetrievePivotBlockHash(
       final DataStorageFormat storageFormat) {
     setUp(storageFormat, Optional.of(1));
     GenesisConfigOptions genesisConfig = mock(GenesisConfigOptions.class);
@@ -483,10 +483,10 @@ public class PivotSyncActionsTest {
 
     SilProtocolManagerTestUtil.createPeer(silProtocolManager, 1001);
     final CompletableFuture<SnapSyncProcessState> result =
-        pivotSyncActions.downloadPivotBlockHeader(
-            new SnapSyncProcessState(finalizedEvent.get().getSafeBlockHash(), false));
+        pivotSyncActions.resolvePivotBlockHeader(
+            new SnapSyncProcessState(finalizedEvent.get().getSafeBlockHash()));
 
-    assertThat(result).isCompletedWithValue(new SnapSyncProcessState(expectedHeader, false));
+    assertThat(result).isCompletedWithValue(new SnapSyncProcessState(expectedHeader));
   }
 
   private PivotSyncActions createPivotSyncActions(
@@ -501,10 +501,11 @@ public class PivotSyncActionsTest {
           protocolSchedule,
           protocolContext,
           silContext,
-          new SyncState(blockchain, silContext.getSilPeers(), true, Optional.empty()),
+          new SyncState(blockchain, silContext.getEthPeers(), true, Optional.empty()),
           pivotBlockSelector,
           new NoOpMetricsSystem(),
-          java.nio.file.Files.createTempDirectory("checkpoint-sync-test"));
+          java.nio.file.Files.createTempDirectory("checkpoint-sync-test"),
+          Optional.empty());
     } catch (IOException e) {
       throw new RuntimeException(e);
     }

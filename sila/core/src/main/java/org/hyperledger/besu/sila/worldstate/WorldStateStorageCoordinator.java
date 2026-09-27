@@ -15,10 +15,10 @@
 package org.hyperledger.besu.sila.worldstate;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
-import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
 import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 
 import java.util.List;
 import java.util.Optional;

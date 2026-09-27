@@ -33,9 +33,9 @@ public interface DNSEntry {
 
   /** Represents a node in the ENR record. */
   class ENRNode implements DNSEntry {
-    private final SilaNodeRecord nodeRecord;
+    private final EthereumNodeRecord nodeRecord;
 
-    private ENRNode(final SilaNodeRecord nodeRecord) {
+    private ENRNode(final EthereumNodeRecord nodeRecord) {
       this.nodeRecord = nodeRecord;
     }
 
@@ -50,7 +50,7 @@ public interface DNSEntry {
         throw new IllegalArgumentException("ENRNode attributes cannot be null");
       }
       return Optional.ofNullable(attrs.get("enr"))
-          .map(SilaNodeRecord::fromEnr)
+          .map(EthereumNodeRecord::fromEnr)
           .map(ENRNode::new)
           .orElse(null);
     }
@@ -58,9 +58,9 @@ public interface DNSEntry {
     /**
      * Sila node record.
      *
-     * @return the instance of SilaNodeRecord
+     * @return the instance of EthereumNodeRecord
      */
-    public SilaNodeRecord nodeRecord() {
+    public EthereumNodeRecord nodeRecord() {
       return nodeRecord;
     }
 

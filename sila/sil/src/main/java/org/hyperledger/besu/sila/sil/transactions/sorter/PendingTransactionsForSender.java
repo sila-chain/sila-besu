@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.transactions.sorter;
 
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
-import org.hyperledger.besu.savm.account.Account;
 
 import java.util.List;
 import java.util.NavigableMap;

@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.metrics;
 
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import javax.inject.Singleton;

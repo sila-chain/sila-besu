@@ -19,7 +19,9 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
 import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.core.encoding.EncodingContext;
+import org.hyperledger.besu.sila.core.encoding.TransactionDecoder;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.util.ArrayList;
 import java.util.LinkedHashMap;
@@ -32,14 +34,16 @@ import java.util.function.Supplier;
 import com.fasterxml.jackson.annotation.JsonCreator;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import org.apache.tuweni.bytes.Bytes;
 import org.jspecify.annotations.Nullable;
 
 /** A Transaction test case specification. */
 @JsonIgnoreProperties(ignoreUnknown = true)
 public class GeneralStateTestCaseSpec {
 
-  private final Map<String, List<GeneralStateTestCaseSipSpec>> finalStateSpecs;
-  private static final BlockHeaderFunctions SILA_MAINNET_FUNCTIONS = new SilaMainnetBlockHeaderFunctions();
+  private final Map<String, List<GeneralStateTestCaseEipSpec>> finalStateSpecs;
+  private static final BlockHeaderFunctions MAINNET_FUNCTIONS =
+      new SilaMainnetBlockHeaderFunctions();
 
   @JsonCreator
   public GeneralStateTestCaseSpec(
@@ -51,7 +55,7 @@ public class GeneralStateTestCaseSpec {
         generate(blockHeader, initialWorldState, postSection, versionedTransaction);
   }
 
-  private Map<String, List<GeneralStateTestCaseSipSpec>> generate(
+  private Map<String, List<GeneralStateTestCaseEipSpec>> generate(
       final BlockHeader rawBlockHeader,
       final ReferenceTestWorldState initialWorldState,
       final Map<String, List<PostSection>> postSections,
@@ -60,22 +64,25 @@ public class GeneralStateTestCaseSpec {
       return Map.of();
     }
     initialWorldState.persist(null);
-    final Map<String, List<GeneralStateTestCaseSipSpec>> res =
+    final Map<String, List<GeneralStateTestCaseEipSpec>> res =
         LinkedHashMap.newLinkedHashMap(postSections.size());
     for (final Map.Entry<String, List<PostSection>> entry : postSections.entrySet()) {
       final String sip = entry.getKey();
       final List<PostSection> post = entry.getValue();
-      final List<GeneralStateTestCaseSipSpec> specs = new ArrayList<>(post.size());
+      final List<GeneralStateTestCaseEipSpec> specs = new ArrayList<>(post.size());
       for (final PostSection p : post) {
         final BlockHeader blockHeader =
             BlockHeaderBuilder.fromHeader(rawBlockHeader)
                 .stateRoot(p.rootHash)
-                .blockHeaderFunctions(SILA_MAINNET_FUNCTIONS)
+                .blockHeaderFunctions(MAINNET_FUNCTIONS)
                 .buildBlockHeader();
         final List<Supplier<Transaction>> txSupplierList =
-            List.of(() -> versionedTransaction.get(p.indexes));
+            List.of(
+                versionedTransaction.isSignable()
+                    ? () -> versionedTransaction.get(p.indexes)
+                    : () -> decodeRawTransaction(p.txBytes));
         specs.add(
-            new GeneralStateTestCaseSipSpec(
+            new GeneralStateTestCaseEipSpec(
                 sip,
                 txSupplierList,
                 initialWorldState,
@@ -92,7 +99,24 @@ public class GeneralStateTestCaseSpec {
     return res;
   }
 
-  public Map<String, List<GeneralStateTestCaseSipSpec>> finalStateSpecs() {
+  /**
+   * Decodes the raw transaction bytes a post section carries. Used for the fixtures that describe a
+   * transaction which cannot be produced by signing, so no secret key is given. Bytes that do not
+   * decode at all are just as invalid a transaction as bytes that decode into one the validator
+   * rejects, so both end up as a null transaction that the test then expects to be rejected.
+   */
+  private static Transaction decodeRawTransaction(final Bytes txBytes) {
+    if (txBytes == null) {
+      return null;
+    }
+    try {
+      return TransactionDecoder.decodeOpaqueBytes(txBytes, EncodingContext.BLOCK_BODY);
+    } catch (final RuntimeException e) {
+      return null;
+    }
+  }
+
+  public Map<String, List<GeneralStateTestCaseEipSpec>> finalStateSpecs() {
     return finalStateSpecs;
   }
 
@@ -139,6 +163,7 @@ public class GeneralStateTestCaseSpec {
     @Nullable private final Hash logsHash;
     private final Indexes indexes;
     private final String expectException;
+    @Nullable private final Bytes txBytes;
 
     @JsonCreator
     public PostSection(
@@ -146,11 +171,12 @@ public class GeneralStateTestCaseSpec {
         @JsonProperty("hash") final String hash,
         @JsonProperty("indexes") final Indexes indexes,
         @JsonProperty("logs") final String logs,
-        @JsonProperty("txbytes") final String txbytes) {
+        @JsonProperty("txbytes") final String txBytes) {
       this.rootHash = Hash.fromHexString(hash);
       this.logsHash = Optional.ofNullable(logs).map(Hash::fromHexString).orElse(null);
       this.indexes = indexes;
       this.expectException = expectException;
+      this.txBytes = Optional.ofNullable(txBytes).map(Bytes::fromHexString).orElse(null);
     }
   }
 }

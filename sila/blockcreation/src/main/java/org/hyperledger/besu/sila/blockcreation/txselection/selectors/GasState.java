@@ -15,15 +15,15 @@
 package org.hyperledger.besu.sila.blockcreation.txselection.selectors;
 
 /**
- * Tracks cumulative regular gas and state gas used during block building. Used by {@link
+ * Tracks cumulative execution gas and state gas used during block building. Used by {@link
  * BlockSizeTransactionSelector} for multidimensional gas metering (SIP-8037).
  *
  * <p>For pre-SIP-8037, stateGas is always 0.
  *
- * @param regularGas cumulative regular (non-state) gas used
+ * @param executionGas cumulative execution (non-state) gas used
  * @param stateGas cumulative state gas used
  */
-record GasState(long regularGas, long stateGas) {
+record GasState(long executionGas, long stateGas) {
 
   static final GasState ZERO = new GasState(0, 0);
 

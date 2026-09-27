@@ -19,13 +19,13 @@ import static java.util.Objects.requireNonNullElse;
 import static org.hyperledger.besu.sila.core.Transaction.toHashList;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.AddedBlockContext;
 import org.hyperledger.besu.sila.chain.BlockAddedEvent;
 import org.hyperledger.besu.sila.chain.BlockAddedObserver;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.plugin.data.AddedBlockContext;
 
 import java.time.Duration;
 import java.util.ArrayList;

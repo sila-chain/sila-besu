@@ -62,6 +62,9 @@ import org.apache.tuweni.units.bigints.UInt256;
 import org.apache.tuweni.units.bigints.UInt256s;
 
 /** An operation submitted by an external actor to be applied to the system. */
+// implements the deprecated plugin.data.UnsignedPrivateMarkerTransaction until the next breaking
+// release
+@SuppressWarnings("removal")
 public class Transaction
     implements org.hyperledger.besu.datatypes.Transaction,
         org.hyperledger.besu.plugin.data.UnsignedPrivateMarkerTransaction {
@@ -80,7 +83,10 @@ public class Transaction
   public static final BigInteger TWO = BigInteger.valueOf(2);
 
   private static final Cache<Hash, Address> senderCache =
-      CacheBuilder.newBuilder().recordStats().maximumSize(100_000L).build();
+      CacheBuilder.newBuilder()
+          .concurrencyLevel(Runtime.getRuntime().availableProcessors())
+          .maximumSize(100_000L)
+          .build();
 
   private final long nonce;
 
@@ -463,8 +469,14 @@ public class Transaction
   @Override
   public Address getSender() {
     if (sender == null) {
-      Optional<Address> cachedSender = Optional.ofNullable(senderCache.getIfPresent(getHash()));
-      sender = cachedSender.orElseGet(this::computeSender);
+      // Per-instance lock: stops duplicate signature recovery on this transaction.
+      // Two different transactions can still recover their senders in parallel.
+      synchronized (this) {
+        if (sender == null) {
+          final Address cachedSender = senderCache.getIfPresent(getHash());
+          sender = cachedSender != null ? cachedSender : computeSender();
+        }
+      }
     }
     return sender;
   }
@@ -649,7 +661,7 @@ public class Transaction
    *
    * @return the max up-front cost for the gas the transaction can use.
    */
-  private Wei getMaxUpfrontGasCost(final long blobGasPerBlock) {
+  public Wei getMaxUpfrontGasCost(final long blobGasPerBlock) {
     return getUpfrontGasCost(
         getMaxGasPrice(), getMaxFeePerBlobGas().orElse(Wei.ZERO), blobGasPerBlock);
   }

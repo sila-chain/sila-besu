@@ -21,10 +21,10 @@ import org.apache.commons.lang3.StringUtils;
 public enum PeerClientName {
   BESU("besu"),
   ERIGON("erigon"),
-  GSIL("Gsil"),
-  NSILERMIND("Nsilermind"),
+  GETH("Geth"),
+  NETHERMIND("Nethermind"),
   NIMBUS("nimbus-sil1"),
-  RSIL("rsil"),
+  RETH("reth"),
   UNKNOWN(null);
 
   private final String agentName;

@@ -25,14 +25,14 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.chain.Blockchain;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.savm.blockhash.BlockHashLookup;
 import org.hyperledger.besu.savm.frame.BlockValues;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
 import org.hyperledger.besu.savm.operation.BlockHashOperation;
+import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 
 import java.util.Optional;
 
@@ -61,6 +61,25 @@ class BlockchainBasedBlockHashLookupTest {
     lookup =
         new BlockchainBasedBlockHashLookup(
             createHeader(CURRENT_BLOCK_NUMBER, headers[headers.length - 1]), blockchain);
+  }
+
+  @Test
+  void shouldSeedAccessedAncestorsWithParentOfCurrentBlock() {
+    Assertions.assertThat(lookup.getAccessedAncestors())
+        .containsEntry((long) CURRENT_BLOCK_NUMBER - 1, headers[headers.length - 1].getBlockHash());
+  }
+
+  @Test
+  void shouldNotReportNegativeBlockNumberInAccessedAncestorsAtGenesis() {
+    // The parent seed is number-1, which is -1 at genesis. The map is part of block-processing
+    // outputs and feeds the SIP-8025 headers walk, so a negative key would send that walk below
+    // genesis.
+    final BlockHashLookup genesisLookup =
+        new BlockchainBasedBlockHashLookup(createHeader(0, null), blockchain);
+
+    Assertions.assertThat(genesisLookup.getAccessedAncestors()).isEmpty();
+    Assertions.assertThat(genesisLookup.getAccessedAncestors().keySet())
+        .allMatch(number -> number >= 0);
   }
 
   private void setUpBlockchain(final int blockNumberAtHead) {

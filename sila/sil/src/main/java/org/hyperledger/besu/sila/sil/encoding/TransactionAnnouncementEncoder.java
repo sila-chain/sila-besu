@@ -42,7 +42,7 @@ public class TransactionAnnouncementEncoder {
    * @return the correct encoder
    */
   public static Encoder getEncoder(final Capability capability) {
-    return TransactionAnnouncementEncoder::encodeForSil68;
+    return TransactionAnnouncementEncoder::encodeForEth68;
   }
 
   /**
@@ -53,35 +53,35 @@ public class TransactionAnnouncementEncoder {
    * @param transactions the list to encode
    * @return the encoded value. The message data will contain hashes, types and sizes.
    */
-  private static Bytes encodeForSil68(final List<Transaction> transactions) {
+  private static Bytes encodeForEth68(final List<Transaction> transactions) {
     final List<Integer> sizes = new ArrayList<>(transactions.size());
     final byte[] types = new byte[transactions.size()];
     final List<Hash> hashes = new ArrayList<>(transactions.size());
 
     for (int i = 0; i < transactions.size(); i++) {
       final TransactionType type = transactions.get(i).getType();
-      types[i] = type.getSilSerializedType();
+      types[i] = type.getEthSerializedType();
       sizes.add(transactions.get(i).getSizeForAnnouncement());
       hashes.add(transactions.get(i).getHash());
     }
 
-    return encodeForSil68(types, sizes, hashes);
+    return encodeForEth68(types, sizes, hashes);
   }
 
   @VisibleForTesting
-  public static Bytes encodeForSil68(
+  public static Bytes encodeForEth68(
       final List<TransactionType> types, final List<Integer> sizes, final List<Hash> hashes) {
 
     final byte[] byteTypes = new byte[types.size()];
     for (int i = 0; i < types.size(); i++) {
       final TransactionType type = types.get(i);
-      byteTypes[i] = type.getSilSerializedType();
+      byteTypes[i] = type.getEthSerializedType();
     }
-    return encodeForSil68(byteTypes, sizes, hashes);
+    return encodeForEth68(byteTypes, sizes, hashes);
   }
 
   @VisibleForTesting
-  public static Bytes encodeForSil68(
+  public static Bytes encodeForEth68(
       final byte[] types, final List<Integer> sizes, final List<Hash> hashes) {
     final BytesValueRLPOutput out = new BytesValueRLPOutput();
     // Check if lists have the same size

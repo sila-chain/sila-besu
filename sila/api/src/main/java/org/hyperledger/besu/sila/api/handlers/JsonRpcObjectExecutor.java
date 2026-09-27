@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.api.handlers;
 
+import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonResponseStreamer;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.context.ContextKey;
@@ -23,7 +24,6 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.exception.InvalidJsonRpcRe
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcErrorResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.JsonRpcResponse;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
-import org.hyperledger.besu.plugin.services.rpc.RpcResponseType;
 
 import java.io.IOException;
 import java.util.Optional;

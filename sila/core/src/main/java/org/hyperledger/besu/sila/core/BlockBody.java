@@ -29,8 +29,8 @@ public class BlockBody implements org.hyperledger.besu.plugin.data.BlockBody {
 
   /**
    * Adding a new field with a corresponding root hash in the block header will require a change in
-   * {@link org.hyperledger.besu.sila.sil.manager.task.GetBodiesFromPeerTask.BodyIdentifier}
-   * Also requires adding the new field to the constructor used in the {@link
+   * {@link org.hyperledger.besu.sila.sil.manager.task.GetBodiesFromPeerTask.BodyIdentifier} Also
+   * requires adding the new field to the constructor used in the {@link
    * org.hyperledger.besu.sila.util.RawBlockIterator }
    */
   private final List<Transaction> transactions;

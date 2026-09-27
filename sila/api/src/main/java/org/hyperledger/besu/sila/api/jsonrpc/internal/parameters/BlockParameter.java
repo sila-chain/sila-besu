@@ -26,7 +26,7 @@ import com.fasterxml.jackson.annotation.JsonCreator;
 
 // Represents a block parameter that can be a special value ("pending", "earliest", "latest",
 // "finalized", "safe") or a number formatted as a hex string.
-// See: https://github.com/sila-chain/wiki/wiki/JSON-RPC#the-default-block-parameter
+// See: https://github.com/sila/wiki/wiki/JSON-RPC#the-default-block-parameter
 public class BlockParameter {
 
   private final BlockParameterType type;

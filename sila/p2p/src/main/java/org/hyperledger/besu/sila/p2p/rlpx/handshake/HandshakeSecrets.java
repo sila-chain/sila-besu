@@ -38,7 +38,7 @@ import org.bouncycastle.crypto.digests.KeccakDigest;
  *   <li><strong>Egress MAC:</strong> continuously-updating MAC for sent bytes.
  * </ul>
  *
- * @see <a href="https://github.com/sila-chain/devp2p/blob/master/rlpx.md#encrypted-handshake">RLPx
+ * @see <a href="https://github.com/sila/devp2p/blob/master/rlpx.md#encrypted-handshake">RLPx
  *     Encrypted Handshake</a>
  */
 public class HandshakeSecrets {

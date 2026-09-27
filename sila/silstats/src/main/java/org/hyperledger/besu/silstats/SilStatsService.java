@@ -30,15 +30,16 @@ import static org.hyperledger.besu.silstats.request.SilStatsRequest.Type.READY;
 import static org.hyperledger.besu.silstats.request.SilStatsRequest.Type.STATS;
 
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.BlockResultFactory;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
 import org.hyperledger.besu.silstats.authentication.ImmutableAuthenticationData;
 import org.hyperledger.besu.silstats.authentication.ImmutableNodeInfo;
 import org.hyperledger.besu.silstats.authentication.NodeInfo;
@@ -51,9 +52,8 @@ import org.hyperledger.besu.silstats.report.ImmutablePingReport;
 import org.hyperledger.besu.silstats.report.NodeStatsReport;
 import org.hyperledger.besu.silstats.report.PendingTransactionsReport;
 import org.hyperledger.besu.silstats.request.SilStatsRequest;
-import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.silstats.util.PrimusHeartBeatsHelper;
-import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.util.platform.PlatformDetector;
 
 import java.math.BigInteger;
@@ -190,8 +190,8 @@ public class SilStatsService {
       enodeURL = p2PNetwork.getLocalEnode().orElseThrow();
       vertx
           .createWebSocketClient(webSocketClientOptions)
-          .connect(
-              webSocketConnectOptions,
+          .connect(webSocketConnectOptions)
+          .onComplete(
               event -> {
                 if (event.succeeded()) {
                   webSocket = event.result();
@@ -209,7 +209,7 @@ public class SilStatsService {
                           LOG.info("Connected to silstats server");
 
                           // listen to messages from the silstats server
-                          startListeningSilstatsServer();
+                          startListeningSilStatsServer();
                           // send a full report after the connection
                           sendFullReport();
                         } else {
@@ -438,7 +438,7 @@ public class SilStatsService {
     final long gasPrice = suggestGasPrice(blockchainQueries.getBlockchain().getChainHeadBlock());
     // safe to cast to int since it isn't realistic to have more than max int peers
     final int peersNumber =
-        (int) protocolManager.silContext().getSilPeers().streamAvailablePeers().count();
+        (int) protocolManager.silContext().getEthPeers().streamAvailablePeers().count();
 
     final NodeStatsReport nodeStatsReport =
         ImmutableNodeStatsReport.builder()
@@ -468,16 +468,17 @@ public class SilStatsService {
       final Consumer<Boolean> handlerResult) {
     try {
       LOG.trace("Send silstats request {}", message.generateCommand());
-      webSocket.writeTextMessage(
-          message.generateCommand(),
-          handler -> {
-            if (!handler.succeeded()) {
-              LOG.error("Failed to send {} silstats request", message.getType());
-              handlerResult.accept(FALSE);
-            } else {
-              handlerResult.accept(TRUE);
-            }
-          });
+      webSocket
+          .writeTextMessage(message.generateCommand())
+          .onComplete(
+              handler -> {
+                if (!handler.succeeded()) {
+                  LOG.error("Failed to send {} silstats request", message.getType());
+                  handlerResult.accept(FALSE);
+                } else {
+                  handlerResult.accept(TRUE);
+                }
+              });
     } catch (Exception e) {
       LOG.error(
           "Failed to send {} silstats request with error {}", message.getType(), e.getMessage());
@@ -489,7 +490,7 @@ public class SilStatsService {
     sendMessage(webSocket, message, __ -> {});
   }
 
-  private void startListeningSilstatsServer() {
+  private void startListeningSilStatsServer() {
     final WebSocket activeWebSocket = requireWebSocket();
 
     activeWebSocket.textMessageHandler(

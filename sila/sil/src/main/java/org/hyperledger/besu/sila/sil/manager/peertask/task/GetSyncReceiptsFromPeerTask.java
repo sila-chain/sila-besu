@@ -22,6 +22,10 @@ import org.hyperledger.besu.sila.core.SyncBlock;
 import org.hyperledger.besu.sila.core.SyncTransactionReceipt;
 import org.hyperledger.besu.sila.core.Util;
 import org.hyperledger.besu.sila.core.encoding.receipt.SyncTransactionReceiptEncoder;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.peertask.InvalidPeerTaskResponseException;
@@ -32,11 +36,7 @@ import org.hyperledger.besu.sila.sil.messages.GetPaginatedReceiptsMessage;
 import org.hyperledger.besu.sila.sil.messages.GetReceiptsMessage;
 import org.hyperledger.besu.sila.sil.messages.PaginatedReceiptsMessage;
 import org.hyperledger.besu.sila.sil.messages.ReceiptsMessage;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
-import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.ArrayList;
 import java.util.HashMap;
@@ -87,7 +87,7 @@ public class GetSyncReceiptsFromPeerTask implements PeerTask<GetSyncReceiptsFrom
   @Override
   public MessageData getRequestMessage(final Set<Capability> agreedCapabilities) {
     final List<Hash> blockHashes = requestedHeaders.stream().map(BlockHeader::getHash).toList();
-    return agreedCapabilities.stream().anyMatch(SilProtocol::isSil70Compatible)
+    return agreedCapabilities.stream().anyMatch(SilProtocol::isEth70Compatible)
         ? GetPaginatedReceiptsMessage.create(blockHashes, request.firstBlockPartialReceipts.size())
         : GetReceiptsMessage.create(blockHashes);
   }
@@ -99,7 +99,7 @@ public class GetSyncReceiptsFromPeerTask implements PeerTask<GetSyncReceiptsFrom
     if (messageData == null) {
       throw new InvalidPeerTaskResponseException("Null message data");
     }
-    if (agreedCapabilities.stream().anyMatch(SilProtocol::isSil70Compatible)) {
+    if (agreedCapabilities.stream().anyMatch(SilProtocol::isEth70Compatible)) {
       return processPaginatedResponse(messageData);
     }
     return processNotPaginatedResponse(messageData);

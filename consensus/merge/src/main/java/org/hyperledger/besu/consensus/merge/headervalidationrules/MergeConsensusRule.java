@@ -20,7 +20,7 @@ import org.hyperledger.besu.consensus.merge.MergeContext;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
-import org.hyperledger.besu.sila.sila-mainnet.AttachedBlockHeaderValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.AttachedBlockHeaderValidationRule;
 
 import java.util.Optional;
 

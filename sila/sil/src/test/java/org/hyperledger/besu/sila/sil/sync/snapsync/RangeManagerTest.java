@@ -17,6 +17,7 @@ package org.hyperledger.besu.sila.sil.sync.snapsync;
 import static org.assertj.core.api.Assertions.assertThat;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.core.TrieGenerator;
 import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
@@ -25,7 +26,6 @@ import org.hyperledger.besu.sila.trie.RangeStorageEntriesCollector;
 import org.hyperledger.besu.sila.trie.TrieIterator;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.math.BigInteger;
 import java.util.HashMap;
@@ -56,6 +56,53 @@ public final class RangeManagerTest {
     int nbRanges =
         RangeManager.getRangeCount(RangeManager.MIN_RANGE, RangeManager.MAX_RANGE, items);
     assertThat(nbRanges).isEqualTo(2);
+  }
+
+  @Test
+  public void testGetRangeCountIsClampedWhenLastKeyIsTiny() {
+    // A peer returns a partial range whose largest slot hash has many leading zero bits
+    // (here bit 230 set, everything below it zero). The raw division
+    // MAX_RANGE / lastKey is astronomically large (~2^26), which would otherwise be
+    // materialized as that many TreeMap ranges/child requests -> OutOfMemoryError.
+    final TreeMap<Bytes32, Bytes> items = new TreeMap<>();
+    items.put(toBytes32(BigInteger.TWO.pow(230)), Bytes.wrap(new byte[] {0x03}));
+    final int nbRanges =
+        RangeManager.getRangeCount(RangeManager.MIN_RANGE, RangeManager.MAX_RANGE, items);
+    assertThat(nbRanges).isBetween(1, RangeManager.MAX_RANGE_COUNT);
+  }
+
+  @Test
+  public void testGetRangeCountIsNeverNegativeOnIntOverflow() {
+    // A peer returns a partial range whose largest slot hash is 2^224. The raw division yields
+    // 2^32 - 1 (0xFFFFFFFF). The count must stay a sane positive value.
+    final TreeMap<Bytes32, Bytes> items = new TreeMap<>();
+    items.put(toBytes32(BigInteger.TWO.pow(224)), Bytes.wrap(new byte[] {0x03}));
+    final int nbRanges =
+        RangeManager.getRangeCount(RangeManager.MIN_RANGE, RangeManager.MAX_RANGE, items);
+    assertThat(nbRanges).isBetween(1, RangeManager.MAX_RANGE_COUNT);
+  }
+
+  @Test
+  public void testGetRangeCountWhenNoKeysReturned() {
+    // findNewBeginElementInRange can report a missing element even when the peer returned zero
+    // keys (proofs alone resolve in-range leaves). getRangeCount is called with that empty map, so
+    // it must not dereference items.lastKey() (which would throw NoSuchElementException) and should
+    // fall back to a single follow-up range.
+    final int nbRanges =
+        RangeManager.getRangeCount(RangeManager.MIN_RANGE, RangeManager.MAX_RANGE, new TreeMap<>());
+    assertThat(nbRanges).isEqualTo(1);
+  }
+
+  @Test
+  public void testGetRangeCountWhenLastKeyEqualsRangeStart() {
+    // A peer whose only returned key is the range start (0x00..00) gives a zero-width divisor.
+    // The raw MAX_RANGE / (lastKey - min) would divide by zero -> ArithmeticException; the count
+    // must instead degrade to a single follow-up range.
+    final TreeMap<Bytes32, Bytes> items = new TreeMap<>();
+    items.put(RangeManager.MIN_RANGE, Bytes.wrap(new byte[] {0x03}));
+    final int nbRanges =
+        RangeManager.getRangeCount(RangeManager.MIN_RANGE, RangeManager.MAX_RANGE, items);
+    assertThat(nbRanges).isEqualTo(1);
   }
 
   @Test
@@ -361,6 +408,10 @@ public final class RangeManagerTest {
 
     final Map<Bytes32, Bytes32> singleRange = RangeManager.generateRanges(bytesMin, bytesMax, 1);
     assertThat(singleRange.entrySet().iterator().next().getKey()).isEqualTo(bytesMin);
+  }
+
+  private static Bytes32 toBytes32(final BigInteger value) {
+    return Bytes32.leftPad(Bytes.wrap(value.toByteArray()).trimLeadingZeros());
   }
 
   private static void assertKeysAreStrictlyIncreasing(final Map<Bytes32, Bytes32> ranges) {

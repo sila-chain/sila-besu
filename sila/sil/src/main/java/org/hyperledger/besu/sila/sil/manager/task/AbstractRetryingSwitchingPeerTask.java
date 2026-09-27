@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.HashSet;
 import java.util.Optional;
@@ -126,8 +126,8 @@ public abstract class AbstractRetryingSwitchingPeerTask<T> extends AbstractRetry
   }
 
   protected Optional<SilPeer> nextPeerToTry() {
-    return getSilContext()
-        .getSilPeers()
+    return getEthContext()
+        .getEthPeers()
         .streamBestPeers()
         .filter((peer) -> isSuitablePeer(peer) && !triedPeers.contains(peer.silPeer()))
         .map(SilPeerImmutableAttributes::silPeer)
@@ -135,7 +135,7 @@ public abstract class AbstractRetryingSwitchingPeerTask<T> extends AbstractRetry
   }
 
   private void refreshPeers() {
-    final SilPeers peers = getSilContext().getSilPeers();
+    final SilPeers peers = getEthContext().getEthPeers();
     // If we are at max connections, then refresh peers disconnecting one of the failed peers,
     // or the least useful
 

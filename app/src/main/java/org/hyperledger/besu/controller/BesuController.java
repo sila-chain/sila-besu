@@ -25,14 +25,15 @@ import org.hyperledger.besu.sila.api.jsonrpc.methods.JsonRpcMethods;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
+import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
+import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.config.SubProtocolConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
@@ -43,6 +44,7 @@ import java.util.Collection;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 
 import org.apache.tuweni.units.bigints.UInt256;
 import org.slf4j.Logger;
@@ -224,7 +226,7 @@ public class BesuController implements java.io.Closeable {
    *
    * @return the SilPeers collection
    */
-  public SilPeers getSilPeers() {
+  public SilPeers getEthPeers() {
     return silPeers;
   }
 
@@ -311,14 +313,28 @@ public class BesuController implements java.io.Closeable {
    *
    * @return the sil scheduler
    */
-  public SilScheduler getSilScheduler() {
+  public SilScheduler getEthScheduler() {
     return silProtocolManager.silContext().getScheduler();
   }
 
   /** The type Builder. */
   public static class Builder {
+
+    private Optional<Checkpoint> checkpoint = Optional.empty();
+
     /** Instantiates a new Builder. */
     public Builder() {}
+
+    /**
+     * Sets the effective checkpoint .
+     *
+     * @param checkpoint the checkpoint, or empty for no checkpoint
+     * @return this builder
+     */
+    public Builder checkpoint(final Optional<Checkpoint> checkpoint) {
+      this.checkpoint = checkpoint;
+      return this;
+    }
 
     /**
      * From sil network config besu controller builder.
@@ -327,7 +343,7 @@ public class BesuController implements java.io.Closeable {
      * @param syncMode The sync mode
      * @return the besu controller builder
      */
-    public BesuControllerBuilder fromSilNetworkConfig(
+    public BesuControllerBuilder fromEthNetworkConfig(
         final SilNetworkConfig silNetworkConfig, final SyncMode syncMode) {
       return fromGenesisFile(silNetworkConfig.genesisConfig(), syncMode)
           .networkId(silNetworkConfig.networkId());
@@ -342,8 +358,14 @@ public class BesuController implements java.io.Closeable {
      */
     public BesuControllerBuilder fromGenesisFile(
         final GenesisConfig genesisConfig, final SyncMode syncMode) {
-      final var configOptions = genesisConfig.getConfigOptions();
+      final GenesisConfigOptions configOptions = genesisConfig.getConfigOptions();
+      return createControllerBuilder(genesisConfig, configOptions, syncMode).checkpoint(checkpoint);
+    }
 
+    private BesuControllerBuilder createControllerBuilder(
+        final GenesisConfig genesisConfig,
+        final GenesisConfigOptions configOptions,
+        final SyncMode syncMode) {
       if (configOptions.isConsensusMigration()) {
         return createConsensusScheduleBesuControllerBuilder(genesisConfig);
       }
@@ -351,7 +373,7 @@ public class BesuController implements java.io.Closeable {
       final boolean hasTTD = configOptions.getTerminalTotalDifficulty().isPresent();
 
       final BesuControllerBuilder builder;
-      if (configOptions.isSilHash()) {
+      if (configOptions.isEthHash()) {
         builder = new SilaMainnetBesuControllerBuilder();
       } else if (configOptions.isIbft2()) {
         builder = new IbftBesuControllerBuilder();
@@ -370,7 +392,7 @@ public class BesuController implements java.io.Closeable {
         }
         builder = new CliqueBesuControllerBuilder();
       } else if (hasTTD) {
-        // No recognized consensus with TTD present: transition chain (e.g. sila-mainnet) that needs
+        // No recognized consensus with TTD present: transition chain (e.g. mainnet) that needs
         // SilaMainnetBesuControllerBuilder for pre-merge PoW block validation
         LOG.warn("No consensus mechanism detected in genesis config, using PoS");
         builder = new SilaMainnetBesuControllerBuilder();
@@ -382,13 +404,13 @@ public class BesuController implements java.io.Closeable {
 
       // wrap with TransitionBesuControllerBuilder if we have a terminal total difficulty:
       if (hasTTD) {
-        // Enable start with vanilla MergeBesuControllerBuilder for PoS checkpoint block
-        if (syncMode == SyncMode.SNAP && isCheckpointPoSBlock(configOptions)) {
+        if (MergeBesuControllerBuilder.isPostMergeAtGenesis(genesisConfig)
+            || (syncMode == SyncMode.SNAP && isCheckpointPoSBlock(configOptions))) {
           return new MergeBesuControllerBuilder().genesisConfig(genesisConfig);
         }
         // TODO this should be changed to vanilla MergeBesuControllerBuilder and the Transition*
         // series of classes removed after we successfully transition to PoS
-        // https://github.com/hyperledger/besu/issues/2897
+        // https://github.com/sila-chain/sila-besu/issues/2897
         return new TransitionBesuControllerBuilder(builder, new MergeBesuControllerBuilder())
             .genesisConfig(genesisConfig);
       }
@@ -436,10 +458,9 @@ public class BesuController implements java.io.Closeable {
 
     private boolean isCheckpointPoSBlock(final GenesisConfigOptions configOptions) {
       final UInt256 terminalTotalDifficulty = configOptions.getTerminalTotalDifficulty().get();
-
-      return configOptions.getCheckpointOptions().isValid()
-          && (UInt256.fromHexString(configOptions.getCheckpointOptions().getTotalDifficulty().get())
-              .greaterThan(terminalTotalDifficulty));
+      return this.checkpoint
+          .map(c -> c.totalDifficulty().toUInt256().greaterThan(terminalTotalDifficulty))
+          .orElse(false);
     }
   }
 }

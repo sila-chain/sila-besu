@@ -43,7 +43,7 @@ dependencies {
   annotationProcessor 'com.google.dagger:dagger-compiler'
   implementation 'com.squareup.okhttp3:okhttp'
   implementation 'info.picocli:picocli'
-  implementation 'io.reactivex.rxjava2:rxjava'
+  implementation 'io.reactivex.rxjava2:rxjava:2.2.21'
   implementation 'io.vertx:vertx-core'
   implementation 'io.opentelemetry:opentelemetry-api'
   implementation 'io.consensys.tuweni:tuweni-bytes'
@@ -51,12 +51,10 @@ dependencies {
   implementation 'io.consensys.tuweni:tuweni-units'
   implementation 'org.assertj:assertj-core'
   implementation 'org.awaitility:awaitility'
-  implementation 'org.java-websocket:Java-WebSocket'
+  implementation 'org.java-websocket:Java-WebSocket:1.5.6'
   implementation 'com.fasterxml.jackson.core:jackson-annotations'
   implementation 'com.fasterxml.jackson.core:jackson-databind'
-  implementation 'org.web3j:abi'
-  implementation 'org.web3j:besu'
-  implementation 'org.web3j:crypto'
+  implementation rootProject.ext.silaWeb3jRuntimeSanitized
 
   implementation 'org.junit.jupiter:junit-jupiter'
 }

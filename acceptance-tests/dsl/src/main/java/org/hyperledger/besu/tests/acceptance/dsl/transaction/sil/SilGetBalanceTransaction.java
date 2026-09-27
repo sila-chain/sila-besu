@@ -15,7 +15,6 @@
 package org.hyperledger.besu.tests.acceptance.dsl.transaction.sil;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.web3j.protocol.core.DefaultBlockParameterName.LATEST;
 
 import org.hyperledger.besu.tests.acceptance.dsl.account.Account;
 import org.hyperledger.besu.tests.acceptance.dsl.transaction.NodeRequests;
@@ -23,8 +22,6 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.io.IOException;
 import java.math.BigInteger;
-
-import org.web3j.protocol.core.methods.response.SilGetBalance;
 
 public class SilGetBalanceTransaction implements Transaction<BigInteger> {
 
@@ -37,11 +34,12 @@ public class SilGetBalanceTransaction implements Transaction<BigInteger> {
   @Override
   public BigInteger execute(final NodeRequests node) {
     try {
-      final SilGetBalance result = node.sil().silGetBalance(account.getAddress(), LATEST).send();
+      final var result = node.custom().silGetBalance(account.getAddress()).send();
       assertThat(result).isNotNull();
       assertThat(result.hasError()).isFalse();
 
-      return result.getBalance();
+      final String quantity = result.getResult();
+      return new BigInteger(quantity.substring(2), 16);
 
     } catch (final IOException e) {
       throw new RuntimeException(e);

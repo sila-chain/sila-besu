@@ -16,17 +16,21 @@ package org.hyperledger.besu.sila.sil.sync.fullsync;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockchainSetupUtil;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetBodiesFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetBodiesFromPeerTaskExecutorAnswer;
@@ -35,11 +39,7 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.sync.ChainDownloader;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.io.IOException;
 
@@ -77,21 +77,21 @@ public class FullSyncChainDownloaderForkTest {
         SilProtocolManagerTestBuilder.builder()
             .setProtocolSchedule(protocolSchedule)
             .setBlockchain(localBlockchain)
-            .setSilScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
+            .setEthScheduler(new SilScheduler(1, 1, 1, 1, new NoOpMetricsSystem()))
             .setWorldStateArchive(localBlockchainSetup.getWorldArchive())
             .setTransactionPool(localBlockchainSetup.getTransactionPool())
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     silContext = silProtocolManager.silContext();
-    syncState = new SyncState(protocolContext.getBlockchain(), silContext.getSilPeers());
+    syncState = new SyncState(protocolContext.getBlockchain(), silContext.getEthPeers());
 
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetHeadersFromPeerTask.class)))
         .thenAnswer(
-            new GetHeadersFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getSilPeers()));
+            new GetHeadersFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getEthPeers()));
     Mockito.when(peerTaskExecutor.execute(Mockito.any(GetBodiesFromPeerTask.class)))
         .thenAnswer(
-            new GetBodiesFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getSilPeers()));
+            new GetBodiesFromPeerTaskExecutorAnswer(otherBlockchain, silContext.getEthPeers()));
   }
 
   @AfterEach
@@ -125,9 +125,9 @@ public class FullSyncChainDownloaderForkTest {
   public void disconnectsFromPeerOnBadFork() {
     otherBlockchainSetup.importAllBlocks();
 
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(otherBlockchain);
-    final RespondingSilPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 100);
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(otherBlockchain);
+    final RespondingEthPeer peer = SilProtocolManagerTestUtil.createPeer(silProtocolManager, 100);
 
     final ChainDownloader downloader = downloader();
     downloader.start();
@@ -137,13 +137,13 @@ public class FullSyncChainDownloaderForkTest {
 
     // Check that we picked our peer
     assertThat(syncState.syncTarget()).isPresent();
-    assertThat(syncState.syncTarget().get().peer()).isEqualTo(peer.getSilPeer());
+    assertThat(syncState.syncTarget().get().peer()).isEqualTo(peer.getEthPeer());
 
     // Process until the sync target is cleared
     peer.respondWhileOtherThreadsWork(responder, () -> syncState.syncTarget().isPresent());
 
     // We should have disconnected from our peer on the invalid chain
-    assertThat(peer.getSilPeer().isDisconnected()).isTrue();
+    assertThat(peer.getEthPeer().isDisconnected()).isTrue();
     assertThat(peer.getPeerConnection().getDisconnectReason())
         .contains(DisconnectReason.BREACH_OF_PROTOCOL_INVALID_BLOCK);
     assertThat(syncState.syncTarget()).isEmpty();

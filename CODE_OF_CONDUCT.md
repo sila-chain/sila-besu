@@ -72,7 +72,7 @@ community.
 ### Discrimination
 
 is the prejudicial treatment of an individual based on criteria such as: physical appearance, race,
-silnic origin, genetic differences, national or social origin, name, religion, gender, sexual
+ethnic origin, genetic differences, national or social origin, name, religion, gender, sexual
 orientation, family or health situation, pregnancy, disability, age, education, wealth, domicile,
 political view, morals, employment, or union activity.
 
@@ -164,4 +164,4 @@ in the event of a misunderstanding.
 This code is based on the
 [W3C’s Code of Ethics and Professional Conduct](https://www.w3.org/Consortium/cepc) with some
 additions from the [Cloud Foundry](https://www.cloudfoundry.org/)‘s Code of Conduct.
-This project also follows the [Hyperledger Project Code of Conduct](https://wiki.hyperledger.org/community/hyperledger-project-code-of-conduct).
+This project also follows the [LFDT Code of Conduct](https://www.lfdecentralizedtrust.org/code-of-conduct).

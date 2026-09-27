@@ -24,6 +24,8 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.p2p.SilProtocolHelper;
 import org.hyperledger.besu.sila.p2p.config.RlpxConfiguration;
@@ -55,8 +57,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.HelloMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.PingMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.WireMessageCodes;
 import org.hyperledger.besu.sila.rlp.RLPException;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 
 import java.net.InetAddress;
 import java.net.InetSocketAddress;

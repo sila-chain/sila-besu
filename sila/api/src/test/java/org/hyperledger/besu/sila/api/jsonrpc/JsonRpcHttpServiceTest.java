@@ -23,6 +23,7 @@ import static org.mockito.Mockito.when;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.data.SyncStatus;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.methods.JsonRpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.response.RpcErrorType;
 import org.hyperledger.besu.sila.api.query.BlockWithMetadata;
@@ -35,7 +36,6 @@ import org.hyperledger.besu.sila.core.DefaultSyncStatus;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.plugin.data.SyncStatus;
 
 import java.math.BigInteger;
 import java.net.InetSocketAddress;
@@ -462,6 +462,9 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
 
   @Test
   public void silGetUncleCountByBlockNumberPendingNoData() throws Exception {
+    when(blockchainQueries.headBlockNumber()).thenReturn(0L);
+    when(blockchainQueries.getOmmerCount(eq(0L))).thenReturn(Optional.of(0));
+
     final String id = "123";
     final String params = "\"params\": [\"pending\"]";
     final RequestBody body =
@@ -706,7 +709,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWMetadata.getTotalDifficulty(), result, false);
+      verifyBlockResult(block, result, false);
     }
   }
 
@@ -738,7 +741,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWMetadata.getTotalDifficulty(), result, true);
+      verifyBlockResult(block, result, true);
     }
   }
 
@@ -928,7 +931,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWithMetadata.getTotalDifficulty(), result, false);
+      verifyBlockResult(block, result, false);
     }
   }
 
@@ -960,7 +963,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWithMetadata.getTotalDifficulty(), result, true);
+      verifyBlockResult(block, result, true);
     }
   }
 
@@ -1012,7 +1015,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWithMetadata.getTotalDifficulty(), result, false);
+      verifyBlockResult(block, result, false);
     }
   }
 
@@ -1041,7 +1044,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWithMetadata.getTotalDifficulty(), result, false);
+      verifyBlockResult(block, result, false);
     }
   }
 
@@ -1062,6 +1065,9 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
     final BlockWithMetadata<TransactionWithMetadata, Hash> blockWithMetadata =
         blockWithMetadata(block);
     when(blockchainQueries.blockByNumber(eq(0L))).thenReturn(Optional.of(blockWithMetadata));
+    when(blockchainQueries.headBlockNumber()).thenReturn(0L);
+    when(blockchainQueries.headBlockHeader()).thenReturn(block.getHeader());
+    when(synchronizer.getSyncStatus()).thenReturn(Optional.empty());
     WorldStateArchive state = mock(WorldStateArchive.class);
     when(state.isWorldStateAvailable(any(Hash.class), any(Hash.class))).thenReturn(true);
     when(blockchainQueries.getWorldStateArchive()).thenReturn(state);
@@ -1074,7 +1080,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWithMetadata.getTotalDifficulty(), result, false);
+      verifyBlockResult(block, result, false);
     }
   }
 
@@ -1093,7 +1099,9 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
     final BlockWithMetadata<TransactionWithMetadata, Hash> blockWithMetadata =
         blockWithMetadata(block);
     when(blockchainQueries.blockByNumber(eq(0L))).thenReturn(Optional.of(blockWithMetadata));
+    when(blockchainQueries.headBlockNumber()).thenReturn(0L);
     when(blockchainQueries.headBlockHeader()).thenReturn(block.getHeader());
+    when(synchronizer.getSyncStatus()).thenReturn(Optional.empty());
     WorldStateArchive state = mock(WorldStateArchive.class);
     when(state.isWorldStateAvailable(any(Hash.class), any(Hash.class))).thenReturn(true);
     when(blockchainQueries.getWorldStateArchive()).thenReturn(state);
@@ -1106,7 +1114,7 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
       testHelper.assertValidJsonRpcResult(json, id);
       // Check result
       final JsonObject result = json.getJsonObject("result");
-      verifyBlockResult(block, blockWithMetadata.getTotalDifficulty(), result, false);
+      verifyBlockResult(block, result, false);
     }
   }
 
@@ -1558,10 +1566,11 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
   @Test
   public void batchRequestParseError() throws Exception {
     final String req =
-        "[\n"
-            + "  {\"jsonrpc\": \"2.0\", \"method\": \"net_version\", \"id\": \"1\"},\n"
-            + "  {\"jsonrpc\": \"2.0\", \"method\"\n"
-            + "]";
+        """
+        [
+          {"jsonrpc": "2.0", "method": "net_version", "id": "1"},
+          {"jsonrpc": "2.0", "method"
+        ]""";
 
     final RequestBody body = RequestBody.create(req, JSON);
 
@@ -1632,17 +1641,10 @@ public class JsonRpcHttpServiceTest extends JsonRpcHttpServiceTestBase {
   }
 
   private void verifyBlockResult(
-      final Block block,
-      final Difficulty td,
-      final JsonObject result,
-      final boolean shouldTransactionsBeHashed) {
+      final Block block, final JsonObject result, final boolean shouldTransactionsBeHashed) {
     assertBlockResultMatchesBlock(result, block);
 
-    if (td == null) {
-      assertThat(result.getJsonObject("totalDifficulty")).isNull();
-    } else {
-      assertThat(Difficulty.fromHexString(result.getString("totalDifficulty"))).isEqualTo(td);
-    }
+    assertThat(result.getString("totalDifficulty")).isNull();
 
     // Check ommers
     final JsonArray ommersResult = result.getJsonArray("uncles");

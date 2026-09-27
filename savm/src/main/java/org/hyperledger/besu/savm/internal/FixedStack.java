@@ -23,8 +23,8 @@ import java.util.Arrays;
  * An operand stack for the Sila Virtual machine (SAVM). This stack allocates the entire stack at
  * initialization time.
  *
- * <p>The operand stack is responsible for storing the current operands that the SAVM can execute. It
- * is assumed to have a fixed size.
+ * <p>The operand stack is responsible for storing the current operands that the SAVM can execute.
+ * It is assumed to have a fixed size.
  *
  * @param <T> the type parameter
  */

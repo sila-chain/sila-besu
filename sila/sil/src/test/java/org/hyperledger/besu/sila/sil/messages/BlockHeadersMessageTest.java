@@ -15,19 +15,19 @@
 package org.hyperledger.besu.sila.sil.messages;
 
 import org.hyperledger.besu.config.GenesisConfig;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.difficulty.fixed.FixedDifficultyProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPInput;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

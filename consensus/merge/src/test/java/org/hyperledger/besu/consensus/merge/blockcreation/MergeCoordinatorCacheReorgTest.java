@@ -34,6 +34,11 @@ import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.StubMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.BlockProcessingResult;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
@@ -58,21 +63,16 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.sorter.BaseFeePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoader;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
+import org.hyperledger.besu.sila.worldstate.ExtraStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.ImmutableDataStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.ImmutablePathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.sila.worldstate.PathBasedExtraStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.StubMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.ServiceManager;
-import org.hyperledger.besu.plugin.services.storage.DataStorageFormat;
+import org.hyperledger.besu.sila.worldstate.ImmutableExtraStorageConfiguration;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.number.Fraction;
 
@@ -124,7 +124,7 @@ public class MergeCoordinatorCacheReorgTest implements MergeGenesisConfigHelper 
 
   private final ProtocolSchedule protocolSchedule = spy(getMergeProtocolSchedule());
   private final GenesisState genesisState =
-      GenesisState.fromConfig(getPosGenesisConfig(), protocolSchedule, new PathBasedCodeCache());
+      GenesisState.fromConfig(getPosGenesisConfig(), protocolSchedule, new BonsaiCodeCache());
 
   private final Address coinbase = genesisAllocations(getPosGenesisConfig()).findFirst().get();
   private final MutableBlockchain blockchain =
@@ -157,10 +157,10 @@ public class MergeCoordinatorCacheReorgTest implements MergeGenesisConfigHelper 
     final DataStorageConfiguration dataStorageConfig =
         ImmutableDataStorageConfiguration.builder()
             .dataStorageFormat(DataStorageFormat.BONSAI)
-            .pathBasedExtraStorageConfiguration(
-                ImmutablePathBasedExtraStorageConfiguration.builder()
+            .extraStorageConfiguration(
+                ImmutableExtraStorageConfiguration.builder()
                     .unstable(
-                        ImmutablePathBasedExtraStorageConfiguration.PathBasedUnstable.builder()
+                        ImmutableExtraStorageConfiguration.Unstable.builder()
                             .bonsaiCrossBlockCacheEnabled(true)
                             .build())
                     .build())
@@ -178,12 +178,11 @@ public class MergeCoordinatorCacheReorgTest implements MergeGenesisConfigHelper 
         new BonsaiWorldStateProvider(
             worldStateKeyValueStorage,
             blockchain,
-            PathBasedExtraStorageConfiguration.DEFAULT,
+            ExtraStorageConfiguration.DEFAULT,
             cachedMerkleTrieLoader,
             pluginContext,
             SavmConfiguration.DEFAULT,
-            () -> null,
-            new PathBasedCodeCache());
+            new BonsaiCodeCache());
 
     protocolContext =
         new ProtocolContext.Builder()
@@ -211,7 +210,7 @@ public class MergeCoordinatorCacheReorgTest implements MergeGenesisConfigHelper 
 
     MergeConfiguration.setMergeEnabled(true);
 
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     TransactionPool transactionPool =
         new TransactionPool(

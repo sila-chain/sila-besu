@@ -15,12 +15,12 @@
 package org.hyperledger.besu.sila.chain;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.AddedBlockContext.EventType;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.LogWithMetadata;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.plugin.data.AddedBlockContext.EventType;
 
 import java.util.Collections;
 import java.util.List;

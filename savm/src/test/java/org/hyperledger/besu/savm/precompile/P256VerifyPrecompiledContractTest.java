@@ -156,7 +156,7 @@ class P256VerifyPrecompiledContractTest {
   void testModularComparisonWhenRPrimeExceedsN() {
 
     // parameters borrowed from execution-spec-tests for R' exceeding N:
-    // https://github.com/sila-chain/execution-spec-tests/blob/61f8ac90841770d9fc407f1498ec0e5229b27508/tests/osaka/sip7951_p256verify_precompiles/test_p256verify.py#L303-L315
+    // https://github.com/sila/execution-spec-tests/blob/61f8ac90841770d9fc407f1498ec0e5229b27508/tests/osaka/sip7951_p256verify_precompiles/test_p256verify.py#L303-L315
     String messageHash = "BB5A52F42F9C9261ED4361F59422A1E30036E7C32B270C8807A419FECA605023";
     String r = "000000000000000000000000000000004319055358E8617B0C46353D039CDAAB";
     String s = "FFFFFFFF00000000FFFFFFFFFFFFFFFFBCE6FAADA7179E84F3B9CAC2FC63254E";

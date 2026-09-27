@@ -18,6 +18,8 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
@@ -27,8 +29,6 @@ import org.hyperledger.besu.sila.permissioning.NodeLocalConfigPermissioningContr
 import org.hyperledger.besu.sila.permissioning.NodePermissioningControllerFactory;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.permissioning.NodeConnectionPermissioningProvider;
 
 import java.util.Collection;
 import java.util.Collections;

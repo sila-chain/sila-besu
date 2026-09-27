@@ -15,18 +15,18 @@
 package org.hyperledger.besu.sila.api.jsonrpc;
 
 import org.hyperledger.besu.config.GenesisConfig;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.GenesisState;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetProtocolSchedule;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.util.RawBlockIterator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.net.URL;
 import java.nio.file.Paths;
@@ -65,7 +65,7 @@ public class BlockchainImporter {
 
     genesisBlock = blocks.get(0);
     // only used in tests no global code cache is needed
-    genesisState = GenesisState.fromJson(genesisJson, protocolSchedule, new PathBasedCodeCache());
+    genesisState = GenesisState.fromJson(genesisJson, protocolSchedule, new BonsaiCodeCache());
   }
 
   public GenesisState getGenesisState() {

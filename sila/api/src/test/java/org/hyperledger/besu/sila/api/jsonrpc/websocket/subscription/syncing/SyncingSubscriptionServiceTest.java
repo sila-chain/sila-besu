@@ -20,14 +20,14 @@ import static org.mockito.Mockito.doAnswer;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.data.SyncStatus;
+import org.hyperledger.besu.plugin.services.BesuEvents.SyncStatusListener;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.JsonRpcResult;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.results.SyncingResult;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.SubscriptionManager;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.request.SubscriptionType;
 import org.hyperledger.besu.sila.core.DefaultSyncStatus;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.plugin.data.SyncStatus;
-import org.hyperledger.besu.plugin.services.BesuEvents.SyncStatusListener;
 
 import java.util.Collections;
 import java.util.List;

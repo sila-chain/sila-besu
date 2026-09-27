@@ -29,8 +29,8 @@ import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
 
 import java.time.Clock;
 import java.time.Duration;

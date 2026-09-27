@@ -23,7 +23,7 @@ import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Withdrawal;
-import org.hyperledger.besu.sila.sil.manager.siltaskutils.PeerMessageTaskTest;
+import org.hyperledger.besu.sila.sil.manager.ethtaskutils.PeerMessageTaskTest;
 
 import java.util.ArrayList;
 import java.util.List;

@@ -95,6 +95,9 @@ import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.GenesisState;
@@ -119,15 +122,12 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.sorter.GasPricePendingTransactionsSorter;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.sila.trie.forest.ForestWorldStateArchive;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.TestClock;
 import org.hyperledger.besu.util.Subscribers;
 
@@ -166,7 +166,7 @@ public class TestContextBuilder {
   private static final MetricsSystem metricsSystem = new NoOpMetricsSystem();
   private boolean useValidatorContract;
   private boolean useLondonMilestone = false;
-  private boolean useSilaShanghaiMilestone = false;
+  private boolean useShanghaiMilestone = false;
   private boolean useZeroBaseFee = false;
   private boolean useFixedBaseFee = false;
   public static final int EPOCH_LENGTH = 10_000;
@@ -240,8 +240,8 @@ public class TestContextBuilder {
     return this;
   }
 
-  public TestContextBuilder useSilaShanghaiMilestone(final boolean useSilaShanghaiMilestone) {
-    this.useSilaShanghaiMilestone = useSilaShanghaiMilestone;
+  public TestContextBuilder useShanghaiMilestone(final boolean useShanghaiMilestone) {
+    this.useShanghaiMilestone = useShanghaiMilestone;
     return this;
   }
 
@@ -326,7 +326,7 @@ public class TestContextBuilder {
             synchronizerUpdater,
             useValidatorContract,
             useLondonMilestone,
-            useSilaShanghaiMilestone,
+            useShanghaiMilestone,
             useZeroBaseFee,
             useFixedBaseFee,
             qbftForks,
@@ -400,7 +400,7 @@ public class TestContextBuilder {
     return GenesisState.fromConfig(
         GenesisConfig.fromSource(Path.of(genesisFile).toUri().toURL()),
         ProtocolScheduleFixture.TESTING_NETWORK,
-        new PathBasedCodeCache());
+        new BonsaiCodeCache());
   }
 
   private static ControllerAndState createControllerAndFinalState(
@@ -414,7 +414,7 @@ public class TestContextBuilder {
       final SynchronizerUpdater synchronizerUpdater,
       final boolean useValidatorContract,
       final boolean useLondonMilestone,
-      final boolean useSilaShanghaiMilestone,
+      final boolean useShanghaiMilestone,
       final boolean useZeroBaseFee,
       final boolean useFixedBaseFee,
       final List<QbftFork> qbftForks,
@@ -443,7 +443,7 @@ public class TestContextBuilder {
 
     if (useLondonMilestone) {
       genesisConfigOptions.londonBlock(0);
-    } else if (useSilaShanghaiMilestone) {
+    } else if (useShanghaiMilestone) {
       genesisConfigOptions.shanghaiTime(10);
     } else {
       genesisConfigOptions.berlinBlock(0);
@@ -474,7 +474,8 @@ public class TestContextBuilder {
             new BadBlockManager(),
             false,
             BalConfiguration.DEFAULT,
-            new NoOpMetricsSystem());
+            new NoOpMetricsSystem(),
+            Long.MAX_VALUE);
 
     final BftValidatorOverrides validatorOverrides = convertBftForks(qbftForks);
     final TransactionSimulator transactionSimulator =
@@ -509,7 +510,7 @@ public class TestContextBuilder {
             poolConf, clock, metricsSystem, blockChain::getChainHeadHeader);
 
     final SilContext silContext = mock(SilContext.class, RETURNS_DEEP_STUBS);
-    when(silContext.getSilPeers().subscribeConnect(any())).thenReturn(1L);
+    when(silContext.getEthPeers().subscribeConnect(any())).thenReturn(1L);
 
     final TransactionPool transactionPool =
         new TransactionPool(
@@ -524,7 +525,7 @@ public class TestContextBuilder {
 
     transactionPool.setEnabled();
 
-    final SilScheduler silScheduler = new DeterministicSilScheduler();
+    final SilScheduler silScheduler = new DeterministicEthScheduler();
 
     final Address localAddress = Util.publicKeyToAddress(nodeKey.getPublicKey());
     final QbftBlockCreatorFactory blockCreatorFactory =

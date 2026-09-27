@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.sila.sil.sync;
 
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
 
 @FunctionalInterface
 public interface ValidationPolicy {

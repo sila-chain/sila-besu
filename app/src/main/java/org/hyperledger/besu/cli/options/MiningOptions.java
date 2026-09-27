@@ -31,10 +31,10 @@ import org.hyperledger.besu.cli.converter.PositiveNumberConverter;
 import org.hyperledger.besu.cli.util.CommandLineUtils;
 import org.hyperledger.besu.config.GenesisConfigOptions;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.TransactionSelectionService;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration.MutableInitValues;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.plugin.services.TransactionSelectionService;
 import org.hyperledger.besu.util.number.PositiveNumber;
 
 import java.util.List;
@@ -50,25 +50,12 @@ import picocli.CommandLine.ParameterException;
 /** The Mining CLI options. */
 public class MiningOptions implements CLIOptions<MiningConfiguration> {
 
-  private static final String DEPRECATION_PREFIX =
-      "Deprecated. PoW consensus is deprecated. See CHANGELOG for alternative options. ";
-
   @Option(
       names = {"--miner-extra-data"},
       description =
           "A hex string representing the (32) bytes to be included in the extra data "
               + "field of a mined block (default: ${DEFAULT-VALUE})")
   private Bytes extraData = DEFAULT_EXTRA_DATA;
-
-  @Option(
-      names = {"--min-block-occupancy-ratio"},
-      hidden = true,
-      description =
-          DEPRECATION_PREFIX
-              + "Minimum occupancy ratio for a mined block (default: ${DEFAULT-VALUE})")
-  @SuppressWarnings("UnusedVariable")
-  @Deprecated
-  private Double minBlockOccupancyRatio = null;
 
   @Option(
       names = {"--min-gas-price"},
@@ -266,13 +253,13 @@ public class MiningOptions implements CLIOptions<MiningConfiguration> {
 
     if (targetGasLimit != null
         && isBuiltInGenesis
-        && genesisConfigOptions.getSilaAmsterdamTime().isPresent()) {
+        && genesisConfigOptions.getAmsterdamTime().isPresent()) {
       logger.warn(
           "--target-gas-limit is set to {} but SilaAmsterdam is scheduled (at timestamp {}). "
               + "From SilaAmsterdam onwards the consensus layer supplies targetGasLimit via "
               + "engine_forkchoiceUpdatedV4 and will override this CLI value when building payloads.",
           targetGasLimit,
-          genesisConfigOptions.getSilaAmsterdamTime().getAsLong());
+          genesisConfigOptions.getAmsterdamTime().getAsLong());
     }
   }
 

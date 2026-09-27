@@ -1,0 +1,2 @@
+# performance critical classes must be reviewed by performance team
+/savm/src/main/java/org/hyperledger/besu/savm/ @ahamlat @lu-pinto @matkt @siladu

@@ -28,7 +28,7 @@ import org.hyperledger.besu.sila.sil.transactions.TransactionAddedResult;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolMetrics;
 import org.hyperledger.besu.sila.sil.transactions.layered.LayeredRemovalReason.PoolRemovalReason;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.util.ArrayList;
 import java.util.Comparator;

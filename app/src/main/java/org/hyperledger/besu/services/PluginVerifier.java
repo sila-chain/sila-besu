@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.services;
 
-import org.hyperledger.besu.sila.core.plugins.PluginsVerificationMode;
 import org.hyperledger.besu.plugin.BesuPlugin;
+import org.hyperledger.besu.sila.core.plugins.PluginsVerificationMode;
 import org.hyperledger.besu.util.BesuVersionUtils;
 
 import java.io.IOException;

@@ -27,20 +27,20 @@ import org.hyperledger.besu.consensus.common.ForkSpec;
 import org.hyperledger.besu.consensus.common.ForksSchedule;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.MilestoneStreamingProtocolSchedule;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.WithdrawalsValidator;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.WithdrawalsValidator;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.math.BigInteger;
 import java.util.List;
@@ -284,7 +284,7 @@ public class BaseBftProtocolScheduleBuilderTest {
 
     // All forks after block 100 should be time based forks and retrieval from the fork
     // schedule should be based on block timestamp not block number
-    when(genesisConfig.getSilaShanghaiTime()).thenReturn(OptionalLong.of(100));
+    when(genesisConfig.getShanghaiTime()).thenReturn(OptionalLong.of(100));
     TransitionsConfigOptions transitions = TransitionsConfigOptions.DEFAULT;
     when(genesisConfig.getTransitions()).thenReturn(transitions);
 

@@ -22,7 +22,7 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 import org.hyperledger.besu.testutil.MockExecutorService;
 import org.hyperledger.besu.testutil.MockScheduledExecutor;
 
@@ -44,7 +44,7 @@ import org.junit.jupiter.api.Test;
 
 public class SilSchedulerTest {
 
-  private DeterministicSilScheduler silScheduler;
+  private DeterministicEthScheduler silScheduler;
   private MockExecutorService syncWorkerExecutor;
   private MockScheduledExecutor scheduledExecutor;
   private AtomicBoolean shouldTimeout;
@@ -52,7 +52,7 @@ public class SilSchedulerTest {
   @BeforeEach
   public void setup() {
     shouldTimeout = new AtomicBoolean(false);
-    silScheduler = new DeterministicSilScheduler(shouldTimeout::get);
+    silScheduler = new DeterministicEthScheduler(shouldTimeout::get);
     syncWorkerExecutor = silScheduler.mockSyncWorkerExecutor();
     scheduledExecutor = silScheduler.mockScheduledExecutor();
   }
@@ -160,7 +160,7 @@ public class SilSchedulerTest {
 
   @Test
   public void timeout_resultCompletesWhenScheduledTaskCompletes() {
-    final MockSilTask task = new MockSilTask();
+    final MockEthTask task = new MockEthTask();
     final CompletableFuture<Object> result = silScheduler.timeout(task, Duration.ofSeconds(2));
 
     assertThat(task.hasBeenStarted()).isTrue();
@@ -175,7 +175,7 @@ public class SilSchedulerTest {
 
   @Test
   public void timeout_resultCompletesWhenScheduledTaskFails() {
-    final MockSilTask task = new MockSilTask();
+    final MockEthTask task = new MockEthTask();
     final CompletableFuture<Object> result = silScheduler.timeout(task, Duration.ofSeconds(2));
 
     assertThat(task.hasBeenStarted()).isTrue();
@@ -191,7 +191,7 @@ public class SilSchedulerTest {
   @Test
   public void timeout_resultCompletesOnTimeout() {
     shouldTimeout.set(true);
-    final MockSilTask task = new MockSilTask();
+    final MockEthTask task = new MockEthTask();
     final CompletableFuture<Object> result = silScheduler.timeout(task, Duration.ofSeconds(2));
 
     // Timeout fires immediately, so everything should be done
@@ -205,7 +205,7 @@ public class SilSchedulerTest {
 
   @Test
   public void timeout_cancelsTaskWhenResultIsCancelled() {
-    final MockSilTask task = new MockSilTask();
+    final MockEthTask task = new MockEthTask();
     final CompletableFuture<Object> result = silScheduler.timeout(task, Duration.ofSeconds(2));
 
     assertThat(task.hasBeenStarted()).isTrue();
@@ -222,7 +222,7 @@ public class SilSchedulerTest {
   public void itemsSubmittedToOrderedProcessorAreProcessedInOrder() throws InterruptedException {
     final int numOfItems = 100;
     final Random random = new Random();
-    final SilScheduler realSilScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
+    final SilScheduler realEthScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
 
     final List<String> processedStrings = new CopyOnWriteArrayList<>();
 
@@ -236,7 +236,7 @@ public class SilSchedulerTest {
           }
         };
 
-    final var orderProcessor = realSilScheduler.createOrderedProcessor(stringProcessor);
+    final var orderProcessor = realEthScheduler.createOrderedProcessor(stringProcessor);
     IntStream.range(0, numOfItems)
         .mapToObj(String::valueOf)
         .forEach(
@@ -255,5 +255,54 @@ public class SilSchedulerTest {
     Awaitility.await().until(() -> processedStrings.size() == numOfItems);
 
     assertThat(processedStrings).containsExactlyElementsOf(expectedStrings);
+  }
+
+  @Test
+  public void scheduleBlockCreationTask_restoresThreadNameOnSuccessAndFailure() throws Exception {
+    final SilScheduler realEthScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
+    try {
+      // Test success case
+      final java.util.concurrent.atomic.AtomicReference<Thread> threadRef =
+          new java.util.concurrent.atomic.AtomicReference<>();
+      final java.util.concurrent.atomic.AtomicReference<String> threadNameDuringTask =
+          new java.util.concurrent.atomic.AtomicReference<>();
+
+      realEthScheduler
+          .scheduleBlockCreationTask(
+              123L,
+              () -> {
+                threadRef.set(Thread.currentThread());
+                threadNameDuringTask.set(Thread.currentThread().getName());
+              })
+          .get();
+
+      assertThat(threadNameDuringTask.get()).endsWith("-123");
+      assertThat(threadRef.get().getName()).doesNotEndWith("-123");
+
+      // Test exception case
+      final java.util.concurrent.atomic.AtomicReference<Thread> exceptionThreadRef =
+          new java.util.concurrent.atomic.AtomicReference<>();
+      final java.util.concurrent.atomic.AtomicReference<String> exceptionThreadNameDuringTask =
+          new java.util.concurrent.atomic.AtomicReference<>();
+
+      assertThatThrownBy(
+              () ->
+                  realEthScheduler
+                      .scheduleBlockCreationTask(
+                          789L,
+                          () -> {
+                            exceptionThreadRef.set(Thread.currentThread());
+                            exceptionThreadNameDuringTask.set(Thread.currentThread().getName());
+                            throw new RuntimeException("test exception");
+                          })
+                      .get())
+          .hasCauseInstanceOf(RuntimeException.class)
+          .hasMessageContaining("test exception");
+
+      assertThat(exceptionThreadNameDuringTask.get()).endsWith("-789");
+      assertThat(exceptionThreadRef.get().getName()).doesNotEndWith("-789");
+    } finally {
+      realEthScheduler.stop();
+    }
   }
 }

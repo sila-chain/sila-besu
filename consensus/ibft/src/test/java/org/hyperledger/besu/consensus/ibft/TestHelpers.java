@@ -25,7 +25,7 @@ import org.hyperledger.besu.consensus.ibft.statemachine.PreparedRoundArtifacts;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.sila.core.AddressHelpers;
 import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 

@@ -21,7 +21,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.io.IOException;
 
-import org.web3j.protocol.core.methods.response.Web3Sha3;
+import sila.web3j.protocol.core.methods.response.Web3Sha3;
 
 public class Web3Sha3Transaction implements Transaction<String> {
 

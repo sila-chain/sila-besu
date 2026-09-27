@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
@@ -21,7 +22,6 @@ import org.hyperledger.besu.sila.sil.manager.exceptions.MaxRetriesReachedExcepti
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.PeerBreachedProtocolException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.PeerDisconnectedException;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;
@@ -41,7 +41,7 @@ import org.slf4j.LoggerFactory;
  *
  * @param <T> The type as a typed list that the peer task can get partial or full results in.
  */
-public abstract class AbstractRetryingPeerTask<T> extends AbstractSilTask<T> {
+public abstract class AbstractRetryingPeerTask<T> extends AbstractEthTask<T> {
 
   private static final Logger LOG = LoggerFactory.getLogger(AbstractRetryingPeerTask.class);
   private final SilContext silContext;
@@ -129,12 +129,12 @@ public abstract class AbstractRetryingPeerTask<T> extends AbstractSilTask<T> {
     if (cause instanceof NoAvailablePeersException) {
       LOG.debug(
           "No useful peer found, wait max 5 seconds for new peer to connect: current peers {}",
-          silContext.getSilPeers().peerCount());
+          silContext.getEthPeers().peerCount());
 
       executeSubTask(
           () ->
               silContext
-                  .getSilPeers()
+                  .getEthPeers()
                   .waitForPeer(this::isSuitablePeer)
                   .orTimeout(5, TimeUnit.SECONDS)
                   // execute the task again
@@ -165,7 +165,7 @@ public abstract class AbstractRetryingPeerTask<T> extends AbstractSilTask<T> {
         || error instanceof NoAvailablePeersException;
   }
 
-  protected SilContext getSilContext() {
+  protected SilContext getEthContext() {
     return silContext;
   }
 

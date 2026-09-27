@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.blockcreation.txselection.selectors;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hyperledger.besu.plugin.data.TransactionSelectionResult.SELECTED;
 import static org.hyperledger.besu.sila.blockcreation.txselection.selectors.BlockRlpSizeTransactionSelector.INITIAL_RLP_SIZE;
 import static org.hyperledger.besu.sila.sil.transactions.PendingTransaction.MAX_SCORE;
-import static org.hyperledger.besu.plugin.data.TransactionSelectionResult.SELECTED;
 import static org.mockito.Answers.RETURNS_DEEP_STUBS;
 import static org.mockito.Mockito.when;
 
@@ -26,14 +26,14 @@ import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.TransactionType;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
+import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionEvaluationContext;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.core.TransactionTestFixture;
-import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
-import org.hyperledger.besu.plugin.services.txselection.SelectorsStateManager;
+import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 
 import java.util.Optional;
 
@@ -70,8 +70,8 @@ class BlockRlpSizeTransactionSelectorTest {
 
   @Test
   void transactionSelectedWhenUnderBlockSize() {
-    final var tx1 = createSIP1559PendingTransaction(Bytes.random(10));
-    final var tx2 = createSIP1559PendingTransaction(Bytes.random(80));
+    final var tx1 = createEIP1559PendingTransaction(Bytes.random(10));
+    final var tx2 = createEIP1559PendingTransaction(Bytes.random(80));
     final int maxRlpBlockSize =
         (int)
                 (INITIAL_RLP_SIZE
@@ -97,9 +97,9 @@ class BlockRlpSizeTransactionSelectorTest {
 
   @Test
   void smallTransactionSelectedAfterLargeTransaction() {
-    final var tx1 = createSIP1559PendingTransaction(Bytes.random(10));
-    final var tx2 = createSIP1559PendingTransaction(Bytes.random(100));
-    final var tx3 = createSIP1559PendingTransaction(Bytes.random(20));
+    final var tx1 = createEIP1559PendingTransaction(Bytes.random(10));
+    final var tx2 = createEIP1559PendingTransaction(Bytes.random(100));
+    final var tx3 = createEIP1559PendingTransaction(Bytes.random(20));
     final int maxRlpBlockSize =
         (int)
             (INITIAL_RLP_SIZE
@@ -132,8 +132,8 @@ class BlockRlpSizeTransactionSelectorTest {
 
   @Test
   void transactionRejectedWhenEqualToBlockSize() {
-    final var tx1 = createSIP1559PendingTransaction(Bytes.random(50));
-    final var tx2 = createSIP1559PendingTransaction(Bytes.random(50));
+    final var tx1 = createEIP1559PendingTransaction(Bytes.random(50));
+    final var tx2 = createEIP1559PendingTransaction(Bytes.random(50));
     final int maxRlpBlockSize =
         (int)
             (INITIAL_RLP_SIZE
@@ -158,8 +158,8 @@ class BlockRlpSizeTransactionSelectorTest {
 
   @Test
   void transactionRejectedWhenOverBlockSize() {
-    final var tx1 = createSIP1559PendingTransaction(Bytes.random(50));
-    final var tx2 = createSIP1559PendingTransaction(Bytes.random(100));
+    final var tx1 = createEIP1559PendingTransaction(Bytes.random(50));
+    final var tx2 = createEIP1559PendingTransaction(Bytes.random(100));
     final int maxRlpBlockSize =
         (int)
             (INITIAL_RLP_SIZE
@@ -197,7 +197,7 @@ class BlockRlpSizeTransactionSelectorTest {
         .isEqualTo(preProcessedResult);
   }
 
-  private PendingTransaction createSIP1559PendingTransaction(final Bytes payload) {
+  private PendingTransaction createEIP1559PendingTransaction(final Bytes payload) {
     return PendingTransaction.newPendingTransaction(
         createTransaction(TransactionType.SIP1559, payload), false, false, MAX_SCORE);
   }

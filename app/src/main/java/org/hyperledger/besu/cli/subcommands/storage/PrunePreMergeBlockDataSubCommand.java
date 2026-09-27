@@ -43,7 +43,7 @@ public class PrunePreMergeBlockDataSubCommand implements Runnable {
 
   private static final List<NetworkDefinition> SUPPORTED_NETWORKS =
       List.of(NetworkDefinition.SILA_MAINNET, NetworkDefinition.SEPOLIA);
-  private static final long SILA_MAINNET_FIRST_POS_BLOCK_NUMBER = 15_537_394;
+  private static final long MAINNET_FIRST_POS_BLOCK_NUMBER = 15_537_394;
   private static final long SEPOLIA_FIRST_POS_BLOCK_NUMBER = 1_450_409;
 
   private static final int DEFAULT_THREADS = Runtime.getRuntime().availableProcessors() - 1;
@@ -121,7 +121,7 @@ public class PrunePreMergeBlockDataSubCommand implements Runnable {
 
   private static long getMergeBlockNumber(final NetworkDefinition network) {
     return switch (network) {
-      case SILA_MAINNET -> SILA_MAINNET_FIRST_POS_BLOCK_NUMBER;
+      case SILA_MAINNET -> MAINNET_FIRST_POS_BLOCK_NUMBER;
       case SEPOLIA -> SEPOLIA_FIRST_POS_BLOCK_NUMBER;
       default -> throw new RuntimeException("Unexpected network: " + network);
     };

@@ -19,9 +19,9 @@ import static org.assertj.core.api.Assertions.assertThatExceptionOfType;
 
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.Transaction;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.transactions.TransactionAnnouncement;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 
 import java.util.List;
 

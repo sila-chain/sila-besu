@@ -32,7 +32,7 @@ public class SilStatsConnectOptionsTest {
   private final String CONTACT = "contact@mail.fr";
 
   private final String ERROR_MESSAGE =
-      "Invalid silstats URL syntax. Silstats URL should have the following format '[ws://|wss://]nodename:secret@host[:port]'.";
+      "Invalid silstats URL syntax. SilStats URL should have the following format '[ws://|wss://]nodename:secret@host[:port]'.";
 
   @Test
   public void buildWithValidParams() {

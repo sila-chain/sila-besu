@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.api.jsonrpc;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.hyperledger.besu.sila.api.jsonrpc.health.HealthService;
 import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.sila.api.jsonrpc.health.HealthService;
 
 import java.nio.file.Path;
 import java.util.HashMap;

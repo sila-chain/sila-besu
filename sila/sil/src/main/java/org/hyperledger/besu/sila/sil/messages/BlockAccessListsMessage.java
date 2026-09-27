@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.messages;
 
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.AbstractMessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 import java.util.stream.StreamSupport;
@@ -40,7 +40,7 @@ public final class BlockAccessListsMessage extends AbstractMessageData {
   public static BlockAccessListsMessage create(
       final Iterable<Optional<BlockAccessList>> blockAccessLists) {
     return new BlockAccessListsMessage(
-        BlockAccessListsMessageData.encodeSilResponse(blockAccessLists));
+        BlockAccessListsMessageData.encodeEthResponse(blockAccessLists));
   }
 
   public static BlockAccessListsMessage createFromBlockAccessLists(
@@ -73,10 +73,10 @@ public final class BlockAccessListsMessage extends AbstractMessageData {
   }
 
   public Iterable<Optional<BlockAccessList>> blockAccessLists() {
-    return BlockAccessListsMessageData.decodeSilResponse(data);
+    return BlockAccessListsMessageData.decodeEthResponse(data);
   }
 
   public Iterable<Bytes> blockAccessListsRaw() {
-    return BlockAccessListsMessageData.decodeSilResponseRaw(data);
+    return BlockAccessListsMessageData.decodeEthResponseRaw(data);
   }
 }

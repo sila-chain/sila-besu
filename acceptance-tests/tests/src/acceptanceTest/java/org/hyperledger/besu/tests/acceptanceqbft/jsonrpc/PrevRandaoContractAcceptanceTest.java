@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.web3j.generated.PrevRandaoContract;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 /**
  * Acceptance test for QBFT blocks that contain transactions reading block.prevrandao.

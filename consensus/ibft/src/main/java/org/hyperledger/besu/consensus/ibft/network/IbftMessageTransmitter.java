@@ -29,9 +29,9 @@ import org.hyperledger.besu.consensus.ibft.payload.RoundChangeCertificate;
 import org.hyperledger.besu.consensus.ibft.statemachine.PreparedRoundArtifacts;
 import org.hyperledger.besu.crypto.SECPSignature;
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.core.Block;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.plugin.services.securitymodule.SecurityModuleException;
+import org.hyperledger.besu.sila.core.Block;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Optional;
 

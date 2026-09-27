@@ -31,17 +31,17 @@ import org.hyperledger.besu.sila.api.query.TransactionWithMetadata;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
+import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.p2p.network.P2PNetwork;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.silstats.request.SilStatsRequest;
-import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 import org.hyperledger.besu.silstats.util.ImmutableSilStatsConnectOptions;
+import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
 
 import java.lang.reflect.Field;
 import java.math.BigInteger;
@@ -53,14 +53,13 @@ import java.util.Optional;
 import com.fasterxml.jackson.databind.JsonNode;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.datatype.jdk8.Jdk8Module;
-import io.vertx.core.AsyncResult;
+import io.vertx.core.Future;
 import io.vertx.core.Handler;
 import io.vertx.core.Vertx;
 import io.vertx.core.http.WebSocket;
 import io.vertx.core.http.WebSocketClient;
 import io.vertx.core.http.WebSocketClientOptions;
 import io.vertx.core.http.WebSocketConnectOptions;
-import org.jspecify.annotations.Nullable;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.junit.jupiter.api.extension.ExtendWith;
@@ -115,6 +114,9 @@ public class SilStatsServiceTest {
     when(silContext.getScheduler()).thenReturn(silScheduler);
     when(vertx.createWebSocketClient(any(WebSocketClientOptions.class)))
         .thenReturn(webSocketClient);
+    when(webSocketClient.connect(any(WebSocketConnectOptions.class)))
+        .thenReturn(Future.succeededFuture(webSocket));
+    when(webSocket.writeTextMessage(anyString())).thenReturn(Future.succeededFuture());
     when(genesisConfigOptions.getChainId()).thenReturn(Optional.of(BigInteger.ONE));
     when(silProtocolManager.getSupportedCapabilities())
         .thenReturn(List.of(Capability.create("sil64", 1)));
@@ -167,17 +169,12 @@ public class SilStatsServiceTest {
             p2PNetwork);
     when(p2PNetwork.getLocalEnode()).thenReturn(Optional.of(node));
 
-    final ArgumentCaptor<Handler<AsyncResult<WebSocket>>> webSocketCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-
     silStatsService.start();
 
-    verify(webSocketClient, times(1))
-        .connect(any(WebSocketConnectOptions.class), webSocketCaptor.capture());
-    webSocketCaptor.getValue().handle(succeededWebSocketEvent(webSocket));
+    verify(webSocketClient, times(1)).connect(any(WebSocketConnectOptions.class));
 
     final ArgumentCaptor<String> helloMessageCaptor = ArgumentCaptor.forClass(String.class);
-    verify(webSocket, times(1)).writeTextMessage(helloMessageCaptor.capture(), any(Handler.class));
+    verify(webSocket, times(1)).writeTextMessage(helloMessageCaptor.capture());
 
     assertThat(helloMessageCaptor.getValue().contains(SilStatsRequest.Type.HELLO.getValue()))
         .isTrue();
@@ -199,21 +196,13 @@ public class SilStatsServiceTest {
             genesisConfigOptions,
             p2PNetwork);
     when(p2PNetwork.getLocalEnode()).thenReturn(Optional.of(node));
+    when(webSocket.writeTextMessage(anyString()))
+        .thenReturn(Future.failedFuture(new RuntimeException("test failure")));
 
     silStatsService.start();
 
-    final ArgumentCaptor<Handler<AsyncResult<WebSocket>>> webSocketCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-    verify(webSocketClient, times(1))
-        .connect(any(WebSocketConnectOptions.class), webSocketCaptor.capture());
-    webSocketCaptor.getValue().handle(succeededWebSocketEvent(webSocket));
-
-    final ArgumentCaptor<Handler<AsyncResult<Void>>> helloMessageCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-    verify(webSocket, times(1)).writeTextMessage(anyString(), helloMessageCaptor.capture());
-    helloMessageCaptor
-        .getValue()
-        .handle(failedWebSocketEvent(new RuntimeException("test failure")));
+    verify(webSocketClient, times(1)).connect(any(WebSocketConnectOptions.class));
+    verify(webSocket, times(1)).writeTextMessage(anyString());
 
     verify(silScheduler, times(1)).scheduleFutureTask(any(Runnable.class), any(Duration.class));
   }
@@ -234,14 +223,9 @@ public class SilStatsServiceTest {
             p2PNetwork);
     when(p2PNetwork.getLocalEnode()).thenReturn(Optional.of(node));
 
-    final ArgumentCaptor<Handler<AsyncResult<WebSocket>>> webSocketCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-
     silStatsService.start();
 
-    verify(webSocketClient, times(1))
-        .connect(any(WebSocketConnectOptions.class), webSocketCaptor.capture());
-    webSocketCaptor.getValue().handle(succeededWebSocketEvent(webSocket));
+    verify(webSocketClient, times(1)).connect(any(WebSocketConnectOptions.class));
 
     final ArgumentCaptor<Handler<String>> textMessageHandlerCaptor =
         ArgumentCaptor.forClass(Handler.class);
@@ -281,19 +265,14 @@ public class SilStatsServiceTest {
     when(p2PNetwork.getLocalEnode()).thenReturn(Optional.of(node));
     when(blockchainQueries.latestBlock()).thenReturn(Optional.of(blockWithMetadata));
 
-    final ArgumentCaptor<Handler<AsyncResult<WebSocket>>> webSocketCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-
     silStatsService.start();
 
-    verify(webSocketClient, times(1))
-        .connect(any(WebSocketConnectOptions.class), webSocketCaptor.capture());
-    webSocketCaptor.getValue().handle(succeededWebSocketEvent(webSocket));
+    verify(webSocketClient, times(1)).connect(any(WebSocketConnectOptions.class));
 
     // send block message
     silStatsService.sendBlockReport();
     final ArgumentCaptor<String> messagesCaptor = ArgumentCaptor.forClass(String.class);
-    verify(webSocket, times(2)).writeTextMessage(messagesCaptor.capture(), any(Handler.class));
+    verify(webSocket, times(2)).writeTextMessage(messagesCaptor.capture());
 
     final List<String> sentMessages = messagesCaptor.getAllValues();
     assertThat(sentMessages.get(0)).contains("hello");
@@ -335,54 +314,6 @@ public class SilStatsServiceTest {
     field.set(silStatsService, value);
   }
 
-  private <T> AsyncResult<T> succeededWebSocketEvent(final T object) {
-    return new AsyncResult<>() {
-      @Override
-      public T result() {
-        return object;
-      }
-
-      @Override
-      public @Nullable Throwable cause() {
-        return null;
-      }
-
-      @Override
-      public boolean succeeded() {
-        return true;
-      }
-
-      @Override
-      public boolean failed() {
-        return false;
-      }
-    };
-  }
-
-  private AsyncResult<Void> failedWebSocketEvent(final Throwable cause) {
-    return new AsyncResult<>() {
-      @Override
-      public Void result() {
-        return null;
-      }
-
-      @Override
-      public Throwable cause() {
-        return cause;
-      }
-
-      @Override
-      public boolean succeeded() {
-        return false;
-      }
-
-      @Override
-      public boolean failed() {
-        return true;
-      }
-    };
-  }
-
   @Test
   public void shouldUseCustomReportInterval() {
     // Test with custom 10-second interval
@@ -410,14 +341,9 @@ public class SilStatsServiceTest {
             p2PNetwork);
     when(p2PNetwork.getLocalEnode()).thenReturn(Optional.of(node));
 
-    final ArgumentCaptor<Handler<AsyncResult<WebSocket>>> webSocketCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-
     silStatsService.start();
 
-    verify(webSocketClient, times(1))
-        .connect(any(WebSocketConnectOptions.class), webSocketCaptor.capture());
-    webSocketCaptor.getValue().handle(succeededWebSocketEvent(webSocket));
+    verify(webSocketClient, times(1)).connect(any(WebSocketConnectOptions.class));
 
     final ArgumentCaptor<Handler<String>> textMessageHandlerCaptor =
         ArgumentCaptor.forClass(Handler.class);
@@ -455,14 +381,9 @@ public class SilStatsServiceTest {
             p2PNetwork);
     when(p2PNetwork.getLocalEnode()).thenReturn(Optional.of(node));
 
-    final ArgumentCaptor<Handler<AsyncResult<WebSocket>>> webSocketCaptor =
-        ArgumentCaptor.forClass(Handler.class);
-
     silStatsService.start();
 
-    verify(webSocketClient, times(1))
-        .connect(any(WebSocketConnectOptions.class), webSocketCaptor.capture());
-    webSocketCaptor.getValue().handle(succeededWebSocketEvent(webSocket));
+    verify(webSocketClient, times(1)).connect(any(WebSocketConnectOptions.class));
 
     final ArgumentCaptor<Handler<String>> textMessageHandlerCaptor =
         ArgumentCaptor.forClass(Handler.class);

@@ -21,7 +21,7 @@ import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.Test;
 
 public class Era1HttpFileSourceTest {
-  private static final URI testFilePath = URI.create("https://sila-mainnet.era1.nimbus.team/");
+  private static final URI testFilePath = URI.create("https://mainnet.era1.nimbus.team/");
 
   @Test
   public void testHasNext() {
@@ -33,6 +33,6 @@ public class Era1HttpFileSourceTest {
   public void testNext() throws URISyntaxException {
     Era1HttpFileSource era1FileSource = new Era1HttpFileSource(testFilePath, 0);
     Assertions.assertEquals(
-        testFilePath.resolve("sila-mainnet-00000-5ec1ffb8.era1"), era1FileSource.next());
+        testFilePath.resolve("mainnet-00000-5ec1ffb8.era1"), era1FileSource.next());
   }
 }

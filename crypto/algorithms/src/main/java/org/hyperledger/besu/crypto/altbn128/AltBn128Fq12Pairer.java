@@ -21,7 +21,7 @@ import java.util.Arrays;
 
 /**
  * Adapted from the pc_ecc (Apache 2 License) <a
- * href="https://github.com/sila-chain/py_ecc/tree/main/py_ecc/bn128">implementation</a>.
+ * href="https://github.com/sila/py_ecc/tree/main/py_ecc/bn128">implementation</a>.
  */
 public class AltBn128Fq12Pairer {
 

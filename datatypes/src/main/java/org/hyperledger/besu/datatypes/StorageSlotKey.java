@@ -21,8 +21,8 @@ import jakarta.validation.constraints.NotNull;
 import org.apache.tuweni.units.bigints.UInt256;
 
 /**
- * StorageSlotKey represents a key used for storage slots in Sila. It contains the hash of the
- * slot key and an optional representation of the key itself.
+ * StorageSlotKey represents a key used for storage slots in Sila. It contains the hash of the slot
+ * key and an optional representation of the key itself.
  *
  * <p>The class provides methods for accessing the hash and key, as well as methods for equality,
  * hashcode, and comparison.

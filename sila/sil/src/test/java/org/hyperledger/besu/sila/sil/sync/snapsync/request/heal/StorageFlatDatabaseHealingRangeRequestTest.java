@@ -18,14 +18,16 @@ import static org.apache.tuweni.rlp.RLP.decodeValue;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.TrieGenerator;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapWorldDownloadState;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.RangeManager;
@@ -36,8 +38,6 @@ import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateK
 import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 
 import java.util.Iterator;
 import java.util.List;

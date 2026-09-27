@@ -72,7 +72,7 @@ public class QbftPivotSelectorTest {
     validatorList.add(Address.ZERO);
     validatorList.add(Address.ZERO);
 
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(validatorProvider.nodeIsValidator(any())).thenReturn(true);
     when(validatorProvider.getValidatorsAtHead()).thenReturn(validatorList);
     BFTPivotSelectorFromPeers pivotSelector =
@@ -93,7 +93,7 @@ public class QbftPivotSelectorTest {
     List<Address> validatorList = new ArrayList<>();
     validatorList.add(Address.ZERO);
 
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(validatorProvider.nodeIsValidator(any())).thenReturn(true);
     when(validatorProvider.getValidatorsAtHead()).thenReturn(validatorList);
     BFTPivotSelectorFromPeers pivotSelector =
@@ -110,7 +110,7 @@ public class QbftPivotSelectorTest {
 
   @Test
   public void returnEmptySyncStateIfNonValidatorWithNoBestPeer() {
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(validatorProvider.nodeIsValidator(any())).thenReturn(false);
     BFTPivotSelectorFromPeers pivotSelector =
         new BFTPivotSelectorFromPeers(
@@ -124,7 +124,7 @@ public class QbftPivotSelectorTest {
 
   @Test
   public void returnEmptySyncStateIfValidatorAndNotAtGenesisAndOtherValidators() {
-    when(silContext.getSilPeers()).thenReturn(silPeers);
+    when(silContext.getEthPeers()).thenReturn(silPeers);
     when(validatorProvider.nodeIsValidator(any())).thenReturn(false);
     when(blockHeader.getNumber()).thenReturn(10L);
     BFTPivotSelectorFromPeers pivotSelector =

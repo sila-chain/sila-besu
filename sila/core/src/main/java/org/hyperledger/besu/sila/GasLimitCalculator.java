@@ -77,8 +77,8 @@ public interface GasLimitCalculator {
   /**
    * Return the transaction gas limit cap.
    *
-   * <p>Before SilaOsaka, there was no limit, and it is safe to use long max value to represent that,
-   * since no transaction has ever reached it.
+   * <p>Before SilaOsaka, there was no limit, and it is safe to use long max value to represent
+   * that, since no transaction has ever reached it.
    *
    * @return the transaction gas limit cap.
    */
@@ -90,9 +90,9 @@ public interface GasLimitCalculator {
    * Return the cap on the transaction intrinsic gas.
    *
    * <p>SIP-8037 (SilaAmsterdam) relaxes the SIP-7825 cap on {@code tx.gas} itself and instead caps
-   * {@code max(intrinsic_regular, calldata_floor)} at the same value. Forks that cap {@code tx.gas}
-   * directly leave this uncapped, since the intrinsic gas is then implicitly bounded by {@code
-   * tx.gas}.
+   * {@code max(intrinsic_execution, calldata_floor)} at the same value. Forks that cap {@code
+   * tx.gas} directly leave this uncapped, since the intrinsic gas is then implicitly bounded by
+   * {@code tx.gas}.
    *
    * @return the transaction intrinsic gas cap.
    */

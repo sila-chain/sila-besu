@@ -22,7 +22,10 @@ import static org.hyperledger.besu.sila.trie.RangeManager.findNewBeginElementInR
 import static org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator.applyForStrategy;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncMetricsManager;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
@@ -30,20 +33,18 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.StackTrie;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.v2.SnapV2DataRequest;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.trie.NodeUpdater;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 
 import java.util.ArrayList;
 import java.util.List;
 import java.util.Map;
 import java.util.NavigableMap;
 import java.util.concurrent.atomic.AtomicInteger;
+import java.util.concurrent.atomic.AtomicLong;
 import java.util.concurrent.atomic.AtomicReference;
 import java.util.stream.Stream;
 
@@ -52,10 +53,14 @@ import org.apache.tuweni.bytes.Bytes32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Snap/2 account range data request. Commits all trie nodes including incomplete ones. */
+/** snap/2 account range data request. Commits all trie nodes including incomplete ones. */
 public class SnapV2AccountRangeRequest extends SnapV2DataRequest {
 
   private static final Logger LOG = LoggerFactory.getLogger(SnapV2AccountRangeRequest.class);
+
+  private static final long EMPTY_LOG_INTERVAL_MS = 30_000L;
+  private static final AtomicLong emptyResponseCount = new AtomicLong();
+  private static final AtomicLong lastEmptyLogMillis = new AtomicLong();
 
   private final Bytes32 startKeyHash;
   private final Bytes32 endKeyHash;
@@ -82,9 +87,6 @@ public class SnapV2AccountRangeRequest extends SnapV2DataRequest {
     final AtomicInteger nbNodesSaved = new AtomicInteger();
     final NodeUpdater nodeUpdater =
         (location, hash, value) -> {
-          if (location.isEmpty()) {
-            downloadState.setRootNodeData(value);
-          }
           applyForStrategy(
               updater,
               onBonsai -> onBonsai.putAccountStateTrieNode(location, hash, value),
@@ -127,6 +129,22 @@ public class SnapV2AccountRangeRequest extends SnapV2DataRequest {
             .addArgument(endKeyHash)
             .log();
       }
+    } else {
+      logEmptyResponse();
+    }
+  }
+
+  private static void logEmptyResponse() {
+    emptyResponseCount.incrementAndGet();
+    final long now = System.currentTimeMillis();
+    final long last = lastEmptyLogMillis.get();
+    if (now - last >= EMPTY_LOG_INTERVAL_MS && lastEmptyLogMillis.compareAndSet(last, now)) {
+      final long loggedCount = emptyResponseCount.getAndSet(0);
+      LOG.warn(
+          "snap/2 received {} empty account range response(s) in the last {}s. "
+              + "Peer may not have state at this pivot or be malicious. ",
+          loggedCount,
+          EMPTY_LOG_INTERVAL_MS / 1000);
     }
   }
 

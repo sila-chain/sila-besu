@@ -1,5 +1,5 @@
 {
-  "comment" : "'Memory Read.', 'Revert.' Note revertReason has been manually added to the response because OpenSila does not include it.",
+  "comment" : "'Memory Read.', 'Revert.' Note revertReason has been manually added to the response because OpenEthereum does not include it.",
   "request" : {
     "method" : "trace_callMany",
     "params" : [ [ [ {

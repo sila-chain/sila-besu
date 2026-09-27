@@ -84,7 +84,7 @@ public class SnappyCompressorTest {
   }
 
   @Test
-  public void roundTripSilaData() {
+  public void roundTripEthereumData() {
     // First data set.
     byte[] compressed =
         decodeHexDump(

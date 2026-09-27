@@ -19,13 +19,13 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 import static org.mockito.Mockito.when;
 
-import org.hyperledger.besu.sila.sil.SilProtocol;
-import org.hyperledger.besu.sila.sil.manager.SilMessage;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.sil.SilProtocol;
+import org.hyperledger.besu.sila.sil.manager.SilMessage;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class NewPooledTransactionHashesMessageHandlerTest {
 
   @BeforeEach
   void setUp() {
-    final DeterministicSilScheduler scheduler = new DeterministicSilScheduler();
+    final DeterministicEthScheduler scheduler = new DeterministicEthScheduler();
     handler = new NewPooledTransactionHashesMessageHandler(scheduler, processor, 300);
     handler.setEnabled();
     when(peer.getConnection()).thenReturn(peerConnection);

@@ -26,5 +26,5 @@ public interface DNSVisitor {
    * @param enr the ENR record read from DNS
    * @return true to continue visiting, false otherwise
    */
-  boolean visit(final SilaNodeRecord enr);
+  boolean visit(final EthereumNodeRecord enr);
 }

@@ -14,6 +14,8 @@
  */
 package org.hyperledger.besu.sila.p2p.rlpx.connections;
 
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.CapabilityMultiplexer;
@@ -23,8 +25,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.WireMessageCodes;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 
 import java.net.InetSocketAddress;
 import java.util.HashMap;

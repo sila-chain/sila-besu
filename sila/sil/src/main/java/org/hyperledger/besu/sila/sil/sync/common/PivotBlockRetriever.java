@@ -17,7 +17,7 @@ package org.hyperledger.besu.sila.sil.sync.common;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.Map;

@@ -68,14 +68,14 @@ public class PivotSelectorFromPeers implements PivotBlockSelector {
     final long estimatedPivotBlock = conservativelyEstimatedPivotBlock();
     final TrailingPeerLimiter trailingPeerLimiter =
         new TrailingPeerLimiter(
-            silContext.getSilPeers(),
+            silContext.getEthPeers(),
             () ->
                 new TrailingPeerRequirements(
                     estimatedPivotBlock, syncConfig.getMaxTrailingPeers()));
     trailingPeerLimiter.enforceTrailingPeerLimit();
 
     return silContext
-        .getSilPeers()
+        .getEthPeers()
         .waitForPeer((peer) -> peer.estimatedChainHeight() >= estimatedPivotBlock)
         .thenRun(() -> {});
   }
@@ -97,8 +97,7 @@ public class PivotSelectorFromPeers implements PivotBlockSelector {
           lastReturnedPivotNumber,
           bestPeerHeight,
           pivotBlockWindowValidity);
-      return CompletableFuture.completedFuture(
-          new SnapSyncProcessState(lastReturnedPivotNumber, false));
+      return CompletableFuture.completedFuture(new SnapSyncProcessState(lastReturnedPivotNumber));
     }
 
     final long pivotBlockNumber = bestPeerHeight - syncConfig.getSyncPivotDistance();
@@ -110,13 +109,13 @@ public class PivotSelectorFromPeers implements PivotBlockSelector {
     }
     lastReturnedPivotNumber = pivotBlockNumber;
     LOG.info("Selecting block number {} as fast sync pivot block.", pivotBlockNumber);
-    return CompletableFuture.completedFuture(new SnapSyncProcessState(pivotBlockNumber, false));
+    return CompletableFuture.completedFuture(new SnapSyncProcessState(pivotBlockNumber));
   }
 
   protected Optional<SilPeer> selectBestPeer() {
     List<SilPeerImmutableAttributes> peers =
         silContext
-            .getSilPeers()
+            .getEthPeers()
             .streamAvailablePeers()
             .filter((peer) -> peer.hasEstimatedChainHeight() && peer.isFullyValidated())
             .toList();
@@ -131,7 +130,7 @@ public class PivotSelectorFromPeers implements PivotBlockSelector {
       return Optional.empty();
     } else {
       return peers.stream()
-          .max(silContext.getSilPeers().getBestPeerComparator())
+          .max(silContext.getEthPeers().getBestPeerComparator())
           .map(SilPeerImmutableAttributes::silPeer);
     }
   }

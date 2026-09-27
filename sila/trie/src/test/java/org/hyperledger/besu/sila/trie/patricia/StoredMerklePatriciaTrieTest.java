@@ -16,11 +16,11 @@ package org.hyperledger.besu.sila.trie.patricia;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.trie.KeyValueMerkleStorage;
 import org.hyperledger.besu.sila.trie.MerkleStorage;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Optional;

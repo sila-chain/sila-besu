@@ -22,12 +22,12 @@ import org.hyperledger.besu.sila.api.graphql.internal.Scalars;
 import java.util.Locale;
 
 import graphql.GraphQLContext;
-import graphql.execution.CosrcedVariables;
+import graphql.execution.CoercedVariables;
 import graphql.language.FloatValue;
 import graphql.language.StringValue;
-import graphql.schema.CosrcingParseLiteralException;
-import graphql.schema.CosrcingParseValueException;
-import graphql.schema.CosrcingSerializeException;
+import graphql.schema.CoercingParseLiteralException;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import org.apache.tuweni.units.bigints.UInt256;
 import org.junit.jupiter.api.BeforeEach;
@@ -46,7 +46,7 @@ public class BigIntScalarTest {
     final String result =
         (String)
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .parseValue(value, GraphQLContext.newContext().build(), Locale.ENGLISH);
     assertThat(result).isEqualTo(str);
   }
@@ -56,9 +56,9 @@ public class BigIntScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseValue(3.2, GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseValueException.class);
+        .isInstanceOf(CoercingParseValueException.class);
   }
 
   @Test
@@ -66,7 +66,7 @@ public class BigIntScalarTest {
     final String result =
         (String)
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .serialize(value, GraphQLContext.newContext().build(), Locale.ENGLISH);
     assertThat(result).isEqualTo(str);
   }
@@ -76,9 +76,9 @@ public class BigIntScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .serialize(3.2, GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingSerializeException.class);
+        .isInstanceOf(CoercingSerializeException.class);
   }
 
   @Test
@@ -86,13 +86,13 @@ public class BigIntScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseLiteral(
                         FloatValue.of(3.2),
-                        CosrcedVariables.emptyVariables(),
+                        CoercedVariables.emptyVariables(),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @Test
@@ -100,13 +100,13 @@ public class BigIntScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseLiteral(
                         invalidStrValue,
-                        CosrcedVariables.emptyVariables(),
+                        CoercedVariables.emptyVariables(),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @BeforeEach

@@ -35,7 +35,7 @@ import org.apache.tuweni.bytes.Bytes;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 /**
  * Acceptance tests for SIP-8024 stack opcodes (DUPN, SWAPN, EXCHANGE).

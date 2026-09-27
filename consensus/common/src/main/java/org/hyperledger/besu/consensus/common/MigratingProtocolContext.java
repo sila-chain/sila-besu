@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.consensus.common;
 
+import org.hyperledger.besu.plugin.ServiceManager;
+import org.hyperledger.besu.plugin.data.BlockHeader;
 import org.hyperledger.besu.sila.ConsensusContext;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.plugin.ServiceManager;
-import org.hyperledger.besu.plugin.data.BlockHeader;
 
 /** The Migrating protocol context. */
 public class MigratingProtocolContext extends ProtocolContext {

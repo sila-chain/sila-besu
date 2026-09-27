@@ -23,6 +23,8 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.services.tasks.Task;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.AccountRangeDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.BytecodeRequest;
@@ -33,8 +35,6 @@ import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateK
 import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.services.tasks.Task;
 
 import java.util.Collections;
 import java.util.List;

@@ -20,6 +20,7 @@ import org.hyperledger.besu.sila.trie.NodeLoader;
 import org.hyperledger.besu.sila.trie.PathNodeVisitor;
 import org.hyperledger.besu.sila.trie.StoredMerkleTrie;
 
+import java.util.Optional;
 import java.util.function.Function;
 
 import org.apache.tuweni.bytes.Bytes;
@@ -80,5 +81,10 @@ public class StoredMerklePatriciaTrie<K extends Bytes, V> extends StoredMerkleTr
   @Override
   public PathNodeVisitor<V> getPutVisitor(final V value) {
     return new PutVisitor<>(nodeFactory, value);
+  }
+
+  protected PathNodeVisitor<V> getDeferredPutVisitor(
+      final Function<Optional<V>, Optional<V>> merger) {
+    return new DeferredPutVisitor<>(nodeFactory, merger);
   }
 }

@@ -22,6 +22,7 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.config.BftConfigOptions;
+import org.hyperledger.besu.config.JsonBftConfigOptions;
 import org.hyperledger.besu.config.JsonGenesisConfigOptions;
 import org.hyperledger.besu.config.JsonQbftConfigOptions;
 import org.hyperledger.besu.config.JsonUtil;
@@ -35,22 +36,28 @@ import org.hyperledger.besu.consensus.common.bft.MutableBftConfigOptions;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.MilestoneStreamingProtocolSchedule;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Util;
-import org.hyperledger.besu.sila.core.components.SilaCoreComponent;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.core.components.EthereumCoreComponent;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.util.number.PositiveNumber;
 
 import java.math.BigInteger;
+import java.time.Duration;
 import java.util.List;
+import java.util.OptionalLong;
 import javax.inject.Singleton;
 
+import com.fasterxml.jackson.databind.node.ObjectNode;
 import dagger.Component;
 import dagger.Module;
 import dagger.Provides;
@@ -62,12 +69,12 @@ public class IbftProtocolScheduleTest {
   private ProtocolContext protocolContext;
   private List<Address> validators;
   private NodeKey proposerNodeKey;
-  private TestSilCoreComponent component;
+  private TestEthCoreComponent component;
 
   @BeforeEach
   public void setup() {
-    TestSilCoreComponent component =
-        DaggerIbftProtocolScheduleTest_TestSilCoreComponent.builder().build();
+    TestEthCoreComponent component =
+        DaggerIbftProtocolScheduleTest_TestEthCoreComponent.builder().build();
     this.component = component;
     this.protocolContext = component.protocolContext();
     this.validators = component.validators();
@@ -94,6 +101,65 @@ public class IbftProtocolScheduleTest {
     assertThat(validateHeader(schedule, parentHeader, blockHeader, 0)).isTrue();
     assertThat(validateHeader(schedule, parentHeader, blockHeader, 1)).isTrue();
     assertThat(validateHeader(schedule, parentHeader, blockHeader, 2)).isTrue();
+  }
+
+  @Test
+  public void enforcesConfiguredTransactionGasLimit() {
+    final MutableBftConfigOptions genesisOptions =
+        new MutableBftConfigOptions(JsonBftConfigOptions.DEFAULT);
+    genesisOptions.setTransactionGasLimit(OptionalLong.of(8_000_000L));
+
+    final BftProtocolSchedule schedule =
+        createProtocolSchedule(component.bftExtraDataCodec(), genesisOptions);
+
+    // arbitraryTransition is the fork at block 1; look up via that block
+    assertThat(
+            schedule
+                .getByBlockNumberOrTimestamp(1, 0)
+                .getGasLimitCalculator()
+                .transactionGasLimitCap())
+        .isEqualTo(8_000_000L);
+  }
+
+  @Test
+  public void poaBlockTxsSelectionMaxTimeAppliesWhenShanghaiOrLaterForkIsConfigured() {
+    final long shanghaiTime = 10;
+    final ObjectNode genesisConfigNode = JsonUtil.createEmptyObjectNode();
+    genesisConfigNode.put("shanghaitime", shanghaiTime);
+
+    final BftProtocolSchedule schedule =
+        IbftProtocolScheduleBuilder.create(
+            JsonGenesisConfigOptions.fromJsonObject(genesisConfigNode),
+            new ForksSchedule<>(List.of(new ForkSpec<>(0, JsonBftConfigOptions.DEFAULT))),
+            false,
+            mock(BftExtraDataCodec.class),
+            SavmConfiguration.DEFAULT,
+            MiningConfiguration.MINING_DISABLED,
+            new BadBlockManager(),
+            false,
+            BalConfiguration.DEFAULT,
+            new NoOpMetricsSystem(),
+            8_000_000L);
+
+    final ProtocolSpec shanghaiSpec = schedule.getByBlockNumberOrTimestamp(1, shanghaiTime);
+
+    // 2s block period with --poa-block-txs-selection-max-time=75
+    final MiningConfiguration miningConfiguration =
+        ImmutableMiningConfiguration.builder()
+            .mutableInitValues(
+                ImmutableMiningConfiguration.MutableInitValues.builder()
+                    .blockPeriodSeconds(2)
+                    .build())
+            .poaBlockTxsSelectionMaxTime(PositiveNumber.fromInt(75))
+            .build();
+
+    // a BFT spec must not be marked as PoS, even with SilaShanghai or a later fork configured
+    assertThat(shanghaiSpec.isPoS()).isFalse();
+
+    // same expression BlockTransactionSelector uses to size the selection timeout: the PoA
+    // percentage of the block period must apply, not the PoS timeout (5000 ms by default)
+    assertThat(miningConfiguration.getBlockTxsSelectionMaxTime(false))
+        .isEqualTo(Duration.ofMillis(1500));
   }
 
   private boolean validateHeader(
@@ -130,7 +196,8 @@ public class IbftProtocolScheduleTest {
         new BadBlockManager(),
         false,
         BalConfiguration.DEFAULT,
-        new NoOpMetricsSystem());
+        new NoOpMetricsSystem(),
+        8_000_000L);
   }
 
   @Module
@@ -177,7 +244,7 @@ public class IbftProtocolScheduleTest {
 
   @Singleton
   @Component(modules = {NoMiningParamters.class, IbftProtocolScheduleModule.class})
-  interface TestSilCoreComponent extends SilaCoreComponent {
+  interface TestEthCoreComponent extends EthereumCoreComponent {
     ProtocolContext protocolContext();
 
     List<Address> validators();

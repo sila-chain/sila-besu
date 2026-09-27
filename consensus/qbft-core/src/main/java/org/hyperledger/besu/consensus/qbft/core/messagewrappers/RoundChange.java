@@ -22,10 +22,10 @@ import org.hyperledger.besu.consensus.qbft.core.payload.RoundChangePayload;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlock;
 import org.hyperledger.besu.consensus.qbft.core.types.QbftBlockCodec;
 import org.hyperledger.besu.sila.core.encoding.BlockAccessListDecoder;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -168,7 +168,6 @@ public class RoundChange extends BftMessage<RoundChangePayload> {
    * @return the round change
    */
   public static RoundChange decode(final Bytes data, final QbftBlockCodec blockEncoder) {
-
     final RLPInput rlpIn = RLP.input(data);
     final int items = rlpIn.enterList();
     final SignedData<RoundChangePayload> payload = readPayload(rlpIn, RoundChangePayload::readFrom);
@@ -190,7 +189,7 @@ public class RoundChange extends BftMessage<RoundChangePayload> {
         (items == LEGACY_ROUND_CHANGE_ITEM_COUNT) ? Optional.empty() : readBlockAccessList(rlpIn);
 
     final List<SignedData<PreparePayload>> prepares =
-        rlpIn.readList(r -> readPayload(r, PreparePayload::readFrom));
+        rlpIn.readList(r -> readPayload(r, PreparePayload::readFrom), MAX_LIST_ENTRIES);
     rlpIn.leaveList();
 
     return new RoundChange(payload, block, blockAccessList, blockEncoder, prepares);

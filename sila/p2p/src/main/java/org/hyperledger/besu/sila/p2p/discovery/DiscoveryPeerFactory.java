@@ -15,10 +15,10 @@
 package org.hyperledger.besu.sila.p2p.discovery;
 
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
-import org.hyperledger.besu.sila.p2p.discovery.dns.SilaNodeRecord;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 
-import org.sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class DiscoveryPeerFactory {
 
@@ -32,23 +32,23 @@ public class DiscoveryPeerFactory {
 
   public static DiscoveryPeer fromNodeRecord(
       final NodeRecord nodeRecord, final boolean preferIpv6Outbound) {
-    SilaNodeRecord enr = SilaNodeRecord.fromNodeRecord(nodeRecord);
-    return fromSilaNodeRecord(enr, preferIpv6Outbound);
+    EthereumNodeRecord enr = EthereumNodeRecord.fromNodeRecord(nodeRecord);
+    return fromEthereumNodeRecord(enr, preferIpv6Outbound);
   }
 
-  public static DiscoveryPeer fromSilaNodeRecord(final SilaNodeRecord enr) {
-    return fromSilaNodeRecord(enr, false);
+  public static DiscoveryPeer fromEthereumNodeRecord(final EthereumNodeRecord enr) {
+    return fromEthereumNodeRecord(enr, false);
   }
 
-  public static DiscoveryPeer fromSilaNodeRecord(
-      final SilaNodeRecord enr, final boolean preferIpv6Outbound) {
+  public static DiscoveryPeer fromEthereumNodeRecord(
+      final EthereumNodeRecord enr, final boolean preferIpv6Outbound) {
     DiscoveryPeer peer = fromEnode(buildEnodeUrl(enr, preferIpv6Outbound));
     peer.setNodeRecord(enr.nodeRecord());
     return peer;
   }
 
   private static EnodeURLImpl buildEnodeUrl(
-      final SilaNodeRecord enr, final boolean preferIpv6Outbound) {
+      final EthereumNodeRecord enr, final boolean preferIpv6Outbound) {
     final boolean hasIpv4 = enr.ip().isPresent();
     final boolean hasIpv6 = enr.ipV6().isPresent();
 

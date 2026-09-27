@@ -25,12 +25,12 @@ import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
 import org.hyperledger.besu.sila.core.BlockImporter;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockImportResult;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockImportResult;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
 import org.hyperledger.besu.sila.util.RawBlockIterator;
 
 import java.io.Closeable;

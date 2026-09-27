@@ -17,13 +17,13 @@ package org.hyperledger.besu.sila.sil.sync.snapsync.request.heal;
 import static org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator.applyForStrategy;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.trie.CompactEncoding;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 
 import java.util.List;
 import java.util.Optional;

@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.transactions;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.account.Account;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.util.Collection;
 import java.util.List;

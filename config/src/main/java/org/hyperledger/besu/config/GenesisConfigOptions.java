@@ -35,7 +35,7 @@ public interface GenesisConfigOptions {
    *
    * @return the boolean
    */
-  boolean isSilHash();
+  boolean isEthHash();
 
   /**
    * Is ibft legacy boolean (NOTE this is a deprecated feature).
@@ -249,28 +249,28 @@ public interface GenesisConfigOptions {
    *
    * @return the shanghai time
    */
-  OptionalLong getSilaShanghaiTime();
+  OptionalLong getShanghaiTime();
 
   /**
    * Gets cancun time.
    *
    * @return the cancun time
    */
-  OptionalLong getSilaCancunTime();
+  OptionalLong getCancunTime();
 
   /**
    * Gets prague time.
    *
    * @return the prague time
    */
-  OptionalLong getSilaPragueTime();
+  OptionalLong getPragueTime();
 
   /**
    * Gets SilaOsaka time.
    *
    * @return the osaka time
    */
-  OptionalLong getSilaOsakaTime();
+  OptionalLong getOsakaTime();
 
   /**
    * Gets bpo1 time.
@@ -312,21 +312,21 @@ public interface GenesisConfigOptions {
    *
    * @return the SilaAmsterdam time
    */
-  OptionalLong getSilaAmsterdamTime();
+  OptionalLong getAmsterdamTime();
 
   /**
    * Gets future sips time.
    *
    * @return the future sips time
    */
-  OptionalLong getFutureSipsTime();
+  OptionalLong getFutureEipsTime();
 
   /**
    * Gets experimental sips time.
    *
    * @return the experimental sips time
    */
-  OptionalLong getExperimentalSipsTime();
+  OptionalLong getExperimentalEipsTime();
 
   /**
    * Gets base fee per gas.
@@ -389,7 +389,7 @@ public interface GenesisConfigOptions {
    *
    * @return the savm stack size
    */
-  OptionalInt getSavmStackSize();
+  OptionalInt getEvmStackSize();
 
   /**
    * As map map.
@@ -448,6 +448,26 @@ public interface GenesisConfigOptions {
    * @return the consolidation request contract address
    */
   Optional<Address> getConsolidationRequestContractAddress();
+
+  /**
+   * The SIP-8282 builder deposit request contract address. Defaults to the spec-fixed address when
+   * not configured.
+   *
+   * @return the builder deposit request contract address
+   */
+  default Optional<Address> getBuilderDepositRequestContractAddress() {
+    return Optional.empty();
+  }
+
+  /**
+   * The SIP-8282 builder exit request contract address. Defaults to the spec-fixed address when not
+   * configured.
+   *
+   * @return the builder exit request contract address
+   */
+  default Optional<Address> getBuilderExitRequestContractAddress() {
+    return Optional.empty();
+  }
 
   /**
    * The blob schedule is a list of hardfork names and their associated target and max blob values.

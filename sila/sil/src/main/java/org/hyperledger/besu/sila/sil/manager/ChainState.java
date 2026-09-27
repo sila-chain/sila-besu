@@ -66,7 +66,7 @@ public class ChainState implements ChainHeadEstimate {
 
   public void statusReceived(final StatusMessage statusMessage) {
     synchronized (this) {
-      if (statusMessage.isSil69Compatible()) {
+      if (statusMessage.isEth69Compatible()) {
         statusReceived(
             statusMessage.bestHash(),
             statusMessage.blockRange().orElseThrow().latestBlock(),

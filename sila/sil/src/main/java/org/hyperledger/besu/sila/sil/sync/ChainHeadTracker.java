@@ -16,14 +16,14 @@ package org.hyperledger.besu.sila.sil.sync;
 
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask.Direction;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;
@@ -50,9 +50,9 @@ public class ChainHeadTracker {
       final Blockchain blockchain,
       final Supplier<TrailingPeerRequirements> trailingPeerRequirementsCalculator) {
     final TrailingPeerLimiter trailingPeerLimiter =
-        new TrailingPeerLimiter(silContext.getSilPeers(), trailingPeerRequirementsCalculator);
+        new TrailingPeerLimiter(silContext.getEthPeers(), trailingPeerRequirementsCalculator);
     final ChainHeadTracker tracker = new ChainHeadTracker(silContext, protocolSchedule);
-    silContext.getSilPeers().setChainHeadTracker(tracker);
+    silContext.getEthPeers().setChainHeadTracker(tracker);
     blockchain.observeBlockAdded(trailingPeerLimiter);
   }
 

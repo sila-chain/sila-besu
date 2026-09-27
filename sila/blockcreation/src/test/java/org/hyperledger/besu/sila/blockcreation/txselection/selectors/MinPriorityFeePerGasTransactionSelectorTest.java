@@ -20,13 +20,13 @@ import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext;
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionEvaluationContext;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
-import org.hyperledger.besu.plugin.data.TransactionSelectionResult;
 
 import com.google.common.base.Stopwatch;
 import com.google.common.base.Supplier;

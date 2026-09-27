@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.savm.precompile;
 
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP2537;
 
 import com.github.benmanes.caffeine.cache.Cache;
 import org.apache.tuweni.bytes.Bytes;
@@ -23,12 +23,12 @@ import org.apache.tuweni.bytes.Bytes;
 public class BLS12G1AddPrecompiledContract extends AbstractBLS12PrecompiledContract {
 
   private static final int PARAMETER_LENGTH = 256;
-  private static final Cache<Integer, PrecompileInputResultTuple> g1AddCache =
+  private static final Cache<Bytes, PrecompileInputResultTuple> g1AddCache =
       AbstractPrecompiledContract.resultCacheBuilder().build();
 
   /** Instantiates a new BLS12G1 Add precompiled contract. */
   BLS12G1AddPrecompiledContract() {
-    super("BLS12_G1ADD", LibGnarkSIP2537.BLS12_G1ADD_OPERATION_SHIM_VALUE, PARAMETER_LENGTH);
+    super("BLS12_G1ADD", LibGnarkEIP2537.BLS12_G1ADD_OPERATION_SHIM_VALUE, PARAMETER_LENGTH);
   }
 
   @Override
@@ -37,7 +37,7 @@ public class BLS12G1AddPrecompiledContract extends AbstractBLS12PrecompiledContr
   }
 
   @Override
-  protected Cache<Integer, PrecompileInputResultTuple> getCache() {
+  protected Cache<Bytes, PrecompileInputResultTuple> getCache() {
     return g1AddCache;
   }
 }

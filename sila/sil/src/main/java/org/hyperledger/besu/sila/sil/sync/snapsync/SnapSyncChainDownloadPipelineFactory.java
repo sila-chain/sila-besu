@@ -14,39 +14,39 @@
  */
 package org.hyperledger.besu.sila.sil.sync.snapsync;
 
-import org.hyperledger.besu.sila.ProtocolContext;
-import org.hyperledger.besu.sila.chain.DefaultBlockchain;
-import org.hyperledger.besu.sila.chain.MutableBlockchain;
-import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.core.encoding.receipt.SyncTransactionReceiptEncoder;
-import org.hyperledger.besu.sila.sil.manager.SilContext;
-import org.hyperledger.besu.sila.sil.sync.DownloadSyncBodiesStep;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.sync.common.BackwardBlockNumberSource;
-import org.hyperledger.besu.sila.sil.sync.common.BlockHeaderSource;
-import org.hyperledger.besu.sila.sil.sync.common.ChainSyncState;
-import org.hyperledger.besu.sila.sil.sync.common.DownloadBackwardHeadersStep;
-import org.hyperledger.besu.sila.sil.sync.common.DownloadSyncReceiptsStep;
-import org.hyperledger.besu.sila.sil.sync.common.ImportHeadersStep;
-import org.hyperledger.besu.sila.sil.sync.common.ImportSyncBlocksStep;
-import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.rlp.SimpleNoCopyRlpEncoder;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.services.pipeline.Pipeline;
 import org.hyperledger.besu.services.pipeline.PipelineBuilder;
+import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.chain.ChainDataPruner;
+import org.hyperledger.besu.sila.chain.DefaultBlockchain;
+import org.hyperledger.besu.sila.chain.MutableBlockchain;
+import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.core.encoding.receipt.SyncTransactionReceiptEncoder;
+import org.hyperledger.besu.sila.rlp.SimpleNoCopyRlpEncoder;
+import org.hyperledger.besu.sila.sil.manager.SilContext;
+import org.hyperledger.besu.sila.sil.sync.DownloadSyncBodiesStep;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.sync.common.BackwardHeaderDriver;
+import org.hyperledger.besu.sila.sil.sync.common.BlockHeaderSource;
+import org.hyperledger.besu.sila.sil.sync.common.ChainSyncState;
+import org.hyperledger.besu.sila.sil.sync.common.DownloadBackwardHeadersStep;
+import org.hyperledger.besu.sila.sil.sync.common.DownloadSyncReceiptsStep;
+import org.hyperledger.besu.sila.sil.sync.common.ImportSyncBlocksStep;
+import org.hyperledger.besu.sila.sil.sync.state.SyncState;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
 public class SnapSyncChainDownloadPipelineFactory {
 
-  record BackwardHeaderPipelineResult(
-      Pipeline<Long> pipeline, ImportHeadersStep importHeadersStep) {}
+  record BackwardHeaderPipelineResult(Pipeline<Long> pipeline, BackwardHeaderDriver driver) {}
 
   private static final Logger LOG =
       LoggerFactory.getLogger(SnapSyncChainDownloadPipelineFactory.class);
@@ -57,6 +57,7 @@ public class SnapSyncChainDownloadPipelineFactory {
   protected final SilContext silContext;
   protected final SnapSyncProcessState fastSyncState;
   protected final MetricsSystem metricsSystem;
+  protected final Optional<ChainDataPruner> chainDataPruner;
 
   public SnapSyncChainDownloadPipelineFactory(
       final SynchronizerConfiguration syncConfig,
@@ -64,13 +65,15 @@ public class SnapSyncChainDownloadPipelineFactory {
       final ProtocolContext protocolContext,
       final SilContext silContext,
       final SnapSyncProcessState fastSyncState,
-      final MetricsSystem metricsSystem) {
+      final MetricsSystem metricsSystem,
+      final Optional<ChainDataPruner> chainDataPruner) {
     this.syncConfig = syncConfig;
     this.protocolSchedule = protocolSchedule;
     this.protocolContext = protocolContext;
     this.silContext = silContext;
     this.fastSyncState = fastSyncState;
     this.metricsSystem = metricsSystem;
+    this.chainDataPruner = chainDataPruner;
   }
 
   /**
@@ -88,16 +91,9 @@ public class SnapSyncChainDownloadPipelineFactory {
     final int headerRequestSize = syncConfig.getDownloaderHeaderRequestSize();
 
     // Lower anchor: the floor block (already in DB, lowest downloaded header must connect to it)
-    final BlockHeader lowerAnchor =
-        chainState.headerDownloadAnchor() != null
-            ? chainState.headerDownloadAnchor()
-            : chainState.blockDownloadAnchor();
+    final BlockHeader lowerAnchor = chainState.headerDownloadAnchor();
 
-    // Upper bound: if we have progress, resume below it; otherwise start from pivot
-    final BlockHeader upperBound =
-        chainState.headerDownloadProgress() != null
-            ? chainState.headerDownloadProgress()
-            : chainState.pivotBlockHeader();
+    final BlockHeader upperBound = chainState.pivotBlockHeader();
 
     LOG.info(
         "Creating backward header download pipeline from upper={} down to lower={}, parallelism={}, batchSize={}, peers={}",
@@ -105,11 +101,15 @@ public class SnapSyncChainDownloadPipelineFactory {
         lowerAnchor.getNumber(),
         downloaderParallelism,
         headerRequestSize,
-        silContext.getSilPeers().peerCount());
+        silContext.getEthPeers().peerCount());
 
-    final BackwardBlockNumberSource headerSource =
-        new BackwardBlockNumberSource(
-            headerRequestSize, lowerAnchor.getNumber() + 1L, upperBound.getNumber() - 1L);
+    final BackwardHeaderDriver backwardHeaderDriver =
+        new BackwardHeaderDriver(
+            headerRequestSize,
+            lowerAnchor,
+            upperBound,
+            chainState.bodyCheckpoint(),
+            protocolContext.getBlockchain());
 
     final DownloadBackwardHeadersStep downloadStep =
         new DownloadBackwardHeadersStep(
@@ -117,15 +117,13 @@ public class SnapSyncChainDownloadPipelineFactory {
             silContext,
             headerRequestSize,
             lowerAnchor.getNumber(),
+            chainState.bodyCheckpoint().getNumber(),
             Duration.ofMillis(syncConfig.getBackwardHeadersDownloadStepTimeoutMillis()));
-
-    final ImportHeadersStep importHeadersStep =
-        new ImportHeadersStep(protocolContext.getBlockchain(), lowerAnchor, upperBound);
 
     final Pipeline<Long> pipeline =
         PipelineBuilder.createPipelineFrom(
                 "backwardHeaderSource",
-                headerSource,
+                backwardHeaderDriver,
                 downloaderParallelism,
                 metricsSystem.createLabelledCounter(
                     BesuMetricCategory.SYNCHRONIZER,
@@ -139,9 +137,9 @@ public class SnapSyncChainDownloadPipelineFactory {
                 "downloadBackwardHeaders",
                 downloadStep,
                 downloaderParallelism * headerDownloadParallelismFactor)
-            .andFinishWith("importHeadersStep", importHeadersStep);
+            .andFinishWith("importHeadersStep", backwardHeaderDriver);
 
-    return new BackwardHeaderPipelineResult(pipeline, importHeadersStep);
+    return new BackwardHeaderPipelineResult(pipeline, backwardHeaderDriver);
   }
 
   /**
@@ -193,7 +191,8 @@ public class SnapSyncChainDownloadPipelineFactory {
             syncState,
             anchorBlock,
             pivotHeader.getNumber(),
-            syncConfig.getSnapSyncConfiguration().isSnapSyncTransactionIndexingEnabled());
+            syncConfig.getSnapSyncConfiguration().isSnapSyncTransactionIndexingEnabled(),
+            chainDataPruner);
 
     return PipelineBuilder.createPipelineFrom(
             "forwardHeaderSource",

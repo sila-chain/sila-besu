@@ -38,7 +38,7 @@ public interface NativeRequirement {
    */
   record NativeRequirementResult(Boolean present, String libname, Optional<String> errorMessage) {}
 
-  /** Sila sila-mainnet-like performance requirements: */
+  /** Sila mainnet-like performance requirements: */
   Supplier<List<NativeRequirementResult>> SILA_MAINNET =
       () -> {
         List<NativeRequirementResult> requirements = new ArrayList<>();

@@ -54,8 +54,8 @@ public class SilSchedulerShutdownTest {
 
   @Test
   public void shutdown_syncWorkerShutsDown() throws InterruptedException {
-    final MockSilTask task1 = new MockSilTask(1);
-    final MockSilTask task2 = new MockSilTask();
+    final MockEthTask task1 = new MockEthTask(1);
+    final MockEthTask task2 = new MockEthTask();
 
     silScheduler.scheduleSyncWorkerTask(task1::executeTask);
     silScheduler.scheduleSyncWorkerTask(task2::executeTask);
@@ -72,7 +72,7 @@ public class SilSchedulerShutdownTest {
 
   @Test
   public void shutdown_scheduledWorkerShutsDown() throws InterruptedException {
-    final MockSilTask task = new MockSilTask(1);
+    final MockEthTask task = new MockEthTask(1);
 
     silScheduler.scheduleFutureTask(task::executeTask, Duration.ofMillis(0));
     silScheduler.stop();
@@ -87,8 +87,8 @@ public class SilSchedulerShutdownTest {
 
   @Test
   public void shutdown_txWorkerShutsDown() throws InterruptedException {
-    final MockSilTask task1 = new MockSilTask(1);
-    final MockSilTask task2 = new MockSilTask();
+    final MockEthTask task1 = new MockEthTask(1);
+    final MockEthTask task2 = new MockEthTask();
 
     silScheduler.scheduleTxWorkerTask(task1::executeTask);
     silScheduler.scheduleTxWorkerTask(task2::executeTask);
@@ -105,8 +105,8 @@ public class SilSchedulerShutdownTest {
 
   @Test
   public void shutdown_servicesShutsDown() throws InterruptedException {
-    final MockSilTask task1 = new MockSilTask(1);
-    final MockSilTask task2 = new MockSilTask();
+    final MockEthTask task1 = new MockEthTask(1);
+    final MockEthTask task2 = new MockEthTask();
 
     silScheduler.scheduleServiceTask(task1);
     silScheduler.scheduleServiceTask(task2);
@@ -123,8 +123,8 @@ public class SilSchedulerShutdownTest {
 
   @Test
   public void shutdown_computationShutsDown() throws InterruptedException {
-    final MockSilTask task1 = new MockSilTask(1);
-    final MockSilTask task2 = new MockSilTask();
+    final MockEthTask task1 = new MockEthTask(1);
+    final MockEthTask task2 = new MockEthTask();
 
     silScheduler.scheduleComputationTask(
         () -> {
@@ -144,6 +144,24 @@ public class SilSchedulerShutdownTest {
 
     assertThat(computationExecutor.isShutdown()).isTrue();
     assertThat(computationExecutor.isTerminated()).isTrue();
+    assertThat(task2.hasBeenStarted()).isFalse();
+  }
+
+  @Test
+  public void shutdown_blockCreationShutsDown() throws InterruptedException {
+    final MockEthTask task1 = new MockEthTask(1);
+    final MockEthTask task2 = new MockEthTask();
+
+    silScheduler.scheduleBlockCreationTask(1L, task1::executeTask);
+    silScheduler.scheduleBlockCreationTask(2L, task2::executeTask);
+    silScheduler.stop();
+
+    assertThat(blockCreationExecutor.isShutdown()).isTrue();
+
+    silScheduler.awaitStop();
+
+    assertThat(blockCreationExecutor.isShutdown()).isTrue();
+    assertThat(blockCreationExecutor.isTerminated()).isTrue();
     assertThat(task2.hasBeenStarted()).isFalse();
   }
 }

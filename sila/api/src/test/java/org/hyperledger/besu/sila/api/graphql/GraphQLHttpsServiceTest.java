@@ -22,10 +22,10 @@ import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.api.query.TransactionWithMetadata;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Synchronizer;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.testutil.BlockTestUtil;
 
 import java.io.File;

@@ -22,7 +22,7 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCo
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.Collection;
 import java.util.Collections;
@@ -92,7 +92,7 @@ class PivotBlockConfirmer {
     synchronized (runningQueries) {
       for (SilPeer silPeer :
           silContext
-              .getSilPeers()
+              .getEthPeers()
               .streamBestPeers()
               .map(SilPeerImmutableAttributes::silPeer)
               .toList()
@@ -129,7 +129,7 @@ class PivotBlockConfirmer {
     } else if (votes >= numberOfPeersToQuery) {
       // We've received the required number of votes and have selected our pivot block
       LOG.info("Confirmed pivot block at {}: {}", pivotBlockNumber, blockHeader.getHash());
-      result.complete(new SnapSyncProcessState(blockHeader, false));
+      result.complete(new SnapSyncProcessState(blockHeader));
     } else {
       LOG.info(
           "Received {} confirmation(s) for pivot block header {}: {}",
@@ -160,7 +160,7 @@ class PivotBlockConfirmer {
             1,
             0,
             GetHeadersFromPeerTask.Direction.FORWARD,
-            silContext.getSilPeers().getMaxPeers(),
+            silContext.getEthPeers().getMaxPeers(),
             protocolSchedule);
     if (isCancelled.get()) {
       return CompletableFuture.failedFuture(
@@ -184,7 +184,7 @@ class PivotBlockConfirmer {
                   return executePivotQuery(
                       blockNumber,
                       silContext
-                          .getSilPeers()
+                          .getEthPeers()
                           .waitForPeer((p) -> !peersUsed.contains(p.silPeer()))
                           .get());
                 } catch (InterruptedException | ExecutionException e) {

@@ -15,15 +15,15 @@
 package org.hyperledger.besu.consensus.merge;
 
 import org.hyperledger.besu.datatypes.HardforkId;
+import org.hyperledger.besu.plugin.services.txvalidator.TransactionValidationRule;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.PermissionTransactionFilter;
 import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
-import org.hyperledger.besu.plugin.services.txvalidator.TransactionValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
 
 import java.math.BigInteger;
 import java.util.List;

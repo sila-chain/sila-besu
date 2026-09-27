@@ -25,13 +25,13 @@ import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.AbstractBlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.MiningBeneficiaryCalculator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.AbstractBlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.MiningBeneficiaryCalculator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
 
 import java.util.Collections;
 import java.util.List;
@@ -79,7 +79,7 @@ public class RewardTraceGeneratorTest {
   }
 
   @Test
-  public void assertThatTraceGeneratorReturnValidRewardsForSilaMainnetBlockProcessor() {
+  public void assertThatTraceGeneratorReturnValidRewardsForMainnetBlockProcessor() {
     final AbstractBlockProcessor.TransactionReceiptFactory transactionReceiptFactory =
         mock(AbstractBlockProcessor.TransactionReceiptFactory.class);
     final SilaMainnetBlockProcessor blockProcessor =

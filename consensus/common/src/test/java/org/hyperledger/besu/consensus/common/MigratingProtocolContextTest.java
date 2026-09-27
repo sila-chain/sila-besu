@@ -18,12 +18,12 @@ import static org.assertj.core.api.Assertions.assertThat;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.ServiceManager;
 import org.hyperledger.besu.sila.ConsensusContext;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.plugin.ServiceManager;
 
 import java.util.List;
 

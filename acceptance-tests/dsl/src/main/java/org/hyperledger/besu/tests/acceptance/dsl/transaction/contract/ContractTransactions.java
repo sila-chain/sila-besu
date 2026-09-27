@@ -19,7 +19,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.DeploySmartContract
 
 import java.math.BigInteger;
 
-import org.web3j.tx.Contract;
+import sila.web3j.tx.Contract;
 
 public class ContractTransactions {
 

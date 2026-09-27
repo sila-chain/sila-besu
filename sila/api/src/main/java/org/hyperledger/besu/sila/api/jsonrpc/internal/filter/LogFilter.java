@@ -18,6 +18,7 @@ import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.BlockParameter;
 import org.hyperledger.besu.sila.api.query.LogsQuery;
 import org.hyperledger.besu.sila.core.LogWithMetadata;
 
+import java.time.Duration;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -33,8 +34,9 @@ class LogFilter extends Filter {
       final String id,
       final BlockParameter fromBlock,
       final BlockParameter toBlock,
-      final LogsQuery logsQuery) {
-    super(id);
+      final LogsQuery logsQuery,
+      final Duration expireDuration) {
+    super(id, expireDuration);
     this.fromBlock = fromBlock;
     this.toBlock = toBlock;
     this.logsQuery = logsQuery;

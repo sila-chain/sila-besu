@@ -21,7 +21,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 
 import java.io.IOException;
 
-import org.web3j.protocol.core.methods.response.SilSyncing;
+import sila.web3j.protocol.core.methods.response.EthSyncing;
 
 public class SilSyncingTransaction implements Transaction<Boolean> {
 
@@ -30,7 +30,7 @@ public class SilSyncingTransaction implements Transaction<Boolean> {
   @Override
   public Boolean execute(final NodeRequests node) {
     try {
-      SilSyncing response = node.sil().silSyncing().send();
+      EthSyncing response = node.sil().ethSyncing().send();
       assertThat(response).isNotNull();
       return response.isSyncing();
     } catch (final IOException e) {

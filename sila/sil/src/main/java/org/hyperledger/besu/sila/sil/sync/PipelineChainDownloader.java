@@ -17,18 +17,18 @@ package org.hyperledger.besu.sila.sil.sync;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.hyperledger.besu.util.FutureUtils.exceptionallyCompose;
 
-import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.manager.exceptions.SilTaskException;
-import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
-import org.hyperledger.besu.sila.sil.sync.tasks.exceptions.InvalidBlockException;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.metrics.SyncDurationMetrics;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.services.pipeline.Pipeline;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.sil.manager.SilScheduler;
+import org.hyperledger.besu.sila.sil.manager.exceptions.SilTaskException;
+import org.hyperledger.besu.sila.sil.sync.state.SyncState;
+import org.hyperledger.besu.sila.sil.sync.state.SyncTarget;
+import org.hyperledger.besu.sila.sil.sync.tasks.exceptions.InvalidBlockException;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.time.Duration;

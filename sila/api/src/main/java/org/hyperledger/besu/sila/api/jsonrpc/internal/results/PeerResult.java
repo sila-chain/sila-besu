@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.api.jsonrpc.internal.results;
 
-import org.hyperledger.besu.sila.sil.SilProtocol;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
+import org.hyperledger.besu.sila.sil.SilProtocol;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
 
 import java.util.List;
 import java.util.Map;
@@ -35,7 +35,7 @@ import org.immutables.value.Value;
 @Value.Style(allParameters = true)
 public interface PeerResult {
 
-  static PeerResult fromSilPeer(final SilPeer peer) {
+  static PeerResult fromEthPeer(final SilPeer peer) {
     final PeerConnection connection = peer.getConnection();
     final PeerInfo peerInfo = connection.getPeerInfo();
     return ImmutablePeerResult.builder()
@@ -53,7 +53,7 @@ public interface PeerResult {
                 connection.inboundInitiated()))
         .port(Quantity.create(peerInfo.getPort()))
         .id(peerInfo.getNodeId().toString())
-        .protocols(Map.of(SilProtocol.NAME, ProtocolsResult.fromSilPeer(peer)))
+        .protocols(Map.of(SilProtocol.NAME, ProtocolsResult.fromEthPeer(peer)))
         .enode(connection.getRemoteEnode().toString())
         .build();
   }

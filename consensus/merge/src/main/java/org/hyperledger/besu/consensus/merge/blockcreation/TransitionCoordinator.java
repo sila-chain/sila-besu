@@ -24,7 +24,7 @@ import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -155,15 +155,8 @@ public class TransitionCoordinator extends TransitionUtils<MiningCoordinator>
   }
 
   @Override
-  public ForkchoiceResult updateForkChoiceWithoutLegacySkip(
-      final BlockHeader newHead, final Hash finalizedBlockHash, final Hash safeBlockHash) {
-    return mergeCoordinator.updateForkChoiceWithoutLegacySkip(
-        newHead, finalizedBlockHash, safeBlockHash);
-  }
-
-  @Override
-  public boolean isAncestorOfFinalized(final Hash candidateHeadHash) {
-    return mergeCoordinator.isAncestorOfFinalized(candidateHeadHash);
+  public boolean isAncestorOfFinalized(final BlockHeader candidateHeadBlockHeader) {
+    return mergeCoordinator.isAncestorOfFinalized(candidateHeadBlockHeader);
   }
 
   @Override
@@ -212,6 +205,11 @@ public class TransitionCoordinator extends TransitionUtils<MiningCoordinator>
   }
 
   @Override
+  public boolean checkAndMarkBadDescendant(final Hash blockHash) {
+    return mergeCoordinator.checkAndMarkBadDescendant(blockHash);
+  }
+
+  @Override
   public Optional<Hash> getLatestValidHashOfBadBlock(final Hash blockHash) {
     return mergeCoordinator.getLatestValidHashOfBadBlock(blockHash);
   }
@@ -232,7 +230,7 @@ public class TransitionCoordinator extends TransitionUtils<MiningCoordinator>
    * @return get the Sil scheduler
    */
   @Override
-  public SilScheduler getSilScheduler() {
-    return mergeCoordinator.getSilScheduler();
+  public SilScheduler getEthScheduler() {
+    return mergeCoordinator.getEthScheduler();
   }
 }

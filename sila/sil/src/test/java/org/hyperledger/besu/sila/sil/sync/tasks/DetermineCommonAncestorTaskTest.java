@@ -27,6 +27,8 @@ import static org.mockito.Mockito.spy;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
@@ -35,13 +37,14 @@ import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.ProtocolScheduleFixture;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.exceptions.SilTaskException;
 import org.hyperledger.besu.sila.sil.manager.exceptions.SilTaskException.FailureReason;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
@@ -50,12 +53,9 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.task.SilTask;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.util.ExceptionUtils;
 
 import java.util.ArrayList;
@@ -97,7 +97,7 @@ public class DetermineCommonAncestorTaskTest {
             .setBlockchain(localBlockchain)
             .setWorldStateArchive(worldStateArchive)
             .setTransactionPool(mock(TransactionPool.class))
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
     silContext = silProtocolManager.silContext();
@@ -113,7 +113,7 @@ public class DetermineCommonAncestorTaskTest {
     final Block block = blockDataGenerator.nextBlock(localBlockchain.getChainHeadBlock());
     localBlockchain.appendBlock(block, blockDataGenerator.receipts(block));
 
-    final RespondingSilPeer respondingSilPeer =
+    final RespondingEthPeer respondingEthPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     final SilTask<BlockHeader> task =
@@ -121,7 +121,7 @@ public class DetermineCommonAncestorTaskTest {
             protocolSchedule,
             protocolContext,
             silContext,
-            respondingSilPeer.getSilPeer(),
+            respondingEthPeer.getEthPeer(),
             defaultHeaderRequestSize,
             metricsSystem);
 
@@ -129,11 +129,11 @@ public class DetermineCommonAncestorTaskTest {
         new PeerTaskExecutorResult<>(
             Optional.of(Collections.emptyList()),
             PeerTaskExecutorResponseCode.PEER_DISCONNECTED,
-            List.of(respondingSilPeer.getSilPeer()));
+            List.of(respondingEthPeer.getEthPeer()));
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingSilPeer.getSilPeer())))
+                Mockito.eq(respondingEthPeer.getEthPeer())))
         .thenReturn(taskResult);
 
     final AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -144,7 +144,7 @@ public class DetermineCommonAncestorTaskTest {
         });
 
     // Disconnect the target peer
-    respondingSilPeer.disconnect(DisconnectReason.CLIENT_QUITTING);
+    respondingEthPeer.disconnect(DisconnectReason.CLIENT_QUITTING);
 
     assertThat(failure.get()).isNotNull();
     final Throwable error = ExceptionUtils.rootCause(failure.get());
@@ -157,7 +157,7 @@ public class DetermineCommonAncestorTaskTest {
     final Block block = blockDataGenerator.nextBlock(localBlockchain.getChainHeadBlock());
     localBlockchain.appendBlock(block, blockDataGenerator.receipts(block));
 
-    final RespondingSilPeer respondingSilPeer =
+    final RespondingEthPeer respondingEthPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     final SilTask<BlockHeader> task =
@@ -165,7 +165,7 @@ public class DetermineCommonAncestorTaskTest {
             protocolSchedule,
             protocolContext,
             silContext,
-            respondingSilPeer.getSilPeer(),
+            respondingEthPeer.getEthPeer(),
             defaultHeaderRequestSize,
             metricsSystem);
 
@@ -173,11 +173,11 @@ public class DetermineCommonAncestorTaskTest {
         new PeerTaskExecutorResult<>(
             Optional.of(Collections.emptyList()),
             PeerTaskExecutorResponseCode.INVALID_RESPONSE,
-            List.of(respondingSilPeer.getSilPeer()));
+            List.of(respondingEthPeer.getEthPeer()));
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingSilPeer.getSilPeer())))
+                Mockito.eq(respondingEthPeer.getEthPeer())))
         .thenReturn(taskResult);
 
     final AtomicReference<Throwable> failure = new AtomicReference<>();
@@ -213,7 +213,7 @@ public class DetermineCommonAncestorTaskTest {
   public void shouldIssueConsistentNumberOfRequestsToPeer() {
     final Blockchain remoteBlockchain = setupLocalAndRemoteChains(101, 101, 1);
 
-    final RespondingSilPeer respondingSilPeer =
+    final RespondingEthPeer respondingEthPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     final SilTask<BlockHeader> task =
@@ -221,14 +221,14 @@ public class DetermineCommonAncestorTaskTest {
             protocolSchedule,
             protocolContext,
             silContext,
-            respondingSilPeer.getSilPeer(),
+            respondingEthPeer.getEthPeer(),
             defaultHeaderRequestSize,
             metricsSystem);
 
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingSilPeer.getSilPeer())))
+                Mockito.eq(respondingEthPeer.getEthPeer())))
         .thenAnswer(peerTaskExecutorResultAnswer(remoteBlockchain));
 
     final AtomicReference<BlockHeader> result = new AtomicReference<>();
@@ -243,7 +243,7 @@ public class DetermineCommonAncestorTaskTest {
 
     Mockito.verify(peerTaskExecutor, Mockito.times(2))
         .executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingSilPeer.getSilPeer()));
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingEthPeer.getEthPeer()));
   }
 
   @Test
@@ -251,9 +251,9 @@ public class DetermineCommonAncestorTaskTest {
     final Blockchain remoteBlockchain = setupLocalAndRemoteChains(100, 100, 96);
     final BlockHeader commonHeader = localBlockchain.getBlockHeader(95).get();
 
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(remoteBlockchain);
-    final RespondingSilPeer respondingSilPeer =
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(remoteBlockchain);
+    final RespondingEthPeer respondingEthPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     final DetermineCommonAncestorTask task =
@@ -261,7 +261,7 @@ public class DetermineCommonAncestorTaskTest {
             protocolSchedule,
             protocolContext,
             silContext,
-            respondingSilPeer.getSilPeer(),
+            respondingEthPeer.getEthPeer(),
             10,
             metricsSystem);
     final DetermineCommonAncestorTask spy = spy(task);
@@ -269,12 +269,12 @@ public class DetermineCommonAncestorTaskTest {
     Mockito.when(
             peerTaskExecutor.executeAgainstPeer(
                 Mockito.any(GetHeadersFromPeerTask.class),
-                Mockito.eq(respondingSilPeer.getSilPeer())))
+                Mockito.eq(respondingEthPeer.getEthPeer())))
         .thenAnswer(peerTaskExecutorResultAnswer(remoteBlockchain));
 
     // Execute task
     final CompletableFuture<BlockHeader> future = spy.run();
-    respondingSilPeer.respondWhile(responder, () -> !future.isDone());
+    respondingEthPeer.respondWhile(responder, () -> !future.isDone());
 
     final AtomicReference<BlockHeader> result = new AtomicReference<>();
     future.whenComplete(
@@ -287,14 +287,14 @@ public class DetermineCommonAncestorTaskTest {
 
     Mockito.verify(peerTaskExecutor)
         .executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingSilPeer.getSilPeer()));
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingEthPeer.getEthPeer()));
   }
 
   @Test
   public void returnsImmediatelyWhenThereIsNoWorkToDo() throws Exception {
-    final RespondingSilPeer respondingSilPeer =
+    final RespondingEthPeer respondingEthPeer =
         spy(SilProtocolManagerTestUtil.createPeer(silProtocolManager));
-    final SilPeer peer = spy(respondingSilPeer.getSilPeer());
+    final SilPeer peer = spy(respondingEthPeer.getEthPeer());
 
     final SilTask<BlockHeader> task =
         DetermineCommonAncestorTask.create(

@@ -19,7 +19,7 @@ import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.core.Synchronizer;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 /**
  * Interface representing the context for a GraphQL data fetcher.

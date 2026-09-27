@@ -18,6 +18,9 @@ import static com.google.common.base.Preconditions.checkArgument;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.peertask.InvalidPeerTaskResponseException;
@@ -25,11 +28,8 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTask;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskValidationResponse;
 import org.hyperledger.besu.sila.sil.messages.BlockAccessListsMessage;
 import org.hyperledger.besu.sila.sil.messages.GetBlockAccessListsMessage;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidation;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidation;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;

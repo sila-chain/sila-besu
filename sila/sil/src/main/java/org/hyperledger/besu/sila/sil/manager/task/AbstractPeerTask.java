@@ -14,14 +14,14 @@
  */
 package org.hyperledger.besu.sila.sil.manager.task;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerTask.PeerTaskResult;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.Optional;
 
-public abstract class AbstractPeerTask<R> extends AbstractSilTask<PeerTaskResult<R>> {
+public abstract class AbstractPeerTask<R> extends AbstractEthTask<PeerTaskResult<R>> {
   protected Optional<SilPeer> assignedPeer = Optional.empty();
   protected final SilContext silContext;
 

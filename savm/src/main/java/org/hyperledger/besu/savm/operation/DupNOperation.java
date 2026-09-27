@@ -78,11 +78,11 @@ public class DupNOperation extends AbstractFixedCostOperation {
     final int imm = (pc + 1 >= code.length) ? 0 : code[pc + 1] & 0xFF;
 
     // Check for invalid immediate range (91-127)
-    if (!Sip8024Decoder.VALID_SINGLE[imm]) {
+    if (!Eip8024Decoder.VALID_SINGLE[imm]) {
       return INVALID_IMMEDIATE;
     }
 
-    final int n = Sip8024Decoder.DECODE_SINGLE[imm];
+    final int n = Eip8024Decoder.DECODE_SINGLE[imm];
 
     try {
       // Duplicate the n'th stack item (1-indexed) to the top
@@ -103,6 +103,6 @@ public class DupNOperation extends AbstractFixedCostOperation {
    * @return the decoded n value, or -1 if the immediate is invalid
    */
   public static int decodeSingle(final int imm) {
-    return Sip8024Decoder.decodeSingle(imm);
+    return Eip8024Decoder.decodeSingle(imm);
   }
 }

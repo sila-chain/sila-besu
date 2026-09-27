@@ -1,5 +1,5 @@
 {
-  "comment" : "Revert. Note revertReason has been manually added to the response because OpenSila does not include it.",
+  "comment" : "Revert. Note revertReason has been manually added to the response because OpenEthereum does not include it.",
   "request" : {
     "jsonrpc" : "2.0",
     "method" : "trace_transaction",

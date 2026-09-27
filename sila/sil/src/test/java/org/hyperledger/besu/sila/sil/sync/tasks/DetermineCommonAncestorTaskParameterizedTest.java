@@ -20,6 +20,8 @@ import static org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider.cre
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
@@ -30,22 +32,20 @@ import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.ProtocolScheduleFixture;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.manager.RespondingEthPeer;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManager;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestBuilder;
 import org.hyperledger.besu.sila.sil.manager.SilProtocolManagerTestUtil;
-import org.hyperledger.besu.sila.sil.manager.RespondingSilPeer;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResponseCode;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.task.SilTask;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.ArrayList;
 import java.util.LinkedHashSet;
@@ -164,12 +164,12 @@ public class DetermineCommonAncestorTaskParameterizedTest {
             .setBlockchain(localBlockchain)
             .setWorldStateArchive(worldStateArchive)
             .setTransactionPool(mock(TransactionPool.class))
-            .setSilaWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
+            .setEthereumWireProtocolConfiguration(SilProtocolConfiguration.DEFAULT)
             .setPeerTaskExecutor(peerTaskExecutor)
             .build();
-    final RespondingSilPeer.Responder responder =
-        RespondingSilPeer.blockchainResponder(remoteBlockchain);
-    final RespondingSilPeer respondingSilPeer =
+    final RespondingEthPeer.Responder responder =
+        RespondingEthPeer.blockchainResponder(remoteBlockchain);
+    final RespondingEthPeer respondingEthPeer =
         SilProtocolManagerTestUtil.createPeer(silProtocolManager);
 
     // Execute task and wait for response
@@ -188,12 +188,12 @@ public class DetermineCommonAncestorTaskParameterizedTest {
             protocolSchedule,
             protocolContext,
             silContext,
-            respondingSilPeer.getSilPeer(),
+            respondingEthPeer.getEthPeer(),
             headerRequestSize,
             metricsSystem);
 
     when(peerTaskExecutor.executeAgainstPeer(
-            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingSilPeer.getSilPeer())))
+            Mockito.any(GetHeadersFromPeerTask.class), Mockito.eq(respondingEthPeer.getEthPeer())))
         .thenAnswer(
             (invocationOnMock) -> {
               GetHeadersFromPeerTask getHeadersTask =
@@ -211,11 +211,11 @@ public class DetermineCommonAncestorTaskParameterizedTest {
               return new PeerTaskExecutorResult<>(
                   Optional.of(headers),
                   PeerTaskExecutorResponseCode.SUCCESS,
-                  List.of(respondingSilPeer.getSilPeer()));
+                  List.of(respondingEthPeer.getEthPeer()));
             });
 
     final CompletableFuture<BlockHeader> future = task.run();
-    respondingSilPeer.respondWhile(responder, () -> !future.isDone());
+    respondingEthPeer.respondWhile(responder, () -> !future.isDone());
 
     future.whenComplete(
         (response, error) -> {

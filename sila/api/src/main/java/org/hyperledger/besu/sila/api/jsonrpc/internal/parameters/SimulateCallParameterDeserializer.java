@@ -29,7 +29,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
  *
  * <p>When both {@code input} and {@code data} are provided with different values, {@code input}
  * takes precedence and {@code data} is ignored. This matches the behaviour of other EL clients
- * (Gsil, Nsilermind, Rsil, Erigon) for sil_simulateV1, where only {@code input} is defined in the
+ * (Geth, Nethermind, Reth, Erigon) for sil_simulateV1, where only {@code input} is defined in the
  * execution-apis spec.
  *
  * <p>For sil_call and other methods, the standard {@link CallParameter} validation still applies

@@ -17,7 +17,7 @@ package org.hyperledger.besu.cli.config;
 import org.hyperledger.besu.config.DiscoveryOptions;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.NetworkDefinition;
-import org.hyperledger.besu.sila.p2p.discovery.dns.SilaNodeRecord;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 
 import java.io.IOException;
@@ -41,7 +41,7 @@ public record SilNetworkConfig(
     GenesisConfig genesisConfig,
     BigInteger networkId,
     List<EnodeURLImpl> enodeBootNodes,
-    List<SilaNodeRecord> enrBootNodes,
+    List<EthereumNodeRecord> enrBootNodes,
     String dnsDiscoveryUrl) {
 
   /**
@@ -73,17 +73,19 @@ public record SilNetworkConfig(
     final DiscoveryOptions discoveryOptions =
         genesisConfig.getConfigOptions().getDiscoveryOptions();
 
+    // Genesis "bootnodes" now carries a mixed list of enode URLs and ENR strings.
+    // Partition by prefix: entries starting with "enr:" feed DiscV5; the rest feed DiscV4.
+    final List<String> allBootNodes = discoveryOptions.getBootNodes().orElse(List.of());
     final List<EnodeURLImpl> enodeBootNodes =
-        discoveryOptions
-            .getBootNodes()
-            .map(nodes -> nodes.stream().map(EnodeURLImpl::fromString).toList())
-            .orElse(List.of());
-
-    final List<SilaNodeRecord> enrBootNodes =
-        discoveryOptions
-            .getV5BootNodes()
-            .map(nodes -> nodes.stream().map(SilaNodeRecord::fromEnr).toList())
-            .orElse(List.of());
+        allBootNodes.stream()
+            .filter(s -> !s.startsWith("enr:"))
+            .map(EnodeURLImpl::fromString)
+            .toList();
+    final List<EthereumNodeRecord> enrBootNodes =
+        allBootNodes.stream()
+            .filter(s -> s.startsWith("enr:"))
+            .map(EthereumNodeRecord::fromEnr)
+            .toList();
 
     return new SilNetworkConfig(
         genesisConfig,
@@ -119,7 +121,7 @@ public record SilNetworkConfig(
     private GenesisConfig genesisConfig;
     private BigInteger networkId;
     private List<EnodeURLImpl> enodeBootNodes;
-    private List<SilaNodeRecord> enrBootNodes;
+    private List<EthereumNodeRecord> enrBootNodes;
 
     /**
      * Instantiates a new Builder.
@@ -173,7 +175,7 @@ public record SilNetworkConfig(
      * @param enrBootNodes the boot nodes
      * @return this builder
      */
-    public Builder setEnrBootNodes(final List<SilaNodeRecord> enrBootNodes) {
+    public Builder setEnrBootNodes(final List<EthereumNodeRecord> enrBootNodes) {
       this.enrBootNodes = enrBootNodes;
       return this;
     }

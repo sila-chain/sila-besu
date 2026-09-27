@@ -17,9 +17,9 @@ package org.hyperledger.besu.consensus.common;
 import static com.google.common.base.Preconditions.checkState;
 
 import org.hyperledger.besu.consensus.common.bft.BftProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduledProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduledProtocolSpec;
 
 import java.math.BigInteger;
 import java.util.NavigableSet;

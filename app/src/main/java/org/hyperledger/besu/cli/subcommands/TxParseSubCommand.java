@@ -105,12 +105,12 @@ public class TxParseSubCommand implements Runnable {
     try {
       var transaction = TransactionDecoder.decodeOpaqueBytes(tx, EncodingContext.BLOCK_BODY);
 
-      // https://github.com/hyperledger/besu/blob/5fe49c60b30fe2954c7967e8475c3b3e9afecf35/sila/core/src/main/java/org/hyperledger/besu/sila/sila-mainnet/SilaMainnetTransactionValidator.java#L252
+      // https://github.com/sila-chain/sila-besu/blob/5fe49c60b30fe2954c7967e8475c3b3e9afecf35/sila/core/src/main/java/org/hyperledger/besu/sila/sila-mainnet/SilaMainnetTransactionValidator.java#L252
       if (transaction.getChainId().isPresent() && !transaction.getChainId().get().equals(chainId)) {
         throw new Exception("wrong chain id");
       }
 
-      // https://github.com/hyperledger/besu/blob/5fe49c60b30fe2954c7967e8475c3b3e9afecf35/sila/core/src/main/java/org/hyperledger/besu/sila/sila-mainnet/SilaMainnetTransactionValidator.java#L270
+      // https://github.com/sila-chain/sila-besu/blob/5fe49c60b30fe2954c7967e8475c3b3e9afecf35/sila/core/src/main/java/org/hyperledger/besu/sila/sila-mainnet/SilaMainnetTransactionValidator.java#L270
       if (transaction.getS().compareTo(SignatureAlgorithmFactory.getInstance().getHalfCurveOrder())
           > 0) {
         throw new Exception("signature s out of range");

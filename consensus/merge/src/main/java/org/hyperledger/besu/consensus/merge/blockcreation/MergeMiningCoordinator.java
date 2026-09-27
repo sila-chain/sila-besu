@@ -25,7 +25,7 @@ import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Withdrawal;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -103,17 +103,6 @@ public interface MergeMiningCoordinator extends MiningCoordinator {
   BlockProcessingResult validateBlock(final Block block);
 
   /**
-   * Update fork choice.
-   *
-   * @param newHead the new head
-   * @param finalizedBlockHash the finalized block hash
-   * @param safeBlockHash the safe block hash
-   * @return the forkchoice result
-   */
-  ForkchoiceResult updateForkChoice(
-      final BlockHeader newHead, final Hash finalizedBlockHash, final Hash safeBlockHash);
-
-  /**
    * Update fork choice without applying the legacy "ignore update to old head" optimization that
    * skips when the new head is an ancestor of the canonical chain head. Used by the post
    * execution-apis #786 forkchoiceUpdated flow, where the narrowed skip (ancestor of finalized) is
@@ -124,19 +113,19 @@ public interface MergeMiningCoordinator extends MiningCoordinator {
    * @param safeBlockHash the safe block hash
    * @return the forkchoice result
    */
-  ForkchoiceResult updateForkChoiceWithoutLegacySkip(
+  ForkchoiceResult updateForkChoice(
       final BlockHeader newHead, final Hash finalizedBlockHash, final Hash safeBlockHash);
 
   /**
-   * Returns true if the given block hash is a strict ancestor of the currently finalized block
+   * Returns true if the given block header is a strict ancestor of the currently finalized block
    * (i.e. an older block on the same chain, not finalized itself). Returns false when no finalized
    * block is known, when the candidate hash cannot be located, or when the candidate IS the
    * finalized block
    *
-   * @param candidateHeadHash the candidate head hash
+   * @param candidateHeadBlockHeader the candidate block header
    * @return whether the candidate is a strict ancestor of the latest known finalized block
    */
-  boolean isAncestorOfFinalized(Hash candidateHeadHash);
+  boolean isAncestorOfFinalized(BlockHeader candidateHeadBlockHeader);
 
   /**
    * Computes the reorg depth that would result from switching the canonical head to {@code
@@ -195,7 +184,7 @@ public interface MergeMiningCoordinator extends MiningCoordinator {
    *
    * @param headHash the head hash
    * @param finalizedHash the finalized hash
-   * @return the or sync head by hash
+   * @return the block header or empty if not present
    */
   Optional<BlockHeader> getOrSyncHeadByHash(Hash headHash, Hash finalizedHash);
 
@@ -213,6 +202,15 @@ public interface MergeMiningCoordinator extends MiningCoordinator {
    * @return the boolean
    */
   boolean isBadBlock(Hash blockHash);
+
+  /**
+   * Check whether a block that has not been imported yet descends from a bad block, recording it as
+   * bad if it does.
+   *
+   * @param blockHash the block hash
+   * @return true if the block descends from a bad block
+   */
+  boolean checkAndMarkBadDescendant(Hash blockHash);
 
   /**
    * Gets latest valid hash of bad block.
@@ -245,7 +243,7 @@ public interface MergeMiningCoordinator extends MiningCoordinator {
    *
    * @return the instance of the scheduler
    */
-  SilScheduler getSilScheduler();
+  SilScheduler getEthScheduler();
 
   /** The type Forkchoice result. */
   class ForkchoiceResult {
@@ -258,7 +256,9 @@ public interface MergeMiningCoordinator extends MiningCoordinator {
       /** Invalid payload attributes status. */
       INVALID_PAYLOAD_ATTRIBUTES,
       /** Ignore update to old head status. */
-      IGNORE_UPDATE_TO_OLD_HEAD
+      IGNORE_UPDATE_TO_OLD_HEAD,
+      /** The head could not be set because of a local failure, the head itself may be valid. */
+      INTERNAL_ERROR
     }
 
     private final Status status;

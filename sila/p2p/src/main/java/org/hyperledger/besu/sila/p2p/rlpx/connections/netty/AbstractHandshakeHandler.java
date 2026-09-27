@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.p2p.rlpx.connections.netty;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.p2p.peers.LocalNode;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
@@ -27,7 +28,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.HelloMessage;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.WireMessageCodes;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;

@@ -17,20 +17,20 @@ package org.hyperledger.besu.sila.sil.manager.snap;
 import static java.util.Collections.emptyMap;
 import static org.slf4j.LoggerFactory.getLogger;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.sil.SnapProtocol;
-import org.hyperledger.besu.sila.sil.manager.SilContext;
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.PeerRequest;
 import org.hyperledger.besu.sila.sil.manager.PendingPeerRequest;
 import org.hyperledger.besu.sila.sil.manager.RequestManager;
+import org.hyperledger.besu.sila.sil.manager.SilContext;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
+import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerRequestTask;
 import org.hyperledger.besu.sila.sil.messages.snap.SnapV1;
 import org.hyperledger.besu.sila.sil.messages.snap.TrieNodesMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.HashMap;
 import java.util.List;
@@ -99,7 +99,7 @@ public class GetTrieNodeFromPeerTask extends AbstractPeerRequestTask<Map<Bytes, 
           }
 
           @Override
-          public boolean isSilPeerSuitable(final SilPeerImmutableAttributes silPeer) {
+          public boolean isEthPeerSuitable(final SilPeerImmutableAttributes silPeer) {
             return silPeer.isServingSnap();
           }
         },

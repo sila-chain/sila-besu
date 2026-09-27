@@ -1,6 +1,6 @@
 {
   "config" : {
-    "silash" : {
+    "ethash" : {
       "fixeddifficulty" : 0
     },
     "homesteadBlock" : 0,

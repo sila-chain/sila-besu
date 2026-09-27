@@ -15,10 +15,10 @@
 package org.hyperledger.besu.sila.core;
 
 import org.hyperledger.besu.sila.ProtocolContext;
-import org.hyperledger.besu.sila.sila-mainnet.BlockImportResult;
-import org.hyperledger.besu.sila.sila-mainnet.BodyValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.BlockImportResult;
+import org.hyperledger.besu.sila.silaMainnet.BodyValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;

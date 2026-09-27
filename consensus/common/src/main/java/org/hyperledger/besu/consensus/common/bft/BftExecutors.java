@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.consensus.common.bft;
 
-import org.hyperledger.besu.sila.sil.manager.MonitoredExecutors;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.sil.manager.MonitoredExecutors;
 
 import java.time.Duration;
 import java.util.concurrent.ExecutorService;

@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.services;
 
-import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
 import org.hyperledger.besu.plugin.services.StorageService;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.plugin.services.storage.SegmentIdentifier;
+import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
 
 import java.util.List;
 import java.util.Map;

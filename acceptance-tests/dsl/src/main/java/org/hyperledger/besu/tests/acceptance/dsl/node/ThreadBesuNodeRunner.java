@@ -29,6 +29,7 @@ import org.hyperledger.besu.chainimport.RlpBlockImporter;
 import org.hyperledger.besu.cli.BesuCommand;
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
 import org.hyperledger.besu.components.BesuComponent;
+import org.hyperledger.besu.config.CheckpointConfigOptions;
 import org.hyperledger.besu.config.GenesisConfig;
 import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.controller.BesuController;
@@ -36,10 +37,34 @@ import org.hyperledger.besu.controller.BesuControllerBuilder;
 import org.hyperledger.besu.crypto.KeyPairUtil;
 import org.hyperledger.besu.cryptoservices.KeyPairSecurityModule;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.cryptoservices.pluginadapter.SecurityModuleServiceImpl;
+import org.hyperledger.besu.metrics.MetricCategoryRegistryImpl;
+import org.hyperledger.besu.metrics.MetricsSystemModule;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.CoreConfiguration;
+import org.hyperledger.besu.plugin.rpc.RpcConfiguration;
+import org.hyperledger.besu.plugin.services.BesuConfiguration;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.PicoCLIOptions;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBPlugin;
+import org.hyperledger.besu.plugin.storage.StorageConfiguration;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.services.BesuConfigurationImpl;
+import org.hyperledger.besu.services.BesuPluginContextImpl;
+import org.hyperledger.besu.services.BesuPluginServiceRegistrar;
+import org.hyperledger.besu.services.PicoCLIOptionsImpl;
+import org.hyperledger.besu.services.StorageServiceImpl;
+import org.hyperledger.besu.services.kvstore.InMemoryStoragePlugin;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.InProcessRpcConfiguration;
+import org.hyperledger.besu.sila.api.pluginadapter.RpcEndpointServiceImpl;
+import org.hyperledger.besu.sila.blockcreation.pluginadapter.TransactionSelectionServiceImpl;
 import org.hyperledger.besu.sila.chain.Blockchain;
+import org.hyperledger.besu.sila.chain.pluginadapter.BlockchainServiceImpl;
 import org.hyperledger.besu.sila.core.ImmutableMiningConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.encoding.BlockBodyEncoder;
@@ -47,45 +72,25 @@ import org.hyperledger.besu.sila.core.encoding.BlockHeaderEncoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncoder;
 import org.hyperledger.besu.sila.core.plugins.ImmutablePluginConfiguration;
 import org.hyperledger.besu.sila.core.plugins.PluginInfo;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.permissioning.pluginadapter.PermissioningServiceImpl;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.sync.common.checkpoint.Checkpoint;
 import org.hyperledger.besu.sila.sil.transactions.BlobCacheModule;
 import org.hyperledger.besu.sila.sil.transactions.ImmutableTransactionPoolConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.sil.transactions.pluginadapter.TransactionPoolValidatorServiceImpl;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProvider;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProviderBuilder;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
+import org.hyperledger.besu.sila.transaction.pluginadapter.TransactionSimulationServiceImpl;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCacheModule;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.accumulator.preload.BonsaiCachedMerkleTrieLoaderModule;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCacheModule;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.MetricCategoryRegistryImpl;
-import org.hyperledger.besu.metrics.MetricsSystemModule;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.BesuConfiguration;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.PicoCLIOptions;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBPlugin;
-import org.hyperledger.besu.services.BesuConfigurationImpl;
-import org.hyperledger.besu.services.BesuPluginContextImpl;
-import org.hyperledger.besu.services.BesuPluginServiceRegistrar;
-import org.hyperledger.besu.services.BlockchainServiceImpl;
-import org.hyperledger.besu.services.PermissioningServiceImpl;
-import org.hyperledger.besu.services.PicoCLIOptionsImpl;
-import org.hyperledger.besu.services.RpcEndpointServiceImpl;
-import org.hyperledger.besu.services.SecurityModuleServiceImpl;
-import org.hyperledger.besu.services.StorageServiceImpl;
-import org.hyperledger.besu.services.TransactionPoolValidatorServiceImpl;
-import org.hyperledger.besu.services.TransactionSelectionServiceImpl;
-import org.hyperledger.besu.services.TransactionSimulationServiceImpl;
-import org.hyperledger.besu.services.TransactionValidatorServiceImpl;
-import org.hyperledger.besu.services.kvstore.InMemoryStoragePlugin;
 import org.hyperledger.besu.util.io.OutputStreamFactory;
 import org.hyperledger.besu.util.snappy.SnappyFactory;
 
@@ -97,6 +102,7 @@ import java.util.HashMap;
 import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
+import java.util.Optional;
 import java.util.concurrent.ConcurrentHashMap;
 import javax.inject.Inject;
 import javax.inject.Named;
@@ -213,7 +219,7 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
 
     besuPluginContext.startPlugins();
 
-    runner.startSilaMainLoop();
+    runner.startEthereumMainLoop();
 
     besuRunners.put(node.getName(), runner);
     MDC.remove("node");
@@ -279,6 +285,11 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
 
   @Override
   public String getConsoleContents() {
+    throw new RuntimeException("Console contents can only be captured in process execution");
+  }
+
+  @Override
+  public String peekConsoleContents() {
     throw new RuntimeException("Console contents can only be captured in process execution");
   }
 
@@ -464,12 +475,33 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
         final TransactionPoolConfiguration transactionPoolConfiguration,
         final DataStorageConfiguration dataStorageConfiguration) {
 
+      final Optional<Checkpoint> checkpoint = getCheckpoint(silNetworkConfig);
       final BesuControllerBuilder builder =
           new BesuController.Builder()
-              .fromSilNetworkConfig(silNetworkConfig, synchronizerConfiguration.getSyncMode());
+              .checkpoint(checkpoint)
+              .fromEthNetworkConfig(silNetworkConfig, synchronizerConfiguration.getSyncMode());
       builder.transactionPoolConfiguration(transactionPoolConfiguration);
       builder.dataStorageConfiguration(dataStorageConfiguration);
       return builder;
+    }
+
+    private Optional<Checkpoint> getCheckpoint(final SilNetworkConfig silNetworkConfig) {
+      final CheckpointConfigOptions checkpointConfigOptions =
+          silNetworkConfig.genesisConfig().getConfigOptions().getCheckpointOptions();
+      if (checkpointConfigOptions == CheckpointConfigOptions.DEFAULT) {
+        return Optional.empty();
+      } else if (!checkpointConfigOptions.isValid()) {
+        throw new IllegalArgumentException(
+            "The checkpoint block configured in the genesis file is not valid.");
+      } else {
+        try {
+          return Checkpoint.fromConfig(checkpointConfigOptions);
+        } catch (final IllegalArgumentException e) {
+          throw new IllegalArgumentException(
+              "The checkpoint block configured in the genesis file is not valid: " + e.getMessage(),
+              e);
+        }
+      }
     }
 
     @Provides
@@ -485,7 +517,7 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
         final BlockchainServiceImpl blockchainServiceImpl,
         final SecurityModuleServiceImpl securityModuleService,
         final RpcEndpointServiceImpl rpcEndpointServiceImpl,
-        final BesuConfiguration commonPluginConfiguration,
+        final BesuConfigurationImpl commonPluginConfiguration,
         final PermissioningServiceImpl permissioningService,
         final TransactionSelectionServiceImpl transactionSelectionServiceImpl,
         final TransactionPoolValidatorServiceImpl transactionPoolValidatorServiceImpl,
@@ -530,7 +562,9 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
       final BesuController besuController = builder.build();
       blockchainServiceImpl.init(
           besuController.getProtocolContext().getBlockchain(),
-          besuController.getProtocolSchedule());
+          besuController.getProtocolSchedule(),
+          besuController.getProtocolManager().getBlockBroadcaster(),
+          besuController.getProtocolContext().getBadBlockManager());
       transactionSimulationServiceImpl.init(
           besuController.getProtocolContext().getBlockchain(),
           besuController.getTransactionSimulator());
@@ -540,14 +574,14 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
 
     @Provides
     @Singleton
-    public SilNetworkConfig.Builder provideSilNetworkConfigBuilder() {
+    public SilNetworkConfig.Builder provideEthNetworkConfigBuilder() {
       final SilNetworkConfig.Builder networkConfigBuilder =
           new SilNetworkConfig.Builder(SilNetworkConfig.getNetworkConfig(NetworkDefinition.DEV));
       return networkConfigBuilder;
     }
 
     @Provides
-    public SilNetworkConfig provideSilNetworkConfig(
+    public SilNetworkConfig provideEthNetworkConfig(
         final SilNetworkConfig.Builder networkConfigBuilder) {
 
       final SilNetworkConfig silNetworkConfig = networkConfigBuilder.build();
@@ -565,7 +599,7 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
         final SecurityModuleServiceImpl securityModuleService,
         final RpcEndpointServiceImpl rpcEndpointServiceImpl,
         final BlockchainServiceImpl blockchainServiceImpl,
-        final BesuConfiguration commonPluginConfiguration,
+        final BesuConfigurationImpl commonPluginConfiguration,
         final PermissioningServiceImpl permissioningService,
         final TransactionSelectionServiceImpl transactionSelectionServiceImpl,
         final TransactionPoolValidatorServiceImpl transactionPoolValidatorServiceImpl,
@@ -579,6 +613,9 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
       final CommandLine commandLine = new CommandLine(CommandSpec.create());
       besuPluginContext.addService(PicoCLIOptions.class, new PicoCLIOptionsImpl(commandLine));
       besuPluginContext.addService(BesuConfiguration.class, commonPluginConfiguration);
+      besuPluginContext.addService(CoreConfiguration.class, commonPluginConfiguration);
+      besuPluginContext.addService(StorageConfiguration.class, commonPluginConfiguration);
+      besuPluginContext.addService(RpcConfiguration.class, commonPluginConfiguration);
       metricCategoryRegistry.setMetricsConfiguration(metricsConfiguration);
       BesuPluginServiceRegistrar.registerEarlyServices(
           besuPluginContext,
@@ -620,7 +657,7 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
 
     @Provides
     public KeyValueStorageProvider provideKeyValueStorageProvider(
-        final BesuConfiguration commonPluginConfiguration,
+        final BesuConfigurationImpl commonPluginConfiguration,
         final MetricsSystem metricsSystem,
         final KeyValueStorageFactory keyValueStorageFactory) {
 
@@ -652,7 +689,7 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
 
     @Provides
     @Inject
-    BesuConfiguration provideBesuConfiguration(
+    BesuConfigurationImpl provideBesuConfiguration(
         final Path dataDir, final MiningConfiguration miningConfiguration, final BesuNode node) {
       final BesuConfigurationImpl commonPluginConfiguration = new BesuConfigurationImpl();
       commonPluginConfiguration.init(
@@ -720,7 +757,7 @@ public class ThreadBesuNodeRunner implements BesuNodeRunner {
         MetricsSystemModule.class,
         ThreadBesuNodeRunner.BesuNodeProviderModule.class,
         BlobCacheModule.class,
-        PathBasedCodeCacheModule.class,
+        BonsaiCodeCacheModule.class,
       })
   public interface AcceptanceTestBesuComponent extends BesuComponent {
     BesuController besuController();

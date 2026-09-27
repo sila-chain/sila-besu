@@ -16,16 +16,16 @@ package org.hyperledger.besu.sila.sil.manager.task;
 
 import static com.google.common.base.Preconditions.checkArgument;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
 import org.hyperledger.besu.sila.sil.messages.SilProtocolMessages;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.ArrayList;
 import java.util.Collections;

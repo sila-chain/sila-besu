@@ -27,8 +27,7 @@ import org.owasp.encoder.Encode;
 /**
  * Represents a client capability.
  *
- * @see <a href= "https://github.com/sila-chain/devp2p/blob/master/devp2p.md">Capability wire
- *     format</a>
+ * @see <a href= "https://github.com/sila/devp2p/blob/master/devp2p.md">Capability wire format</a>
  */
 public class Capability implements org.hyperledger.besu.plugin.data.p2p.Capability {
   private final String name;

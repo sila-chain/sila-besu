@@ -39,7 +39,7 @@ import org.apache.tuweni.bytes.Bytes32;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.TransactionReceipt;
+import sila.web3j.protocol.core.methods.response.TransactionReceipt;
 
 public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase {
   private static final String GENESIS_FILE = "/dev/dev_prague.json";
@@ -154,7 +154,7 @@ public class CodeDelegationTransactionAcceptanceTest extends AcceptanceTestBase 
   @Test
   public void shouldCheckNonceAfterNonceIncreaseOfSender() throws IOException {
     final long GAS_LIMIT = 1_000_000L;
-    cluster.verify(authorizer.balanceEquals(Amount.siler(90_000)));
+    cluster.verify(authorizer.balanceEquals(Amount.sila(90_000)));
 
     final CodeDelegation codeDelegation =
         org.hyperledger.besu.sila.core.CodeDelegation.builder()

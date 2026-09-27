@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.trie.patricia;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.trie.KeyValueMerkleStorage;
 import org.hyperledger.besu.sila.trie.MerkleStorage;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.util.Optional;
 import java.util.function.Function;
@@ -403,6 +403,34 @@ class ParallelStoredMerklePatriciaTrieTest {
       assertThat(parallelTrie.get(key)).isEqualTo(Optional.of(value));
     }
 
+    assertThat(parallelTrie.getRootHash()).isEqualTo(sequentialTrie.getRootHash());
+  }
+
+  @Test
+  void shouldPutDeferredUpdateAndRemove() {
+    final Bytes key = createKey(0x01, 0x02, 0x03, 0x04);
+    final Bytes value = createValue(100);
+    final Bytes updatedValue = createValue(200);
+
+    parallelTrie.put(key, value);
+    sequentialTrie.put(key, value);
+    parallelTrie.commit(parallelStorage::put);
+    sequentialTrie.commit(sequentialStorage::put);
+
+    parallelTrie.putDeferred(key, prior -> Optional.of(updatedValue));
+    sequentialTrie.putDeferred(key, prior -> Optional.of(updatedValue));
+    parallelTrie.commit(parallelStorage::put);
+    sequentialTrie.commit(sequentialStorage::put);
+
+    assertThat(parallelTrie.get(key)).isEqualTo(Optional.of(updatedValue));
+    assertThat(parallelTrie.getRootHash()).isEqualTo(sequentialTrie.getRootHash());
+
+    parallelTrie.putDeferred(key, prior -> Optional.empty());
+    sequentialTrie.putDeferred(key, prior -> Optional.empty());
+    parallelTrie.commit(parallelStorage::put);
+    sequentialTrie.commit(sequentialStorage::put);
+
+    assertThat(parallelTrie.get(key)).isEmpty();
     assertThat(parallelTrie.getRootHash()).isEqualTo(sequentialTrie.getRootHash());
   }
 

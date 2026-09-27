@@ -242,7 +242,7 @@ public class ForkIdTest {
         // Withdrawals test cases
         Arguments.of(
             "SilaMainnet Withdrawals // First Merge Start block",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             18000000L,
             0L,
             ForkIdTestUtil.wantForkId("0x4fb8a872", 1668000000L),
@@ -250,7 +250,7 @@ public class ForkIdTest {
             empty()),
         Arguments.of(
             "SilaMainnet Withdrawals // Last Merge Start block",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             0L,
             ForkIdTestUtil.wantForkId("0x4fb8a872", 1668000000L),
@@ -258,7 +258,7 @@ public class ForkIdTest {
             empty()),
         Arguments.of(
             "SilaMainnet Withdrawals // First SilaShanghai block",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000000L,
             ForkIdTestUtil.wantForkId("0xc1fdf181", 0L),
@@ -266,7 +266,7 @@ public class ForkIdTest {
             empty()),
         Arguments.of(
             "SilaMainnet Withdrawals // Last SilaShanghai block",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             20100000L,
             2669000000L,
             ForkIdTestUtil.wantForkId("0xc1fdf181", 0L),
@@ -439,16 +439,16 @@ public class ForkIdTest {
             wantPeerCheck("0x5cddc0e1", 0L, false)),
         // Timestamp based peer check cases adapted from SIP-6122 test cases
         Arguments.of(
-            "withdrawalsCheck1SilaShanghaiWithRemoteAnnouncingTheSame",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck1ShanghaiWithRemoteAnnouncingTheSame",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000001L,
             empty(),
             empty(),
             wantPeerCheck("0xc1fdf181", 0L, true)),
         Arguments.of(
-            "withdrawalsCheck2SilaShanghaiWithRemoteAnnouncingSameAndNextFork",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck2ShanghaiWithRemoteAnnouncingSameAndNextFork",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000001L,
             empty(),
@@ -456,7 +456,7 @@ public class ForkIdTest {
             wantPeerCheck("0xc1fdf181", Long.MAX_VALUE, true)),
         Arguments.of(
             "withdrawalsCheck3ByzantiumWithRemoteAnnouncingByzantiumNotAwareOfPetersburg",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             7279999L,
             1667999999L,
             empty(),
@@ -464,7 +464,7 @@ public class ForkIdTest {
             wantPeerCheck("0xa00bc324", 0L, true)),
         Arguments.of(
             "withdrawalsCheck4ByzantiumWithRemoteAnnouncingByzantiumAwareOfPetersburg",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             7279999L,
             1667999999L,
             empty(),
@@ -472,31 +472,31 @@ public class ForkIdTest {
             wantPeerCheck("0xa00bc324", 7280000L, true)),
         Arguments.of(
             "withdrawalsCheck5ByzantiumWithRemoteAnnouncingByzantiumAwareOfUnknownFork",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             7279999L,
             1667999999L,
             empty(),
             empty(),
             wantPeerCheck("0xa00bc324", Long.MAX_VALUE, true)),
         Arguments.of(
-            "withdrawalsCheck6ExactlySilaShanghaiWithRemoteAnnouncingByzantiumAwareOfPetersburgRemoteOutOfSync",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck6ExactlyShanghaiWithRemoteAnnouncingByzantiumAwareOfPetersburgRemoteOutOfSync",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000000L,
             empty(),
             empty(),
             wantPeerCheck("0xa00bc324", 7280000L, true)),
         Arguments.of(
-            "withdrawalsCheck7SilaShanghaiWithRemoteAnnouncingByzantiumAwareOfPetersburgRemoteOutOfSync",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck7ShanghaiWithRemoteAnnouncingByzantiumAwareOfPetersburgRemoteOutOfSync",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000001L,
             empty(),
             empty(),
             wantPeerCheck("0xa00bc324", 7280000L, true)),
         Arguments.of(
-            "withdrawalsCheck8SilaShanghaiWithRemoteAnnouncingSpuriousAwareOfByzantium",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck8ShanghaiWithRemoteAnnouncingSpuriousAwareOfByzantium",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000001L,
             empty(),
@@ -504,7 +504,7 @@ public class ForkIdTest {
             wantPeerCheck("0x3edd5b10", 4370000, true)),
         Arguments.of(
             "withdrawalsCheck9ByzantiumWithRemoteAnnouncingPetersburgLocalOutOfSync",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             7279999L,
             1667999999L,
             empty(),
@@ -512,39 +512,39 @@ public class ForkIdTest {
             wantPeerCheck("0x668db0af", 4370000, true)),
         Arguments.of(
             "withdrawalsCheck10SpuriousWithRemoteAnnouncingByzantiumNotAwareOfPetersburgLocalOutOfSync",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            Network.MAINNET_WITH_SHANGHAI,
             4369999L,
             1667999999L,
             empty(),
             empty(),
             wantPeerCheck("0xa00bc324", 0L, true)),
         Arguments.of(
-            "withdrawalsCheck11SilaShanghaiWithRemoteAnnouncingByzantiumUnawareOfAdditionalForksRemoteNeedsUpdate",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck11ShanghaiWithRemoteAnnouncingByzantiumUnawareOfAdditionalForksRemoteNeedsUpdate",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000001L,
             empty(),
             empty(),
             wantPeerCheck("0xa00bc324", 0L, false)),
         Arguments.of(
-            "withdrawalsCheck12SilaShanghaiAndNotAwareOfAdditionalForksWithRemoteAnnouncingPetersburgAndUnknownFork",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck12ShanghaiAndNotAwareOfAdditionalForksWithRemoteAnnouncingPetersburgAndUnknownFork",
+            Network.MAINNET_WITH_SHANGHAI,
             20000000L,
             1668000001L,
             empty(),
             empty(),
             wantPeerCheck("0x5cddc0e1", 0L, false)),
         Arguments.of(
-            "withdrawalsCheck14SilaShanghaiWithRemoteAnnouncingUnknownFork",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck14ShanghaiWithRemoteAnnouncingUnknownFork",
+            Network.MAINNET_WITH_SHANGHAI,
             88888888L,
             1668000001L,
             empty(),
             empty(),
             wantPeerCheck("0xf0afd0e3", 88888888L, false)),
         Arguments.of(
-            "withdrawalsCheck15SilaShanghaiWithRemoteInByzantiumAnnouncingUnknownFork",
-            Network.SILA_MAINNET_WITH_SHANGHAI,
+            "withdrawalsCheck15ShanghaiWithRemoteInByzantiumAnnouncingUnknownFork",
+            Network.MAINNET_WITH_SHANGHAI,
             88888888L,
             1668000001L,
             empty(),
@@ -581,7 +581,7 @@ public class ForkIdTest {
   }
 
   @Test
-  public void testGenesisTimestampEqualToSilaShanghaiTimestamp() {
+  public void testGenesisTimestampEqualToShanghaiTimestamp() {
     final ForkIdManager forkIdManager =
         new ForkIdManager(
             mockBlockchain(Hash.ZERO.getBytes().toHexString(), 10L, 0L),

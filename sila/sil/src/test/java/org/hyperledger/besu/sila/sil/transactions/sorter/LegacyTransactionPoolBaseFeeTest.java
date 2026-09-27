@@ -25,7 +25,7 @@ import org.hyperledger.besu.sila.sil.transactions.AbstractTransactionPoolTest;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
 import org.hyperledger.besu.sila.sil.transactions.PendingTransactions;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.time.ZoneId;

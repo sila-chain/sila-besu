@@ -543,7 +543,7 @@ type Transaction {
   account. Before SIP-1559, this is equal to the transaction's gas price.
   After SIP-1559, it is baseFeePerGas + min(maxFeePerGas - baseFeePerGas,
   maxPriorityFeePerGas). Legacy transactions and SIP-2930 transactions are
-  cosrced into the SIP-1559 format by setting both maxFeePerGas and
+  coerced into the SIP-1559 format by setting both maxFeePerGas and
   maxPriorityFeePerGas as the transaction's gas price.
   """
   effectiveGasPrice: BigInt

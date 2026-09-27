@@ -3,7 +3,7 @@
     "homesteadBlock": 0,
     "petersburgBlock": 0,
     "istanbulBlock": 0,
-    "silash": {
+    "ethash": {
       "fixeddifficulty": 15
     },
     "chainID": 1982,

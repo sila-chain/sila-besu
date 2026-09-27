@@ -22,10 +22,10 @@ import static org.junit.jupiter.api.Assumptions.assumingThat;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
 import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 
 import java.io.IOException;
 import java.net.BindException;

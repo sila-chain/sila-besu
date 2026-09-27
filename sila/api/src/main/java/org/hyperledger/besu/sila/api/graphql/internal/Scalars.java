@@ -24,14 +24,14 @@ import java.math.BigInteger;
 import java.util.Locale;
 
 import graphql.GraphQLContext;
-import graphql.execution.CosrcedVariables;
+import graphql.execution.CoercedVariables;
 import graphql.language.IntValue;
 import graphql.language.StringValue;
 import graphql.language.Value;
-import graphql.schema.Cosrcing;
-import graphql.schema.CosrcingParseLiteralException;
-import graphql.schema.CosrcingParseValueException;
-import graphql.schema.CosrcingSerializeException;
+import graphql.schema.Coercing;
+import graphql.schema.CoercingParseLiteralException;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
@@ -41,15 +41,15 @@ import org.apache.tuweni.units.bigints.UInt256;
  * The Scalars class provides methods for creating GraphQLScalarType objects. These objects
  * represent the scalar types used in GraphQL, such as Address, BigInt, Bytes, Bytes32, and Long.
  * Each method in this class returns a GraphQLScalarType object that has been configured with a
- * specific Cosrcing implementation. The Cosrcing implementation defines how that type is
+ * specific Coercing implementation. The Coercing implementation defines how that type is
  * serialized, deserialized and validated.
  */
 public class Scalars {
 
   private Scalars() {}
 
-  private static final Cosrcing<Address, String> ADDRESS_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<Address, String> ADDRESS_COERCING =
+      new Coercing<>() {
         private Address convertImpl(final Object input) {
           if (input instanceof Address address) {
             return address;
@@ -69,24 +69,24 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           Address result = convertImpl(input);
           if (result != null) {
             return result.getBytes().toHexString();
           } else {
-            throw new CosrcingSerializeException("Unable to serialize " + input + " as an Address");
+            throw new CoercingSerializeException("Unable to serialize " + input + " as an Address");
           }
         }
 
         @Override
         public Address parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           Address result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as an Address");
           }
         }
@@ -94,21 +94,21 @@ public class Scalars {
         @Override
         public Address parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           Address result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingParseLiteralException("Value is not any Address : '" + input + "'");
+            throw new CoercingParseLiteralException("Value is not any Address : '" + input + "'");
           }
         }
       };
 
-  private static final Cosrcing<LogTopic, String> LOG_TOPIC_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<LogTopic, String> LOG_TOPIC_COERCING =
+      new Coercing<>() {
 
         private LogTopic convertImpl(final Object input) {
           if (input instanceof LogTopic logTopic) {
@@ -117,7 +117,7 @@ public class Scalars {
             return convertImpl(stringValue.getValue());
           } else if (input instanceof String string) {
             if (!Quantity.isValid(string)) {
-              throw new CosrcingParseLiteralException(
+              throw new CoercingParseLiteralException(
                   "LogTopic value '" + input + "' is not prefixed with 0x");
             } else {
               try {
@@ -134,10 +134,10 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingSerializeException("Unable to serialize " + input + " as a LogTopic");
+            throw new CoercingSerializeException("Unable to serialize " + input + " as a LogTopic");
           } else {
             return result.getBytes().toHexString();
           }
@@ -146,10 +146,10 @@ public class Scalars {
         @Override
         public LogTopic parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as a LogTopic");
           } else {
             return result;
@@ -159,21 +159,21 @@ public class Scalars {
         @Override
         public LogTopic parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseLiteralException("Value is not any LogTopic : '" + input + "'");
+            throw new CoercingParseLiteralException("Value is not any LogTopic : '" + input + "'");
           } else {
             return result;
           }
         }
       };
 
-  private static final Cosrcing<VersionedHash, String> VERSIONED_HASH_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<VersionedHash, String> VERSIONED_HASH_COERCING =
+      new Coercing<>() {
         private VersionedHash convertImpl(final Object input) {
           if (input instanceof VersionedHash versionedHash) {
             return versionedHash;
@@ -181,7 +181,7 @@ public class Scalars {
             return convertImpl(stringValue.getValue());
           } else if (input instanceof String string) {
             if (!Quantity.isValid(string)) {
-              throw new CosrcingParseLiteralException(
+              throw new CoercingParseLiteralException(
                   "VersionedHash value '" + input + "' is not prefixed with 0x");
             } else {
               try {
@@ -198,10 +198,10 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingSerializeException(
+            throw new CoercingSerializeException(
                 "Unable to serialize " + input + " as a VersionedHash");
           } else {
             return result.getBytes().toHexString();
@@ -211,10 +211,10 @@ public class Scalars {
         @Override
         public VersionedHash parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as a VersionedHash");
           } else {
             return result;
@@ -224,13 +224,13 @@ public class Scalars {
         @Override
         public VersionedHash parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseLiteralException(
+            throw new CoercingParseLiteralException(
                 "Value is not any VersionedHash : '" + input + "'");
           } else {
             return result;
@@ -238,8 +238,8 @@ public class Scalars {
         }
       };
 
-  private static final Cosrcing<String, String> BIG_INT_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<String, String> BIG_INT_COERCING =
+      new Coercing<>() {
         private String convertImpl(final Object input) {
           if (input instanceof String string) {
             try {
@@ -263,24 +263,24 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           var result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingSerializeException("Unable to serialize " + input + " as an BigInt");
+            throw new CoercingSerializeException("Unable to serialize " + input + " as an BigInt");
           }
         }
 
         @Override
         public String parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           var result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as an BigInt");
           }
         }
@@ -288,21 +288,21 @@ public class Scalars {
         @Override
         public String parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           var result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingParseLiteralException("Value is not any BigInt : '" + input + "'");
+            throw new CoercingParseLiteralException("Value is not any BigInt : '" + input + "'");
           }
         }
       };
 
-  private static final Cosrcing<Bytes, String> BYTES_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<Bytes, String> BYTES_COERCING =
+      new Coercing<>() {
         private Bytes convertImpl(final Object input) {
           if (input instanceof Bytes bytes) {
             return bytes;
@@ -310,7 +310,7 @@ public class Scalars {
             return convertImpl(stringValue.getValue());
           } else if (input instanceof String string) {
             if (!Quantity.isValid(string)) {
-              throw new CosrcingParseLiteralException(
+              throw new CoercingParseLiteralException(
                   "Bytes value '" + input + "' is not prefixed with 0x");
             }
             try {
@@ -326,24 +326,24 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           var result = convertImpl(input);
           if (result != null) {
             return result.toHexString();
           } else {
-            throw new CosrcingSerializeException("Unable to serialize " + input + " as an Bytes");
+            throw new CoercingSerializeException("Unable to serialize " + input + " as an Bytes");
           }
         }
 
         @Override
         public Bytes parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           var result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as an Bytes");
           }
         }
@@ -351,21 +351,21 @@ public class Scalars {
         @Override
         public Bytes parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           var result = convertImpl(input);
           if (result != null) {
             return result;
           } else {
-            throw new CosrcingParseLiteralException("Value is not any Bytes : '" + input + "'");
+            throw new CoercingParseLiteralException("Value is not any Bytes : '" + input + "'");
           }
         }
       };
 
-  private static final Cosrcing<Hash, String> HASH_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<Hash, String> HASH_COERCING =
+      new Coercing<>() {
         private Hash convertImpl(final Object input) {
           if (input instanceof Hash hash) {
             return hash;
@@ -373,7 +373,7 @@ public class Scalars {
             return convertImpl(stringValue.getValue());
           } else if (input instanceof String string) {
             if (!Quantity.isValid(string)) {
-              throw new CosrcingParseLiteralException(
+              throw new CoercingParseLiteralException(
                   "Hash value '" + input + "' is not prefixed with 0x");
             } else {
               try {
@@ -390,10 +390,10 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingSerializeException("Unable to serialize " + input + " as a Hash");
+            throw new CoercingSerializeException("Unable to serialize " + input + " as a Hash");
           } else {
             return result.getBytes().toHexString();
           }
@@ -402,10 +402,10 @@ public class Scalars {
         @Override
         public Hash parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as a Hash");
           } else {
             return result;
@@ -415,21 +415,21 @@ public class Scalars {
         @Override
         public Hash parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseLiteralException("Value is not any Hash : '" + input + "'");
+            throw new CoercingParseLiteralException("Value is not any Hash : '" + input + "'");
           } else {
             return result;
           }
         }
       };
 
-  private static final Cosrcing<Bytes32, String> BYTES32_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<Bytes32, String> BYTES32_COERCING =
+      new Coercing<>() {
         private Bytes32 convertImpl(final Object input) {
           if (input instanceof Bytes32 bytes32) {
             return bytes32;
@@ -443,7 +443,7 @@ public class Scalars {
             return convertImpl(stringValue.getValue());
           } else if (input instanceof String string) {
             if (!Quantity.isValid(string)) {
-              throw new CosrcingParseLiteralException(
+              throw new CoercingParseLiteralException(
                   "Bytes32 value '" + input + "' is not prefixed with 0x");
             } else {
               try {
@@ -460,10 +460,10 @@ public class Scalars {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingSerializeException("Unable to serialize " + input + " as an Bytes32");
+            throw new CoercingSerializeException("Unable to serialize " + input + " as an Bytes32");
           } else {
             return result.toHexString();
           }
@@ -472,10 +472,10 @@ public class Scalars {
         @Override
         public Bytes32 parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseValueException(
+            throw new CoercingParseValueException(
                 "Unable to parse variable value " + input + " as an Bytes32");
           } else {
             return result;
@@ -485,25 +485,25 @@ public class Scalars {
         @Override
         public Bytes32 parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           var result = convertImpl(input);
           if (result == null) {
-            throw new CosrcingParseLiteralException("Value is not any Bytes32 : '" + input + "'");
+            throw new CoercingParseLiteralException("Value is not any Bytes32 : '" + input + "'");
           } else {
             return result;
           }
         }
       };
 
-  private static final Cosrcing<Number, String> LONG_COSRCING =
-      new Cosrcing<>() {
+  private static final Coercing<Number, String> LONG_COERCING =
+      new Coercing<>() {
         @Override
         public String serialize(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingSerializeException {
+            throws CoercingSerializeException {
           if (input instanceof Number number) {
             return Bytes.ofUnsignedLong(number.longValue()).toQuantityHexString();
           } else if (input instanceof String string) {
@@ -513,13 +513,13 @@ public class Scalars {
               return "0x" + string;
             }
           }
-          throw new CosrcingSerializeException("Unable to serialize " + input + " as an Long");
+          throw new CoercingSerializeException("Unable to serialize " + input + " as an Long");
         }
 
         @Override
         public Number parseValue(
             final Object input, final GraphQLContext graphQLContext, final Locale locale)
-            throws CosrcingParseValueException {
+            throws CoercingParseValueException {
           if (input instanceof Number number) {
             return number;
           } else if (input instanceof String string) {
@@ -530,17 +530,17 @@ public class Scalars {
               return Long.parseLong(value);
             }
           }
-          throw new CosrcingParseValueException(
+          throw new CoercingParseValueException(
               "Unable to parse variable value " + input + " as an Long");
         }
 
         @Override
         public Number parseLiteral(
             final Value<?> input,
-            final CosrcedVariables variables,
+            final CoercedVariables variables,
             final GraphQLContext graphQLContext,
             final Locale locale)
-            throws CosrcingParseLiteralException {
+            throws CoercingParseLiteralException {
           try {
             if (input instanceof IntValue intValue) {
               return intValue.getValue().longValue();
@@ -555,14 +555,14 @@ public class Scalars {
           } catch (final NumberFormatException e) {
             // fall through
           }
-          throw new CosrcingParseLiteralException("Value is not any Long : '" + input + "'");
+          throw new CoercingParseLiteralException("Value is not any Long : '" + input + "'");
         }
       };
 
   /**
    * Creates a new GraphQLScalarType object for an Address.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the
+   * <p>The object is configured with a specific Coercing implementation that defines how the
    * Address type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for an Address.
@@ -571,14 +571,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("Address")
         .description("Address scalar")
-        .cosrcing(ADDRESS_COSRCING)
+        .coercing(ADDRESS_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for a BigInt.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the BigInt
+   * <p>The object is configured with a specific Coercing implementation that defines how the BigInt
    * type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for a BigInt.
@@ -587,14 +587,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("BigInt")
         .description("A BigInt (UInt256) scalar")
-        .cosrcing(BIG_INT_COSRCING)
+        .coercing(BIG_INT_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for Bytes.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the Bytes
+   * <p>The object is configured with a specific Coercing implementation that defines how the Bytes
    * type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for Bytes.
@@ -603,14 +603,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("Bytes")
         .description("A Bytes scalar")
-        .cosrcing(BYTES_COSRCING)
+        .coercing(BYTES_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for Bytes32.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the
+   * <p>The object is configured with a specific Coercing implementation that defines how the
    * Bytes32 type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for Bytes32.
@@ -619,14 +619,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("Bytes32")
         .description("A Bytes32 scalar")
-        .cosrcing(BYTES32_COSRCING)
+        .coercing(BYTES32_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for a Long.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the Long
+   * <p>The object is configured with a specific Coercing implementation that defines how the Long
    * type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for a Long.
@@ -635,14 +635,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("Long")
         .description("A Long (UInt64) scalar")
-        .cosrcing(LONG_COSRCING)
+        .coercing(LONG_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for a Hash.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the Hash
+   * <p>The object is configured with a specific Coercing implementation that defines how the Hash
    * type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for a Hash.
@@ -651,14 +651,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("Hash")
         .description("A Hash (32 byte keccak256 hash) scalar")
-        .cosrcing(HASH_COSRCING)
+        .coercing(HASH_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for a LogTopic.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the
+   * <p>The object is configured with a specific Coercing implementation that defines how the
    * LogTopic type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for a LogTopic.
@@ -667,14 +667,14 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("LogTopic")
         .description("A LogTopic (32 byte log topic) scalar")
-        .cosrcing(LOG_TOPIC_COSRCING)
+        .coercing(LOG_TOPIC_COERCING)
         .build();
   }
 
   /**
    * Creates a new GraphQLScalarType object for a VersionedHash.
    *
-   * <p>The object is configured with a specific Cosrcing implementation that defines how the
+   * <p>The object is configured with a specific Coercing implementation that defines how the
    * VersionedHash type is serialized, deserialized and validated.
    *
    * @return a GraphQLScalarType object for a VersionedHash.
@@ -683,7 +683,7 @@ public class Scalars {
     return GraphQLScalarType.newScalar()
         .name("VersionedHash")
         .description("A VersionedHash (32 byte versioned hash) scalar")
-        .cosrcing(VERSIONED_HASH_COSRCING)
+        .coercing(VERSIONED_HASH_COERCING)
         .build();
   }
 }

@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv4.internal;
 
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeer;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.Endpoint;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 import org.hyperledger.besu.sila.rlp.RLPOutput;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 
 import java.util.Optional;
 import java.util.concurrent.atomic.AtomicLong;
@@ -28,8 +28,7 @@ import java.util.concurrent.atomic.AtomicLong;
 import org.apache.tuweni.bytes.Bytes;
 
 /**
- * Represents an Sila node that we are interacting with through the discovery and wire
- * protocols.
+ * Represents an Sila node that we are interacting with through the discovery and wire protocols.
  */
 public class DiscoveryPeerV4 extends DiscoveryPeer {
   private PeerDiscoveryStatus status = PeerDiscoveryStatus.KNOWN;

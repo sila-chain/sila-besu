@@ -17,8 +17,10 @@ package org.hyperledger.besu.sila.sil.sync.common;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 import static org.hyperledger.besu.util.log.LogUtil.throttledLog;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
@@ -28,10 +30,8 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.sync.AbstractSyncTargetManager;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.Optional;
@@ -77,7 +77,7 @@ public class SyncTargetManager extends AbstractSyncTargetManager {
   @Override
   protected CompletableFuture<Optional<SilPeer>> selectBestAvailableSyncTarget() {
     final BlockHeader pivotBlockHeader = fastSyncState.getPivotBlockHeader().get();
-    final SilPeers silPeers = silContext.getSilPeers();
+    final SilPeers silPeers = silContext.getEthPeers();
     final Optional<SilPeer> maybeBestPeer = silPeers.bestPeerWithHeightEstimate();
     if (maybeBestPeer.isEmpty()) {
       throttledLog(
@@ -85,7 +85,7 @@ public class SyncTargetManager extends AbstractSyncTargetManager {
           String.format(
               "Unable to find sync target. Waiting for %d peers minimum. Currently checking %d peers for usefulness. Pivot block: %d",
               config.getSyncMinimumPeerCount(),
-              silContext.getSilPeers().peerCount(),
+              silContext.getEthPeers().peerCount(),
               pivotBlockHeader.getNumber()),
           logDebug,
           LOG_DEBUG_REPEAT_DELAY);
@@ -93,7 +93,7 @@ public class SyncTargetManager extends AbstractSyncTargetManager {
           LOG::info,
           String.format(
               "Unable to find sync target. Waiting for %d peers minimum. Currently checking %d peers for usefulness.",
-              config.getSyncMinimumPeerCount(), silContext.getSilPeers().peerCount()),
+              config.getSyncMinimumPeerCount(), silContext.getEthPeers().peerCount()),
           logInfo,
           LOG_INFO_REPEAT_DELAY);
       return completedFuture(Optional.empty());

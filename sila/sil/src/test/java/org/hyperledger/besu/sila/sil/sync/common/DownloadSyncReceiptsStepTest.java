@@ -32,6 +32,7 @@ import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockDataGenerator.BlockOptions;
@@ -45,10 +46,9 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetSyncReceiptsFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetSyncReceiptsFromPeerTask.Response;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.math.BigInteger;
 import java.time.Duration;
@@ -79,7 +79,7 @@ public class DownloadSyncReceiptsStepTest {
   @BeforeEach
   public void setUp() {
     protocolSchedule = new DefaultProtocolSchedule(Optional.of(BigInteger.ONE));
-    when(silContext.getScheduler()).thenReturn(new DeterministicSilScheduler());
+    when(silContext.getScheduler()).thenReturn(new DeterministicEthScheduler());
     when(silContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
 
     downloadSyncReceiptsStep =
@@ -661,16 +661,16 @@ public class DownloadSyncReceiptsStepTest {
 
     // Create a real SilScheduler (not deterministic) to test timeout behavior
     final SilScheduler realScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
-    final SilContext realSilContext = mock(SilContext.class);
-    when(realSilContext.getScheduler()).thenReturn(realScheduler);
-    when(realSilContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
+    final SilContext realEthContext = mock(SilContext.class);
+    when(realEthContext.getScheduler()).thenReturn(realScheduler);
+    when(realEthContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
 
     try {
       // Create a new instance with a very short timeout for testing (100ms)
       final DownloadSyncReceiptsStep shortTimeoutStep =
           new DownloadSyncReceiptsStep(
               protocolSchedule,
-              realSilContext,
+              realEthContext,
               syncTransactionReceiptEncoder,
               Duration.ofMillis(100));
 
@@ -706,15 +706,15 @@ public class DownloadSyncReceiptsStepTest {
     final List<SyncBlock> syncBlocks = blocksToSyncBlocks(blocks);
 
     final SilScheduler realScheduler = new SilScheduler(1, 1, 1, new NoOpMetricsSystem());
-    final SilContext realSilContext = mock(SilContext.class);
-    when(realSilContext.getScheduler()).thenReturn(realScheduler);
-    when(realSilContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
+    final SilContext realEthContext = mock(SilContext.class);
+    when(realEthContext.getScheduler()).thenReturn(realScheduler);
+    when(realEthContext.getPeerTaskExecutor()).thenReturn(peerTaskExecutor);
 
     try {
       final DownloadSyncReceiptsStep step =
           new DownloadSyncReceiptsStep(
               protocolSchedule,
-              realSilContext,
+              realEthContext,
               syncTransactionReceiptEncoder,
               Duration.ofMillis(500));
 

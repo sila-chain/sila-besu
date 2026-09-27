@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.core.encoding;
 
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.RLPOutput;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import org.apache.tuweni.units.bigints.UInt256;
 

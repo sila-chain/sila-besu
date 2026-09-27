@@ -46,7 +46,7 @@ public class SyncStepStep {
 
   public CompletableFuture<Block> executeAsync(final Hash hash) {
     return context
-        .getSilContext()
+        .getEthContext()
         .getScheduler()
         .scheduleServiceTask(
             () -> {
@@ -70,10 +70,10 @@ public class SyncStepStep {
             1,
             0,
             Direction.FORWARD,
-            Math.max(1, context.getSilContext().getSilPeers().peerCount()),
+            Math.max(1, context.getEthContext().getEthPeers().peerCount()),
             context.getProtocolSchedule());
     PeerTaskExecutorResult<List<BlockHeader>> headerExecutorResult =
-        context.getSilContext().getPeerTaskExecutor().execute(headersFromPeerTask);
+        context.getEthContext().getPeerTaskExecutor().execute(headersFromPeerTask);
     if (headerExecutorResult.result().isEmpty()
         || headerExecutorResult.responseCode() != PeerTaskExecutorResponseCode.SUCCESS) {
       throw new RuntimeException(new InvalidPeerTaskResponseException());
@@ -82,7 +82,7 @@ public class SyncStepStep {
           new GetBodiesFromPeerTask(
               headerExecutorResult.result().get(), context.getProtocolSchedule());
       PeerTaskExecutorResult<List<Block>> blockExecutorResult =
-          context.getSilContext().getPeerTaskExecutor().execute(bodiesTask);
+          context.getEthContext().getPeerTaskExecutor().execute(bodiesTask);
       if (blockExecutorResult.result().isEmpty()
           || blockExecutorResult.responseCode() != PeerTaskExecutorResponseCode.SUCCESS) {
         throw new RuntimeException(new InvalidPeerTaskResponseException());

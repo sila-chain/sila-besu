@@ -16,7 +16,7 @@ package org.hyperledger.besu.sila;
 
 import org.hyperledger.besu.sila.core.Request;
 import org.hyperledger.besu.sila.core.TransactionReceipt;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 import java.util.Optional;
@@ -32,6 +32,10 @@ public class BlockProcessingResult extends BlockValidationResult {
 
   /** A result indicating that processing failed. */
   public static final BlockProcessingResult FAILED = new BlockProcessingResult("processing failed");
+
+  /** A result indicating that a transaction's gas limit does not fit the block's gas budget. */
+  public static final BlockProcessingResult INSUFFICIENT_BLOCK_GAS =
+      new BlockProcessingResult("provided gas insufficient");
 
   /**
    * Creates a result indicating that the parent world state was not available when attempting to

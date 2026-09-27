@@ -26,14 +26,14 @@ import org.hyperledger.besu.consensus.common.bft.BftExtraDataCodec;
 import org.hyperledger.besu.consensus.common.bft.BftProtocolSchedule;
 import org.hyperledger.besu.consensus.common.bft.MutableBftConfigOptions;
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.util.List;
 import java.util.Optional;
@@ -99,7 +99,7 @@ public class ForksScheduleTest {
 
     final GenesisConfigOptions genesisMilestones = mock(GenesisConfigOptions.class);
     when(genesisMilestones.getLondonBlockNumber()).thenReturn(OptionalLong.of(50));
-    when(genesisMilestones.getSilaShanghaiTime()).thenReturn(OptionalLong.of(100));
+    when(genesisMilestones.getShanghaiTime()).thenReturn(OptionalLong.of(100));
 
     // Create a protocol schedule based on the genesis config, which applies types (block or
     // timestamp) to all of the forks
@@ -113,6 +113,24 @@ public class ForksScheduleTest {
         .isEqualTo(miningBeneficiary3);
     assertThat(schedule.getFork(0, 400)).isEqualTo(forkSpec4);
     assertThat(schedule.getFork(0, 400).getValue().getMiningBeneficiary()).isEmpty();
+  }
+
+  @Test
+  public void fallbackReturnsSmallestForkNotLargest() {
+    // Regression test for https://github.com/sila-chain/sila-besu/issues/10878.
+    //
+    // Before the fix, when no fork satisfied `blockValue >= f.getBlock()` (i.e. the queried
+    // value was below every configured fork), getFork() fell back to forks.first() - but since
+    // `forks` is a TreeSet sorted in *descending* block order, first() is the LARGEST fork, not
+    // the smallest/base one a sane fallback should return.
+    final ForkSpec<BftConfigOptions> forkSpec10 = createForkSpec(10, 10);
+    final ForkSpec<BftConfigOptions> forkSpec20 = createForkSpec(20, 20);
+
+    final ForksSchedule<BftConfigOptions> schedule =
+        new ForksSchedule<>(List.of(forkSpec20, forkSpec10));
+
+    assertThat(schedule.getFork(5, 5)).isEqualTo(forkSpec10);
+    assertThat(schedule.getFork(0, 0)).isEqualTo(forkSpec10);
   }
 
   private ForkSpec<BftConfigOptions> createForkSpecWithMiningBeneficiary(

@@ -16,14 +16,14 @@ package org.hyperledger.besu.sila.sil.manager;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.hyperledger.besu.sila.sil.SilProtocol;
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLP;
+import org.hyperledger.besu.sila.sil.SilProtocol;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.util.ArrayList;

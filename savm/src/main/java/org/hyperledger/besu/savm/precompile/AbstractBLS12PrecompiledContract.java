@@ -17,9 +17,9 @@ package org.hyperledger.besu.savm.precompile;
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.hyperledger.besu.savm.precompile.AbstractPrecompiledContract.cacheEventConsumer;
 
+import org.hyperledger.besu.nativelib.gnark.LibGnarkEIP2537;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
-import org.hyperledger.besu.nativelib.gnark.LibGnarkSIP2537;
 
 import java.util.Optional;
 
@@ -37,7 +37,7 @@ public abstract class AbstractBLS12PrecompiledContract implements PrecompiledCon
 
   static {
     // set parallel 1 for testing.  Remove this for prod code (or set a rational limit)
-    // LibGnarkSIP2537.setDegreeOfMSMParallelism(1);
+    // LibGnarkEIP2537.setDegreeOfMSMParallelism(1);
   }
 
   /** Default result caching to false unless otherwise set. */
@@ -97,7 +97,7 @@ public abstract class AbstractBLS12PrecompiledContract implements PrecompiledCon
    */
   public static boolean isAvailable() {
     try {
-      return LibGnarkSIP2537.ENABLED;
+      return LibGnarkEIP2537.ENABLED;
     } catch (UnsatisfiedLinkError | NoClassDefFoundError ule) {
       LOG.info("bls12-381 native precompile not available: {}", ule.getMessage());
     }
@@ -116,7 +116,7 @@ public abstract class AbstractBLS12PrecompiledContract implements PrecompiledCon
 
     PrecompileInputResultTuple res = null;
 
-    Integer cacheKey = null;
+    Bytes cacheKey = null;
     final Bytes cachedInput = input.size() > inputLimit ? input.slice(0, inputLimit) : input;
 
     if (enableResultCaching) {
@@ -129,13 +129,15 @@ public abstract class AbstractBLS12PrecompiledContract implements PrecompiledCon
                   name, AbstractPrecompiledContract.CacheMetric.HIT));
           return res.cachedResult();
         } else {
-          LOG.debug(
-              "false positive {} {}, cache key {}, cached input: {}, input: {}",
-              name,
-              input.getClass().getSimpleName(),
-              cacheKey,
-              res.cachedInput().toHexString(),
-              cachedInput.toHexString());
+          if (LOG.isDebugEnabled()) {
+            LOG.debug(
+                "false positive {} {}, cache key {}, cached input: {}, input: {}",
+                name,
+                input.getClass().getSimpleName(),
+                cacheKey,
+                res.cachedInput().toHexString(),
+                cachedInput.toHexString());
+          }
 
           cacheEventConsumer.accept(
               new AbstractPrecompiledContract.CacheEvent(
@@ -148,17 +150,17 @@ public abstract class AbstractBLS12PrecompiledContract implements PrecompiledCon
       }
     }
 
-    final byte[] result = new byte[LibGnarkSIP2537.SIP2537_PREALLOCATE_FOR_RESULT_BYTES];
-    final byte[] error = new byte[LibGnarkSIP2537.SIP2537_PREALLOCATE_FOR_ERROR_BYTES];
+    final byte[] result = new byte[LibGnarkEIP2537.EIP2537_PREALLOCATE_FOR_RESULT_BYTES];
+    final byte[] error = new byte[LibGnarkEIP2537.EIP2537_PREALLOCATE_FOR_ERROR_BYTES];
 
     final IntByReference o_len =
-        new IntByReference(LibGnarkSIP2537.SIP2537_PREALLOCATE_FOR_RESULT_BYTES);
+        new IntByReference(LibGnarkEIP2537.EIP2537_PREALLOCATE_FOR_RESULT_BYTES);
     final IntByReference err_len =
-        new IntByReference(LibGnarkSIP2537.SIP2537_PREALLOCATE_FOR_ERROR_BYTES);
+        new IntByReference(LibGnarkEIP2537.EIP2537_PREALLOCATE_FOR_ERROR_BYTES);
 
     final int inputSize = Math.min(inputLimit, input.size());
     final int errorNo =
-        LibGnarkSIP2537.sip2537_perform_operation(
+        LibGnarkEIP2537.eip2537_perform_operation(
             operationId,
             input.slice(0, inputSize).toArrayUnsafe(),
             inputSize,
@@ -241,5 +243,5 @@ public abstract class AbstractBLS12PrecompiledContract implements PrecompiledCon
    *
    * @return precompile cache.
    */
-  protected abstract Cache<Integer, PrecompileInputResultTuple> getCache();
+  protected abstract Cache<Bytes, PrecompileInputResultTuple> getCache();
 }

@@ -16,7 +16,7 @@ package org.hyperledger.besu.savm.operation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.frame.MessageFrame.State;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
@@ -53,14 +53,14 @@ public class ConstantinopleSStoreOperationGasCostTest {
 
   @ParameterizedTest
   @MethodSource("scenarios")
-  void shouldCalculateGasAccordingToSip1283(
+  void shouldCalculateGasAccordingToEip1283(
       final String code,
       final int originalValue,
       final int expectedGasUsed,
       final int expectedGasRefund) {
 
     TestCodeExecutor codeExecutor =
-        new TestCodeExecutor(SilaMainnetSAVMs.constantinople(SavmConfiguration.DEFAULT));
+        new TestCodeExecutor(SilaMainnetEVMs.constantinople(SavmConfiguration.DEFAULT));
 
     final long gasLimit = 1_000_000;
     final MessageFrame frame =

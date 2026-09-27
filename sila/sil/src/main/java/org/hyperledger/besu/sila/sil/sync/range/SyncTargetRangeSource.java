@@ -19,10 +19,10 @@ import static java.util.concurrent.CompletableFuture.completedFuture;
 import static java.util.concurrent.TimeUnit.MILLISECONDS;
 
 import org.hyperledger.besu.sila.core.BlockHeader;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.fullsync.SyncTerminationCondition;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
 
 import java.time.Duration;
 import java.util.ArrayDeque;

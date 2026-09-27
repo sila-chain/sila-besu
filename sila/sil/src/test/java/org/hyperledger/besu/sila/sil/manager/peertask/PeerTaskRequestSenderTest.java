@@ -14,11 +14,11 @@
  */
 package org.hyperledger.besu.sila.sil.manager.peertask;
 
-import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.sil.manager.RequestManager;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
+import org.hyperledger.besu.sila.sil.manager.RequestManager;
+import org.hyperledger.besu.sila.sil.manager.SilPeer;
 
 import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.ExecutionException;

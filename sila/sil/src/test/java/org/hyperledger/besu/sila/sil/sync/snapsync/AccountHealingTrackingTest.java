@@ -21,13 +21,14 @@ import static org.mockito.Mockito.verify;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.TrieGenerator;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.StorageRangeDataRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.StorageTrieNodeHealingRequest;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.RangeStorageEntriesCollector;
 import org.hyperledger.besu.sila.trie.TrieIterator;
@@ -37,7 +38,6 @@ import org.hyperledger.besu.sila.trie.patricia.StoredMerklePatriciaTrie;
 import org.hyperledger.besu.sila.trie.patricia.StoredNodeFactory;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.util.List;
 import java.util.TreeMap;

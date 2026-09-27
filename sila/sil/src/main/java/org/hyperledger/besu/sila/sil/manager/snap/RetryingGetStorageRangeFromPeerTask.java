@@ -14,13 +14,13 @@
  */
 package org.hyperledger.besu.sila.sil.manager.snap;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractRetryingSwitchingPeerTask;
 import org.hyperledger.besu.sila.sil.messages.snap.StorageRangeMessage;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 import java.util.List;
 import java.util.concurrent.CompletableFuture;

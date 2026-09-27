@@ -15,7 +15,7 @@
 package org.hyperledger.besu.sila;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.trie.pathbased.common.worldview.WorldStateConfig.createStatefulConfigWithTrie;
+import static org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.WorldStateConfig.createStatefulConfigWithTrie;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.ArgumentMatchers.eq;
@@ -25,6 +25,10 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.exception.StorageException;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.MutableBlockchain;
 import org.hyperledger.besu.sila.core.Block;
@@ -32,33 +36,29 @@ import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderTestFixture;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
-import org.hyperledger.besu.sila.sila-mainnet.AbstractBlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockBodyValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.BlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.blockhash.FrontierPreExecutionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.staterootcommitter.DefaultStateRootCommitterFactory;
+import org.hyperledger.besu.sila.silaMainnet.AbstractBlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockBodyValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.BlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockProcessor;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.blockhash.FrontierPreExecutionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.staterootcommitter.StateRootCommitterFactory;
 import org.hyperledger.besu.sila.storage.StorageProvider;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.provider.BonsaiWorldStateProvider;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.worldview.BonsaiWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.exception.StorageException;
 
 import java.util.Optional;
 
@@ -115,11 +115,11 @@ class BlockImportExceptionHandlingTest {
                   worldStateStorageCoordinator.worldStateKeyValueStorage(),
               SavmConfiguration.DEFAULT,
               createStatefulConfigWithTrie(),
-              new PathBasedCodeCache()));
+              new BonsaiCodeCache()));
 
   private final BadBlockManager badBlockManager = new BadBlockManager();
 
-  private BlockValidator sila-mainnetBlockValidator;
+  private BlockValidator mainnetBlockValidator;
 
   @BeforeEach
   public void setup() {
@@ -132,8 +132,8 @@ class BlockImportExceptionHandlingTest {
     when(protocolSpec.getFeeMarket()).thenReturn(feeMarket);
     when(blockAccessListValidator.validate(any(), any(), anyInt())).thenReturn(true);
     when(protocolSpec.getStateRootCommitterFactory())
-        .thenReturn(new DefaultStateRootCommitterFactory());
-    sila-mainnetBlockValidator =
+        .thenReturn(new StateRootCommitterFactory(BalConfiguration.DISABLED));
+    mainnetBlockValidator =
         SilaMainnetBlockValidatorBuilder.frontier(
             blockHeaderValidator, blockBodyValidator, blockProcessor, blockAccessListValidator);
   }
@@ -172,7 +172,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenReturn(true);
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -210,7 +210,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenReturn(true);
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -239,7 +239,7 @@ class BlockImportExceptionHandlingTest {
         .thenThrow(new StorageException("database problem"));
 
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,
@@ -280,7 +280,7 @@ class BlockImportExceptionHandlingTest {
             any()))
         .thenThrow(new StorageException("database problem"));
     assertThat(badBlockManager.getBadBlocks()).isEmpty();
-    sila-mainnetBlockValidator.validateAndProcessBlock(
+    mainnetBlockValidator.validateAndProcessBlock(
         protocolContext,
         goodBlock,
         HeaderValidationMode.DETACHED_ONLY,

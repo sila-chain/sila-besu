@@ -14,6 +14,8 @@
  */
 package org.hyperledger.besu.sila.sil.sync.fullsync;
 
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutor;
@@ -21,9 +23,7 @@ import org.hyperledger.besu.sila.sil.sync.ChainDownloader;
 import org.hyperledger.besu.sila.sil.sync.PipelineChainDownloader;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 public class FullSyncChainDownloader {
   private FullSyncChainDownloader() {}

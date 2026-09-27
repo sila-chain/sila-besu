@@ -16,9 +16,9 @@ package org.hyperledger.besu.sila.permissioning.account;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.permissioning.TransactionPermissioningProvider;
 import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.sila.permissioning.AccountLocalConfigPermissioningController;
-import org.hyperledger.besu.plugin.services.permissioning.TransactionPermissioningProvider;
 
 import java.util.List;
 import java.util.Optional;

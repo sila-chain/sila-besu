@@ -17,8 +17,8 @@ package org.hyperledger.besu.sila.p2p.peers;
 import static com.google.common.base.Preconditions.checkArgument;
 import static com.google.common.base.Preconditions.checkState;
 
-import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
 import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
 import org.hyperledger.besu.util.NetworkUtility;
 
 import java.net.InetAddress;

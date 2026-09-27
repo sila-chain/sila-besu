@@ -96,7 +96,6 @@ public class CodeDelegationTransactionDecoder {
     final SECPSignature signature =
         SIGNATURE_ALGORITHM.createCodeDelegationSignature(r, s, yParity);
 
-    return new org.hyperledger.besu.sila.core.CodeDelegation(
-        chainId, address, nonce, signature);
+    return new org.hyperledger.besu.sila.core.CodeDelegation(chainId, address, nonce, signature);
   }
 }

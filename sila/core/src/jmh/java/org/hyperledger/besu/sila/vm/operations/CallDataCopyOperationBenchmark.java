@@ -15,7 +15,8 @@
 package org.hyperledger.besu.sila.vm.operations;
 
 import org.hyperledger.besu.savm.frame.MessageFrame;
-import org.hyperledger.besu.savm.gascalculator.SilaCancunGasCalculator;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaOsakaGasCalculator;
 import org.hyperledger.besu.savm.operation.CallDataCopyOperation;
 
 import java.util.concurrent.TimeUnit;
@@ -31,6 +32,7 @@ import org.openjdk.jmh.annotations.Scope;
 import org.openjdk.jmh.annotations.Setup;
 import org.openjdk.jmh.annotations.State;
 import org.openjdk.jmh.annotations.Warmup;
+import org.openjdk.jmh.infra.BenchmarkParams;
 import org.openjdk.jmh.infra.Blackhole;
 
 @State(Scope.Thread)
@@ -38,7 +40,15 @@ import org.openjdk.jmh.infra.Blackhole;
 @OutputTimeUnit(value = TimeUnit.NANOSECONDS)
 @Measurement(iterations = 5, time = 1, timeUnit = TimeUnit.SECONDS)
 @BenchmarkMode(Mode.AverageTime)
-public class CallDataCopyOperationBenchmark {
+public class CallDataCopyOperationBenchmark implements GasCostBenchmark {
+
+  @Override
+  public long getGasCost(final BenchmarkParams params, final GasCalculator calc) {
+    final long size = Long.parseLong(params.getParam("dataSize"));
+    final MessageFrame frame = BenchmarkHelper.createMessageCallFrame();
+    frame.expandMemory(0, size);
+    return calc.dataCopyOperationGasCost(frame, 0, size);
+  }
 
   private CallDataCopyOperation callDataCopyOperation;
   protected static final int SAMPLE_SIZE = 30_000;
@@ -67,7 +77,7 @@ public class CallDataCopyOperationBenchmark {
 
   @Setup
   public void setUp() {
-    callDataCopyOperation = new CallDataCopyOperation(new SilaCancunGasCalculator());
+    callDataCopyOperation = new CallDataCopyOperation(new SilaOsakaGasCalculator());
     callData = BenchmarkHelper.createCallData(dataSize, nonZeroData);
     frame = BenchmarkHelper.createMessageCallFrameWithCallData(callData);
 
@@ -83,18 +93,7 @@ public class CallDataCopyOperationBenchmark {
     index = 0;
   }
 
-  @Benchmark
-  public void baseline() {
-    frame.pushStackItem(sizePool[index]);
-    frame.pushStackItem(srcOffsetPool[index]);
-    frame.pushStackItem(destOffsetPool[index]);
-
-    frame.popStackItem();
-    frame.popStackItem();
-    frame.popStackItem();
-    index = (index + 1) % SAMPLE_SIZE;
-  }
-
+  @Override
   @Benchmark
   public void executeOperation(final Blackhole blackhole) {
     frame.pushStackItem(sizePool[index]);

@@ -23,12 +23,12 @@ import org.hyperledger.besu.sila.api.graphql.internal.Scalars;
 import java.util.Locale;
 
 import graphql.GraphQLContext;
-import graphql.execution.CosrcedVariables;
+import graphql.execution.CoercedVariables;
 import graphql.language.FloatValue;
 import graphql.language.StringValue;
-import graphql.schema.CosrcingParseLiteralException;
-import graphql.schema.CosrcingParseValueException;
-import graphql.schema.CosrcingSerializeException;
+import graphql.schema.CoercingParseLiteralException;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import org.apache.tuweni.bytes.Bytes;
 import org.junit.jupiter.api.BeforeEach;
@@ -49,7 +49,7 @@ public class HashScalarTest {
   public void parseValueTest() {
     final var result =
         scalar
-            .getCosrcing()
+            .getCoercing()
             .parseValue(strValue.getValue(), GraphQLContext.newContext().build(), Locale.ENGLISH);
     assertThat(result).isEqualTo(hash);
   }
@@ -59,10 +59,10 @@ public class HashScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseValue(
                         "not_hexadecimal", GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @Test
@@ -70,16 +70,16 @@ public class HashScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseValue(3.2f, GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseValueException.class);
+        .isInstanceOf(CoercingParseValueException.class);
   }
 
   @Test
   public void serializeHashTest() {
     assertThat(
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .serialize(hash, GraphQLContext.newContext().build(), Locale.ENGLISH))
         .isEqualTo(hash.toString());
   }
@@ -89,9 +89,9 @@ public class HashScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .serialize(3.2f, GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingSerializeException.class);
+        .isInstanceOf(CoercingSerializeException.class);
   }
 
   @Test
@@ -99,10 +99,10 @@ public class HashScalarTest {
     final Hash result =
         (Hash)
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .parseLiteral(
                     strValue,
-                    CosrcedVariables.emptyVariables(),
+                    CoercedVariables.emptyVariables(),
                     GraphQLContext.newContext().build(),
                     Locale.ENGLISH);
     assertThat(result).isEqualTo(hash);
@@ -113,13 +113,13 @@ public class HashScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseLiteral(
                         FloatValue.of(3.2f),
-                        CosrcedVariables.emptyVariables(),
+                        CoercedVariables.emptyVariables(),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @Test
@@ -127,13 +127,13 @@ public class HashScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseLiteral(
                         invalidStrValue,
-                        CosrcedVariables.emptyVariables(),
+                        CoercedVariables.emptyVariables(),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @BeforeEach

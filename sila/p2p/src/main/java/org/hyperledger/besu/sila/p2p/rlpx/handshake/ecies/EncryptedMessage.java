@@ -47,7 +47,7 @@ final class EncryptedMessage {
    * @return The plaintext.
    * @throws InvalidCipherTextException Thrown if decryption failed.
    */
-  public static Bytes decryptMsgSIP8(final Bytes msgBytes, final NodeKey nodeKey)
+  public static Bytes decryptMsgEIP8(final Bytes msgBytes, final NodeKey nodeKey)
       throws InvalidCipherTextException {
     final SECPPublicKey ephPubKey = SIGNATURE_ALGORITHM.createPublicKey(msgBytes.slice(3, 64));
 
@@ -71,7 +71,7 @@ final class EncryptedMessage {
    * @return The ciphertext.
    * @throws InvalidCipherTextException Thrown if encryption failed.
    */
-  public static Bytes encryptMsgSip8(final Bytes message, final SECPPublicKey remoteKey)
+  public static Bytes encryptMsgEip8(final Bytes message, final SECPPublicKey remoteKey)
       throws InvalidCipherTextException {
     final ECIESEncryptionEngine engine = ECIESEncryptionEngine.forEncryption(remoteKey);
 

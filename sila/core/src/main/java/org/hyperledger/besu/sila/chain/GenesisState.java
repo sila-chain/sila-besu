@@ -23,19 +23,19 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.BlobGas;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.LogsBloomFilter;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.account.MutableAccount;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderBuilder;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.Withdrawal;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
-import org.hyperledger.besu.sila.trie.pathbased.common.code.PathBasedCodeCache;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
+import org.hyperledger.besu.sila.trie.pathbased.bonsai.code.BonsaiCodeCache;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.account.MutableAccount;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.net.URL;
 import java.util.List;
@@ -68,9 +68,7 @@ public final class GenesisState {
    * @return A new {@link GenesisState}.
    */
   public static GenesisState fromJson(
-      final String json,
-      final ProtocolSchedule protocolSchedule,
-      final PathBasedCodeCache codeCache) {
+      final String json, final ProtocolSchedule protocolSchedule, final BonsaiCodeCache codeCache) {
     return fromConfig(GenesisConfig.fromConfig(json), protocolSchedule, codeCache);
   }
 
@@ -92,7 +90,7 @@ public final class GenesisState {
         dataStorageConfiguration,
         GenesisConfig.fromConfig(jsonSource),
         protocolSchedule,
-        new PathBasedCodeCache());
+        new BonsaiCodeCache());
   }
 
   /**
@@ -105,7 +103,7 @@ public final class GenesisState {
   public static GenesisState fromConfig(
       final GenesisConfig config,
       final ProtocolSchedule protocolSchedule,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     return fromConfig(DataStorageConfiguration.DEFAULT_CONFIG, config, protocolSchedule, codeCache);
   }
 
@@ -122,7 +120,7 @@ public final class GenesisState {
       final DataStorageConfiguration dataStorageConfiguration,
       final GenesisConfig genesisConfig,
       final ProtocolSchedule protocolSchedule,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     final var genesisStateRoot =
         calculateGenesisStateRoot(dataStorageConfiguration, genesisConfig, codeCache);
     final Block block =
@@ -153,7 +151,7 @@ public final class GenesisState {
 
   private static BlockBody buildBody(final GenesisConfig config) {
     final Optional<List<Withdrawal>> withdrawals =
-        isSilaShanghaiAtGenesis(config) ? Optional.of(emptyList()) : Optional.empty();
+        isShanghaiAtGenesis(config) ? Optional.of(emptyList()) : Optional.empty();
 
     return new BlockBody(emptyList(), emptyList(), withdrawals);
   }
@@ -191,7 +189,7 @@ public final class GenesisState {
   private static Hash calculateGenesisStateRoot(
       final DataStorageConfiguration dataStorageConfiguration,
       final GenesisConfig genesisConfig,
-      final PathBasedCodeCache codeCache) {
+      final BonsaiCodeCache codeCache) {
     try (var worldState = createGenesisWorldState(dataStorageConfiguration, codeCache)) {
       writeAccountsTo(worldState, genesisConfig.streamAllocations(), null);
       return worldState.rootHash();
@@ -223,14 +221,14 @@ public final class GenesisState {
         .nonce(parseNonce(genesis))
         .blockHeaderFunctions(ScheduleBasedBlockHeaderFunctions.create(protocolSchedule))
         .baseFee(genesis.getGenesisBaseFeePerGas().orElse(null))
-        .withdrawalsRoot(isSilaShanghaiAtGenesis(genesis) ? Hash.EMPTY_TRIE_HASH : null)
-        .blobGasUsed(isSilaCancunAtGenesis(genesis) ? parseBlobGasUsed(genesis) : null)
-        .excessBlobGas(isSilaCancunAtGenesis(genesis) ? parseExcessBlobGas(genesis) : null)
+        .withdrawalsRoot(isShanghaiAtGenesis(genesis) ? Hash.EMPTY_TRIE_HASH : null)
+        .blobGasUsed(isCancunAtGenesis(genesis) ? parseBlobGasUsed(genesis) : null)
+        .excessBlobGas(isCancunAtGenesis(genesis) ? parseExcessBlobGas(genesis) : null)
         .parentBeaconBlockRoot(
-            (isSilaCancunAtGenesis(genesis) ? parseParentBeaconBlockRoot(genesis) : null))
-        .requestsHash(isSilaPragueAtGenesis(genesis) ? Hash.EMPTY_REQUESTS_HASH : null)
-        .balHash(isSilaAmsterdamAtGenesis(genesis) ? Hash.EMPTY_BAL_HASH : null)
-        .slotNumber(isSilaAmsterdamAtGenesis(genesis) ? parseSlotNumber(genesis) : null)
+            (isCancunAtGenesis(genesis) ? parseParentBeaconBlockRoot(genesis) : null))
+        .requestsHash(isPragueAtGenesis(genesis) ? Hash.EMPTY_REQUESTS_HASH : null)
+        .balHash(isAmsterdamAtGenesis(genesis) ? Hash.EMPTY_BAL_HASH : null)
+        .slotNumber(isAmsterdamAtGenesis(genesis) ? parseSlotNumber(genesis) : null)
         .buildBlockHeader();
   }
 
@@ -264,7 +262,14 @@ public final class GenesisState {
     return withNiceErrorMessage("extraData", genesis.getExtraData(), Bytes::fromHexString);
   }
 
-  private static Difficulty parseDifficulty(final GenesisConfig genesis) {
+  /**
+   * Parse the genesis block difficulty, reporting a malformed value against the field it came from.
+   *
+   * @param genesis A {@link GenesisConfig} describing the genesis block.
+   * @return the genesis block difficulty
+   * @throws IllegalArgumentException if the difficulty is missing or not a valid quantity
+   */
+  public static Difficulty parseDifficulty(final GenesisConfig genesis) {
     return withNiceErrorMessage("difficulty", genesis.getDifficulty(), Difficulty::fromHexString);
   }
 
@@ -306,58 +311,58 @@ public final class GenesisState {
     return Long.parseUnsignedLong(v, 16);
   }
 
-  private static boolean isSilaShanghaiAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong shanghaiTimestamp = genesis.getConfigOptions().getSilaShanghaiTime();
+  private static boolean isShanghaiAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong shanghaiTimestamp = genesis.getConfigOptions().getShanghaiTime();
     if (shanghaiTimestamp.isPresent()) {
       return genesis.getTimestamp() >= shanghaiTimestamp.getAsLong();
     }
-    return isSilaCancunAtGenesis(genesis);
+    return isCancunAtGenesis(genesis);
   }
 
-  private static boolean isSilaCancunAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong cancunTimestamp = genesis.getConfigOptions().getSilaCancunTime();
+  private static boolean isCancunAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong cancunTimestamp = genesis.getConfigOptions().getCancunTime();
     if (cancunTimestamp.isPresent()) {
       return genesis.getTimestamp() >= cancunTimestamp.getAsLong();
     }
-    return isSilaPragueAtGenesis(genesis);
+    return isPragueAtGenesis(genesis);
   }
 
-  private static boolean isSilaPragueAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong pragueTimestamp = genesis.getConfigOptions().getSilaPragueTime();
+  private static boolean isPragueAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong pragueTimestamp = genesis.getConfigOptions().getPragueTime();
     if (pragueTimestamp.isPresent()) {
       return genesis.getTimestamp() >= pragueTimestamp.getAsLong();
     }
-    return isSilaOsakaAtGenesis(genesis);
+    return isOsakaAtGenesis(genesis);
   }
 
-  private static boolean isSilaOsakaAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong osakaTimestamp = genesis.getConfigOptions().getSilaOsakaTime();
+  private static boolean isOsakaAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong osakaTimestamp = genesis.getConfigOptions().getOsakaTime();
     if (osakaTimestamp.isPresent()) {
       return genesis.getTimestamp() >= osakaTimestamp.getAsLong();
     }
-    return isSilaAmsterdamAtGenesis(genesis);
+    return isAmsterdamAtGenesis(genesis);
   }
 
-  private static boolean isSilaAmsterdamAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong amsterdamTimestamp = genesis.getConfigOptions().getSilaAmsterdamTime();
+  private static boolean isAmsterdamAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong amsterdamTimestamp = genesis.getConfigOptions().getAmsterdamTime();
     if (amsterdamTimestamp.isPresent()) {
       return genesis.getTimestamp() >= amsterdamTimestamp.getAsLong();
     }
-    return isFutureSipsTimeAtGenesis(genesis);
+    return isFutureEipsTimeAtGenesis(genesis);
   }
 
-  private static boolean isFutureSipsTimeAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong futureSipsTime = genesis.getConfigOptions().getFutureSipsTime();
-    if (futureSipsTime.isPresent()) {
-      return genesis.getTimestamp() >= futureSipsTime.getAsLong();
+  private static boolean isFutureEipsTimeAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong futureEipsTime = genesis.getConfigOptions().getFutureEipsTime();
+    if (futureEipsTime.isPresent()) {
+      return genesis.getTimestamp() >= futureEipsTime.getAsLong();
     }
-    return isExperimentalSipsTimeAtGenesis(genesis);
+    return isExperimentalEipsTimeAtGenesis(genesis);
   }
 
-  private static boolean isExperimentalSipsTimeAtGenesis(final GenesisConfig genesis) {
-    final OptionalLong experimentalSipsTime = genesis.getConfigOptions().getExperimentalSipsTime();
-    if (experimentalSipsTime.isPresent()) {
-      return genesis.getTimestamp() >= experimentalSipsTime.getAsLong();
+  private static boolean isExperimentalEipsTimeAtGenesis(final GenesisConfig genesis) {
+    final OptionalLong experimentalEipsTime = genesis.getConfigOptions().getExperimentalEipsTime();
+    if (experimentalEipsTime.isPresent()) {
+      return genesis.getTimestamp() >= experimentalEipsTime.getAsLong();
     }
     return false;
   }

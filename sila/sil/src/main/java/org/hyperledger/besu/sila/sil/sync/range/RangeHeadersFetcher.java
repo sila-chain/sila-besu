@@ -27,7 +27,7 @@ import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTas
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetHeadersFromPeerTask.Direction;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.List;
 import java.util.Optional;

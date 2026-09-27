@@ -80,7 +80,7 @@ public class SyncTransactionReceiptDecoderTest {
   }
 
   @Test
-  public void testDecodeSil69Receipt() {
+  public void testDecodeEth69Receipt() {
     final Hash stateRoot = Hash.hash(Bytes.random(32));
     final long cumulativeGasUsed = 2;
     final List<Log> logs =
@@ -106,7 +106,7 @@ public class SyncTransactionReceiptDecoderTest {
     Assertions.assertEquals(encodedReceipt, syncTransactionReceipt.getRlpBytes());
     Assertions.assertFalse(syncTransactionReceipt.isFormattedForRootCalculation());
     Assertions.assertEquals(
-        Bytes.of(TransactionType.FRONTIER.getSilSerializedType()),
+        Bytes.of(TransactionType.FRONTIER.getEthSerializedType()),
         syncTransactionReceipt.getTransactionTypeCode());
     Assertions.assertEquals(stateRoot.getBytes(), syncTransactionReceipt.getStatusOrStateRoot());
     Assertions.assertEquals(

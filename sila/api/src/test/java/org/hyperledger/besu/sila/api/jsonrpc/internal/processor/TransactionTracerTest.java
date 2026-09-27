@@ -22,6 +22,11 @@ import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
+import org.hyperledger.besu.savm.tracing.StreamingOperationTracer;
+import org.hyperledger.besu.savm.tracing.TraceFrame;
+import org.hyperledger.besu.savm.worldstate.StackedUpdater;
+import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 import org.hyperledger.besu.sila.GasLimitCalculator;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.jsonrpc.internal.parameters.ImmutableTransactionTraceParams;
@@ -30,18 +35,13 @@ import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.BlockBody;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetTransactionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.blockhash.PreExecutionProcessor;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetTransactionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.blockhash.PreExecutionProcessor;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 import org.hyperledger.besu.sila.vm.DebugOperationTracer;
-import org.hyperledger.besu.savm.gascalculator.GasCalculator;
-import org.hyperledger.besu.savm.tracing.StreamingOperationTracer;
-import org.hyperledger.besu.savm.tracing.TraceFrame;
-import org.hyperledger.besu.savm.worldstate.StackedUpdater;
-import org.hyperledger.besu.savm.worldstate.WorldUpdater;
 
 import java.io.IOException;
 import java.nio.file.Files;
@@ -145,6 +145,8 @@ public class TransactionTracerTest {
     when(blockchain.getBlockBody(blockHash)).thenReturn(Optional.of(blockBody));
     final List<TraceFrame> traceFrames = Collections.singletonList(mock(TraceFrame.class));
     when(tracer.getTraceFrames()).thenReturn(traceFrames);
+    final WorldUpdater updater = mock(WorldUpdater.class);
+    when(mutableWorldState.updater()).thenReturn(updater);
 
     final Optional<TransactionTrace> transactionTrace =
         transactionTracer.traceTransaction(mutableWorldState, blockHash, transactionHash, tracer);
@@ -162,6 +164,8 @@ public class TransactionTracerTest {
     when(blockchain.getBlockBody(blockHash)).thenReturn(Optional.of(blockBody));
     final List<TraceFrame> traceFrames = Collections.singletonList(mock(TraceFrame.class));
     when(tracer.getTraceFrames()).thenReturn(traceFrames);
+    final WorldUpdater updater = mock(WorldUpdater.class);
+    when(mutableWorldState.updater()).thenReturn(updater);
 
     final Optional<TransactionTrace> transactionTrace =
         transactionTracer.traceTransaction(mutableWorldState, blockHash, transactionHash, tracer);

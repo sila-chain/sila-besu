@@ -19,13 +19,13 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.ProtocolScheduleFixture;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.account.Account;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.util.stream.Stream;
 
@@ -180,7 +180,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaShanghai(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromShanghai(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -229,7 +229,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaCancun(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromCancun(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -279,7 +279,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaPrague(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromPrague(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -334,7 +334,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisFromSilaAmsterdam(final DataStorageConfiguration dataStorageConfiguration) {
+  void genesisFromAmsterdam(final DataStorageConfiguration dataStorageConfiguration) {
     final GenesisState genesisState =
         GenesisState.fromJsonSource(
             dataStorageConfiguration,
@@ -359,7 +359,7 @@ final class GenesisStateTest {
 
   @ParameterizedTest
   @ArgumentsSource(GenesisStateTestArguments.class)
-  void genesisSlotNumberNotPresentPreSilaAmsterdam(
+  void genesisSlotNumberNotPresentPreAmsterdam(
       final DataStorageConfiguration dataStorageConfiguration) {
     // SilaPrague genesis should NOT have slot number
     final GenesisState genesisState =

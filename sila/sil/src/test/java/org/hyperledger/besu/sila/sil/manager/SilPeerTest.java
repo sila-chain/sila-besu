@@ -25,21 +25,21 @@ import static org.mockito.ArgumentMatchers.anyInt;
 import static org.mockito.Mockito.mock;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sil.SilPeerTestUtil;
-import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
-import org.hyperledger.besu.sila.sil.messages.BlockBodiesMessage;
-import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
-import org.hyperledger.besu.sila.sil.messages.ReceiptsMessage;
-import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection.PeerNotConnected;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.Capability;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.PeerInfo;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.PingMessage;
-import org.hyperledger.besu.plugin.services.permissioning.NodeMessagePermissioningProvider;
+import org.hyperledger.besu.sila.sil.SilPeerTestUtil;
+import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
+import org.hyperledger.besu.sila.sil.messages.BlockBodiesMessage;
+import org.hyperledger.besu.sila.sil.messages.BlockHeadersMessage;
+import org.hyperledger.besu.sila.sil.messages.ReceiptsMessage;
+import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.math.BigInteger;
@@ -367,19 +367,19 @@ public class SilPeerTest {
     // Set up 1 stream
     getStream.get(peer).then(responseHandler);
 
-    SilMessage targetSilMessage =
+    SilMessage targetEthMessage =
         new SilMessage(peer, targetMessage.wrapMessageData(BigInteger.valueOf(requestIdCounter++)));
     // Dispatch message and check that stream processes messages
-    peer.dispatch(targetSilMessage);
+    peer.dispatch(targetEthMessage);
     assertThat(messageCount.get()).isEqualTo(1);
     assertThat(closedCount.get()).isEqualTo(1);
 
-    targetSilMessage =
+    targetEthMessage =
         new SilMessage(peer, targetMessage.wrapMessageData(BigInteger.valueOf(requestIdCounter++)));
 
     // Check that no new messages are delivered
     getStream.get(peer);
-    peer.dispatch(targetSilMessage);
+    peer.dispatch(targetEthMessage);
     assertThat(messageCount.get()).isEqualTo(1);
     assertThat(closedCount.get()).isEqualTo(1);
 
@@ -391,37 +391,37 @@ public class SilPeerTest {
     messageCount.set(0);
     closedCount.set(0);
 
-    targetSilMessage =
+    targetEthMessage =
         new SilMessage(peer, targetMessage.wrapMessageData(BigInteger.valueOf(requestIdCounter++)));
 
     // Dispatch message and check that stream processes messages
-    peer.dispatch(targetSilMessage);
+    peer.dispatch(targetEthMessage);
     assertThat(messageCount.get()).isEqualTo(1);
     assertThat(closedCount.get()).isEqualTo(0);
 
     // Dispatch unrelated message and check that it is not process
-    SilMessage otherSilMessage =
+    SilMessage otherEthMessage =
         new SilMessage(peer, otherMessage.wrapMessageData(BigInteger.valueOf(999)));
-    peer.dispatch(otherSilMessage);
+    peer.dispatch(otherEthMessage);
     assertThat(messageCount.get()).isEqualTo(1);
     assertThat(closedCount.get()).isEqualTo(0);
 
-    targetSilMessage =
+    targetEthMessage =
         new SilMessage(peer, targetMessage.wrapMessageData(BigInteger.valueOf(requestIdCounter++)));
     // Dispatch last outstanding message and check that streams are closed
-    peer.dispatch(targetSilMessage);
+    peer.dispatch(targetEthMessage);
     assertThat(messageCount.get()).isEqualTo(2);
     assertThat(closedCount.get()).isEqualTo(2);
 
-    targetSilMessage =
+    targetEthMessage =
         new SilMessage(peer, targetMessage.wrapMessageData(BigInteger.valueOf(requestIdCounter++)));
     // Check that no new messages are delivered
     getStream.get(peer);
-    peer.dispatch(targetSilMessage);
+    peer.dispatch(targetEthMessage);
     assertThat(messageCount.get()).isEqualTo(2);
     assertThat(closedCount.get()).isEqualTo(2);
 
-    targetSilMessage =
+    targetEthMessage =
         new SilMessage(peer, targetMessage.wrapMessageData(BigInteger.valueOf(requestIdCounter)));
     // Open stream, then close it and check no messages are processed
     final RequestManager.ResponseStream stream = getStream.get(peer).then(responseHandler);
@@ -430,7 +430,7 @@ public class SilPeerTest {
     closedCount.set(0);
     stream.close();
     getStream.get(peer);
-    peer.dispatch(targetSilMessage);
+    peer.dispatch(targetEthMessage);
     assertThat(messageCount.get()).isEqualTo(0);
     assertThat(closedCount.get()).isEqualTo(1);
   }

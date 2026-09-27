@@ -32,7 +32,7 @@ import okhttp3.OkHttpClient;
 import okhttp3.Request;
 import okhttp3.RequestBody;
 import okhttp3.Response;
-import org.web3j.protocol.core.methods.response.SilBlock;
+import sila.web3j.protocol.core.methods.response.EthBlock;
 
 /** Acceptance test helper for SilaAmsterdam fork. */
 public class SilaAmsterdamAcceptanceTestHelper {
@@ -49,7 +49,8 @@ public class SilaAmsterdamAcceptanceTestHelper {
   private long blockTimeStamp = 0;
   private long slotNumber = 0;
 
-  SilaAmsterdamAcceptanceTestHelper(final BesuNode besuNode, final SilTransactions silTransactions) {
+  SilaAmsterdamAcceptanceTestHelper(
+      final BesuNode besuNode, final SilTransactions silTransactions) {
     this.besuNode = besuNode;
     this.silTransactions = silTransactions;
     httpClient = new OkHttpClient();
@@ -57,7 +58,7 @@ public class SilaAmsterdamAcceptanceTestHelper {
   }
 
   public void buildNewBlock() throws IOException {
-    final SilBlock.Block block = besuNode.execute(silTransactions.block());
+    final EthBlock.Block block = besuNode.execute(silTransactions.block());
 
     blockTimeStamp += 1;
     slotNumber += 1;
@@ -131,8 +132,7 @@ public class SilaAmsterdamAcceptanceTestHelper {
         createNewPayloadRequest(
             executionPayload.toString(),
             PARENT_BEACON_BLOCK_ROOT_TEST,
-            executionRequests.toString(),
-            blockAccessList);
+            executionRequests.toString());
     final Call newPayloadRequest = createEngineCall(newPayloadRequestBody);
     try (final Response newPayloadResponse = newPayloadRequest.execute()) {
       assertThat(newPayloadResponse.code()).isEqualTo(200);
@@ -178,14 +178,14 @@ public class SilaAmsterdamAcceptanceTestHelper {
 
   /**
    * Sends a payload-building {@code engine_forkchoiceUpdatedV4} whose payload attributes omit the
-   * {@code targetGasLimit} field, which is mandatory from SilaAmsterdam onwards, and returns the parsed
-   * JSON-RPC response so callers can assert the error.
+   * {@code targetGasLimit} field, which is mandatory from SilaAmsterdam onwards, and returns the
+   * parsed JSON-RPC response so callers can assert the error.
    *
    * @return the parsed JSON-RPC response
    * @throws IOException if the engine call fails
    */
   public JsonNode forkChoiceUpdatedWithoutTargetGasLimit() throws IOException {
-    final SilBlock.Block block = besuNode.execute(silTransactions.block());
+    final EthBlock.Block block = besuNode.execute(silTransactions.block());
 
     blockTimeStamp += 1;
     slotNumber += 1;
@@ -277,12 +277,9 @@ public class SilaAmsterdamAcceptanceTestHelper {
   private String createNewPayloadRequest(
       final String executionPayload,
       final String parentBeaconBlockRoot,
-      final String executionRequests,
-      final String blockAccessList) {
+      final String executionRequests) {
     // engine_newPayloadV5 params: [executionPayload, versionedHashes, parentBeaconBlockRoot,
-    // executionRequests, blockAccessList]
-    String blockAccessListParam =
-        blockAccessList != null ? "\"" + blockAccessList + "\"" : "\"0xc0\"";
+    // executionRequests]
     return "{"
         + "  \"jsonrpc\": \"2.0\","
         + "  \"method\": \"engine_newPayloadV5\","
@@ -294,8 +291,6 @@ public class SilaAmsterdamAcceptanceTestHelper {
         + "\""
         + ","
         + executionRequests
-        + ","
-        + blockAccessListParam
         + "],"
         + "  \"id\": 67"
         + "}";

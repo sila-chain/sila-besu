@@ -47,13 +47,13 @@ import java.util.Optional;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.sila.beacon.discovery.schema.EnrField;
-import org.sila.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.Assertions;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.Mockito;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 public class PacketSerializerTest {
   final Clock clock = Clock.fixed(Instant.ofEpochSecond(123), ZoneId.of("UTC"));

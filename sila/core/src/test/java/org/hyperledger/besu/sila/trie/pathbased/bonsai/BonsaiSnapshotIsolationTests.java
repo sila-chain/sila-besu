@@ -15,8 +15,8 @@
 package org.hyperledger.besu.sila.trie.pathbased.bonsai;
 
 import static org.assertj.core.api.AssertionsForClassTypes.assertThat;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
-import static org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams.withStateRootAndBlockHashAndUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withBlockHeaderAndNoUpdateNodeHead;
+import static org.hyperledger.besu.sila.worldstate.WorldStateQueryParams.withStateRootAndBlockHashAndUpdateNodeHead;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Wei;

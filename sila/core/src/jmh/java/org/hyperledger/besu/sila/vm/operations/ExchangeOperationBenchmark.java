@@ -15,11 +15,15 @@
 package org.hyperledger.besu.sila.vm.operations;
 
 import org.hyperledger.besu.savm.frame.MessageFrame;
+import org.hyperledger.besu.savm.gascalculator.GasCalculator;
 import org.hyperledger.besu.savm.operation.ExchangeOperation;
 import org.hyperledger.besu.savm.operation.Operation;
 
+import org.openjdk.jmh.infra.BenchmarkParams;
+
 /** JMH benchmark for the EXCHANGE operation (SIP-8024). */
-public class ExchangeOperationBenchmark extends ImmediateByteOperationBenchmark {
+public class ExchangeOperationBenchmark extends ImmediateByteOperationBenchmark
+    implements GasCostBenchmark {
 
   @Override
   protected int getOpcode() {
@@ -43,5 +47,10 @@ public class ExchangeOperationBenchmark extends ImmediateByteOperationBenchmark 
   protected int getStackDelta() {
     // EXCHANGE does not change stack size
     return 0;
+  }
+
+  @Override
+  public long getGasCost(final BenchmarkParams params, final GasCalculator calc) {
+    return new ExchangeOperation(calc).getGasCost();
   }
 }

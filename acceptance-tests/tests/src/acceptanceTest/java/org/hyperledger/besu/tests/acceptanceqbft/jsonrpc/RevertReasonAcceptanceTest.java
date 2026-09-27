@@ -23,7 +23,7 @@ import org.hyperledger.besu.tests.web3j.generated.RevertReason;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.core.methods.response.SilSendTransaction;
+import sila.web3j.protocol.core.methods.response.EthSendTransaction;
 
 public class RevertReasonAcceptanceTest extends AcceptanceTestBase {
 
@@ -39,7 +39,7 @@ public class RevertReasonAcceptanceTest extends AcceptanceTestBase {
   public void mustRevertWithRevertReason() {
     final RevertReason revertReasonContract =
         minerNode.execute(contractTransactions.createSmartContract(RevertReason.class));
-    final SilSendTransaction transaction =
+    final EthSendTransaction transaction =
         minerNode.execute(
             contractTransactions.callSmartContract(
                 revertReasonContract.getContractAddress(), FUNC_REVERTWITHREVERTREASON));
@@ -52,7 +52,7 @@ public class RevertReasonAcceptanceTest extends AcceptanceTestBase {
   public void mustRevertWithoutRevertReason() {
     final RevertReason revertReasonContract =
         minerNode.execute(contractTransactions.createSmartContract(RevertReason.class));
-    final SilSendTransaction transaction =
+    final EthSendTransaction transaction =
         minerNode.execute(
             contractTransactions.callSmartContract(
                 revertReasonContract.getContractAddress(), FUNC_REVERTWITHOUTREVERTREASON));

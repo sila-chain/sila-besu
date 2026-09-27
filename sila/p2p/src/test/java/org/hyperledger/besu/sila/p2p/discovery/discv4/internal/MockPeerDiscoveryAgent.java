@@ -15,6 +15,8 @@
 package org.hyperledger.besu.sila.p2p.discovery.discv4.internal;
 
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.nat.NatService;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.forkid.ForkIdManager;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
@@ -26,8 +28,6 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.Packet;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketPackage;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.nat.NatService;
 
 import java.net.InetSocketAddress;
 import java.util.ArrayDeque;

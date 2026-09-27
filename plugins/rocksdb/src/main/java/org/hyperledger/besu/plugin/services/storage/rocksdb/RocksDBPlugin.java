@@ -79,7 +79,9 @@ public class RocksDBPlugin implements BesuPlugin {
   public void start() {
     LOG.debug("Starting plugin.");
     if (factory == null) {
-      LOG.trace("Applied configuration: {}", options.toString());
+      if (LOG.isTraceEnabled()) {
+        LOG.trace("Applied configuration: {}", options.toString());
+      }
       createFactoriesAndRegisterWithStorageService();
     }
   }
@@ -121,6 +123,25 @@ public class RocksDBPlugin implements BesuPlugin {
    */
   public RocksDBCLIOptions.BlobDBSettings getBlobDBSettings() {
     return options.getBlobDBSettings();
+  }
+
+  /**
+   * Returns the max open files value that will be used, either explicitly set or derived from
+   * available memory.
+   *
+   * @return the resolved max open files value
+   */
+  public int getResolvedMaxOpenFiles() {
+    return options.getResolvedMaxOpenFiles();
+  }
+
+  /**
+   * Returns whether max open files was explicitly set via CLI.
+   *
+   * @return true if max open files was set via CLI, false if derived from available memory
+   */
+  public boolean isMaxOpenFilesExplicitlySet() {
+    return options.isMaxOpenFilesExplicitlySet();
   }
 
   private void createAndRegister(final StorageService service) {

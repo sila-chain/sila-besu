@@ -19,11 +19,11 @@ import static org.junit.jupiter.api.Assertions.assertThrows;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.Difficulty;
-import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.sil.SilProtocol;
 
 import java.math.BigInteger;
 import java.util.Random;
@@ -87,7 +87,7 @@ public class Sil69StatusMessageTest {
   }
 
   @Test
-  public void shouldNotHaveTotalDifficultWhenSil69() {
+  public void shouldNotHaveTotalDifficultWhenEth69() {
     Exception exception =
         assertThrows(
             IllegalArgumentException.class, () -> builder.totalDifficulty(Difficulty.ZERO).build());
@@ -125,7 +125,7 @@ public class Sil69StatusMessageTest {
   }
 
   @Test
-  public void shouldRejectSil68LayoutFromProdBesuV26Dot2Develop73d07f9() {
+  public void shouldRejectEth68LayoutFromProdBesuV26Dot2Develop73d07f9() {
     // Captured verbatim from bal-devnet-3 on 2026-04-15 from peer
     // besu/v26.2-develop-73d07f9, which advertises sil/69 in Hello but encodes Status
     // with the sil/68 layout (version=69, totalDifficulty present).

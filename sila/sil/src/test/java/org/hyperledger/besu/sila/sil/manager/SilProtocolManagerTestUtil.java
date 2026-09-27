@@ -23,13 +23,13 @@ import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.chain.ChainHead;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.Difficulty;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.sil.SilProtocol;
 import org.hyperledger.besu.sila.sil.manager.snap.SnapProtocolManager;
 import org.hyperledger.besu.sila.sil.peervalidation.PeerValidator;
 import org.hyperledger.besu.sila.sil.sync.ChainHeadTracker;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.DefaultMessage;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
-import org.hyperledger.besu.testutil.DeterministicSilScheduler;
+import org.hyperledger.besu.testutil.DeterministicEthScheduler;
 
 import java.util.OptionalLong;
 import java.util.concurrent.CompletableFuture;
@@ -50,31 +50,31 @@ public class SilProtocolManagerTestUtil {
   }
 
   // Utility to prevent scheduler from automatically running submitted tasks
-  public static void disableSilSchedulerAutoRun(final SilProtocolManager silProtocolManager) {
+  public static void disableEthSchedulerAutoRun(final SilProtocolManager silProtocolManager) {
     final SilScheduler scheduler = silProtocolManager.silContext().getScheduler();
     checkArgument(
-        scheduler instanceof DeterministicSilScheduler,
+        scheduler instanceof DeterministicEthScheduler,
         "SilProtocolManager must be set up with "
-            + DeterministicSilScheduler.class.getSimpleName()
+            + DeterministicEthScheduler.class.getSimpleName()
             + " in order to disable auto run.");
-    ((DeterministicSilScheduler) scheduler).disableAutoRun();
+    ((DeterministicEthScheduler) scheduler).disableAutoRun();
   }
 
   // Manually runs any pending tasks submitted to the SilScheduler
-  // Works with {@code disableSilSchedulerAutoRun} - tasks will only be pending if
+  // Works with {@code disableEthSchedulerAutoRun} - tasks will only be pending if
   // autoRun has been disabled.
   public static void runPendingFutures(final SilProtocolManager silProtocolManager) {
     final SilScheduler scheduler = silProtocolManager.silContext().getScheduler();
     checkArgument(
-        scheduler instanceof DeterministicSilScheduler,
+        scheduler instanceof DeterministicEthScheduler,
         "SilProtocolManager must be set up with "
-            + DeterministicSilScheduler.class.getSimpleName()
+            + DeterministicEthScheduler.class.getSimpleName()
             + " in order to manually run pending futures.");
-    ((DeterministicSilScheduler) scheduler).runPendingFutures();
+    ((DeterministicEthScheduler) scheduler).runPendingFutures();
   }
 
   /**
-   * Expires any pending timeouts tracked by {@code DeterministicSilScheduler}
+   * Expires any pending timeouts tracked by {@code DeterministicEthScheduler}
    *
    * @param silProtocolManager The {@code SilProtocolManager} managing the scheduler holding the
    *     timeouts to be expired.
@@ -82,55 +82,55 @@ public class SilProtocolManagerTestUtil {
   public static void expirePendingTimeouts(final SilProtocolManager silProtocolManager) {
     final SilScheduler scheduler = silProtocolManager.silContext().getScheduler();
     checkArgument(
-        scheduler instanceof DeterministicSilScheduler,
+        scheduler instanceof DeterministicEthScheduler,
         "SilProtocolManager must be set up with "
-            + DeterministicSilScheduler.class.getSimpleName()
+            + DeterministicEthScheduler.class.getSimpleName()
             + " in order to manually expire pending timeouts.");
-    ((DeterministicSilScheduler) scheduler).expirePendingTimeouts();
+    ((DeterministicEthScheduler) scheduler).expirePendingTimeouts();
   }
 
   /**
    * Gets the number of pending tasks submitted to the SilScheduler.
    *
-   * <p>Works with {@code disableSilSchedulerAutoRun} - tasks will only be pending if autoRun has
+   * <p>Works with {@code disableEthSchedulerAutoRun} - tasks will only be pending if autoRun has
    * been disabled.
    */
   public static long getPendingFuturesCount(final SilProtocolManager silProtocolManager) {
     final SilScheduler scheduler = silProtocolManager.silContext().getScheduler();
     checkArgument(
-        scheduler instanceof DeterministicSilScheduler,
+        scheduler instanceof DeterministicEthScheduler,
         "SilProtocolManager must be set up with "
-            + DeterministicSilScheduler.class.getSimpleName()
+            + DeterministicEthScheduler.class.getSimpleName()
             + " in order to manually run pending futures.");
-    return ((DeterministicSilScheduler) scheduler).getPendingFuturesCount();
+    return ((DeterministicEthScheduler) scheduler).getPendingFuturesCount();
   }
 
   public static void broadcastMessage(
       final SilProtocolManager silProtocolManager,
-      final RespondingSilPeer peer,
+      final RespondingEthPeer peer,
       final MessageData message) {
     silProtocolManager.processMessage(
         SilProtocol.LATEST, new DefaultMessage(peer.getPeerConnection(), message));
   }
 
-  public static RespondingSilPeer.Builder peerBuilder() {
-    return RespondingSilPeer.builder();
+  public static RespondingEthPeer.Builder peerBuilder() {
+    return RespondingEthPeer.builder();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager, final Difficulty td) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .totalDifficulty(td)
         .capability(SilProtocol.SIL68)
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final Difficulty td,
       final long estimatedHeight) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .totalDifficulty(td)
         .estimatedHeight(estimatedHeight)
@@ -138,11 +138,11 @@ public class SilProtocolManagerTestUtil {
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final Difficulty td,
       final OptionalLong estimatedHeight) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .totalDifficulty(td)
         .estimatedHeight(estimatedHeight)
@@ -150,23 +150,23 @@ public class SilProtocolManagerTestUtil {
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final OptionalLong estimatedHeight,
       final PeerValidator... validators) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .estimatedHeight(estimatedHeight)
         .peerValidators(validators)
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final Difficulty td,
       final OptionalLong estimatedHeight,
       final PeerValidator... validators) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .totalDifficulty(td)
         .estimatedHeight(estimatedHeight)
@@ -175,44 +175,44 @@ public class SilProtocolManagerTestUtil {
         .build();
   }
 
-  public static RespondingSilPeer createPeer(final SilProtocolManager silProtocolManager) {
-    return RespondingSilPeer.builder().silProtocolManager(silProtocolManager).build();
+  public static RespondingEthPeer createPeer(final SilProtocolManager silProtocolManager) {
+    return RespondingEthPeer.builder().silProtocolManager(silProtocolManager).build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager, final long estimatedHeight) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .estimatedHeight(estimatedHeight)
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final SnapProtocolManager snapProtocolManager,
       final long estimatedHeight) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .estimatedHeight(estimatedHeight)
         .snapProtocolManager(snapProtocolManager)
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final long estimatedHeight,
       final PeerValidator... validators) {
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .estimatedHeight(estimatedHeight)
         .peerValidators(validators)
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager, final Blockchain blockchain) {
     final ChainHead head = blockchain.getChainHead();
-    return RespondingSilPeer.builder()
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .totalDifficulty(head.getTotalDifficulty())
         .chainHeadHash(head.getHash())
@@ -220,18 +220,18 @@ public class SilProtocolManagerTestUtil {
         .build();
   }
 
-  public static RespondingSilPeer createPeer(
+  public static RespondingEthPeer createPeer(
       final SilProtocolManager silProtocolManager,
       final Difficulty td,
       final int estimatedHeight,
       final boolean isServingSnap,
-      final boolean addToSilPeers) {
-    return RespondingSilPeer.builder()
+      final boolean addToEthPeers) {
+    return RespondingEthPeer.builder()
         .silProtocolManager(silProtocolManager)
         .totalDifficulty(td)
         .estimatedHeight(estimatedHeight)
         .isServingSnap(isServingSnap)
-        .addToSilPeers(addToSilPeers)
+        .addToEthPeers(addToEthPeers)
         .build();
   }
 }

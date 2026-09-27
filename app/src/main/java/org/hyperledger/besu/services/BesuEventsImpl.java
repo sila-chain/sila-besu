@@ -18,6 +18,11 @@ import static java.util.stream.Collectors.toUnmodifiableList;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.LogTopic;
+import org.hyperledger.besu.plugin.data.AddedBlockContext;
+import org.hyperledger.besu.plugin.data.AddedBlockContext.EventType;
+import org.hyperledger.besu.plugin.data.BlockHeader;
+import org.hyperledger.besu.plugin.data.PropagatedBlockContext;
+import org.hyperledger.besu.plugin.services.BesuEvents;
 import org.hyperledger.besu.sila.api.query.LogsQuery;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.chain.Blockchain;
@@ -28,11 +33,6 @@ import org.hyperledger.besu.sila.core.TransactionReceipt;
 import org.hyperledger.besu.sila.sil.sync.BlockBroadcaster;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.plugin.data.AddedBlockContext;
-import org.hyperledger.besu.plugin.data.AddedBlockContext.EventType;
-import org.hyperledger.besu.plugin.data.BlockHeader;
-import org.hyperledger.besu.plugin.data.PropagatedBlockContext;
-import org.hyperledger.besu.plugin.services.BesuEvents;
 
 import java.util.List;
 import java.util.function.Supplier;
@@ -114,7 +114,7 @@ public class BesuEventsImpl implements BesuEvents {
 
   @Override
   public void removeBlockReorgListener(final long listenerIdentifier) {
-    blockchain.removeObserver(listenerIdentifier);
+    blockchain.removeChainReorgObserver(listenerIdentifier);
   }
 
   @Override

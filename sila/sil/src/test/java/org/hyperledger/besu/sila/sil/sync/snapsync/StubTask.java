@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.sila.sil.sync.snapsync;
 
-import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 import org.hyperledger.besu.services.tasks.Task;
+import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapDataRequest;
 
 public class StubTask implements Task<SnapDataRequest> {
 

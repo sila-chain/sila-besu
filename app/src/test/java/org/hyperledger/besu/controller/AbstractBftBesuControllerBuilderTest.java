@@ -29,6 +29,11 @@ import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.LogsBloomFilter;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockBody;
@@ -36,24 +41,19 @@ import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.BlockHeaderFunctions;
 import org.hyperledger.besu.sila.core.Difficulty;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
-import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStoragePrefixedKeyBlockchainStorage;
 import org.hyperledger.besu.sila.storage.keyvalue.VariablesKeyValueStorage;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
-import org.hyperledger.besu.services.kvstore.InMemoryKeyValueStorage;
 
 import java.math.BigInteger;
 import java.nio.file.Path;
@@ -144,7 +144,7 @@ public abstract class AbstractBftBesuControllerBuilderTest {
         .thenReturn(Range.closed(1L, 2L));
 
     lenient()
-        .when(silProtocolConfiguration.getMaxSilCapability())
+        .when(silProtocolConfiguration.getMaxEthCapability())
         .thenReturn(SilProtocolConfiguration.DEFAULT_MAX_CAPABILITY);
     setupBftGenesisConfig();
 
@@ -171,6 +171,30 @@ public abstract class AbstractBftBesuControllerBuilderTest {
   protected abstract void setupBftGenesisConfig() throws JsonProcessingException;
 
   protected abstract BesuControllerBuilder createBftControllerBuilder();
+
+  @Test
+  public void miningCoordinatorOnlyReactsToSyncEventsAfterSubscribe() {
+    final var besuController = bftBesuControllerBuilder.build();
+    final var miningCoordinator = besuController.getMiningCoordinator();
+
+    try {
+      // Sync events must not start the coordinator before subscribe() is called. On consensus
+      // migration networks only the MigratingMiningCoordinator may start the delegate
+      // coordinators, otherwise a stopped consensus mechanism resumes producing blocks.
+      besuController.getSyncState().markInitialSyncPhaseAsDone();
+      assertThat(miningCoordinator.isMining()).isFalse();
+
+      // After subscribe() (invoked by the Runner on non-migration networks) sync completion
+      // starts the coordinator as before
+      miningCoordinator.subscribe();
+      besuController.getSyncState().markInitialSyncPhaseAsDone();
+      assertThat(miningCoordinator.isMining()).isTrue();
+    } finally {
+      // the coordinator was actually started, stop it so its executor threads don't outlive
+      // the test
+      miningCoordinator.stop();
+    }
+  }
 
   @Test
   public void miningParametersBlockPeriodSecondsIsUpdatedOnTransition() {

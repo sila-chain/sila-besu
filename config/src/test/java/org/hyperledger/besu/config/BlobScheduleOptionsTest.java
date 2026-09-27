@@ -29,7 +29,7 @@ public class BlobScheduleOptionsTest {
   @BeforeEach
   public void setupConfig() {
     final GenesisConfig genesisConfig =
-        GenesisConfig.fromResource("/sila-mainnet_with_blob_schedule.json");
+        GenesisConfig.fromResource("/mainnet_with_blob_schedule.json");
     final GenesisConfigOptions configOptions = genesisConfig.getConfigOptions();
     assertThat(configOptions.getBlobScheduleOptions()).isNotEmpty();
     options = configOptions.getBlobScheduleOptions().get();
@@ -37,8 +37,8 @@ public class BlobScheduleOptionsTest {
 
   @Test
   public void blobScheduleIsParsed() {
-    assertParsed(options::getSilaCancun, 4, 7, 3338477);
-    assertParsed(options::getSilaPrague, 7, 10, 5007716);
+    assertParsed(options::getCancun, 4, 7, 3338477);
+    assertParsed(options::getPrague, 7, 10, 5007716);
     assertParsed(options::getBpo1, 11, 12, 5007716);
     assertParsed(options::getBpo2, 21, 22, 5007716);
     assertParsed(options::getBpo3, 31, 32, 5007716);

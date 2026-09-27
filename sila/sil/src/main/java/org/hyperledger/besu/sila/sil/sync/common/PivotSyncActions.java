@@ -17,7 +17,12 @@ package org.hyperledger.besu.sila.sil.sync.common;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.metrics.BesuMetricCategory;
+import org.hyperledger.besu.metrics.SyncDurationMetrics;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
 import org.hyperledger.besu.sila.ProtocolContext;
+import org.hyperledger.besu.sila.chain.ChainDataPruner;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.exceptions.NoAvailablePeersException;
@@ -30,17 +35,15 @@ import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncChainDownloader;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.metrics.BesuMetricCategory;
-import org.hyperledger.besu.metrics.SyncDurationMetrics;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
 
 import java.nio.file.Path;
 import java.time.Duration;
 import java.util.List;
+import java.util.Optional;
 import java.util.concurrent.CompletableFuture;
+import java.util.concurrent.TimeUnit;
 import java.util.concurrent.atomic.AtomicLong;
 import java.util.function.Supplier;
 
@@ -61,6 +64,7 @@ public class PivotSyncActions {
   protected final Counter pivotBlockSelectionCounter;
   protected final AtomicLong pivotBlockGauge = new AtomicLong(0);
   protected final java.nio.file.Path fastSyncDataDirectory;
+  protected final Optional<ChainDataPruner> chainDataPruner;
 
   private volatile PivotUpdateListener chainDownloaderListener;
 
@@ -73,7 +77,8 @@ public class PivotSyncActions {
       final SyncState syncState,
       final PivotBlockSelector pivotBlockSelector,
       final MetricsSystem metricsSystem,
-      final Path fastSyncDataDirectory) {
+      final Path fastSyncDataDirectory,
+      final Optional<ChainDataPruner> chainDataPruner) {
     this.syncConfig = syncConfig;
     this.worldStateStorageCoordinator = worldStateStorageCoordinator;
     this.protocolSchedule = protocolSchedule;
@@ -83,6 +88,7 @@ public class PivotSyncActions {
     this.pivotBlockSelector = pivotBlockSelector;
     this.metricsSystem = metricsSystem;
     this.fastSyncDataDirectory = fastSyncDataDirectory;
+    this.chainDataPruner = chainDataPruner;
 
     pivotBlockSelectionCounter =
         metricsSystem.createCounter(
@@ -129,26 +135,32 @@ public class PivotSyncActions {
         .thenCompose(ignore -> selectNewPivotBlock());
   }
 
-  public CompletableFuture<SnapSyncProcessState> downloadPivotBlockHeader(
+  public CompletableFuture<SnapSyncProcessState> resolvePivotBlockHeader(
       final SnapSyncProcessState currentState) {
-    return internalDownloadPivotBlockHeader(currentState).thenApply(this::updateStats);
+    if (currentState.hasPivotBlockHeader()) {
+      LOG.debug("Initial sync state {} already contains the block header", currentState);
+      // Resume path: no new pivot is selected, but keep the gauge in sync with the loaded pivot.
+      currentState
+          .getPivotBlockHeader()
+          .ifPresent(blockHeader -> pivotBlockGauge.set(blockHeader.getNumber()));
+      return completedFuture(currentState);
+    } else {
+      return internalDownloadPivotBlockHeader(currentState).thenApply(this::updateStats);
+    }
   }
 
   private CompletableFuture<SnapSyncProcessState> internalDownloadPivotBlockHeader(
       final SnapSyncProcessState currentState) {
-    if (currentState.hasPivotBlockHeader()) {
-      LOG.debug("Initial sync state {} already contains the block header", currentState);
-      return completedFuture(currentState);
-    }
 
     return silContext
-        .getSilPeers()
+        .getEthPeers()
         .waitForPeer((peer) -> true)
+        .orTimeout(5, TimeUnit.SECONDS)
         .thenCompose(
             unused ->
                 currentState
                     .getPivotBlockHash()
-                    .map(hash -> downloadPivotBlockHeader(hash, currentState.isSourceTrusted()))
+                    .map(this::downloadPivotBlockHeaderByHash)
                     .orElseGet(
                         () ->
                             new PivotBlockRetriever(
@@ -180,11 +192,11 @@ public class PivotSyncActions {
         metricsSystem,
         currentState,
         syncDurationMetrics,
-        fastSyncDataDirectory);
+        fastSyncDataDirectory,
+        chainDataPruner);
   }
 
-  private CompletableFuture<SnapSyncProcessState> downloadPivotBlockHeader(
-      final Hash hash, final boolean sourceIsTrusted) {
+  private CompletableFuture<SnapSyncProcessState> downloadPivotBlockHeaderByHash(final Hash hash) {
     LOG.debug("Downloading pivot block header by hash {}", hash);
     return silContext
         .getScheduler()
@@ -197,7 +209,7 @@ public class PivotSyncActions {
                       1,
                       0,
                       GetHeadersFromPeerTask.Direction.FORWARD,
-                      silContext.getSilPeers().peerCount(),
+                      silContext.getEthPeers().peerCount(),
                       protocolSchedule);
               PeerTaskExecutorResult<List<BlockHeader>> taskResult =
                   silContext.getPeerTaskExecutor().execute(task);
@@ -231,7 +243,7 @@ public class PivotSyncActions {
                     .log();
               }
             })
-        .thenApply(blockHeader -> new SnapSyncProcessState(blockHeader, sourceIsTrusted));
+        .thenApply(SnapSyncProcessState::new);
   }
 
   public boolean isBlockchainBehind(final long blockNumber) {

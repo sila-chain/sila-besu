@@ -16,13 +16,13 @@ package org.hyperledger.besu.sila.p2p.discovery.discv4;
 
 import static org.hyperledger.besu.util.NetworkUtility.checkPort;
 
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.rlp.RLPException;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 import org.hyperledger.besu.sila.rlp.RLPOutput;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.util.Preconditions;
 
 import java.net.InetAddress;
@@ -184,7 +184,7 @@ public class Endpoint {
     }
     final int udpPort = in.readIntScalar();
 
-    // Some sila-mainnet packets have been shown to either not have the TCP port field at all,
+    // Some mainnet packets have been shown to either not have the TCP port field at all,
     // or to have an RLP NULL value for it.
     Optional<Integer> tcpPort = Optional.empty();
     if (fieldCount == 3) {

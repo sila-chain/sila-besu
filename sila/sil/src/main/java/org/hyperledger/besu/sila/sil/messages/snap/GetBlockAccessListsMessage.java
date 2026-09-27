@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.sil.messages.snap;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.sil.messages.GetBlockAccessListsMessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.AbstractSnapMessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
+import org.hyperledger.besu.sila.sil.messages.GetBlockAccessListsMessageData;
 
 import java.math.BigInteger;
 

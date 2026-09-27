@@ -16,18 +16,18 @@ package org.hyperledger.besu.cli.options;
 
 import static java.nio.charset.StandardCharsets.UTF_8;
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.SIL;
 import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.NET;
 import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.PERM;
+import static org.hyperledger.besu.sila.api.jsonrpc.RpcApis.SIL;
 import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.verifyNoInteractions;
 
 import org.hyperledger.besu.cli.CommandTestAbstract;
+import org.hyperledger.besu.plugin.services.rpc.PluginRpcRequest;
 import org.hyperledger.besu.sila.api.jsonrpc.RpcMethod;
 import org.hyperledger.besu.sila.api.jsonrpc.authentication.JwtAlgorithm;
 import org.hyperledger.besu.sila.api.tls.TlsConfiguration;
-import org.hyperledger.besu.plugin.services.rpc.PluginRpcRequest;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -148,11 +148,12 @@ public class JsonRpcHttpOptionsTest extends CommandTestAbstract {
     final Path toml =
         createTempFile(
             "toml",
-            "rpc-http-api=[\"SIL\",\"NET\"]\n"
-                + "rpc-http-host=\"0.0.0.0\"\n"
-                + "rpc-http-port=1234\n"
-                + "rpc-http-cors-origins=[\"all\"]\n"
-                + "rpc-http-max-active-connections=88");
+            """
+            rpc-http-api=["SIL","NET"]
+            rpc-http-host="0.0.0.0"
+            rpc-http-port=1234
+            rpc-http-cors-origins=["all"]
+            rpc-http-max-active-connections=88""");
 
     parseCommand("--config-file", toml.toString());
 
@@ -950,7 +951,8 @@ public class JsonRpcHttpOptionsTest extends CommandTestAbstract {
 
     assertThat(commandOutput.toString(UTF_8)).isEmpty();
     assertThat(commandErrorOutput.toString(UTF_8))
-        .contains("Port(s) '[8545]' already in use. Check for other processes using the port(s).");
+        .contains(
+            "Port(s) '[8545/TCP]' already in use. Check for other processes using the port(s).");
 
     serverSocket.close();
   }

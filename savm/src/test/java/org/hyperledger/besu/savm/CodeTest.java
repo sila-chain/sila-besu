@@ -44,7 +44,7 @@ class CodeTest {
 
   @BeforeEach
   void startUp() {
-    savm = SilaMainnetSAVMs.futureSips(SavmConfiguration.DEFAULT);
+    savm = SilaMainnetEVMs.futureEips(SavmConfiguration.DEFAULT);
   }
 
   @Test

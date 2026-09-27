@@ -20,7 +20,6 @@ import static org.hyperledger.besu.config.NetworkDefinition.DEV;
 import static org.hyperledger.besu.config.NetworkDefinition.SILA_MAINNET;
 import static org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions.DEFAULT_BACKGROUND_THREAD_COUNT;
 import static org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions.DEFAULT_CACHE_CAPACITY;
-import static org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions.DEFAULT_ENABLE_READ_CACHE_FOR_SNAPSHOTS;
 import static org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions.DEFAULT_IS_HIGH_SPEC;
 import static org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBCLIOptions.DEFAULT_MAX_OPEN_FILES;
 import static org.mockito.Mockito.mock;
@@ -35,6 +34,15 @@ import org.hyperledger.besu.controller.SilaMainnetBesuControllerBuilder;
 import org.hyperledger.besu.crypto.KeyPairUtil;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBKeyValueStorageFactory;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBMetricsFactory;
+import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBFactoryConfiguration;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.services.BesuConfigurationImpl;
+import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ImmutableApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
@@ -42,38 +50,29 @@ import org.hyperledger.besu.sila.api.jsonrpc.ImmutableInProcessRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.ipc.JsonRpcIpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
+import org.hyperledger.besu.sila.api.pluginadapter.RpcEndpointServiceImpl;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockImporter;
 import org.hyperledger.besu.sila.core.BlockSyncTestUtils;
 import org.hyperledger.besu.sila.core.InMemoryKeyValueStorageProvider;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
+import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
+import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
+import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.permissioning.pluginadapter.PermissioningServiceImpl;
 import org.hyperledger.besu.sila.sil.SilProtocolConfiguration;
 import org.hyperledger.besu.sila.sil.sync.SyncMode;
 import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
 import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BlockImportResult;
-import org.hyperledger.besu.sila.sila-mainnet.HeaderValidationMode;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
-import org.hyperledger.besu.sila.p2p.discovery.NodeIdentifier;
-import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
+import org.hyperledger.besu.sila.silaMainnet.BlockImportResult;
+import org.hyperledger.besu.sila.silaMainnet.HeaderValidationMode;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueSegmentIdentifier;
 import org.hyperledger.besu.sila.storage.keyvalue.KeyValueStorageProviderBuilder;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBKeyValueStorageFactory;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.RocksDBMetricsFactory;
-import org.hyperledger.besu.plugin.services.storage.rocksdb.configuration.RocksDBFactoryConfiguration;
-import org.hyperledger.besu.services.BesuConfigurationImpl;
-import org.hyperledger.besu.services.BesuPluginContextImpl;
-import org.hyperledger.besu.services.PermissioningServiceImpl;
-import org.hyperledger.besu.services.RpcEndpointServiceImpl;
-import org.hyperledger.besu.services.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.testutil.TestClock;
 
 import java.io.IOException;
@@ -94,7 +93,7 @@ import com.fasterxml.jackson.databind.node.ObjectNode;
 import io.vertx.core.Future;
 import io.vertx.core.Promise;
 import io.vertx.core.Vertx;
-import io.vertx.core.http.HttpClient;
+import io.vertx.core.http.WebSocketClient;
 import io.vertx.core.json.Json;
 import io.vertx.core.json.JsonObject;
 import okhttp3.MediaType;
@@ -225,7 +224,7 @@ public final class RunnerTest {
             .build();
     try {
       runnerAhead.startExternalServices();
-      runnerAhead.startSilaMainLoop();
+      runnerAhead.startEthereumMainLoop();
       assertThat(pidPath.toFile()).exists();
 
       final SynchronizerConfiguration syncConfigBehind =
@@ -248,7 +247,7 @@ public final class RunnerTest {
               miningParameters);
 
       final EnodeURLImpl aheadEnode = runnerAhead.getLocalEnode().get();
-      final SilNetworkConfig behindSilNetworkConfiguration =
+      final SilNetworkConfig behindEthNetworkConfiguration =
           new SilNetworkConfig(
               GenesisConfig.fromResource(DEV.getGenesisFile()),
               DEV.getNetworkId(),
@@ -259,7 +258,7 @@ public final class RunnerTest {
       runnerBehind =
           runnerBuilder
               .besuController(controllerBehind)
-              .silNetworkConfig(behindSilNetworkConfiguration)
+              .silNetworkConfig(behindEthNetworkConfiguration)
               .jsonRpcConfiguration(jsonRpcConfiguration())
               .graphQLConfiguration(graphQLConfiguration())
               .webSocketConfiguration(wsRpcConfiguration())
@@ -269,7 +268,7 @@ public final class RunnerTest {
               .build();
 
       runnerBehind.startExternalServices();
-      runnerBehind.startSilaMainLoop();
+      runnerBehind.startEthereumMainLoop();
 
       final int behindJsonRpcPort = runnerBehind.getJsonRpcPort().get();
       final OkHttpClient client = new OkHttpClient();
@@ -325,27 +324,29 @@ public final class RunnerTest {
                 }
               });
       final Promise<String> promise = Promise.promise();
-      final HttpClient httpClient = vertx.createHttpClient();
-      httpClient.webSocket(
-          runnerBehind.getWebSocketPort().get(),
-          WebSocketConfiguration.DEFAULT_WEBSOCKET_HOST,
-          "/",
-          ws -> {
-            ws.result()
-                .writeTextMessage(
-                    "{\"id\": 1, \"method\": \"sil_subscribe\", \"params\": [\"syncing\"]}");
-            ws.result()
-                .textMessageHandler(
-                    payload -> {
-                      final boolean matches =
-                          payload.equals("{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"0x0\"}");
-                      if (matches) {
-                        promise.complete(payload);
-                      } else {
-                        promise.fail("Unexpected result: " + payload);
-                      }
-                    });
-          });
+      final WebSocketClient webSocketClient = vertx.createWebSocketClient();
+      webSocketClient
+          .connect(
+              runnerBehind.getWebSocketPort().get(),
+              WebSocketConfiguration.DEFAULT_WEBSOCKET_HOST,
+              "/")
+          .onComplete(
+              ws -> {
+                ws.result()
+                    .writeTextMessage(
+                        "{\"id\": 1, \"method\": \"sil_subscribe\", \"params\": [\"syncing\"]}");
+                ws.result()
+                    .textMessageHandler(
+                        payload -> {
+                          final boolean matches =
+                              payload.equals("{\"jsonrpc\":\"2.0\",\"id\":2,\"result\":\"0x0\"}");
+                          if (matches) {
+                            promise.complete(payload);
+                          } else {
+                            promise.fail("Unexpected result: " + payload);
+                          }
+                        });
+              });
       final Future<String> future = promise.future();
       Awaitility.await()
           .catchUncaughtExceptions()
@@ -377,7 +378,8 @@ public final class RunnerTest {
   private GenesisConfig getFastSyncGenesis() throws IOException {
     final ObjectNode jsonNode =
         (ObjectNode)
-            new ObjectMapper().readTree(GenesisConfig.class.getResource(SILA_MAINNET.getGenesisFile()));
+            new ObjectMapper()
+                .readTree(GenesisConfig.class.getResource(SILA_MAINNET.getGenesisFile()));
     final Optional<ObjectNode> configNode = JsonUtil.getObjectNode(jsonNode, "config");
     configNode.ifPresent(
         (node) -> {
@@ -407,7 +409,7 @@ public final class RunnerTest {
                         DEFAULT_BACKGROUND_THREAD_COUNT,
                         DEFAULT_CACHE_CAPACITY,
                         DEFAULT_IS_HIGH_SPEC,
-                        DEFAULT_ENABLE_READ_CACHE_FOR_SNAPSHOTS,
+                        false,
                         false,
                         Optional.empty(),
                         Optional.empty()),

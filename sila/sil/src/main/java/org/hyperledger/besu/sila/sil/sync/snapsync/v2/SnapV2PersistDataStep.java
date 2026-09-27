@@ -21,6 +21,10 @@ import static org.hyperledger.besu.sila.trie.RangeManager.MAX_RANGE;
 import static org.hyperledger.besu.sila.trie.RangeManager.MIN_RANGE;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.exception.StorageException;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.services.tasks.Task;
+import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.sil.sync.snapsync.DownloadedAccountRangeTracker;
 import org.hyperledger.besu.sila.sil.sync.snapsync.DownloadedStorageRangeTracker;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
@@ -30,13 +34,9 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.request.SnapRequestContext;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.v2.SnapV2AccountRangeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.v2.SnapV2BytecodeRequest;
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.v2.SnapV2StorageRangeRequest;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.trie.common.PmtStateTrieAccountValue;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.exception.StorageException;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.services.tasks.Task;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -47,7 +47,7 @@ import org.apache.tuweni.bytes.Bytes32;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 
-/** Snap/2 persist step. Owns persistence, child creation, and range tracking. */
+/** snap/2 persist step. Owns persistence, child creation, and range tracking. */
 public class SnapV2PersistDataStep {
 
   private static final Logger LOG = LoggerFactory.getLogger(SnapV2PersistDataStep.class);

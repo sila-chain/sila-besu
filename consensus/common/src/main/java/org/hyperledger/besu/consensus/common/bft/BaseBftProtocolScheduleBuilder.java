@@ -16,35 +16,41 @@ package org.hyperledger.besu.consensus.common.bft;
 
 import org.hyperledger.besu.config.BftConfigOptions;
 import org.hyperledger.besu.config.GenesisConfigOptions;
+import org.hyperledger.besu.config.JsonBftConfigOptions;
 import org.hyperledger.besu.consensus.common.ForksSchedule;
 import org.hyperledger.besu.datatypes.Wei;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.sila.GasLimitCalculator;
 import org.hyperledger.besu.sila.SilaMainnetBlockValidatorBuilder;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.DefaultProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockBodyValidator;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockImporter;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolScheduleBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecAdapters;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpecBuilder;
-import org.hyperledger.besu.sila.sila-mainnet.WithdrawalsValidator;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.DefaultProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolScheduleBuilder;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecAdapters;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpecBuilder;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockBodyValidator;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockImporter;
+import org.hyperledger.besu.sila.silaMainnet.WithdrawalsValidator;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.math.BigInteger;
 import java.util.HashMap;
 import java.util.Map;
 import java.util.Optional;
+import java.util.OptionalLong;
 import java.util.function.Function;
 
 /** Defines the protocol behaviours for a blockchain using a BFT consensus mechanism. */
 public abstract class BaseBftProtocolScheduleBuilder {
 
   private static final BigInteger DEFAULT_CHAIN_ID = BigInteger.ONE;
+
+  /** The genesis block gas limit, used for validating per-transaction gas limit overrides. */
+  protected long blockGasLimit;
 
   /** Default constructor. */
   protected BaseBftProtocolScheduleBuilder() {}
@@ -142,11 +148,47 @@ public abstract class BaseBftProtocolScheduleBuilder {
         .blockValidatorBuilder(SilaMainnetBlockValidatorBuilder::frontier)
         .blockImporterBuilder(SilaMainnetBlockImporter::new)
         .difficultyCalculator((time, parent) -> BigInteger.ONE)
+        // BFT is a PoA consensus, so specs must not be marked as PoS even when the network is
+        // configured with an execution fork that is PoS on silaMainnet(SilaParis and later).
+        // Otherwise
+        // any behaviour conditioned on ProtocolSpec.isPoS() would wrongly follow the PoS path.
+        .isPoS(false)
         .skipZeroBlockRewards(true)
         .blockHeaderFunctions(BftBlockHeaderFunctions.forOnchainBlock(bftExtraDataCodec))
         .blockReward(Wei.of(configOptions.getBlockRewardWei()))
         .withdrawalsValidator(new WithdrawalsValidator.NotApplicableWithdrawals())
         .miningBeneficiaryCalculator(
-            header -> configOptions.getMiningBeneficiary().orElseGet(header::getCoinbase));
+            header -> configOptions.getMiningBeneficiary().orElseGet(header::getCoinbase))
+        .gasLimitCalculatorBuilder(createCustomGasCalculator(builder, configOptions));
+  }
+
+  private ProtocolSpecBuilder.GasLimitCalculatorBuilder createCustomGasCalculator(
+      final ProtocolSpecBuilder builder, final BftConfigOptions configOptions) {
+    final OptionalLong perTxGasLimit = configOptions.getTransactionGasLimit();
+    if (perTxGasLimit.isEmpty()) {
+      return builder.getGasLimitCalculatorBuilder();
+    }
+
+    final long cap = perTxGasLimit.getAsLong();
+    if (cap < 0 || cap > blockGasLimit) {
+      throw new IllegalArgumentException(
+          "config.bft."
+              + JsonBftConfigOptions.TRANSACTION_GAS_LIMIT
+              + " ("
+              + cap
+              + ") must be >= 0 and <= the genesis block gas limit ("
+              + blockGasLimit
+              + ")");
+    }
+
+    final long effectiveCap = cap == 0 ? Long.MAX_VALUE : cap;
+
+    final ProtocolSpecBuilder.GasLimitCalculatorBuilder delegateBuilder =
+        builder.getGasLimitCalculatorBuilder();
+    return (feeMarket, gasCalculator, blobSchedule) -> {
+      final GasLimitCalculator delegate =
+          delegateBuilder.apply(feeMarket, gasCalculator, blobSchedule);
+      return new TransactionGasLimitOverrideGasLimitCalculator(delegate, effectiveCap);
+    };
   }
 }

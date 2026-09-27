@@ -74,12 +74,12 @@ public interface SilProtocolConfiguration {
   }
 
   @Value.Default
-  default int getMaxSilCapability() {
+  default int getMaxEthCapability() {
     return DEFAULT_MAX_CAPABILITY;
   }
 
   @Value.Default
-  default int getMinSilCapability() {
+  default int getMinEthCapability() {
     return DEFAULT_MIN_CAPABILITY;
   }
 }

@@ -16,25 +16,24 @@ package org.hyperledger.besu.sila.trie.forest;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.data.BlockHeader;
+import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
+import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
+import org.hyperledger.besu.savm.worldstate.WorldState;
 import org.hyperledger.besu.sila.proof.WorldStateProof;
 import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.MerkleTrie;
 import org.hyperledger.besu.sila.trie.forest.storage.ForestWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.trie.forest.worldview.ForestMutableWorldState;
-import org.hyperledger.besu.sila.trie.pathbased.common.provider.WorldStateQueryParams;
 import org.hyperledger.besu.sila.worldstate.WorldStateArchive;
+import org.hyperledger.besu.sila.worldstate.WorldStateQueryParams;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.savm.worldstate.WorldState;
-import org.hyperledger.besu.plugin.data.BlockHeader;
-import org.hyperledger.besu.plugin.services.storage.WorldStatePreimageStorage;
-import org.hyperledger.besu.plugin.services.worldstate.MutableWorldState;
 
 import java.util.List;
 import java.util.Optional;
 import java.util.function.Function;
 
-import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.units.bigints.UInt256;
 
@@ -111,11 +110,6 @@ public class ForestWorldStateArchive implements WorldStateArchive {
     return mapper.apply(
         worldStateProof.getAccountProof(
             blockHeader.getStateRoot(), accountAddress, accountStorageKeys));
-  }
-
-  @Override
-  public void heal(final Optional<Address> maybeAccountToRepair, final Bytes location) {
-    // no heal needed for Forest
   }
 
   @Override

@@ -14,7 +14,7 @@
  */
 package org.hyperledger.besu.sila.core;
 
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.util.RawBlockIterator;
 import org.hyperledger.besu.testutil.BlockTestUtil;
 

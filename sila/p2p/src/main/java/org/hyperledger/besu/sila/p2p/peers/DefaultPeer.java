@@ -40,7 +40,7 @@ public class DefaultPeer extends DefaultPeerId implements Peer {
    *
    * @param uri A String representation of the enode URI.
    * @return The Peer instance.
-   * @see <a href="https://github.com/sila-chain/wiki/wiki/enode-url-format">enode URL format</a>
+   * @see <a href="https://github.com/sila/wiki/wiki/enode-url-format">enode URL format</a>
    */
   public static DefaultPeer fromURI(final String uri) {
     return new DefaultPeer(EnodeURLImpl.fromString(uri));
@@ -51,7 +51,7 @@ public class DefaultPeer extends DefaultPeerId implements Peer {
    *
    * @param uri The enode URI.
    * @return The Peer instance.
-   * @see <a href="https://github.com/sila-chain/wiki/wiki/enode-url-format">enode URL format</a>
+   * @see <a href="https://github.com/sila/wiki/wiki/enode-url-format">enode URL format</a>
    */
   public static DefaultPeer fromURI(final URI uri) {
     return new DefaultPeer(EnodeURLImpl.fromURI(uri));

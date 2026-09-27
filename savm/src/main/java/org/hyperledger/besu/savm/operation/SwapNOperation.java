@@ -75,11 +75,11 @@ public class SwapNOperation extends AbstractFixedCostOperation {
     final int imm = (pc + 1 >= code.length) ? 0 : code[pc + 1] & 0xFF;
 
     // Check for invalid immediate range (91-127)
-    if (!Sip8024Decoder.VALID_SINGLE[imm]) {
+    if (!Eip8024Decoder.VALID_SINGLE[imm]) {
       return INVALID_IMMEDIATE;
     }
 
-    final int n = Sip8024Decoder.DECODE_SINGLE[imm];
+    final int n = Eip8024Decoder.DECODE_SINGLE[imm];
 
     try {
       // Swap the top of stack (index 0) with the (n+1)'th item (index n)
@@ -101,6 +101,6 @@ public class SwapNOperation extends AbstractFixedCostOperation {
    * @return the decoded n value, or -1 if the immediate is invalid
    */
   public static int decodeSingle(final int imm) {
-    return Sip8024Decoder.decodeSingle(imm);
+    return Eip8024Decoder.decodeSingle(imm);
   }
 }

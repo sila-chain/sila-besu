@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.enrresponse;
 
+import org.hyperledger.besu.sila.p2p.discovery.PeerDiscoveryPacketDecodingException;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.PacketDataDeserializer;
 import org.hyperledger.besu.sila.rlp.RLPInput;
 
@@ -21,8 +22,10 @@ import javax.inject.Inject;
 import javax.inject.Singleton;
 
 import org.apache.tuweni.bytes.Bytes;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
+import org.apache.tuweni.rlp.RLPException;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
+import sila.beacon.discovery.util.DecodeException;
 
 @Singleton
 public class EnrResponsePacketDataRlpReader
@@ -43,8 +46,11 @@ public class EnrResponsePacketDataRlpReader
     in.enterList();
     final Bytes requestHash = in.readBytes();
     in.leaveListLenient();
-    final NodeRecord enr = nodeRecordFactory.fromBytes(in.currentListAsBytes());
-
-    return enrResponsePacketDataFactory.create(requestHash, enr);
+    try {
+      final NodeRecord enr = nodeRecordFactory.fromBytes(in.currentListAsBytes());
+      return enrResponsePacketDataFactory.create(requestHash, enr);
+    } catch (final RLPException | DecodeException | IllegalArgumentException e) {
+      throw new PeerDiscoveryPacketDecodingException("Invalid ENR in ENR_RESPONSE packet", e);
+    }
   }
 }

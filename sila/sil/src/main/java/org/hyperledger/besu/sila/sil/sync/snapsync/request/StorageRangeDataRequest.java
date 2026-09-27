@@ -22,17 +22,17 @@ import static org.hyperledger.besu.sila.trie.RangeManager.getRangeCount;
 import static org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator.applyForStrategy;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
 import org.hyperledger.besu.sila.sil.sync.snapsync.StackTrie;
-import org.hyperledger.besu.sila.proof.WorldStateProofProvider;
 import org.hyperledger.besu.sila.trie.CompactEncoding;
 import org.hyperledger.besu.sila.trie.NodeUpdater;
 import org.hyperledger.besu.sila.trie.RangeManager;
 import org.hyperledger.besu.sila.trie.pathbased.bonsai.storage.BonsaiWorldStateKeyValueStorage;
 import org.hyperledger.besu.sila.worldstate.FlatDbMode;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
 
 import java.util.ArrayList;
 import java.util.List;

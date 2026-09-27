@@ -137,7 +137,7 @@ public class TransactionReceiptTest {
   }
 
   @Test
-  public void toFromRlpSil69Receipt() {
+  public void toFromRlpEth69Receipt() {
     final TransactionReceiptEncodingConfiguration encodingConfiguration =
         TransactionReceiptEncodingConfiguration.SIL69_RECEIPT_CONFIGURATION;
 
@@ -154,7 +154,7 @@ public class TransactionReceiptTest {
   }
 
   @Test
-  public void decodeSil69WithEmptyStringForType() {
+  public void decodeEth69WithEmptyStringForType() {
     String encodedReceiptWith0x00AsType =
         "0xf85800808844e52a8ce6476327f84be494fccc2c35f0b84609e5f12c55dd85aba8d5d9bef7c08d72e5900112b81927ba5bb5f67ee594b4049bf0e4aed78db15d7bf2fc0c34e9a99de4efc08e8137ad659878f9e93df1f658367a";
     String encodedReceiptWith0x80AsType =
@@ -169,7 +169,7 @@ public class TransactionReceiptTest {
   }
 
   @Test
-  public void encodeSil69FrontierTypeAs0x80() {
+  public void encodeEth69FrontierTypeAs0x80() {
     final TransactionReceiptEncodingConfiguration encodingConfiguration =
         TransactionReceiptEncodingConfiguration.SIL69_RECEIPT_CONFIGURATION;
     final BlockDataGenerator gen = new BlockDataGenerator();

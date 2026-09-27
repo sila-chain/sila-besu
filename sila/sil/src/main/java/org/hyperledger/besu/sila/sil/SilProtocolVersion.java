@@ -21,8 +21,7 @@ import java.util.List;
 
 /**
  * Sil protocol messages as defined in <a
- * href="https://github.com/sila-chain/devp2p/blob/master/caps/sil.md">Sila Wire Protocol
- * (SIL)</a>}
+ * href="https://github.com/sila/devp2p/blob/master/caps/sil.md">Sila Wire Protocol (SIL)</a>}
  */
 public class SilProtocolVersion {
   public static final int V68 = 68;

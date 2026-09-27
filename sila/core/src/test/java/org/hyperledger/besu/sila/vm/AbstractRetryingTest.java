@@ -28,13 +28,13 @@ import org.junit.jupiter.api.Test;
  * <p>To turn trace logging manually, you can set 2 system properties during execution of the tests:
  *
  * <ul>
- *   <li>-Dsavm.log.level=trace
+ *   <li>-Devm.log.level=trace
  *   <li>-Droot.log.level=trace
  * </ul>
  */
 public abstract class AbstractRetryingTest {
 
-  private static final String originalSavmLogLevel = System.getProperty("savm.log.level");
+  private static final String originalEvmLogLevel = System.getProperty("savm.log.level");
   private static final String originalRootLogLevel = System.getProperty("root.log.level");
 
   /** Sets the logging system back to the original parameters with which the tests were launched. */
@@ -45,10 +45,10 @@ public abstract class AbstractRetryingTest {
     } else {
       System.setProperty("root.log.level", originalRootLogLevel);
     }
-    if (originalSavmLogLevel == null) {
+    if (originalEvmLogLevel == null) {
       System.clearProperty("savm.log.level");
     } else {
-      System.setProperty("savm.log.level", originalSavmLogLevel);
+      System.setProperty("savm.log.level", originalEvmLogLevel);
     }
     resetLogging();
   }
@@ -60,7 +60,7 @@ public abstract class AbstractRetryingTest {
       runTest();
     } catch (final RuntimeException | AssertionError e) {
       if (!"trace".equalsIgnoreCase(originalRootLogLevel)
-          || !"trace".equalsIgnoreCase(originalSavmLogLevel)) {
+          || !"trace".equalsIgnoreCase(originalEvmLogLevel)) {
         // try again, this time with more logging, so we can capture more information.
         System.setProperty("root.log.level", "trace");
         System.setProperty("savm.log.level", "trace");

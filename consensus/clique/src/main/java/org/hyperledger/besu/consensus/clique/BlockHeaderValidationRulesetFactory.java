@@ -14,8 +14,8 @@
  */
 package org.hyperledger.besu.consensus.clique;
 
-import static org.hyperledger.besu.sila.sila-mainnet.AbstractGasLimitSpecification.DEFAULT_MAX_GAS_LIMIT;
-import static org.hyperledger.besu.sila.sila-mainnet.AbstractGasLimitSpecification.DEFAULT_MIN_GAS_LIMIT;
+import static org.hyperledger.besu.sila.silaMainnet.AbstractGasLimitSpecification.DEFAULT_MAX_GAS_LIMIT;
+import static org.hyperledger.besu.sila.silaMainnet.AbstractGasLimitSpecification.DEFAULT_MIN_GAS_LIMIT;
 
 import org.hyperledger.besu.config.MergeConfiguration;
 import org.hyperledger.besu.consensus.clique.headervalidationrules.CliqueDifficultyValidationRule;
@@ -27,16 +27,16 @@ import org.hyperledger.besu.consensus.clique.headervalidationrules.VoteValidatio
 import org.hyperledger.besu.consensus.common.EpochManager;
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.AncestryValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.AttachedComposedFromDetachedRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.BaseFeeMarketBlockHeaderGasPriceValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.ConstantFieldValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.GasLimitRangeAndDeltaValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.GasUsageValidationRule;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.TimestampBoundedByFutureParameter;
-import org.hyperledger.besu.sila.sila-mainnet.headervalidationrules.TimestampMoreRecentThanParent;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.AncestryValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.AttachedComposedFromDetachedRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.BaseFeeMarketBlockHeaderGasPriceValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.ConstantFieldValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.GasLimitRangeAndDeltaValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.GasUsageValidationRule;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.TimestampBoundedByFutureParameter;
+import org.hyperledger.besu.sila.silaMainnet.headervalidationrules.TimestampMoreRecentThanParent;
 
 import java.util.Optional;
 
@@ -106,9 +106,8 @@ public class BlockHeaderValidationRulesetFactory {
             .addRule(new CoinbaseHeaderValidationRule(epochManager))
             .addRule(new GasUsageValidationRule());
 
-    if (baseFeeMarket.isPresent()) {
-      builder.addRule(new BaseFeeMarketBlockHeaderGasPriceValidationRule(baseFeeMarket.get()));
-    }
+    baseFeeMarket.ifPresent(
+        market -> builder.addRule(new BaseFeeMarketBlockHeaderGasPriceValidationRule(market)));
 
     if (!createEmptyBlocks) {
       builder.addRule(new CliqueNoEmptyBlockValidationRule());

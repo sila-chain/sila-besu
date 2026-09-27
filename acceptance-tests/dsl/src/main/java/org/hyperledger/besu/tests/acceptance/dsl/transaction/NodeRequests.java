@@ -26,13 +26,13 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.txpool.TxPoolReques
 
 import java.util.Optional;
 
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.websocket.WebSocketService;
+import sila.web3j.protocol.Web3j;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.websocket.WebSocketService;
 
 public class NodeRequests {
   private final Web3jService web3jService;
-  private final Web3j netSil;
+  private final Web3j netEth;
   private final BftRequestFactory bft;
   private final PermissioningJsonRpcRequestFactory perm;
   private final AdminRequestFactory admin;
@@ -46,7 +46,7 @@ public class NodeRequests {
 
   public NodeRequests(
       final Web3jService web3jService,
-      final Web3j netSil,
+      final Web3j netEth,
       final BftRequestFactory bft,
       final PermissioningJsonRpcRequestFactory perm,
       final AdminRequestFactory admin,
@@ -58,7 +58,7 @@ public class NodeRequests {
       final LoginRequestFactory login,
       final PluginsRequestFactory plugins) {
     this.web3jService = web3jService;
-    this.netSil = netSil;
+    this.netEth = netEth;
     this.bft = bft;
     this.perm = perm;
     this.admin = admin;
@@ -72,11 +72,11 @@ public class NodeRequests {
   }
 
   public Web3j sil() {
-    return netSil;
+    return netEth;
   }
 
   public Web3j net() {
-    return netSil;
+    return netEth;
   }
 
   public BftRequestFactory bft() {
@@ -116,7 +116,7 @@ public class NodeRequests {
   }
 
   public void shutdown() {
-    netSil.shutdown();
+    netEth.shutdown();
     websocketService.ifPresent(WebSocketService::close);
   }
 

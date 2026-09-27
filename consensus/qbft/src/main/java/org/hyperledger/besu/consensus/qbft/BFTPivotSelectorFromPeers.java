@@ -126,7 +126,7 @@ public class BFTPivotSelectorFromPeers extends PivotSelectorFromPeers {
         final AtomicInteger peerValidatorCount = new AtomicInteger();
         final AtomicBoolean peerAtOurGenesisBlock = new AtomicBoolean();
         silContext
-            .getSilPeers()
+            .getEthPeers()
             .streamAllPeers()
             .map(SilPeerImmutableAttributes::silPeer)
             .forEach(

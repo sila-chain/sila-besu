@@ -22,8 +22,8 @@ import java.net.InetSocketAddress;
 import java.util.Optional;
 
 import inet.ipaddr.ipv6.IPv6Address;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.storage.NewAddressHandler;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.storage.NewAddressHandler;
 
 /**
  * DiscV5 {@code newAddressHandler} that auto-discovers the local IPv6 advertised address from peer
@@ -35,8 +35,8 @@ import org.sila.beacon.discovery.storage.NewAddressHandler;
  * covers IPv4 external address discovery via a one-shot resolve at startup.
  *
  * <p>Wired only when {@code --p2p-host-ipv6} is unpinned (see {@link
- * org.hyperledger.besu.sila.p2p.discovery.discv5.PeerDiscoveryAgentFactoryV5}); when pinned,
- * the discovery library is given a no-op handler instead. The handler additionally short-circuits
+ * org.hyperledger.besu.sila.p2p.discovery.discv5.PeerDiscoveryAgentFactoryV5}); when pinned, the
+ * discovery library is given a no-op handler instead. The handler additionally short-circuits
  * returning {@link Optional#empty()} when any of the following hold:
  *
  * <ul>

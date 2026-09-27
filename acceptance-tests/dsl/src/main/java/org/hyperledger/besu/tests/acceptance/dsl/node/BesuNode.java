@@ -22,6 +22,8 @@ import org.hyperledger.besu.config.NetworkDefinition;
 import org.hyperledger.besu.crypto.KeyPair;
 import org.hyperledger.besu.crypto.KeyPairUtil;
 import org.hyperledger.besu.datatypes.Address;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.InProcessRpcConfiguration;
 import org.hyperledger.besu.sila.api.jsonrpc.JsonRpcConfiguration;
@@ -30,13 +32,11 @@ import org.hyperledger.besu.sila.api.jsonrpc.websocket.WebSocketConfiguration;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Util;
 import org.hyperledger.besu.sila.core.plugins.PluginConfiguration;
-import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.permissioning.PermissioningConfiguration;
+import org.hyperledger.besu.sila.sil.sync.SynchronizerConfiguration;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPoolConfiguration;
 import org.hyperledger.besu.sila.worldstate.DataStorageConfiguration;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorageFactory;
 import org.hyperledger.besu.tests.acceptance.dsl.condition.Condition;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.NodeConfiguration;
 import org.hyperledger.besu.tests.acceptance.dsl.node.configuration.genesis.GenesisConfigurationProvider;
@@ -69,6 +69,7 @@ import java.util.Locale;
 import java.util.Map;
 import java.util.Optional;
 import java.util.Properties;
+import java.util.concurrent.CompletableFuture;
 import java.util.concurrent.TimeUnit;
 import java.util.zip.ZipEntry;
 import java.util.zip.ZipInputStream;
@@ -76,23 +77,90 @@ import java.util.zip.ZipInputStream;
 import com.google.common.base.MoreObjects;
 import com.google.common.io.MoreFiles;
 import com.google.common.io.RecursiveDeleteOption;
+import io.reactivex.Flowable;
 import org.awaitility.Awaitility;
 import org.awaitility.core.ConditionTimeoutException;
 import org.java_websocket.exceptions.WebsocketNotConnectedException;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
-import org.web3j.protocol.Web3jService;
-import org.web3j.protocol.core.JsonRpc2_0Web3j;
-import org.web3j.protocol.http.HttpService;
-import org.web3j.protocol.websocket.WebSocketClient;
-import org.web3j.protocol.websocket.WebSocketListener;
-import org.web3j.protocol.websocket.WebSocketService;
-import org.web3j.utils.Async;
+import sila.web3j.protocol.Web3jService;
+import sila.web3j.protocol.core.BatchRequest;
+import sila.web3j.protocol.core.BatchResponse;
+import sila.web3j.protocol.core.JsonRpc2_0Web3j;
+import sila.web3j.protocol.core.Request;
+import sila.web3j.protocol.core.Response;
+import sila.web3j.protocol.http.HttpService;
+import sila.web3j.protocol.websocket.WebSocketClient;
+import sila.web3j.protocol.websocket.WebSocketListener;
+import sila.web3j.protocol.websocket.WebSocketService;
+import sila.web3j.protocol.websocket.events.Notification;
+import sila.web3j.utils.Async;
 
 public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable {
 
   private static final String LOCALHOST = "127.0.0.1";
   private static final Logger LOG = LoggerFactory.getLogger(BesuNode.class);
+
+  @SuppressWarnings("rawtypes")
+  private static final class SilaNamespaceWeb3jService implements Web3jService {
+    private final Web3jService delegate;
+
+    private SilaNamespaceWeb3jService(final Web3jService delegate) {
+      this.delegate = delegate;
+    }
+
+    private static void translateNamespace(final Request<?, ?> request) {
+      final String method = request.getMethod();
+      if (method != null && method.startsWith("eth_")) {
+        request.setMethod("sil_" + method.substring("eth_".length()));
+      }
+    }
+
+    private static String translateNamespace(final String method) {
+      return method != null && method.startsWith("eth_")
+          ? "sil_" + method.substring("eth_".length())
+          : method;
+    }
+
+    @Override
+    public <T extends Response> T send(final Request request, final Class<T> responseType)
+        throws IOException {
+      translateNamespace(request);
+      return delegate.send(request, responseType);
+    }
+
+    @Override
+    public <T extends Response> CompletableFuture<T> sendAsync(
+        final Request request, final Class<T> responseType) {
+      translateNamespace(request);
+      return delegate.sendAsync(request, responseType);
+    }
+
+    @Override
+    public BatchResponse sendBatch(final BatchRequest batchRequest) throws IOException {
+      batchRequest.getRequests().forEach(SilaNamespaceWeb3jService::translateNamespace);
+      return delegate.sendBatch(batchRequest);
+    }
+
+    @Override
+    public CompletableFuture<BatchResponse> sendBatchAsync(final BatchRequest batchRequest) {
+      batchRequest.getRequests().forEach(SilaNamespaceWeb3jService::translateNamespace);
+      return delegate.sendBatchAsync(batchRequest);
+    }
+
+    @Override
+    public <T extends Notification<?>> Flowable<T> subscribe(
+        final Request request, final String unsubscribeMethod, final Class<T> responseType) {
+      translateNamespace(request);
+      return delegate.subscribe(request, translateNamespace(unsubscribeMethod), responseType);
+    }
+
+    @Override
+    public void close() throws IOException {
+      delegate.close();
+    }
+  }
+
   public static final String HTTP = "http://";
   public static final String HTTPS = "https://";
   public static final String WS = "ws://";
@@ -139,7 +207,7 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
   private final List<String> extraCLIOptions;
   private final List<String> staticNodes;
   private boolean isDnsEnabled = false;
-  private Optional<Integer> exitCode = Optional.empty();
+  private volatile Optional<Integer> exitCode = Optional.empty();
   private final boolean isStrictTxReplayProtectionEnabled;
   private final Map<String, String> environment;
   private SynchronizerConfiguration synchronizerConfiguration;
@@ -514,20 +582,21 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
                           : ConsensusType.QBFT)
               .orElse(ConsensusType.IBFT2);
 
+      final Web3jService silaWeb3jService = new SilaNamespaceWeb3jService(web3jService);
       nodeRequests =
           new NodeRequests(
-              web3jService,
-              new JsonRpc2_0Web3j(web3jService, 2000, Async.defaultExecutorService()),
-              new BftRequestFactory(web3jService, bftType),
-              new PermissioningJsonRpcRequestFactory(web3jService),
-              new AdminRequestFactory(web3jService),
-              new CustomRequestFactory(web3jService),
-              new MinerRequestFactory(web3jService),
-              new TxPoolRequestFactory(web3jService),
-              new DebugRequestFactory(web3jService),
+              silaWeb3jService,
+              new JsonRpc2_0Web3j(silaWeb3jService, 2000, Async.defaultExecutorService()),
+              new BftRequestFactory(silaWeb3jService, bftType),
+              new PermissioningJsonRpcRequestFactory(silaWeb3jService),
+              new AdminRequestFactory(silaWeb3jService),
+              new CustomRequestFactory(silaWeb3jService),
+              new MinerRequestFactory(silaWeb3jService),
+              new TxPoolRequestFactory(silaWeb3jService),
+              new DebugRequestFactory(silaWeb3jService),
               websocketService,
               loginRequestFactory(),
-              new PluginsRequestFactory(web3jService));
+              new PluginsRequestFactory(silaWeb3jService));
     }
 
     return nodeRequests;
@@ -758,11 +827,6 @@ public class BesuNode implements NodeConfiguration, RunnableNode, AutoCloseable 
   public void setBootnodes(final List<String> bootnodes) {
     this.bootnodes.clear();
     this.bootnodes.addAll(bootnodes);
-  }
-
-  @Override
-  public boolean isDiscoveryV5Enabled() {
-    return networkingConfiguration.discoveryConfiguration().isDiscoveryV5Enabled();
   }
 
   @Override

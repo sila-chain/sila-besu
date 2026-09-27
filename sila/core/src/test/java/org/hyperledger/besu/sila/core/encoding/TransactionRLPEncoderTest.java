@@ -19,10 +19,10 @@ import static org.assertj.core.api.Assertions.assertThat;
 import org.hyperledger.besu.sila.core.Block;
 import org.hyperledger.besu.sila.core.BlockDataGenerator;
 import org.hyperledger.besu.sila.core.Transaction;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import org.apache.tuweni.bytes.Bytes;
 import org.junit.jupiter.api.Test;
@@ -44,7 +44,7 @@ class TransactionRLPEncoderTest {
   }
 
   @Test
-  void encodeSIP1559TxNominalCase() {
+  void encodeEIP1559TxNominalCase() {
     final Transaction transaction = decodeRLP(RLP.input(Bytes.fromHexString(SIP1559_TX_RLP)));
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     encodeRLP(transaction, output);
@@ -52,7 +52,7 @@ class TransactionRLPEncoderTest {
   }
 
   @Test
-  void blockWithLegacyAndSIP2930TransactionsRoundTrips() {
+  void blockWithLegacyAndEIP2930TransactionsRoundTrips() {
     final BlockDataGenerator gen = new BlockDataGenerator();
 
     final Block block =

@@ -16,10 +16,10 @@ package org.hyperledger.besu.sila.sil.sync;
 
 import org.hyperledger.besu.sila.chain.BlockAddedEvent;
 import org.hyperledger.besu.sila.chain.BlockAddedObserver;
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.SilPeerImmutableAttributes;
 import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
 import java.util.Comparator;
 import java.util.List;

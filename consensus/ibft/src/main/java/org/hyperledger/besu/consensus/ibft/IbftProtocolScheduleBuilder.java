@@ -20,20 +20,21 @@ import org.hyperledger.besu.consensus.common.ForksSchedule;
 import org.hyperledger.besu.consensus.common.bft.BaseBftProtocolScheduleBuilder;
 import org.hyperledger.besu.consensus.common.bft.BftExtraDataCodec;
 import org.hyperledger.besu.consensus.common.bft.BftProtocolSchedule;
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.sila.chain.BadBlockManager;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BalConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.BlockHeaderValidator;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.BaseFeeMarket;
-import org.hyperledger.besu.sila.sila-mainnet.feemarket.FeeMarket;
-import org.hyperledger.besu.savm.internal.SavmConfiguration;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.BalConfiguration;
+import org.hyperledger.besu.sila.silaMainnet.BlockHeaderValidator;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.BaseFeeMarket;
+import org.hyperledger.besu.sila.silaMainnet.feemarket.FeeMarket;
 
 import java.time.Duration;
 import java.util.Optional;
 
 /** Defines the protocol behaviours for a blockchain using a BFT consensus mechanism. */
 public class IbftProtocolScheduleBuilder extends BaseBftProtocolScheduleBuilder {
+
   /** Default constructor. */
   protected IbftProtocolScheduleBuilder() {}
 
@@ -51,6 +52,7 @@ public class IbftProtocolScheduleBuilder extends BaseBftProtocolScheduleBuilder 
    * @param balConfiguration configuration related to block-level access lists
    * @param metricsSystem A metricSystem instance to be able to expose metrics in the underlying
    *     calls
+   * @param blockGasLimit the genesis block gas limit
    * @return the protocol schedule
    */
   public static BftProtocolSchedule create(
@@ -63,7 +65,8 @@ public class IbftProtocolScheduleBuilder extends BaseBftProtocolScheduleBuilder 
       final BadBlockManager badBlockManager,
       final boolean isParallelTxProcessingEnabled,
       final BalConfiguration balConfiguration,
-      final MetricsSystem metricsSystem) {
+      final MetricsSystem metricsSystem,
+      final long blockGasLimit) {
     return new IbftProtocolScheduleBuilder()
         .createProtocolSchedule(
             config,
@@ -75,7 +78,8 @@ public class IbftProtocolScheduleBuilder extends BaseBftProtocolScheduleBuilder 
             badBlockManager,
             isParallelTxProcessingEnabled,
             balConfiguration,
-            metricsSystem);
+            metricsSystem,
+            blockGasLimit);
   }
 
   /**
@@ -91,6 +95,7 @@ public class IbftProtocolScheduleBuilder extends BaseBftProtocolScheduleBuilder 
    * @param balConfiguration configuration related to block-level access lists
    * @param metricsSystem A metricSystem instance to be able to expose metrics in the underlying
    *     calls
+   * @param blockGasLimit the genesis block gas limit
    * @return the protocol schedule
    */
   public static BftProtocolSchedule create(
@@ -102,11 +107,56 @@ public class IbftProtocolScheduleBuilder extends BaseBftProtocolScheduleBuilder 
       final BadBlockManager badBlockManager,
       final boolean isParallelTxProcessingEnabled,
       final BalConfiguration balConfiguration,
-      final MetricsSystem metricsSystem) {
+      final MetricsSystem metricsSystem,
+      final long blockGasLimit) {
     return create(
         config,
         forksSchedule,
         false,
+        bftExtraDataCodec,
+        savmConfiguration,
+        miningConfiguration,
+        badBlockManager,
+        isParallelTxProcessingEnabled,
+        balConfiguration,
+        metricsSystem,
+        blockGasLimit);
+  }
+
+  /**
+   * Creates a protocol schedule with the specified block gas limit for validation.
+   *
+   * @param config the config
+   * @param forksSchedule the forks schedule
+   * @param isRevertReasonEnabled the is revert reason enabled
+   * @param bftExtraDataCodec the bft extra data codec
+   * @param savmConfiguration the savm configuration
+   * @param miningConfiguration the mining parameters
+   * @param badBlockManager the cache to use to keep invalid blocks
+   * @param isParallelTxProcessingEnabled indicates whether parallel transaction is enabled
+   * @param balConfiguration configuration related to block-level access lists
+   * @param metricsSystem A metricSystem instance to be able to expose metrics in the underlying
+   *     calls
+   * @param blockGasLimit the genesis block gas limit
+   * @return the protocol schedule
+   */
+  public BftProtocolSchedule createProtocolSchedule(
+      final GenesisConfigOptions config,
+      final ForksSchedule<? extends BftConfigOptions> forksSchedule,
+      final boolean isRevertReasonEnabled,
+      final BftExtraDataCodec bftExtraDataCodec,
+      final SavmConfiguration savmConfiguration,
+      final MiningConfiguration miningConfiguration,
+      final BadBlockManager badBlockManager,
+      final boolean isParallelTxProcessingEnabled,
+      final BalConfiguration balConfiguration,
+      final MetricsSystem metricsSystem,
+      final long blockGasLimit) {
+    this.blockGasLimit = blockGasLimit;
+    return super.createProtocolSchedule(
+        config,
+        forksSchedule,
+        isRevertReasonEnabled,
         bftExtraDataCodec,
         savmConfiguration,
         miningConfiguration,

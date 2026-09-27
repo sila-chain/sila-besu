@@ -29,6 +29,7 @@ import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
 import org.hyperledger.besu.cryptoservices.NodeKeyUtils;
+import org.hyperledger.besu.plugin.data.EnodeURL;
 import org.hyperledger.besu.sila.forkid.ForkId;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper.AgentBuilder;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.DiscoveryPeerV4;
@@ -46,7 +47,6 @@ import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions.Action;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionsDenylist;
-import org.hyperledger.besu.plugin.data.EnodeURL;
 
 import java.net.InetAddress;
 import java.net.UnknownHostException;
@@ -58,9 +58,9 @@ import java.util.stream.Collectors;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
 import org.apache.tuweni.units.bigints.UInt64;
-import org.sila.beacon.discovery.schema.NodeRecord;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
+import sila.beacon.discovery.schema.NodeRecord;
 
 public class PeerDiscoveryAgentV4Test {
 
@@ -120,7 +120,31 @@ public class PeerDiscoveryAgentV4Test {
             Collections.singletonList(new ForkId(Bytes.EMPTY, Bytes.EMPTY).getForkIdAsBytesList()));
     assertThat(nodeRecord.asEnr())
         .isEqualTo(
-            "enr:-JG4QF0FFhEXDu_G-1LD5lkWh5-cbnw8vJ00NvO8vGnAf85JMwLiP-Qo49DL2xYMzX3zg_d5VXhegmoVTFJRWgZAtCYBg2V0aMPCgICCaWSCdjSCaXCEfwAAAYlzZWNwMjU2azGhA8pjTK4NSay0Adikxrb-jFW3DRFb9AB2nMFADzJYzTE4g3RjcAKDdWRwgnZf");
+            "enr:-JG4QPbQK8QCksih2gB0KbOjF8VK6stt4VJ5ZG5Fb4ZVnoVVSDoUKubcsHPgbazYkKd7iBPApDH_bN1exCy52l1fdMsBgmlkgnY0gmlwhH8AAAGJc2VjcDI1NmsxoQPKY0yuDUmstAHYpMa2_oxVtw0RW_QAdpzBQA8yWM0xOINzaWzDwoCAg3RjcAKDdWRwgnZf");
+  }
+
+  @Test
+  public void nodeRecord_withAdvertisedHostIpv6_carriesIpv6EnrFields() {
+    final MockPeerDiscoveryAgent agent =
+        helper.startDiscoveryAgent(helper.agentBuilder().advertisedHostIpv6("2001:db8::1"));
+
+    final NodeRecord nodeRecord =
+        agent.getAdvertisedPeer().orElseThrow().getNodeRecord().orElseThrow();
+
+    assertThat(nodeRecord.getTcp6Address()).isPresent();
+    assertThat(nodeRecord.getTcp6Address().get().getPort()).isGreaterThan(0);
+    assertThat(nodeRecord.getUdp6Address()).isPresent();
+  }
+
+  @Test
+  public void nodeRecord_withoutAdvertisedHostIpv6_hasNoIpv6EnrFields() {
+    final MockPeerDiscoveryAgent agent = helper.startDiscoveryAgent();
+
+    final NodeRecord nodeRecord =
+        agent.getAdvertisedPeer().orElseThrow().getNodeRecord().orElseThrow();
+
+    assertThat(nodeRecord.getTcp6Address()).isEmpty();
+    assertThat(nodeRecord.getUdp6Address()).isEmpty();
   }
 
   @Test

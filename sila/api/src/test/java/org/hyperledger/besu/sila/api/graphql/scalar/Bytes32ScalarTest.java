@@ -22,12 +22,12 @@ import org.hyperledger.besu.sila.api.graphql.internal.Scalars;
 import java.util.Locale;
 
 import graphql.GraphQLContext;
-import graphql.execution.CosrcedVariables;
+import graphql.execution.CoercedVariables;
 import graphql.language.FloatValue;
 import graphql.language.StringValue;
-import graphql.schema.CosrcingParseLiteralException;
-import graphql.schema.CosrcingParseValueException;
-import graphql.schema.CosrcingSerializeException;
+import graphql.schema.CoercingParseLiteralException;
+import graphql.schema.CoercingParseValueException;
+import graphql.schema.CoercingSerializeException;
 import graphql.schema.GraphQLScalarType;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.bytes.Bytes32;
@@ -46,7 +46,7 @@ public class Bytes32ScalarTest {
   @Test
   public void parseValueTest() {
     final var result =
-        scalar.getCosrcing().parseValue(str, GraphQLContext.newContext().build(), Locale.ENGLISH);
+        scalar.getCoercing().parseValue(str, GraphQLContext.newContext().build(), Locale.ENGLISH);
     assertThat(result).isEqualTo(value);
   }
 
@@ -55,10 +55,10 @@ public class Bytes32ScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseValue(
                         "not_hexadecimal", GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @Test
@@ -66,9 +66,9 @@ public class Bytes32ScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseValue(3.2f, GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseValueException.class);
+        .isInstanceOf(CoercingParseValueException.class);
   }
 
   @Test
@@ -76,7 +76,7 @@ public class Bytes32ScalarTest {
     final String result =
         (String)
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .serialize(value, GraphQLContext.newContext().build(), Locale.ENGLISH);
     assertThat(result).isEqualTo(str);
   }
@@ -85,7 +85,7 @@ public class Bytes32ScalarTest {
   public void serializeBytesTest() {
     assertThat(
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .serialize(
                     Bytes.fromHexString("0x01"),
                     GraphQLContext.newContext().build(),
@@ -98,12 +98,12 @@ public class Bytes32ScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .serialize(
                         Bytes.concatenate(value, Bytes.fromHexString("0x01")),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingSerializeException.class);
+        .isInstanceOf(CoercingSerializeException.class);
   }
 
   @Test
@@ -111,9 +111,9 @@ public class Bytes32ScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .serialize(3.2f, GraphQLContext.newContext().build(), Locale.ENGLISH))
-        .isInstanceOf(CosrcingSerializeException.class);
+        .isInstanceOf(CoercingSerializeException.class);
   }
 
   @Test
@@ -121,10 +121,10 @@ public class Bytes32ScalarTest {
     final Bytes32 result =
         (Bytes32)
             scalar
-                .getCosrcing()
+                .getCoercing()
                 .parseLiteral(
                     strValue,
-                    CosrcedVariables.emptyVariables(),
+                    CoercedVariables.emptyVariables(),
                     GraphQLContext.newContext().build(),
                     Locale.ENGLISH);
     assertThat(result).isEqualTo(value);
@@ -135,13 +135,13 @@ public class Bytes32ScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseLiteral(
                         FloatValue.of(3.2f),
-                        CosrcedVariables.emptyVariables(),
+                        CoercedVariables.emptyVariables(),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @Test
@@ -149,13 +149,13 @@ public class Bytes32ScalarTest {
     assertThatThrownBy(
             () ->
                 scalar
-                    .getCosrcing()
+                    .getCoercing()
                     .parseLiteral(
                         invalidStrValue,
-                        CosrcedVariables.emptyVariables(),
+                        CoercedVariables.emptyVariables(),
                         GraphQLContext.newContext().build(),
                         Locale.ENGLISH))
-        .isInstanceOf(CosrcingParseLiteralException.class);
+        .isInstanceOf(CoercingParseLiteralException.class);
   }
 
   @BeforeEach

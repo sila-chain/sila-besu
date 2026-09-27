@@ -76,7 +76,8 @@ public class Era1BlockExporter {
     this.blockchain = blockchain;
     this.network =
         switch (networkDefinition) {
-          case SILA_MAINNET, SEPOLIA -> networkDefinition.name().toLowerCase(Locale.getDefault());
+          case SILA_MAINNET -> "sila-mainnet";
+          case SEPOLIA -> networkDefinition.name().toLowerCase(Locale.getDefault());
           default ->
               throw new RuntimeException(
                   "Unable to export ERA1 files for " + networkDefinition + " network");

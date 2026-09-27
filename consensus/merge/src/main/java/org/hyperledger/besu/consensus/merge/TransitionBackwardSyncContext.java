@@ -14,6 +14,7 @@
  */
 package org.hyperledger.besu.consensus.merge;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.BlockValidator;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.core.Block;
@@ -23,9 +24,8 @@ import org.hyperledger.besu.sila.sil.sync.backwardsync.BackwardChain;
 import org.hyperledger.besu.sila.sil.sync.backwardsync.BackwardSyncAlgorithmFactory;
 import org.hyperledger.besu.sila.sil.sync.backwardsync.BackwardSyncContext;
 import org.hyperledger.besu.sila.sil.sync.state.SyncState;
-import org.hyperledger.besu.sila.sila-mainnet.ScheduleBasedBlockHeaderFunctions;
+import org.hyperledger.besu.sila.silaMainnet.ScheduleBasedBlockHeaderFunctions;
 import org.hyperledger.besu.sila.storage.StorageProvider;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
 
 /** The Transition backward sync context. */
 public class TransitionBackwardSyncContext extends BackwardSyncContext {

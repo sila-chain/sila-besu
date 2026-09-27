@@ -16,6 +16,7 @@ package org.hyperledger.besu.sila.permissioning;
 
 import static java.util.Collections.singletonList;
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.assertj.core.api.Assertions.assertThatThrownBy;
 import static org.assertj.core.api.Assertions.catchThrowable;
 import static org.junit.jupiter.api.Assertions.assertThrows;
 import static org.mockito.ArgumentMatchers.any;
@@ -27,10 +28,10 @@ import static org.mockito.Mockito.verifyNoMoreInteractions;
 import static org.mockito.Mockito.when;
 
 import org.hyperledger.besu.datatypes.Address;
-import org.hyperledger.besu.sila.core.Transaction;
 import org.hyperledger.besu.metrics.BesuMetricCategory;
 import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.sila.core.Transaction;
 
 import java.io.IOException;
 import java.nio.charset.StandardCharsets;
@@ -94,6 +95,15 @@ public class AccountLocalConfigPermissioningControllerTest {
 
     assertThat(controller.getAccountAllowlist())
         .contains("0xfe3b557e8fb62b89f4916b721be55ceb828dbd73");
+  }
+
+  @Test
+  public void missingAccountPermissioningFileIsInvalidConfigurationState() {
+    assertThatThrownBy(
+            () -> new AccountLocalConfigPermissioningController(permissioningConfig, metricsSystem))
+        .isInstanceOf(IllegalStateException.class)
+        .hasMessage(
+            "Account permissioning config file path is required when account permissioning is enabled");
   }
 
   @Test

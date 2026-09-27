@@ -53,7 +53,7 @@ import org.slf4j.LoggerFactory;
  * fragmented frames, as well as streams of multiple messages within the same incoming buffer, as
  * long as the order of incoming bytes matches the underlying TCP sequence.
  *
- * @see <a href="https://github.com/sila-chain/devp2p/blob/master/rlpx.md#framing">RLPx framing</a>
+ * @see <a href="https://github.com/sila/devp2p/blob/master/rlpx.md#framing">RLPx framing</a>
  */
 public class Framer {
   private static final Logger LOG = LoggerFactory.getLogger(Framer.class);
@@ -295,7 +295,7 @@ public class Framer {
 
       if (!compressionSuccessful) {
         // First compressed message: decompress eagerly to validate and handle
-        // the OpenSila/Parity fallback (non-Snappy peer detection via SIP-706)
+        // the OpenEthereum/Parity fallback (non-Snappy peer detection via SIP-706)
         try {
           final byte[] decompressedMessageData = compressor.decompress(compressedMessageData);
           compressionSuccessful = true;

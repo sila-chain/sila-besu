@@ -92,7 +92,7 @@ public class TransactionBroadcaster
 
   @Override
   public void onTransactionsAdded(final Collection<Transaction> transactions) {
-    final int currPeerCount = silContext.getSilPeers().peerCount();
+    final int currPeerCount = silContext.getEthPeers().peerCount();
     if (currPeerCount == 0) {
       return;
     }
@@ -107,7 +107,7 @@ public class TransactionBroadcaster
 
     final List<SilPeer> peers =
         silContext
-            .getSilPeers()
+            .getEthPeers()
             .streamAvailablePeers()
             .map(SilPeerImmutableAttributes::silPeer)
             .collect(Collectors.toCollection(ArrayList::new));

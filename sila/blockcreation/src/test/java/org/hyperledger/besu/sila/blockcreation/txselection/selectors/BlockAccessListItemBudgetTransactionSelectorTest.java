@@ -30,15 +30,15 @@ import org.hyperledger.besu.sila.blockcreation.txselection.BlockSelectionContext
 import org.hyperledger.besu.sila.blockcreation.txselection.TransactionEvaluationContext;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.ProcessableBlockHeader;
-import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListItemSizeCheck;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListValidationError;
-import org.hyperledger.besu.sila.sila-mainnet.BlockAccessListValidator;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSpec;
-import org.hyperledger.besu.sila.sila-mainnet.ValidationResult;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.PartialBlockAccessView;
 import org.hyperledger.besu.sila.processing.TransactionProcessingResult;
+import org.hyperledger.besu.sila.sil.transactions.PendingTransaction;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListItemSizeCheck;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidationError;
+import org.hyperledger.besu.sila.silaMainnet.BlockAccessListValidator;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSpec;
+import org.hyperledger.besu.sila.silaMainnet.ValidationResult;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.PartialBlockAccessView;
 
 import java.util.List;
 import java.util.Optional;
@@ -186,7 +186,7 @@ class BlockAccessListItemBudgetTransactionSelectorTest {
     final PartialBlockAccessView.PartialBlockAccessViewBuilder b =
         new PartialBlockAccessView.PartialBlockAccessViewBuilder().withTxIndex(txIndex);
     b.getOrCreateAccountBuilder(addr)
-        .addStorageChange(new StorageSlotKey(UInt256.ONE), UInt256.ZERO);
+        .addStorageChange(new StorageSlotKey(UInt256.ONE), null, UInt256.ZERO);
     return b.build();
   }
 }

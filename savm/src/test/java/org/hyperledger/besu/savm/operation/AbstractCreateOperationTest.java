@@ -27,16 +27,16 @@ import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.datatypes.Wei;
 import org.hyperledger.besu.savm.Code;
 import org.hyperledger.besu.savm.SAVM;
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.account.Account;
 import org.hyperledger.besu.savm.account.MutableAccount;
 import org.hyperledger.besu.savm.frame.BlockValues;
 import org.hyperledger.besu.savm.frame.ExceptionalHaltReason;
 import org.hyperledger.besu.savm.frame.MessageFrame;
-import org.hyperledger.besu.savm.gascalculator.SilaAmsterdamGasCalculator;
 import org.hyperledger.besu.savm.gascalculator.ConstantinopleGasCalculator;
-import org.hyperledger.besu.savm.gascalculator.Sip8037StateGasCostCalculator;
+import org.hyperledger.besu.savm.gascalculator.Eip8037StateGasCostCalculator;
 import org.hyperledger.besu.savm.gascalculator.GasCalculator;
+import org.hyperledger.besu.savm.gascalculator.SilaAmsterdamGasCalculator;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
 import org.hyperledger.besu.savm.processor.ContractCreationProcessor;
 import org.hyperledger.besu.savm.testutils.FakeBlockValues;
@@ -172,7 +172,6 @@ class AbstractCreateOperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
     operation.execute(messageFrame, savm);
@@ -183,7 +182,7 @@ class AbstractCreateOperationTest {
 
   @Test
   void onSuccess() {
-    final SAVM savm = SilaMainnetSAVMs.london(SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.london(SavmConfiguration.DEFAULT);
 
     executeOperation(SIMPLE_CREATE, savm);
 
@@ -196,7 +195,7 @@ class AbstractCreateOperationTest {
 
   @Test
   void onFailure() {
-    final SAVM savm = SilaMainnetSAVMs.london(SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.london(SavmConfiguration.DEFAULT);
 
     executeOperation(POP_UNDERFLOW_CREATE, savm);
 
@@ -217,7 +216,7 @@ class AbstractCreateOperationTest {
     final FakeCreateOperation amsterdamOp = new FakeCreateOperation(amsterdamCalc);
 
     // State gas for CREATE at 36M = 112 * 150 = 16,800
-    final long stateGas = new Sip8037StateGasCostCalculator().newContractStateGas();
+    final long stateGas = new Eip8037StateGasCostCalculator().newContractStateGas();
 
     final UInt256 memoryOffset = UInt256.fromHexString("0xFF");
     final MessageFrame frame =
@@ -260,11 +259,13 @@ class AbstractCreateOperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
+    // SIP-8037: the target has to read as empty, or no NEW_ACCOUNT is charged and the
+    // spill-below-cost scenario under test never arises.
+    when(account.isEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
     // Compute the operation cost so we can set initialGas to trigger the underflow scenario
-    final SAVM savm = SilaMainnetSAVMs.amsterdam(SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.amsterdam(SavmConfiguration.DEFAULT);
     final long cost = amsterdamOp.cost(frame, () -> new Code(SIMPLE_CREATE));
 
     // Set gasRemaining to: cost + (stateGas - 1). This ensures the initial check (gas >= cost)
@@ -287,7 +288,7 @@ class AbstractCreateOperationTest {
     final GasCalculator amsterdamCalc = new SilaAmsterdamGasCalculator();
     final FakeCreateOperation amsterdamOp = new FakeCreateOperation(amsterdamCalc);
 
-    final SAVM savm = SilaMainnetSAVMs.amsterdam(SavmConfiguration.DEFAULT);
+    final SAVM savm = SilaMainnetEVMs.amsterdam(SavmConfiguration.DEFAULT);
     final int maxInitcodeSize = savm.getMaxInitcodeSize();
     // Size just over the limit
     final int oversizedLength = maxInitcodeSize + 1;
@@ -331,7 +332,6 @@ class AbstractCreateOperationTest {
     when(worldUpdater.getSenderAccount(any())).thenReturn(account);
     when(worldUpdater.getOrCreate(any())).thenReturn(newAccount);
     when(newAccount.getCode()).thenReturn(Bytes.EMPTY);
-    when(newAccount.isStorageEmpty()).thenReturn(true);
     when(worldUpdater.updater()).thenReturn(worldUpdater);
 
     final long stateGasBefore = frame.getStateGasReservoir();

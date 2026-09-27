@@ -15,22 +15,20 @@
 package org.hyperledger.besu.sila.core.encoding;
 
 import static org.assertj.core.api.Assertions.assertThat;
-import static org.assertj.core.api.Assertions.assertThatThrownBy;
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.StorageSlotKey;
 import org.hyperledger.besu.datatypes.Wei;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.AccountChanges;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.BalanceChange;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.CodeChange;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.NonceChange;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.SlotChanges;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.SlotRead;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList.StorageChange;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPOutput;
-import org.hyperledger.besu.sila.rlp.RLPException;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.AccountChanges;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.BalanceChange;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.CodeChange;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.NonceChange;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.SlotChanges;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.SlotRead;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList.StorageChange;
 
 import java.util.List;
 
@@ -51,7 +49,7 @@ public class AccessListTransactionEncoderTest {
     final SlotChanges slotChanges = new SlotChanges(slotKey, List.of(write));
     final SlotRead slotRead = new SlotRead(slotKey);
 
-    final BalanceChange balanceChange = new BalanceChange(0, Wei.fromSil(3));
+    final BalanceChange balanceChange = new BalanceChange(0, Wei.fromEth(3));
     final CodeChange codeChange = new CodeChange(1, Bytes.fromHexString("0x6001600101"));
     final NonceChange nonceChange = new NonceChange(2, 42L);
 
@@ -116,7 +114,7 @@ public class AccessListTransactionEncoderTest {
             address,
             List.of(),
             List.of(),
-            List.of(new BalanceChange(0, Wei.fromSil(1))),
+            List.of(new BalanceChange(0, Wei.fromEth(1))),
             List.of(new NonceChange(0, 5L)),
             List.of());
 
@@ -141,7 +139,11 @@ public class AccessListTransactionEncoderTest {
   }
 
   @Test
-  void shouldRejectSlotChangesWithoutStorageChanges() {
+  void shouldDecodeSlotChangesWithoutStorageChanges() {
+    // An empty change list is well-formed RLP. The SIP-7928 "at least one storage change" rule is
+    // left to SilaMainnetBlockAccessListValidator, so the block is reported INVALID rather than as
+    // an
+    // engine_newPayload parameter error.
     final Address address = Address.fromHexString("0x00000000219ab540356cbb839cbe05303d7705fa");
     final StorageSlotKey slotKey = new StorageSlotKey(Wei.ONE.toUInt256());
     final BlockAccessList invalidAccessList =
@@ -158,10 +160,17 @@ public class AccessListTransactionEncoderTest {
     final BytesValueRLPOutput output = new BytesValueRLPOutput();
     BlockAccessListEncoder.encode(invalidAccessList, output);
 
-    assertThatThrownBy(
-            () -> BlockAccessListDecoder.decode(new BytesValueRLPInput(output.encoded(), false)))
-        .isInstanceOf(RLPException.class)
-        .hasMessageContaining("at least one storage change");
+    final BlockAccessList decoded =
+        BlockAccessListDecoder.decode(new BytesValueRLPInput(output.encoded(), false));
+
+    assertThat(decoded.accountChanges()).hasSize(1);
+    assertThat(decoded.accountChanges().getFirst().storageChanges())
+        .singleElement()
+        .satisfies(
+            slotChanges -> {
+              assertThat(slotChanges.slot()).isEqualTo(slotKey);
+              assertThat(slotChanges.changes()).isEmpty();
+            });
   }
 
   @Test

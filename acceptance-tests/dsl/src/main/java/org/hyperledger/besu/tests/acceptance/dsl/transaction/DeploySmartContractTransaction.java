@@ -23,10 +23,10 @@ import java.util.Arrays;
 import java.util.List;
 import java.util.stream.Collectors;
 
-import org.web3j.crypto.Credentials;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.RemoteCall;
-import org.web3j.tx.Contract;
+import sila.web3j.crypto.Credentials;
+import sila.web3j.protocol.Web3j;
+import sila.web3j.protocol.core.RemoteCall;
+import sila.web3j.tx.Contract;
 
 public class DeploySmartContractTransaction<T extends Contract> implements Transaction<T> {
 

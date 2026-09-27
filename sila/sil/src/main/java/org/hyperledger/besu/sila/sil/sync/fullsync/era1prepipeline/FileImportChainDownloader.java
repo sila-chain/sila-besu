@@ -14,10 +14,10 @@
  */
 package org.hyperledger.besu.sila.sil.sync.fullsync.era1prepipeline;
 
+import org.hyperledger.besu.services.pipeline.Pipeline;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.sil.manager.SilScheduler;
 import org.hyperledger.besu.sila.sil.sync.ChainDownloader;
-import org.hyperledger.besu.services.pipeline.Pipeline;
 
 import java.util.Optional;
 import java.util.concurrent.CompletableFuture;

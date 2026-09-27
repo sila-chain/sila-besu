@@ -30,7 +30,7 @@ import org.hyperledger.besu.sila.sil.manager.peertask.PeerTaskExecutorResult;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetSyncReceiptsFromPeerTask;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetSyncReceiptsFromPeerTask.Request;
 import org.hyperledger.besu.sila.sil.manager.peertask.task.GetSyncReceiptsFromPeerTask.Response;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.time.Duration;
 import java.util.ArrayList;

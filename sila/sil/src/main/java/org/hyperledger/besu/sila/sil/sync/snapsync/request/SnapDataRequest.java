@@ -15,6 +15,8 @@
 package org.hyperledger.besu.sila.sil.sync.snapsync.request;
 
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
+import org.hyperledger.besu.services.tasks.TasksPriorityProvider;
 import org.hyperledger.besu.sila.sil.sync.snapsync.RequestType;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncConfiguration;
 import org.hyperledger.besu.sila.sil.sync.snapsync.SnapSyncProcessState;
@@ -25,8 +27,6 @@ import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.StorageTrieNodeH
 import org.hyperledger.besu.sila.sil.sync.snapsync.request.heal.TrieNodeHealingRequest;
 import org.hyperledger.besu.sila.sil.sync.worldstate.WorldStateDownloaderException;
 import org.hyperledger.besu.sila.worldstate.WorldStateStorageCoordinator;
-import org.hyperledger.besu.plugin.services.storage.WorldStateKeyValueStorage;
-import org.hyperledger.besu.services.tasks.TasksPriorityProvider;
 
 import java.util.Optional;
 import java.util.Set;

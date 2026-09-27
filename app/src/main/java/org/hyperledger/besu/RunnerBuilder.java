@@ -21,9 +21,22 @@ import static java.util.function.Predicate.not;
 import static org.hyperledger.besu.controller.BesuController.CACHE_PATH;
 
 import org.hyperledger.besu.cli.config.SilNetworkConfig;
-import org.hyperledger.besu.cli.options.SilstatsOptions;
+import org.hyperledger.besu.cli.options.SilStatsOptions;
 import org.hyperledger.besu.controller.BesuController;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.MetricsService;
+import org.hyperledger.besu.metrics.ObservableMetricsSystem;
+import org.hyperledger.besu.metrics.prometheus.MetricsConfiguration;
+import org.hyperledger.besu.nat.NatMethod;
+import org.hyperledger.besu.nat.NatService;
+import org.hyperledger.besu.nat.core.NatManager;
+import org.hyperledger.besu.nat.docker.DockerDetector;
+import org.hyperledger.besu.nat.docker.DockerNatManager;
+import org.hyperledger.besu.nat.upnp.UpnpNatManager;
+import org.hyperledger.besu.plugin.BesuPlugin;
+import org.hyperledger.besu.plugin.data.EnodeURL;
+import org.hyperledger.besu.plugin.services.HealthCheckService;
+import org.hyperledger.besu.services.BesuPluginContextImpl;
 import org.hyperledger.besu.sila.ProtocolContext;
 import org.hyperledger.besu.sila.api.ApiConfiguration;
 import org.hyperledger.besu.sila.api.graphql.GraphQLConfiguration;
@@ -62,16 +75,14 @@ import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.pending.Pend
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.pending.PendingTransactionSubscriptionService;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.syncing.SyncingSubscriptionService;
 import org.hyperledger.besu.sila.api.jsonrpc.websocket.subscription.transactionreceipts.TransactionReceiptsSubscriptionService;
+import org.hyperledger.besu.sila.api.pluginadapter.RpcEndpointServiceImpl;
 import org.hyperledger.besu.sila.api.query.BlockchainQueries;
 import org.hyperledger.besu.sila.blockcreation.MiningCoordinator;
 import org.hyperledger.besu.sila.chain.Blockchain;
 import org.hyperledger.besu.sila.core.MiningConfiguration;
 import org.hyperledger.besu.sila.core.Synchronizer;
-import org.hyperledger.besu.sila.sil.manager.SilPeers;
-import org.hyperledger.besu.sila.sil.manager.SilScheduler;
-import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
 import org.hyperledger.besu.sila.p2p.config.DiscoveryConfiguration;
+import org.hyperledger.besu.sila.p2p.config.DiscoveryMode;
 import org.hyperledger.besu.sila.p2p.config.ImmutableNetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.config.NetworkingConfiguration;
 import org.hyperledger.besu.sila.p2p.config.RlpxConfiguration;
@@ -104,26 +115,16 @@ import org.hyperledger.besu.sila.permissioning.account.AccountPermissioningContr
 import org.hyperledger.besu.sila.permissioning.node.InsufficientPeersPermissioningProvider;
 import org.hyperledger.besu.sila.permissioning.node.NodePermissioningController;
 import org.hyperledger.besu.sila.permissioning.node.PeerPermissionsAdapter;
+import org.hyperledger.besu.sila.permissioning.pluginadapter.PermissioningServiceImpl;
+import org.hyperledger.besu.sila.sil.manager.SilPeers;
+import org.hyperledger.besu.sila.sil.manager.SilScheduler;
+import org.hyperledger.besu.sila.sil.transactions.TransactionPool;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.pluginadapter.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.sila.storage.StorageProvider;
 import org.hyperledger.besu.sila.transaction.TransactionSimulator;
 import org.hyperledger.besu.silstats.SilStatsService;
 import org.hyperledger.besu.silstats.util.SilStatsConnectOptions;
-import org.hyperledger.besu.metrics.MetricsService;
-import org.hyperledger.besu.metrics.ObservableMetricsSystem;
-import org.hyperledger.besu.metrics.promsileus.MetricsConfiguration;
-import org.hyperledger.besu.nat.NatMethod;
-import org.hyperledger.besu.nat.NatService;
-import org.hyperledger.besu.nat.core.NatManager;
-import org.hyperledger.besu.nat.docker.DockerDetector;
-import org.hyperledger.besu.nat.docker.DockerNatManager;
-import org.hyperledger.besu.nat.upnp.UpnpNatManager;
-import org.hyperledger.besu.plugin.BesuPlugin;
-import org.hyperledger.besu.plugin.data.EnodeURL;
-import org.hyperledger.besu.plugin.services.HealthCheckService;
-import org.hyperledger.besu.services.BesuPluginContextImpl;
-import org.hyperledger.besu.services.PermissioningServiceImpl;
-import org.hyperledger.besu.services.RpcEndpointServiceImpl;
-import org.hyperledger.besu.services.TransactionValidatorServiceImpl;
 import org.hyperledger.besu.util.BesuVersionUtils;
 import org.hyperledger.besu.util.NetworkUtility;
 
@@ -147,7 +148,6 @@ import com.google.common.base.Strings;
 import graphql.GraphQL;
 import inet.ipaddr.IPAddress;
 import io.vertx.core.Vertx;
-import io.vertx.core.VertxOptions;
 import io.vertx.core.json.JsonObject;
 import org.apache.tuweni.bytes.Bytes;
 import org.apache.tuweni.units.bigints.UInt256;
@@ -166,9 +166,12 @@ public class RunnerBuilder {
   private final Collection<Bytes> bannedNodeIds = new ArrayList<>();
   private boolean p2pEnabled = true;
   private boolean discoveryEnabled;
+  private DiscoveryMode discoveryMode = DiscoveryMode.getDefault();
   private String p2pAdvertisedHost;
   private String p2pListenInterface = NetworkUtility.INADDR_ANY;
   private int p2pListenPort;
+  private Integer p2pDiscoveryListenPort;
+  private Integer p2pDiscoveryListenPortIpv6;
   private Optional<String> p2pAdvertisedHostIpv6 = Optional.empty();
   private Optional<String> p2pListenInterfaceIpv6 = Optional.empty();
   private int p2pListenPortIpv6 = EnodeURLImpl.DEFAULT_LISTENING_PORT_IPV6;
@@ -176,7 +179,7 @@ public class RunnerBuilder {
   private NatMethod natMethod = NatMethod.AUTO;
   private boolean natMethodFallbackEnabled;
   private SilNetworkConfig silNetworkConfig;
-  private SilstatsOptions silstatsOptions;
+  private SilStatsOptions silStatsOptions;
   private JsonRpcConfiguration jsonRpcConfiguration;
   private Optional<JsonRpcConfiguration> engineJsonRpcConfiguration = Optional.empty();
   private GraphQLConfiguration graphQLConfiguration;
@@ -249,6 +252,17 @@ public class RunnerBuilder {
   }
 
   /**
+   * Set discovery mode.
+   *
+   * @param discoveryMode the discovery mode
+   * @return the runner builder
+   */
+  public RunnerBuilder discoveryMode(final DiscoveryMode discoveryMode) {
+    this.discoveryMode = discoveryMode;
+    return this;
+  }
+
+  /**
    * Add Sil network config.
    *
    * @param silNetworkConfig the sil network config
@@ -302,6 +316,28 @@ public class RunnerBuilder {
    */
   public RunnerBuilder p2pListenPort(final int p2pListenPort) {
     this.p2pListenPort = p2pListenPort;
+    return this;
+  }
+
+  /**
+   * Add UDP discovery listen port. Defaults to p2pListenPort when not set.
+   *
+   * @param p2pDiscoveryListenPort the UDP discovery port
+   * @return the runner builder
+   */
+  public RunnerBuilder p2pDiscoveryListenPort(final Integer p2pDiscoveryListenPort) {
+    this.p2pDiscoveryListenPort = p2pDiscoveryListenPort;
+    return this;
+  }
+
+  /**
+   * Add IPv6 UDP discovery listen port. Defaults to p2pListenPortIpv6 when not set.
+   *
+   * @param p2pDiscoveryListenPortIpv6 the IPv6 UDP discovery port
+   * @return the runner builder
+   */
+  public RunnerBuilder p2pDiscoveryListenPortIpv6(final Integer p2pDiscoveryListenPortIpv6) {
+    this.p2pDiscoveryListenPortIpv6 = p2pDiscoveryListenPortIpv6;
     return this;
   }
 
@@ -363,11 +399,11 @@ public class RunnerBuilder {
   /**
    * Add SilStatsOptions
    *
-   * @param silstatsOptions the silstats options
+   * @param silStatsOptions the silstats options
    * @return Runner builder instance
    */
-  public RunnerBuilder silstatsOptions(final SilstatsOptions silstatsOptions) {
-    this.silstatsOptions = silstatsOptions;
+  public RunnerBuilder silStatsOptions(final SilStatsOptions silStatsOptions) {
+    this.silStatsOptions = silStatsOptions;
     return this;
   }
 
@@ -661,15 +697,19 @@ public class RunnerBuilder {
 
     Preconditions.checkNotNull(besuController);
 
+    final int effectiveDiscoveryPort =
+        p2pDiscoveryListenPort != null ? p2pDiscoveryListenPort : p2pListenPort;
     final DiscoveryConfiguration discoveryConfiguration =
         DiscoveryConfiguration.create()
             .setBindHost(p2pListenInterface)
-            .setBindPort(p2pListenPort)
+            .setBindPort(effectiveDiscoveryPort)
             .setAdvertisedHost(p2pAdvertisedHost);
     p2pListenInterfaceIpv6.ifPresent(
         iface -> {
+          final int effectiveDiscoveryPortIpv6 =
+              p2pDiscoveryListenPortIpv6 != null ? p2pDiscoveryListenPortIpv6 : p2pListenPortIpv6;
           discoveryConfiguration.setBindHostIpv6(p2pListenInterfaceIpv6);
-          discoveryConfiguration.setBindPortIpv6(p2pListenPortIpv6);
+          discoveryConfiguration.setBindPortIpv6(effectiveDiscoveryPortIpv6);
           discoveryConfiguration.setAdvertisedHostIpv6(p2pAdvertisedHostIpv6);
         });
     discoveryConfiguration.setPreferIpv6Outbound(preferIpv6Outbound);
@@ -688,12 +728,12 @@ public class RunnerBuilder {
           discoveryConfiguration.getEnodeBootnodes(),
           discoveryConfiguration.getEnrBootnodes());
       discoveryConfiguration.setDnsDiscoveryURL(silNetworkConfig.dnsDiscoveryUrl());
-      discoveryConfiguration.setDiscoveryV5Enabled(
-          networkingConfiguration.discoveryConfiguration().isDiscoveryV5Enabled());
       discoveryConfiguration.setFilterOnEnrForkId(
           networkingConfiguration.discoveryConfiguration().isFilterOnEnrForkIdEnabled());
       discoveryConfiguration.setDiscV5DiscoveryIntervalSeconds(
           networkingConfiguration.discoveryConfiguration().getDiscV5DiscoveryIntervalSeconds());
+      discoveryConfiguration.setDiscV5FastDiscoveryIntervalSeconds(
+          networkingConfiguration.discoveryConfiguration().getDiscV5FastDiscoveryIntervalSeconds());
       discoveryConfiguration.setDiscV5DiscoveryTimeoutSeconds(
           networkingConfiguration.discoveryConfiguration().getDiscV5DiscoveryTimeoutSeconds());
       discoveryConfiguration.setDiscV5MinimumPeerRatio(
@@ -701,6 +741,7 @@ public class RunnerBuilder {
     } else {
       discoveryConfiguration.setEnabled(false);
     }
+    discoveryConfiguration.setDiscoveryMode(discoveryMode);
 
     final NodeKey nodeKey = besuController.getNodeKey();
 
@@ -717,21 +758,12 @@ public class RunnerBuilder {
             .flatMap(protocolManager -> protocolManager.getSupportedCapabilities().stream())
             .collect(Collectors.toSet());
 
-    // IPv6 dual-stack support (a second UDP socket + a second TCP socket) was introduced
-    // alongside DiscV5. Besu does not implement dual-stack for DiscV4, so RLPx should only
-    // bind a second TCP socket when DiscV5 is active. This guard can be dropped once DiscV4
-    // is removed.
-    final boolean rlpxDualStackEnabled =
-        discoveryEnabled && networkingConfiguration.discoveryConfiguration().isDiscoveryV5Enabled();
     final RlpxConfiguration rlpxConfiguration =
         RlpxConfiguration.create()
             .setBindHost(p2pListenInterface)
             .setBindPort(p2pListenPort)
-            .setBindHostIpv6(rlpxDualStackEnabled ? p2pListenInterfaceIpv6 : Optional.empty())
-            .setBindPortIpv6(
-                rlpxDualStackEnabled
-                    ? p2pListenInterfaceIpv6.map(ignored -> p2pListenPortIpv6)
-                    : Optional.empty())
+            .setBindHostIpv6(p2pListenInterfaceIpv6)
+            .setBindPortIpv6(p2pListenInterfaceIpv6.map(ignored -> p2pListenPortIpv6))
             .setSupportedProtocols(subProtocols)
             .setClientId(BesuVersionUtils.nodeName(identityString));
     networkingConfiguration =
@@ -766,7 +798,7 @@ public class RunnerBuilder {
             .map(nodePerms -> PeerPermissions.combine(nodePerms, defaultPeerPermissions))
             .orElse(defaultPeerPermissions);
 
-    final SilPeers silPeers = besuController.getSilPeers();
+    final SilPeers silPeers = besuController.getEthPeers();
 
     LOG.info("Detecting NAT service.");
     final boolean fallbackEnabled = natMethod == NatMethod.AUTO || natMethodFallbackEnabled;
@@ -823,15 +855,27 @@ public class RunnerBuilder {
     networkRunner.getRlpxAgent().ifPresent(silPeers::setRlpxAgent);
 
     final P2PNetwork network = networkRunner.getNetwork();
-    // ForkId in Sila Node Record needs updating when we transition to a new
-    // protocol spec
+    // ForkId in Sila Node Record needs updating when we transition to a new protocol spec.
+    // Compare the HardforkId of the resolved spec for the new block against its parent — a change
+    // indicates we just crossed a fork boundary regardless of whether the exact timestamp was hit.
     context
         .getBlockchain()
         .observeBlockAdded(
             blockAddedEvent -> {
-              if (protocolSchedule.isOnMilestoneBoundary(blockAddedEvent.getHeader())) {
-                network.updateNodeRecord();
-              }
+              final var header = blockAddedEvent.getHeader();
+              context
+                  .getBlockchain()
+                  .getBlockHeader(header.getParentHash())
+                  .ifPresent(
+                      parentHeader -> {
+                        if (!protocolSchedule
+                            .getByBlockHeader(header)
+                            .getHardforkId()
+                            .equals(
+                                protocolSchedule.getByBlockHeader(parentHeader).getHardforkId())) {
+                          network.updateNodeRecord();
+                        }
+                      });
             });
     nodePermissioningController.ifPresent(
         n ->
@@ -856,6 +900,9 @@ public class RunnerBuilder {
         new FilterManagerBuilder()
             .blockchainQueries(blockchainQueries)
             .transactionPool(transactionPool)
+            .maxLogRange(apiConfiguration.getMaxLogsRange())
+            .maxFilterCount(apiConfiguration.getMaxFilterCount())
+            .filterTimeout(apiConfiguration.getFilterTimeout())
             .build();
     vertx.deployVerticle(filterManager);
 
@@ -926,7 +973,7 @@ public class RunnerBuilder {
     }
 
     final SubscriptionManager subscriptionManager =
-        createSubscriptionManager(vertx, transactionPool, blockchainQueries);
+        createSubscriptionManager(vertx, transactionPool, webSocketConfiguration);
 
     if (webSocketConfiguration.isEnabled()
         || (jsonRpcIpcConfiguration != null && jsonRpcIpcConfiguration.isEnabled())) {
@@ -987,7 +1034,8 @@ public class RunnerBuilder {
               : WebSocketConfiguration.createEngineDefault();
 
       final WebSocketMethodsFactory websocketMethodsFactory =
-          new WebSocketMethodsFactory(subscriptionManager, engineMethods);
+          new WebSocketMethodsFactory(
+              subscriptionManager, engineMethods, apiConfiguration.getMaxFilterAddresses());
 
       engineJsonRpcService =
           Optional.of(
@@ -1007,7 +1055,8 @@ public class RunnerBuilder {
 
     Optional<GraphQLHttpService> graphQLHttpService = Optional.empty();
     if (graphQLConfiguration.isEnabled()) {
-      final GraphQLDataFetchers fetchers = new GraphQLDataFetchers(supportedCapabilities);
+      final GraphQLDataFetchers fetchers =
+          new GraphQLDataFetchers(supportedCapabilities, graphQLConfiguration.getMaxBlockRange());
       final Map<GraphQLContextType, Object> graphQlContextMap = new ConcurrentHashMap<>();
       graphQlContextMap.putIfAbsent(GraphQLContextType.BLOCKCHAIN_QUERIES, blockchainQueries);
       graphQlContextMap.putIfAbsent(GraphQLContextType.PROTOCOL_SCHEDULE, protocolSchedule);
@@ -1086,10 +1135,10 @@ public class RunnerBuilder {
           Optional.of(
               new SilStatsService(
                   SilStatsConnectOptions.fromParams(
-                      silstatsOptions.getSilstatsUrl(),
-                      silstatsOptions.getSilstatsContact(),
-                      silstatsOptions.getSilstatsCaCert(),
-                      silstatsOptions.getSilstatsReportInterval()),
+                      silStatsOptions.getSilStatsUrl(),
+                      silStatsOptions.getSilStatsContact(),
+                      silStatsOptions.getSilStatsCaCert(),
+                      silStatsOptions.getSilStatsReportInterval()),
                   blockchainQueries,
                   besuController.getProtocolManager(),
                   transactionPool,
@@ -1136,7 +1185,8 @@ public class RunnerBuilder {
               besuController.getProtocolManager().silContext().getScheduler());
 
       final WebSocketMethodsFactory ipcMethodsFactory =
-          new WebSocketMethodsFactory(subscriptionManager, ipcMethods);
+          new WebSocketMethodsFactory(
+              subscriptionManager, ipcMethods, apiConfiguration.getMaxFilterAddresses());
 
       jsonRpcIpcService =
           Optional.of(
@@ -1202,7 +1252,7 @@ public class RunnerBuilder {
   }
 
   private boolean isSilStatsEnabled() {
-    return silstatsOptions != null && !Strings.isNullOrEmpty(silstatsOptions.getSilstatsUrl());
+    return silStatsOptions != null && !Strings.isNullOrEmpty(silStatsOptions.getSilStatsUrl());
   }
 
   private Stream<EnodeURLImpl> sanitizePeers(
@@ -1294,8 +1344,7 @@ public class RunnerBuilder {
       case UPNP:
         return Optional.of(new UpnpNatManager());
       case DOCKER:
-        return Optional.of(
-            new DockerNatManager(p2pAdvertisedHost, p2pListenPort, jsonRpcConfiguration.getPort()));
+        return Optional.of(new DockerNatManager(p2pAdvertisedHost, jsonRpcConfiguration.getPort()));
       case NONE:
       default:
         return Optional.empty();
@@ -1345,8 +1394,12 @@ public class RunnerBuilder {
       final RpcEndpointServiceImpl rpcEndpointServiceImpl,
       final TransactionSimulator transactionSimulator,
       final SilScheduler silScheduler) {
-    // sync vertx for engine consensus API, to process requests in FIFO order;
-    final Vertx consensusEngineServer = Vertx.vertx(new VertxOptions().setWorkerPoolSize(1));
+    // vertx for the engine consensus API: engine methods execute concurrently on its worker
+    // pool, except engine_forkchoiceUpdated and engine_newPayload calls, which the Engine API
+    // spec requires to be processed in the order received — those run on a dedicated
+    // single-threaded executor (see OrderedExecutionJsonRpcMethod)
+    final Vertx consensusEngineServer =
+        Vertx.vertx(new io.vertx.core.VertxOptions().setWorkerPoolSize(1).setEventLoopPoolSize(1));
 
     final Map<String, JsonRpcMethod> methods =
         new JsonRpcMethodsFactory()
@@ -1377,7 +1430,7 @@ public class RunnerBuilder {
                 natService,
                 namedPlugins,
                 dataDir,
-                besuController.getProtocolManager().silContext().getSilPeers(),
+                besuController.getEthPeers(),
                 consensusEngineServer,
                 apiConfiguration,
                 enodeDnsConfiguration,
@@ -1401,9 +1454,9 @@ public class RunnerBuilder {
   private SubscriptionManager createSubscriptionManager(
       final Vertx vertx,
       final TransactionPool transactionPool,
-      final BlockchainQueries blockchainQueries) {
+      final WebSocketConfiguration webSocketConfiguration) {
     final SubscriptionManager subscriptionManager =
-        new SubscriptionManager(metricsSystem, blockchainQueries.getBlockchain());
+        new SubscriptionManager(metricsSystem, webSocketConfiguration);
     final PendingTransactionSubscriptionService pendingTransactions =
         new PendingTransactionSubscriptionService(subscriptionManager);
     final PendingTransactionDroppedSubscriptionService pendingTransactionsRemoved =
@@ -1461,7 +1514,8 @@ public class RunnerBuilder {
       final ObservableMetricsSystem metricsSystem) {
 
     final WebSocketMethodsFactory websocketMethodsFactory =
-        new WebSocketMethodsFactory(subscriptionManager, jsonRpcMethods);
+        new WebSocketMethodsFactory(
+            subscriptionManager, jsonRpcMethods, apiConfiguration.getMaxFilterAddresses());
 
     rpcEndpointServiceImpl
         .getPluginMethods(configuration.getRpcApis())
@@ -1516,8 +1570,11 @@ public class RunnerBuilder {
 
   private HealthService.HealthCheck adaptProvider(
       final HealthCheckService.HealthCheckProvider provider) {
-    return healthServiceParams ->
-        new HealthService.HealthCheckResult(
-            provider.isHealthy(healthServiceParams::getParam), new JsonObject());
+    return healthServiceParams -> {
+      final HealthCheckService.HealthCheckResult result =
+          provider.check(healthServiceParams::getParam);
+      return new HealthService.HealthCheckResult(
+          result.isHealthy(), new JsonObject(result.getDetails()));
+    };
   }
 }

@@ -35,6 +35,8 @@ import org.hyperledger.besu.crypto.Hash;
 import org.hyperledger.besu.crypto.SignatureAlgorithm;
 import org.hyperledger.besu.crypto.SignatureAlgorithmFactory;
 import org.hyperledger.besu.cryptoservices.NodeKey;
+import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
+import org.hyperledger.besu.sila.p2p.discovery.DiscoveryPeerFactory;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.Endpoint;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.PeerDiscoveryTestHelper;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.DaggerPacketPackage;
@@ -50,13 +52,14 @@ import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.ping.PingP
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.pong.PongPacketData;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.EndpointValidator;
 import org.hyperledger.besu.sila.p2p.discovery.discv4.internal.packet.validation.ExpiryValidator;
+import org.hyperledger.besu.sila.p2p.discovery.dns.EthereumNodeRecord;
 import org.hyperledger.besu.sila.p2p.peers.EnodeURLImpl;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissions.Action;
 import org.hyperledger.besu.sila.p2p.permissions.PeerPermissionsDenylist;
+import org.hyperledger.besu.sila.p2p.rlpx.ConnectSource;
 import org.hyperledger.besu.sila.p2p.rlpx.RlpxAgent;
-import org.hyperledger.besu.metrics.noop.NoOpMetricsSystem;
 
 import java.time.Clock;
 import java.time.Instant;
@@ -92,21 +95,30 @@ import org.apache.tuweni.units.bigints.UInt256;
 import org.apache.tuweni.units.bigints.UInt64;
 import org.assertj.core.api.Assertions;
 import org.awaitility.Awaitility;
-import org.sila.beacon.discovery.schema.EnrField;
-import org.sila.beacon.discovery.schema.IdentitySchema;
-import org.sila.beacon.discovery.schema.IdentitySchemaInterpreter;
-import org.sila.beacon.discovery.schema.NodeRecord;
-import org.sila.beacon.discovery.schema.NodeRecordFactory;
 import org.junit.jupiter.api.AfterEach;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import org.mockito.ArgumentCaptor;
+import sila.beacon.discovery.schema.EnrField;
+import sila.beacon.discovery.schema.IdentitySchema;
+import sila.beacon.discovery.schema.IdentitySchemaInterpreter;
+import sila.beacon.discovery.schema.NodeRecord;
+import sila.beacon.discovery.schema.NodeRecordFactory;
 
 public class PeerDiscoveryControllerTest {
 
   private static final byte MOST_SIGNIFICANT_BIT_MASK = -128;
   private static final PeerRequirement PEER_REQUIREMENT = () -> true;
   private static final long TABLE_REFRESH_INTERVAL_MS = TimeUnit.HOURS.toMillis(1);
+
+  // Real mainnet EF bootnode (config/src/main/resources/mainnet.json): discovery only, no RLPx
+  // listening port.
+  private static final String DISCOVERY_ONLY_BOOTNODE_ENODE =
+      "enode://ca967418ba165105303cfbb733dfb92bfcab80d65009d5e5f158c8e9e5f2c90795ae396a28d2114d66b4001e123e8c2c0465b018aed619fff41faca2ab4d2e64@212.99.218.66:0?discport=20151";
+  // The ENR form of the same node: no tcp/tcp6 fields at all, only udp/udp6=20151.
+  private static final String DISCOVERY_ONLY_BOOTNODE_ENR =
+      "enr:-KG4QCF1Mj32xpKHjinNb6ocCtMZG6IR_tyF5dkio5Hkek7zVbT6MM5eJwhjJFdiksQl51T33IRgryE0XLXiy1QOqsUBgmlkgnY0gmlwhNRj2kKDaXA2kCoAHKALAA0CAAAAAAAAAF6Jc2VjcDI1NmsxoQLKlnQYuhZRBTA8-7cz37kr_KuA1lAJ1eXxWMjp5fLJB4N1ZHCCTreEdWRwNoJOtw";
+
   private PeerDiscoveryController controller;
   private DiscoveryPeerV4 localPeer;
   private PeerTable peerTable;
@@ -587,7 +599,7 @@ public class PeerDiscoveryControllerTest {
     // getting in the way of this test.
     final OutboundMessageHandler outboundMessageHandler = mock(OutboundMessageHandler.class);
     RlpxAgent rlpxAgentMock = mock(RlpxAgent.class);
-    when(rlpxAgentMock.connect(any()))
+    when(rlpxAgentMock.connect(any(), any(ConnectSource.class)))
         .thenReturn(CompletableFuture.failedFuture(new Exception(new TimeoutException())));
     controller =
         getControllerBuilder()
@@ -631,9 +643,73 @@ public class PeerDiscoveryControllerTest {
         .send(eq(peerThatTimesOut), matchPacketOfType(PacketType.PING));
   }
 
+  @Test
+  public void bond_toIpv6Peer_usesConfiguredLocalV6EndpointAsPingFrom() {
+    final Endpoint localV6Endpoint = new Endpoint("2001:db8::1", 30303, Optional.of(30303));
+    final DiscoveryPeerV4 ipv6Peer = createDiscoveryPeer("2001:db8::2");
+    final OutboundMessageHandler outboundMessageHandler = mock(OutboundMessageHandler.class);
+    controller =
+        getControllerBuilder()
+            .outboundMessageHandler(outboundMessageHandler)
+            .localPeerV6Endpoint(Optional.of(localV6Endpoint))
+            .build();
+
+    controller.bond(ipv6Peer);
+
+    final PingPacketData pingData = capturePing(outboundMessageHandler, ipv6Peer);
+    assertThat(pingData.getFrom()).contains(localV6Endpoint);
+  }
+
+  @Test
+  public void bond_toIpv4Peer_usesLocalIpv4EndpointEvenWhenV6Configured() {
+    final Endpoint localV6Endpoint = new Endpoint("2001:db8::1", 30303, Optional.of(30303));
+    final DiscoveryPeerV4 ipv4Peer = helper.createDiscoveryPeer();
+    final OutboundMessageHandler outboundMessageHandler = mock(OutboundMessageHandler.class);
+    controller =
+        getControllerBuilder()
+            .outboundMessageHandler(outboundMessageHandler)
+            .localPeerV6Endpoint(Optional.of(localV6Endpoint))
+            .build();
+
+    controller.bond(ipv4Peer);
+
+    final PingPacketData pingData = capturePing(outboundMessageHandler, ipv4Peer);
+    assertThat(pingData.getFrom()).contains(localPeer.getEndpoint());
+  }
+
+  @Test
+  public void bond_toIpv6Peer_defaultsToLocalIpv4EndpointWhenNoV6Configured() {
+    final DiscoveryPeerV4 ipv6Peer = createDiscoveryPeer("2001:db8::2");
+    final OutboundMessageHandler outboundMessageHandler = mock(OutboundMessageHandler.class);
+    controller = getControllerBuilder().outboundMessageHandler(outboundMessageHandler).build();
+
+    controller.bond(ipv6Peer);
+
+    final PingPacketData pingData = capturePing(outboundMessageHandler, ipv6Peer);
+    assertThat(pingData.getFrom()).contains(localPeer.getEndpoint());
+  }
+
+  private DiscoveryPeerV4 createDiscoveryPeer(final String ipAddress) {
+    final NodeKey nodeKey = PeerDiscoveryTestHelper.generateNodeKeys(1).get(0);
+    final int port = counter.incrementAndGet();
+    return DiscoveryPeerV4.fromEnode(
+        EnodeURLImpl.builder()
+            .nodeId(nodeKey.getPublicKey().getEncodedBytes())
+            .ipAddress(ipAddress)
+            .discoveryAndListeningPorts(port)
+            .build());
+  }
+
+  private PingPacketData capturePing(
+      final OutboundMessageHandler outboundMessageHandler, final DiscoveryPeerV4 recipient) {
+    final ArgumentCaptor<Packet> captor = ArgumentCaptor.forClass(Packet.class);
+    verify(outboundMessageHandler).send(eq(recipient), captor.capture());
+    return captor.getValue().getPacketData(PingPacketData.class).orElseThrow();
+  }
+
   private ControllerBuilder getControllerBuilder() {
     final RlpxAgent rlpxAgent = mock(RlpxAgent.class);
-    when(rlpxAgent.connect(any()))
+    when(rlpxAgent.connect(any(), any(ConnectSource.class)))
         .thenReturn(CompletableFuture.failedFuture(new RuntimeException()));
     return ControllerBuilder.create()
         .nodeKey(localNodeKey)
@@ -1171,6 +1247,78 @@ public class PeerDiscoveryControllerTest {
     controller.onMessage(pongPacket, peers.get(0));
 
     assertThat(controller.streamDiscoveredPeers()).contains(peers.get(0));
+  }
+
+  @Test
+  public void shouldNotConnectOnRlpxLayerToDiscoveryOnlyPeer() {
+    final DiscoveryPeerV4 discoveryOnlyPeer =
+        DiscoveryPeerV4.fromEnode(EnodeURLImpl.fromString(DISCOVERY_ONLY_BOOTNODE_ENODE));
+    assertThat(discoveryOnlyPeer.isListening()).isFalse();
+
+    final NodeKey pingSigningKey = PeerDiscoveryTestHelper.generateNodeKeys(1).get(0);
+    final PingPacketData pingPacketData =
+        packetPackage
+            .pingPacketDataFactory()
+            .create(
+                Optional.ofNullable(localPeer.getEndpoint()),
+                discoveryOnlyPeer.getEndpoint(),
+                UInt64.ONE);
+    final Packet pingPacket =
+        packetPackage.packetFactory().create(PacketType.PING, pingPacketData, pingSigningKey);
+
+    final OutboundMessageHandler outboundMessageHandler = mock(OutboundMessageHandler.class);
+    controller =
+        getControllerBuilder()
+            .peers(discoveryOnlyPeer)
+            .outboundMessageHandler(outboundMessageHandler)
+            .build();
+    mockPingPacketCreation(pingPacket);
+    controller.setRetryDelayFunction(PeerDiscoveryControllerTest::longDelayFunction);
+    controller.start();
+
+    verify(outboundMessageHandler, times(1)).send(any(), matchPacketOfType(PacketType.PING));
+
+    controller.onMessage(
+        MockPacketDataFactory.mockPongPacket(discoveryOnlyPeer, pingPacket.getHash()),
+        discoveryOnlyPeer);
+
+    verify(controller, never()).connectOnRlpxLayer(any());
+    assertThat(discoveryOnlyPeer.getStatus()).isEqualTo(PeerDiscoveryStatus.BONDED);
+    assertThat(controller.streamDiscoveredPeers()).contains(discoveryOnlyPeer);
+  }
+
+  @Test
+  public void shouldNotConnectOnRlpxLayerToEnrPeerWithoutTcpPort() {
+    final DiscoveryPeerV4 enrPeer =
+        DiscoveryPeerV4.from(
+                DiscoveryPeerFactory.fromEthereumNodeRecord(
+                    EthereumNodeRecord.fromEnr(DISCOVERY_ONLY_BOOTNODE_ENR)))
+            .orElseThrow();
+    assertThat(enrPeer.isListening()).isFalse();
+
+    final NodeKey pingSigningKey = PeerDiscoveryTestHelper.generateNodeKeys(1).get(0);
+    final OutboundMessageHandler outboundMessageHandler = mock(OutboundMessageHandler.class);
+    controller = getControllerBuilder().outboundMessageHandler(outboundMessageHandler).build();
+
+    final PingPacketData pingPacketData =
+        packetPackage
+            .pingPacketDataFactory()
+            .create(
+                Optional.ofNullable(localPeer.getEndpoint()), enrPeer.getEndpoint(), UInt64.ONE);
+    final Packet pingPacket =
+        packetPackage.packetFactory().create(PacketType.PING, pingPacketData, pingSigningKey);
+    mockPingPacketCreation(pingPacket);
+    controller.setRetryDelayFunction(PeerDiscoveryControllerTest::longDelayFunction);
+    controller.start();
+
+    controller.handleBondingRequest(enrPeer);
+    verify(outboundMessageHandler, times(1)).send(eq(enrPeer), matchPacketOfType(PacketType.PING));
+
+    controller.onMessage(
+        MockPacketDataFactory.mockPongPacket(enrPeer, pingPacket.getHash()), enrPeer);
+
+    verify(controller, never()).connectOnRlpxLayer(any());
+    assertThat(controller.streamDiscoveredPeers()).contains(enrPeer);
   }
 
   @Test
@@ -2003,6 +2151,7 @@ public class PeerDiscoveryControllerTest {
     private boolean filterOnForkId = false;
     private RlpxAgent rlpxAgent;
     private Executor dispatchExecutor = Runnable::run;
+    private Optional<Endpoint> localPeerV6Endpoint = Optional.empty();
 
     public static ControllerBuilder create() {
       return new ControllerBuilder();
@@ -2035,6 +2184,11 @@ public class PeerDiscoveryControllerTest {
 
     ControllerBuilder nodeKey(final NodeKey nodeKey) {
       this.nodeKey = nodeKey;
+      return this;
+    }
+
+    ControllerBuilder localPeerV6Endpoint(final Optional<Endpoint> localPeerV6Endpoint) {
+      this.localPeerV6Endpoint = localPeerV6Endpoint;
       return this;
     }
 
@@ -2081,6 +2235,7 @@ public class PeerDiscoveryControllerTest {
           PeerDiscoveryController.builder()
               .nodeKey(nodeKey)
               .localPeer(localPeer)
+              .localPeerV6Endpoint(localPeerV6Endpoint)
               .peerTable(peerTable)
               .bootstrapNodes(discoPeers)
               .outboundMessageHandler(outboundMessageHandler)

@@ -36,7 +36,7 @@ public final class GetBlockAccessListsMessage extends AbstractMessageData {
 
   public static GetBlockAccessListsMessage create(final Iterable<Hash> blockHashes) {
     return new GetBlockAccessListsMessage(
-        GetBlockAccessListsMessageData.encodeSilRequest(blockHashes));
+        GetBlockAccessListsMessageData.encodeEthRequest(blockHashes));
   }
 
   private GetBlockAccessListsMessage(final Bytes data) {
@@ -49,6 +49,6 @@ public final class GetBlockAccessListsMessage extends AbstractMessageData {
   }
 
   public Iterable<Hash> blockHashes() {
-    return GetBlockAccessListsMessageData.decodeSilRequest(data);
+    return GetBlockAccessListsMessageData.decodeEthRequest(data);
   }
 }

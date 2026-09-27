@@ -16,12 +16,12 @@ package org.hyperledger.besu.sila.sil.messages;
 
 import org.hyperledger.besu.datatypes.Hash;
 import org.hyperledger.besu.sila.core.BlockHeader;
-import org.hyperledger.besu.sila.sila-mainnet.SilaMainnetBlockHeaderFunctions;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.RawMessage;
 import org.hyperledger.besu.sila.rlp.BytesValueRLPInput;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.RLPInput;
+import org.hyperledger.besu.sila.silaMainnet.SilaMainnetBlockHeaderFunctions;
 
 import java.io.IOException;
 import java.nio.ByteBuffer;

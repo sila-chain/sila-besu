@@ -22,6 +22,8 @@ import static org.hyperledger.besu.sila.chain.VariablesStorage.Keys.SEQ_NO_STORE
 
 import org.hyperledger.besu.datatypes.Address;
 import org.hyperledger.besu.datatypes.Hash;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
+import org.hyperledger.besu.plugin.services.storage.KeyValueStorageTransaction;
 import org.hyperledger.besu.sila.chain.BlockchainStorage;
 import org.hyperledger.besu.sila.chain.TransactionLocation;
 import org.hyperledger.besu.sila.chain.VariablesStorage;
@@ -38,12 +40,10 @@ import org.hyperledger.besu.sila.core.encoding.BlockAccessListEncoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptDecoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncoder;
 import org.hyperledger.besu.sila.core.encoding.receipt.TransactionReceiptEncodingConfiguration;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
 import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.sila.rlp.SimpleNoCopyRlpEncoder;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
-import org.hyperledger.besu.plugin.services.storage.KeyValueStorageTransaction;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.Collection;
 import java.util.List;
@@ -315,7 +315,7 @@ public class KeyValueStoragePrefixedKeyBlockchainStorage implements BlockchainSt
     LOG.error(
         "Inconsistency found when migrating {} to variables storage,"
             + " probably this is due to a downgrade done without running the `storage revert-variables`"
-            + " subcommand first, see https://github.com/hyperledger/besu/pull/5471",
+            + " subcommand first, see https://github.com/sila-chain/sila-besu/pull/5471",
         key);
     throw new IllegalStateException(
         key + " mismatch: blockchain storage value=" + bch + ", variables storage value=" + vch);

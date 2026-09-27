@@ -15,9 +15,9 @@
 package org.hyperledger.besu.sila.chain;
 
 import org.hyperledger.besu.datatypes.Hash;
-import org.hyperledger.besu.sila.rlp.RLP;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorage;
 import org.hyperledger.besu.plugin.services.storage.KeyValueStorageTransaction;
+import org.hyperledger.besu.sila.rlp.RLP;
 
 import java.nio.charset.StandardCharsets;
 import java.util.Collection;

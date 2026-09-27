@@ -24,8 +24,8 @@ import org.jspecify.annotations.Nullable;
 import org.slf4j.LoggerFactory;
 
 /**
- * This interface represents the connection options for Sila statistics. It provides methods to
- * get the scheme, node name, secret, host, port, contact, and CA certificate.
+ * This interface represents the connection options for Sila statistics. It provides methods to get
+ * the scheme, node name, secret, host, port, contact, and CA certificate.
  */
 @Value.Immutable
 public interface SilStatsConnectOptions {
@@ -131,7 +131,7 @@ public interface SilStatsConnectOptions {
       if (scheme != null) {
         // make sure that scheme is either ws or wss
         if (!scheme.equalsIgnoreCase("ws") && !scheme.equalsIgnoreCase("wss")) {
-          throw new IllegalArgumentException("Silstats URI only support ws:// or wss:// scheme.");
+          throw new IllegalArgumentException("SilStats URI only support ws:// or wss:// scheme.");
         }
       }
 
@@ -139,7 +139,7 @@ public interface SilStatsConnectOptions {
 
       // make sure user info is specified
       if (userInfo == null || !userInfo.contains(":")) {
-        throw new IllegalArgumentException("Silstats URI missing user info.");
+        throw new IllegalArgumentException("SilStats URI missing user info.");
       }
       final String nodeName = userInfo.substring(0, userInfo.indexOf(":"));
       final String secret = userInfo.substring(userInfo.indexOf(":") + 1);
@@ -158,6 +158,6 @@ public interface SilStatsConnectOptions {
       LoggerFactory.getLogger(SilStatsConnectOptions.class).error(e.getMessage());
     }
     throw new IllegalArgumentException(
-        "Invalid silstats URL syntax. Silstats URL should have the following format '[ws://|wss://]nodename:secret@host[:port]'.");
+        "Invalid silstats URL syntax. SilStats URL should have the following format '[ws://|wss://]nodename:secret@host[:port]'.");
   }
 }

@@ -14,9 +14,9 @@
  */
 package org.hyperledger.besu.sila.sil.peervalidation;
 
+import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
-import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage.DisconnectReason;
 
 import java.time.Duration;
 import java.util.concurrent.CompletableFuture;

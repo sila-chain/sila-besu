@@ -22,7 +22,7 @@ import org.hyperledger.besu.tests.acceptance.dsl.transaction.Transaction;
 import java.io.IOException;
 import java.util.Optional;
 
-import org.web3j.protocol.core.Response;
+import sila.web3j.protocol.core.Response;
 
 public class ReloadPluginConfig implements Transaction<String> {
 

@@ -18,6 +18,7 @@ import static com.google.common.base.Preconditions.checkArgument;
 import static java.util.Collections.emptyList;
 import static java.util.concurrent.CompletableFuture.completedFuture;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
 import org.hyperledger.besu.sila.core.BlockHeader;
 import org.hyperledger.besu.sila.core.SyncBlock;
 import org.hyperledger.besu.sila.core.SyncBlockBody;
@@ -25,8 +26,7 @@ import org.hyperledger.besu.sila.sil.manager.SilContext;
 import org.hyperledger.besu.sila.sil.manager.SilPeer;
 import org.hyperledger.besu.sila.sil.manager.task.AbstractPeerTask.PeerTaskResult;
 import org.hyperledger.besu.sila.sil.manager.task.GetSyncBlocksFromPeerTask;
-import org.hyperledger.besu.sila.sila-mainnet.ProtocolSchedule;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.sila.silaMainnet.ProtocolSchedule;
 
 import java.util.List;
 import java.util.Optional;

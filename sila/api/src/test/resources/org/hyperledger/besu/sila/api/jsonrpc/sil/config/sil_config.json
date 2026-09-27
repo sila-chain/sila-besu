@@ -1,7 +1,7 @@
 {
   "request": {
     "id": 8,
-    "comment": "sil_config for sila-mainnet modified genesis",
+    "comment": "sil_config for mainnet modified genesis",
     "jsonrpc": "2.0",
     "method": "sil_config",
     "params": []

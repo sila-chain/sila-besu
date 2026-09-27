@@ -24,6 +24,9 @@ import static org.mockito.Mockito.times;
 import static org.mockito.Mockito.verify;
 import static org.mockito.Mockito.when;
 
+import org.hyperledger.besu.plugin.services.MetricsSystem;
+import org.hyperledger.besu.plugin.services.metrics.Counter;
+import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 import org.hyperledger.besu.sila.p2p.peers.Peer;
 import org.hyperledger.besu.sila.p2p.rlpx.MessageCallback;
 import org.hyperledger.besu.sila.p2p.rlpx.connections.PeerConnection;
@@ -33,9 +36,6 @@ import org.hyperledger.besu.sila.p2p.rlpx.wire.Message;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.MessageData;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.SubProtocol;
 import org.hyperledger.besu.sila.p2p.rlpx.wire.messages.DisconnectMessage;
-import org.hyperledger.besu.plugin.services.MetricsSystem;
-import org.hyperledger.besu.plugin.services.metrics.Counter;
-import org.hyperledger.besu.plugin.services.metrics.LabelledMetric;
 
 import java.util.List;
 import java.util.Optional;

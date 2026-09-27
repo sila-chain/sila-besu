@@ -39,7 +39,7 @@ public class AccountTransactions {
 
   public TransferTransaction createTransfer(
       final Account recipient, final int amount, final Amount gasPrice) {
-    return createFrontierBuilder(accounts.getPrimaryBenefactor(), recipient, Amount.siler(amount))
+    return createFrontierBuilder(accounts.getPrimaryBenefactor(), recipient, Amount.sila(amount))
         .gasPrice(gasPrice)
         .build();
   }
@@ -51,7 +51,7 @@ public class AccountTransactions {
 
   public TransferTransaction createTransfer(
       final Account recipient, final int amount, final SignatureAlgorithm signatureAlgorithm) {
-    return createFrontierBuilder(accounts.getPrimaryBenefactor(), recipient, Amount.siler(amount))
+    return createFrontierBuilder(accounts.getPrimaryBenefactor(), recipient, Amount.sila(amount))
         .setSignatureAlgorithm(signatureAlgorithm)
         .build();
   }
@@ -62,7 +62,7 @@ public class AccountTransactions {
 
   public TransferTransaction createTransfer(
       final Account sender, final Account recipient, final int amount) {
-    return createFrontierBuilder(sender, recipient, Amount.siler(amount)).build();
+    return createFrontierBuilder(sender, recipient, Amount.sila(amount)).build();
   }
 
   public TransferTransaction createTransfer(
@@ -72,7 +72,19 @@ public class AccountTransactions {
 
   public TransferTransaction createTransfer(
       final Account sender, final Account recipient, final int amount, final BigInteger nonce) {
-    return createFrontierBuilder(sender, recipient, Amount.siler(amount)).nonce(nonce).build();
+    return createFrontierBuilder(sender, recipient, Amount.sila(amount)).nonce(nonce).build();
+  }
+
+  public TransferTransaction createTransferWithGasLimit(
+      final Account sender, final int amount, final long gasLimit) {
+    return createFrontierBuilder(accounts.getPrimaryBenefactor(), sender, Amount.sila(amount))
+        .gasLimit(gasLimit)
+        .build();
+  }
+
+  public TransferTransaction createTransferWithGasLimit(
+      final Account sender, final Account recipient, final int amount, final long gasLimit) {
+    return createFrontierBuilder(sender, recipient, Amount.sila(amount)).gasLimit(gasLimit).build();
   }
 
   public TransferTransaction createTransfer(
@@ -83,54 +95,54 @@ public class AccountTransactions {
   public TransferTransaction create1559Transfer(
       final Account recipient, final int amount, final long chainId) {
     return create1559Builder(
-            accounts.getPrimaryBenefactor(), recipient, Amount.siler(amount), chainId)
+            accounts.getPrimaryBenefactor(), recipient, Amount.sila(amount), chainId)
         .build();
   }
 
   public TransferTransaction create1559Transfer(
       final Account recipient, final int amount, final long chainId, final Amount gasPrice) {
     return create1559Builder(
-            accounts.getPrimaryBenefactor(), recipient, Amount.siler(amount), chainId)
+            accounts.getPrimaryBenefactor(), recipient, Amount.sila(amount), chainId)
         .gasPrice(gasPrice)
         .build();
   }
 
   public TransferTransactionSet createIncrementalTransfers(
-      final Account sender, final Account recipient, final int silerAmount) {
-    return createIncrementalTransfers(sender, recipient, silerAmount, DEFAULT_GAS_PRICE);
+      final Account sender, final Account recipient, final int silaAmount) {
+    return createIncrementalTransfers(sender, recipient, silaAmount, DEFAULT_GAS_PRICE);
   }
 
   public TransferTransactionSet createIncrementalTransfers(
-      final Account sender, final Account recipient, final int silerAmount, final Amount gasPrice) {
+      final Account sender, final Account recipient, final int silaAmount, final Amount gasPrice) {
     final List<TransferTransaction> transfers = new ArrayList<>();
-    final TransferTransactionBuilder transferOneSiler =
-        createFrontierBuilder(sender, recipient, Amount.siler(1)).gasPrice(gasPrice);
+    final TransferTransactionBuilder transferOneEther =
+        createFrontierBuilder(sender, recipient, Amount.sila(1)).gasPrice(gasPrice);
 
-    for (int i = 1; i <= silerAmount; i++) {
-      transfers.add(transferOneSiler.build());
+    for (int i = 1; i <= silaAmount; i++) {
+      transfers.add(transferOneEther.build());
     }
 
     return new TransferTransactionSet(transfers);
   }
 
   public TransferTransactionSet create1559IncrementalTransfers(
-      final Account sender, final Account recipient, final int silerAmount, final long chainId) {
+      final Account sender, final Account recipient, final int silaAmount, final long chainId) {
     return create1559IncrementalTransfers(
-        sender, recipient, silerAmount, chainId, DEFAULT_GAS_PRICE);
+        sender, recipient, silaAmount, chainId, DEFAULT_GAS_PRICE);
   }
 
   public TransferTransactionSet create1559IncrementalTransfers(
       final Account sender,
       final Account recipient,
-      final int silerAmount,
+      final int silaAmount,
       final long chainId,
       final Amount gasPrice) {
     final List<TransferTransaction> transfers = new ArrayList<>();
-    final TransferTransactionBuilder transferOneSiler =
-        create1559Builder(sender, recipient, Amount.siler(1), chainId).gasPrice(gasPrice);
+    final TransferTransactionBuilder transferOneEther =
+        create1559Builder(sender, recipient, Amount.sila(1), chainId).gasPrice(gasPrice);
 
-    for (int i = 1; i <= silerAmount; i++) {
-      transfers.add(transferOneSiler.build());
+    for (int i = 1; i <= silaAmount; i++) {
+      transfers.add(transferOneEther.build());
     }
 
     return new TransferTransactionSet(transfers);

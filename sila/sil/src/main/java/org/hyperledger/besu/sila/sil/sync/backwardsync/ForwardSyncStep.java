@@ -59,18 +59,22 @@ public class ForwardSyncStep {
           .addArgument(() -> blockHeaders.getFirst().getHash().getBytes().toHexString())
           .log();
       return requestBodies(blockHeaders)
-          .thenApply(this::saveBlocks)
-          .exceptionally(
-              throwable -> {
-                context.halveBatchSize();
-                LOG.atDebug()
-                    .setMessage(
-                        "Getting {} blocks from peers failed with reason {}, reducing batch size to {}")
-                    .addArgument(blockHeaders::size)
-                    .addArgument(throwable::getMessage)
-                    .addArgument(context::getBatchSize)
-                    .log();
-                return null;
+          .handle(
+              (blocks, throwable) -> {
+                if (throwable != null) {
+                  context.halveBatchSize();
+                  LOG.atDebug()
+                      .setMessage(
+                          "Getting {} blocks from peers failed with reason {}, reducing batch size to {}")
+                      .addArgument(blockHeaders::size)
+                      .addArgument(throwable::getMessage)
+                      .addArgument(context::getBatchSize)
+                      .log();
+                  return null;
+                }
+                // a block that cannot be saved is not a failed download, retrying it right away
+                // repeats the failure, so the sync session decides whether and when to retry
+                return saveBlocks(blocks);
               });
     }
   }
@@ -78,7 +82,7 @@ public class ForwardSyncStep {
   @VisibleForTesting
   protected CompletableFuture<List<Block>> requestBodies(final List<BlockHeader> blockHeaders) {
     return context
-        .getSilContext()
+        .getEthContext()
         .getScheduler()
         .scheduleServiceTask(
             () -> {
@@ -86,9 +90,9 @@ public class ForwardSyncStep {
                   new GetBodiesFromPeerTask(
                       blockHeaders,
                       context.getProtocolSchedule(),
-                      context.getSilContext().getSilPeers().peerCount());
+                      context.getEthContext().getEthPeers().peerCount());
               PeerTaskExecutorResult<List<Block>> taskResult =
-                  context.getSilContext().getPeerTaskExecutor().execute(task);
+                  context.getEthContext().getPeerTaskExecutor().execute(task);
               if (taskResult.responseCode() == PeerTaskExecutorResponseCode.SUCCESS
                   && taskResult.result().isPresent()) {
                 return CompletableFuture.completedFuture(taskResult.result().get());

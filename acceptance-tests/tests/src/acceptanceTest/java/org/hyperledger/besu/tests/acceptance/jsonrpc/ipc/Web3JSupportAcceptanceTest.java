@@ -31,10 +31,10 @@ import java.util.Locale;
 
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
-import org.web3j.protocol.Web3j;
-import org.web3j.protocol.core.Request;
-import org.web3j.protocol.core.methods.response.NetVersion;
-import org.web3j.protocol.ipc.UnixIpcService;
+import sila.web3j.protocol.Web3j;
+import sila.web3j.protocol.core.Request;
+import sila.web3j.protocol.core.methods.response.NetVersion;
+import sila.web3j.protocol.ipc.UnixIpcService;
 
 public class Web3JSupportAcceptanceTest extends AcceptanceTestBase {
 

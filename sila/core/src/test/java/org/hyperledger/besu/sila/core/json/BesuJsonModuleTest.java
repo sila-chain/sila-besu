@@ -29,7 +29,7 @@ import org.hyperledger.besu.sila.core.Withdrawal;
 import org.hyperledger.besu.sila.core.kzg.Blob;
 import org.hyperledger.besu.sila.core.kzg.KZGCommitment;
 import org.hyperledger.besu.sila.core.kzg.KZGProof;
-import org.hyperledger.besu.sila.sila-mainnet.block.access.list.BlockAccessList;
+import org.hyperledger.besu.sila.silaMainnet.block.access.list.BlockAccessList;
 
 import java.util.List;
 

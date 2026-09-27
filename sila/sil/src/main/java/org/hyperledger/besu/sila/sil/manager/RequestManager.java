@@ -69,13 +69,13 @@ public class RequestManager {
 
   public void dispatchResponse(final SilMessage silMessage) {
     try {
-      final Map.Entry<BigInteger, MessageData> requestIdAndSilMessage =
+      final Map.Entry<BigInteger, MessageData> requestIdAndEthMessage =
           silMessage.getData().unwrapMessageData();
-      Optional.ofNullable(responseStreams.get(requestIdAndSilMessage.getKey()))
+      Optional.ofNullable(responseStreams.get(requestIdAndEthMessage.getKey()))
           .ifPresentOrElse(
               responseStream -> {
                 responseStream.releaseOutstandingRequest();
-                responseStream.processMessage(requestIdAndSilMessage.getValue());
+                responseStream.processMessage(requestIdAndEthMessage.getValue());
               },
               // Consider incorrect requestIds to be a useless response; too
               // many of these and we will disconnect.

@@ -55,11 +55,11 @@ public class BftMiningAcceptanceTest_Part2 extends ParameterizedBftTestBase {
 
   @ParameterizedTest(name = "{index}: {0}")
   @MethodSource("factoryFunctions")
-  public void shouldMineOnSingleNodeWithFreeGas_SilaShanghai(
+  public void shouldMineOnSingleNodeWithFreeGas_Shanghai(
       final String testName, final BftAcceptanceTestParameterization nodeFactory) throws Exception {
     setUp(testName, nodeFactory);
     final BesuNode minerNode = nodeFactory.createNode(besu, "miner1");
-    updateGenesisConfigToSilaShanghai(minerNode, true);
+    updateGenesisConfigToShanghai(minerNode, true);
 
     cluster.start(minerNode);
 

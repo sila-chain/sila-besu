@@ -16,7 +16,7 @@ package org.hyperledger.besu.savm.operation;
 
 import static org.assertj.core.api.Assertions.assertThat;
 
-import org.hyperledger.besu.savm.SilaMainnetSAVMs;
+import org.hyperledger.besu.savm.SilaMainnetEVMs;
 import org.hyperledger.besu.savm.frame.MessageFrame;
 import org.hyperledger.besu.savm.frame.MessageFrame.State;
 import org.hyperledger.besu.savm.internal.SavmConfiguration;
@@ -56,12 +56,12 @@ public class LondonSStoreOperationGasCostTest {
 
   @BeforeEach
   public void setUp() {
-    codeExecutor = new TestCodeExecutor(SilaMainnetSAVMs.london(SavmConfiguration.DEFAULT));
+    codeExecutor = new TestCodeExecutor(SilaMainnetEVMs.london(SavmConfiguration.DEFAULT));
   }
 
   @ParameterizedTest
   @MethodSource("scenarios")
-  void shouldCalculateGasAccordingToSip3529(
+  void shouldCalculateGasAccordingToEip3529(
       final String code,
       final int originalValue,
       final int expectedGasUsed,

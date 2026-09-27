@@ -63,7 +63,8 @@ public interface PrecompiledContract {
    *
    * @param output output if successful
    * @param isRefundGas Should we charge the gasRequirement?
-   * @param state state of the SAVM after execution (for format errors this would be ExceptionalHalt)
+   * @param state state of the SAVM after execution (for format errors this would be
+   *     ExceptionalHalt)
    * @param haltReason the exceptional halt reason
    */
   record PrecompileContractResult(

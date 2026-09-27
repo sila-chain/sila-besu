@@ -19,7 +19,7 @@ import java.time.Instant;
 public interface PacketData {
 
   /**
-   * Expiration is not standardised. We use Gsil's expiration period (60 seconds); whereas Parity's
+   * Expiration is not standardised. We use Geth's expiration period (60 seconds); whereas Parity's
    * is 20 seconds.
    */
   long DEFAULT_EXPIRATION_PERIOD_SEC = 60;
